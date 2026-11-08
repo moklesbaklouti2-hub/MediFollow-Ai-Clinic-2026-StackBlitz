@@ -64,35 +64,13 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
 
 function BrainArtwork() {
   return (
-    <svg className="mf-brain-art" viewBox="0 0 340 250" role="img" aria-label="Illustration lumineuse d'un cerveau humain stylisé">
-      <defs>
-        <linearGradient id="mfBrainFill" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#e5ffff" /><stop offset=".32" stopColor="#62eaff" /><stop offset=".72" stopColor="#168fe8" /><stop offset="1" stopColor="#164d9c" />
-        </linearGradient>
-        <linearGradient id="mfBrainLine" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffffff" /><stop offset=".5" stopColor="#7cf5ff" /><stop offset="1" stopColor="#28b8ff" />
-        </linearGradient>
-        <radialGradient id="mfBrainAura"><stop stopColor="#00dfff" stopOpacity=".38" /><stop offset="1" stopColor="#00dfff" stopOpacity="0" /></radialGradient>
-        <filter id="mfBrainGlow"><feGaussianBlur stdDeviation="8" /></filter>
-      </defs>
-      <ellipse cx="170" cy="126" rx="150" ry="112" fill="url(#mfBrainAura)" />
-      <ellipse cx="170" cy="224" rx="92" ry="9" fill="#00cfff" opacity=".2" filter="url(#mfBrainGlow)" />
-      <path d="M166 49c-9-18-34-22-49-8-19-7-39 6-39 27-20 5-27 28-15 44-13 16-6 39 12 47-2 21 17 36 36 31 10 17 34 17 47 3 4-5 7-12 8-20Z" fill="url(#mfBrainFill)" stroke="#9af5ff" strokeWidth="3.5" strokeLinejoin="round" />
-      <path d="M174 49c9-18 34-22 49-8 19-7 39 6 39 27 20 5 27 28 15 44 13 16 6 39-12 47 2 21-17 36-36 31-10 17-34 17-47 3-4-5-7-12-8-20Z" fill="url(#mfBrainFill)" stroke="#9af5ff" strokeWidth="3.5" strokeLinejoin="round" />
-      <path d="M170 43v151" stroke="#e5ffff" strokeOpacity=".9" strokeWidth="3" strokeLinecap="round" />
-      <g fill="none" stroke="url(#mfBrainLine)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M112 49c-9 10-5 23 7 28 11 4 17-3 18-12M84 83c15-4 25 5 23 18-2 10-13 15-24 11M79 139c15-12 29-5 31 8 2 12-7 19-18 20M126 177c-2-13 8-22 19-19 8 2 12 9 11 17M137 76c-10 9-9 23 2 29 9 5 20 0 21-10M112 118c9-9 23-7 28 4 4 9-1 19-10 22" />
-        <path d="M228 49c9 10 5 23-7 28-11 4-17-3-18-12M256 83c-15-4-25 5-23 18 2 10 13 15 24 11M261 139c-15-12-29-5-31 8-2 12 7 19 18 20M214 177c2-13-8-22-19-19-8 2-12 9-11 17M203 76c10 9 9 23-2 29-9 5-20 0-21-10M228 118c-9-9-23-7-28 4-4 9 1 19 10 22" />
-      </g>
-      <g fill="#eaffff" stroke="#25cfff" strokeWidth="2">
-        <circle cx="112" cy="49" r="4"/><circle cx="84" cy="83" r="4"/><circle cx="79" cy="139" r="4"/><circle cx="126" cy="177" r="4"/>
-        <circle cx="228" cy="49" r="4"/><circle cx="256" cy="83" r="4"/><circle cx="261" cy="139" r="4"/><circle cx="214" cy="177" r="4"/>
-      </g>
-      <g fill="none" stroke="#50eaff" strokeWidth="1.5" opacity=".7">
-        <path d="M54 54l14-9 10 5M273 48l13 8 9-4M47 177l15 5 7 12M276 181l13-7 8 4" />
-        <circle cx="48" cy="54" r="3"/><circle cx="296" cy="52" r="3"/><circle cx="70" cy="198" r="3"/><circle cx="298" cy="178" r="3"/>
-      </g>
-    </svg>
+    <img
+      className="mf-brain-art"
+      src="https://images.rawpixel.com/dark_image_png_social_square/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDI2LTAzL3NyLWltYWdlLTIzMDMyMDI2LWV5MTItcy0wOTItbW44ZTlmam8ucG5n.png"
+      alt="Modèle anatomique réaliste du cerveau humain"
+      loading="eager"
+      decoding="async"
+    />
   );
 }
 function DoctorRobotArtwork() {
