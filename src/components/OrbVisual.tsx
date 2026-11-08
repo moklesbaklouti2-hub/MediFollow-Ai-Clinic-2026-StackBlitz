@@ -84,20 +84,20 @@ const coreFragmentShader = `
     float violetField = smoothstep(0.20, 0.58, detail) * (0.72 + 0.28 * sin(q.y * 1.8 + motionTime * 0.18));
     float energy = strandA * 0.82 + strandB * 0.68 + strandC * 0.48 + strandD * 0.38;
     vec3 deepBlack = vec3(0.002, 0.004, 0.014);
-    vec3 cyan = vec3(0.008, 0.43, 0.42);
-    vec3 turquoise = vec3(0.006, 0.31, 0.38);
-    vec3 violet = vec3(0.42, 0.13, 0.68);
+    vec3 cyan = vec3(0.025, 0.82, 0.78);
+    vec3 turquoise = vec3(0.018, 0.62, 0.70);
+    vec3 violet = vec3(0.78, 0.28, 1.0);
     vec3 basePlasma = mix(turquoise, violet, smoothstep(0.28, 0.72, detail));
     float plasmaCoverage = clamp(0.46 + cyanField * 0.10 + violetField * 0.18 + plasmaMass * 0.12, 0.0, 0.84);
     vec3 color = mix(deepBlack, basePlasma, plasmaCoverage);
     vec3 innerColor = mix(turquoise, violet, smoothstep(0.34, 0.68, fineCloud));
     color = mix(color, innerColor, innerVeil * 0.22);
     color += mix(cyan, violet, smoothstep(0.30, 0.72, fineCloud)) * plasmaMass * 0.22;
-    color += cyan * cyanField * 0.28;
-    color += violet * violetField * 0.27;
-    color += turquoise * strandA * 0.92;
-    color += cyan * strandB * 0.84;
-    color += violet * strandC * 0.82;
+    color += cyan * cyanField * 0.38;
+    color += violet * violetField * 0.34;
+    color += turquoise * strandA * 1.28;
+    color += cyan * strandB * 1.16;
+    color += violet * strandC * 1.10;
     color += mix(cyan, violet, smoothstep(0.35, 0.68, fineCloud)) * strandD * 0.72;
     color += vec3(0.12, 0.025, 0.22) * pow(energy, 2.4) * 0.42;
     vec3 N = normalize(vNormal);
@@ -109,14 +109,14 @@ const coreFragmentShader = `
     float specular = pow(max(dot(N, H), 0.0), 48.0);
     float rim = smoothstep(0.20, 0.92, fresnel);
     color *= 0.48 + diffuse * 0.58;
-    color += mix(cyan, violet, 0.48) * rim * 0.18;
+    color += mix(cyan, violet, 0.38) * rim * 0.34;
     color += vec3(0.10, 0.025, 0.16) * specular * 0.30;
     float darkVeil = smoothstep(0.20, 0.46, 1.0 - cloud) * smoothstep(0.16, 0.48, 1.0 - detail);
     color = mix(color, deepBlack, darkVeil * 0.10);
     float deepChannels = smoothstep(0.62, 0.82, fineCloud) * (1.0 - smoothstep(0.76, 0.94, deepCloud));
     color += mix(violet, cyan, smoothstep(0.30, 0.72, detail)) * deepChannels * 0.16;
     float pulse = 0.96 + 0.04 * sin(motionTime * (0.9 + uThinking * 0.12) + cloud * 6.0);
-    gl_FragColor = vec4(color * pulse * 1.18, 1.0);
+    gl_FragColor = vec4(color * pulse * 1.52, 1.0);
   }
 `;const plasmaVertexShader = `
   varying vec3 vLocal;
@@ -176,15 +176,15 @@ const plasmaFragmentShader = `
     float filament = clamp(ridgesA * 0.82 + ridgesB * 0.72, 0.0, 1.0);
     float sparks = pow(max(0.0, 1.0 - abs(fbm3(q * 3.2 + 4.0) * 2.0 - 1.0)), 19.0);
     sparks *= smoothstep(0.48, 0.76, cloud) * smoothstep(0.32, 0.66, detail);
-    vec3 cyan = vec3(0.008, 0.46, 0.44);
-    vec3 violet = vec3(0.44, 0.14, 0.72);
+    vec3 cyan = vec3(0.025, 0.86, 0.82);
+    vec3 violet = vec3(0.68, 0.22, 0.98);
     float colorMix = smoothstep(0.30, 0.64, fbm3(q * 0.68 + 4.0));
     vec3 color = mix(cyan, violet, colorMix);
     color += vec3(0.12, 0.025, 0.20) * sparks * 0.30;
     float facing = max(dot(normalize(vNormal), normalize(cameraPosition - vWorld)), 0.0);
     float rim = pow(1.0 - facing, 1.55);
-    float alpha = clamp(filament * 0.52 + sparks * 0.12 + rim * filament * 0.08, 0.0, 0.58);
-    float brightness = 0.38 + filament * 0.72 + sparks * 0.20 + abs(livingWave) * uThinking * 0.05;
+    float alpha = clamp(filament * 0.76 + sparks * 0.22 + rim * filament * 0.12, 0.0, 0.78);
+    float brightness = 0.68 + filament * 1.28 + sparks * 0.48 + abs(livingWave) * uThinking * 0.08;
     gl_FragColor = vec4(color * brightness, alpha);
   }
 `;function LivingOrb({ isThinking }: OrbVisualProps) {
@@ -200,7 +200,7 @@ const plasmaFragmentShader = `
   const plasmaMaterial = useMemo(() => new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 }, uThinking: { value: 0 } },
     vertexShader: plasmaVertexShader, fragmentShader: plasmaFragmentShader,
-    transparent: true, blending: THREE.NormalBlending, depthWrite: false,
+    transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
     side: THREE.FrontSide, toneMapped: false,
   }), []);
 
