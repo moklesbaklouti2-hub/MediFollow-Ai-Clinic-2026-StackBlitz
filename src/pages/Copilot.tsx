@@ -154,7 +154,7 @@ export default function Copilot({
                   <circle r="15" fill="#103d5c" fillOpacity=".88" stroke="#c5fff5" strokeOpacity=".8" strokeWidth="1.2" />
                   <path d="M-2.2-8h4.4v5.8H8v4.4H2.2V8h-4.4V2.2H-8v-4.4h5.8z" fill="#e4fffa" />
                 </g>
-              </svg>        </svg>
+              </svg>
             </div>
 
             <div className="welcome-text">
