@@ -4779,3 +4779,194 @@ textarea {
   .mf-hero h2 { font-size:25px; }
   .mf-hero-art { opacity:.28; }
 }
+
+
+/* ==========================================================
+   MEDIFOLLOW AI — REFERENCE-LED VISUAL REFINEMENT
+   Deep navy / luminous cyan / layered glass / clinical clarity
+========================================================== */
+:root[data-theme="dark"] {
+  --mf-bg-0: #030d20;
+  --mf-bg-1: #061733;
+  --mf-bg-2: #0a2145;
+  --mf-card: #0a2042;
+  --mf-card-raised: #0d2a55;
+  --mf-cyan: #00dfff;
+  --mf-teal: #00e6c3;
+  --mf-blue: #168bff;
+  --mf-violet: #b45cff;
+  --mf-amber: #ffb52e;
+  --mf-white: #f4f8ff;
+  --mf-muted: #a9bfd9;
+}
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] .app {
+  background:
+    radial-gradient(ellipse at 72% 3%, rgba(0, 159, 226, .13), transparent 34%),
+    radial-gradient(ellipse at 4% 88%, rgba(22, 92, 174, .10), transparent 32%),
+    linear-gradient(145deg, #030d20 0%, #06152e 48%, #071a36 100%);
+}
+:root[data-theme="dark"] .main {
+  background: transparent;
+}
+:root[data-theme="dark"] .premium-sidebar {
+  background:
+    radial-gradient(ellipse at 50% 8%, rgba(0, 205, 230, .11), transparent 34%),
+    linear-gradient(180deg, #071a38 0%, #04132b 62%, #030f24 100%);
+  border-right: 1px solid rgba(69, 173, 229, .28);
+  box-shadow: 14px 0 44px rgba(0, 0, 0, .28), inset -1px 0 rgba(90, 205, 255, .04);
+}
+:root[data-theme="dark"] .sidebar-brand {
+  padding: 18px 12px 22px;
+  border-bottom: 1px solid rgba(90, 173, 224, .14);
+}
+:root[data-theme="dark"] .brand-mark {
+  border: 1px solid rgba(54, 230, 255, .4);
+  background: linear-gradient(145deg, rgba(0, 224, 255, .18), rgba(22, 104, 194, .18));
+  box-shadow: 0 0 24px rgba(0, 211, 255, .22), inset 0 0 18px rgba(0, 220, 255, .10);
+}
+:root[data-theme="dark"] .brand-mark span { color: #e8fbff; text-shadow: 0 0 12px rgba(0, 223, 255, .55); }
+:root[data-theme="dark"] .brand-mark i { color: #00e6c3; text-shadow: 0 0 10px rgba(0, 230, 195, .7); }
+:root[data-theme="dark"] .brand-copy h2 { letter-spacing: -.55px; }
+:root[data-theme="dark"] .brand-copy small { letter-spacing: 1.45px; color: #86a9ca; }
+:root[data-theme="dark"] .sidebar-workspace {
+  margin: 15px 12px 10px;
+  padding: 9px 11px;
+  border: 1px solid rgba(65, 177, 218, .17);
+  border-radius: 10px;
+  background: rgba(7, 42, 73, .45);
+  color: #9cc8e4;
+  letter-spacing: 1px;
+}
+:root[data-theme="dark"] .premium-nav-item {
+  min-height: 47px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: background .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+:root[data-theme="dark"] .premium-nav-item.active {
+  background: linear-gradient(100deg, rgba(0, 211, 229, .28), rgba(17, 103, 174, .23));
+  border-color: rgba(0, 224, 255, .48);
+  box-shadow: inset 3px 0 #00e6e6, 0 0 22px rgba(0, 199, 235, .14), inset 0 1px rgba(255,255,255,.07);
+}
+:root[data-theme="dark"] .premium-nav-item.active .nav-icon {
+  color: #a8ffff;
+  filter: drop-shadow(0 0 7px rgba(0, 230, 255, .72));
+}
+:root[data-theme="dark"] .premium-sidebar-bottom {
+  border-top-color: rgba(83, 158, 207, .18);
+  background: linear-gradient(110deg, rgba(8, 43, 76, .5), rgba(5, 23, 47, .35));
+}
+:root[data-theme="dark"] .premium-doctor-avatar {
+  border: 1px solid rgba(0, 224, 255, .42);
+  background: linear-gradient(145deg, #0b7199, #173d79);
+  box-shadow: 0 0 18px rgba(0, 201, 235, .22);
+}
+:root[data-theme="dark"] .sidebar-version { color: #7e9cbb; }
+:root[data-theme="dark"] .version-dot { box-shadow: 0 0 10px rgba(0, 230, 195, .85); }
+
+/* Dashboard hero: cinematic medical blue with a restrained ECG glow */
+:root[data-theme="dark"] .mf-hero {
+  min-height: 190px;
+  border-color: rgba(35, 190, 245, .52);
+  background:
+    radial-gradient(ellipse at 82% 45%, rgba(0, 188, 255, .32), transparent 33%),
+    radial-gradient(ellipse at 58% 100%, rgba(0, 226, 221, .12), transparent 40%),
+    linear-gradient(105deg, #08264d 0%, #0b3766 47%, #061b3b 100%);
+  box-shadow: 0 18px 46px rgba(0, 0, 0, .32), 0 0 28px rgba(0, 155, 235, .12), inset 0 1px rgba(255,255,255,.12);
+}
+:root[data-theme="dark"] .mf-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  width: 42%;
+  height: 180%;
+  right: 1%;
+  top: -42%;
+  border: 1px solid rgba(79, 224, 255, .16);
+  border-radius: 50%;
+  box-shadow: 0 0 45px rgba(0, 183, 255, .12), inset 0 0 45px rgba(0, 183, 255, .08);
+  pointer-events: none;
+}
+:root[data-theme="dark"] .mf-hero-art svg { filter: drop-shadow(0 0 9px rgba(0, 225, 255, .72)); }
+:root[data-theme="dark"] .mf-hero-orbit-one { border-color: rgba(63, 218, 255, .25); }
+:root[data-theme="dark"] .mf-hero-orbit-two { border-color: rgba(0, 230, 213, .24); }
+:root[data-theme="dark"] .mf-stethoscope-glow {
+  border: 1px solid rgba(99, 229, 255, .25);
+  background: radial-gradient(circle at 40% 35%, rgba(58, 210, 255, .32), rgba(6, 32, 65, .08) 72%);
+  box-shadow: 0 0 52px rgba(27, 191, 246, .28), inset 0 0 24px rgba(95, 228, 255, .14);
+}
+:root[data-theme="dark"] .mf-dashboard .mf-stat {
+  border-color: rgba(75, 171, 230, .38);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(27, 153, 230, .15), transparent 45%),
+    linear-gradient(145deg, rgba(12, 42, 82, .98), rgba(5, 23, 49, .99));
+  box-shadow: 0 13px 32px rgba(0, 0, 0, .25), inset 0 1px rgba(255,255,255,.07);
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+}
+:root[data-theme="dark"] .mf-dashboard .mf-stat:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 223, 255, .62);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, .3), 0 0 24px rgba(0, 188, 255, .12), inset 0 1px rgba(255,255,255,.09);
+}
+:root[data-theme="dark"] .mf-stat-blue { border-color: rgba(22, 139, 255, .56)!important; }
+:root[data-theme="dark"] .mf-stat-teal { border-color: rgba(0, 230, 195, .52)!important; }
+:root[data-theme="dark"] .mf-stat-violet { border-color: rgba(180, 92, 255, .52)!important; }
+:root[data-theme="dark"] .mf-stat-amber { border-color: rgba(255, 181, 46, .44)!important; }
+:root[data-theme="dark"] .mf-dashboard .mf-panel {
+  border-color: rgba(80, 159, 216, .32);
+  background:
+    linear-gradient(145deg, rgba(12, 37, 73, .97), rgba(5, 22, 47, .99));
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .24), inset 0 1px rgba(255,255,255,.045);
+}
+:root[data-theme="dark"] .mf-panel-chip,
+:root[data-theme="dark"] .mf-panel-count {
+  border-color: rgba(78, 177, 225, .3);
+  background: linear-gradient(120deg, rgba(20, 76, 124, .52), rgba(10, 42, 77, .56));
+}
+:root[data-theme="dark"] .mf-chart-line { stroke: #00dfff; filter: drop-shadow(0 0 7px rgba(0, 223, 255, .65)); }
+:root[data-theme="dark"] .mf-chart-point { fill: #efffff; stroke: #00dfff; filter: drop-shadow(0 0 5px rgba(0, 223, 255, .8)); }
+:root[data-theme="dark"] .mf-quick-action {
+  border-color: rgba(79, 166, 218, .28);
+  background: linear-gradient(115deg, rgba(12, 52, 91, .76), rgba(7, 29, 57, .88));
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+:root[data-theme="dark"] .mf-quick-action:hover {
+  border-color: rgba(0, 224, 225, .6);
+  box-shadow: 0 8px 24px rgba(0, 185, 215, .12);
+}
+:root[data-theme="dark"] .mf-copilot-card {
+  border-color: rgba(0, 192, 255, .62);
+  background:
+    radial-gradient(ellipse at 88% 16%, rgba(0, 192, 255, .30), transparent 42%),
+    radial-gradient(ellipse at 5% 100%, rgba(99, 73, 214, .18), transparent 48%),
+    linear-gradient(145deg, #0b3566, #061a38 76%);
+  box-shadow: 0 14px 36px rgba(0,0,0,.28), 0 0 26px rgba(0, 166, 255, .16), inset 0 1px rgba(255,255,255,.09);
+}
+:root[data-theme="dark"] .mf-copilot-orb {
+  border-color: rgba(0, 231, 255, .68);
+  background:
+    radial-gradient(circle at 32% 27%, #6ffaff 0%, #1689bb 17%, #114b82 43%, #071a39 76%);
+  box-shadow: 0 0 28px rgba(0, 201, 255, .38), inset 0 0 21px rgba(102, 238, 255, .23);
+}
+:root[data-theme="dark"] .mf-copilot-card button {
+  background: linear-gradient(100deg, #00dfff, #00e6c3);
+  box-shadow: 0 7px 23px rgba(0, 208, 225, .28), inset 0 1px rgba(255,255,255,.35);
+}
+:root[data-theme="dark"] .mf-dashboard-footer {
+  border-color: rgba(69, 157, 212, .24);
+  background: linear-gradient(100deg, rgba(5, 24, 49, .88), rgba(8, 34, 63, .72));
+  box-shadow: inset 0 1px rgba(255,255,255,.035);
+}
+:root[data-theme="dark"] .mf-dashboard-footer span:last-child { text-shadow: 0 0 12px rgba(0, 218, 225, .18); }
+
+@media (max-width: 760px) {
+  :root[data-theme="dark"] .mf-hero { min-height: 170px; }
+  :root[data-theme="dark"] .mf-dashboard .mf-panel { padding: 15px; }
+  :root[data-theme="dark"] .mf-dashboard-footer { gap: 9px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme="dark"] .mf-dashboard .mf-stat,
+  :root[data-theme="dark"] .mf-quick-action,
+  :root[data-theme="dark"] .premium-nav-item { transition: none; }
+}
