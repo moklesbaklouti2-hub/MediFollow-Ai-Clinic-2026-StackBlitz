@@ -60,7 +60,7 @@ function App() {
   // ---------- THÈME ----------
 
   const [themePreference, setThemePreference] = useState(() => {
-    return localStorage.getItem('medifollow-theme') || 'dark';
+    return 'dark';
   });
 
   useEffect(() => {
