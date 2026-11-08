@@ -31,6 +31,45 @@ export function detectClinicalSuggestions(input: {
   ].join(' '));
   const suggestions: ClinicalSuggestion[] = [];
 
+  // Détection simple des données manquantes : un champ vide n'est jamais considéré comme normal.
+  const hasPatientHistory = Boolean(
+    input.patient?.clinicalHistory?.medical?.length ||
+    input.patient?.clinicalHistory?.surgical?.length ||
+    input.patient?.clinicalHistory?.allergies?.length ||
+    input.patient?.clinicalHistory?.family?.length ||
+    input.patient?.clinicalHistory?.other?.trim() ||
+    input.patient?.currentMedications?.length
+  );
+
+  if (input.motif.trim().length >= 4 && !input.symptoms.trim()) {
+    suggestions.push({
+      id: 'missing-symptom-history',
+      priority: 'routine',
+      title: 'Histoire de la maladie non renseignée',
+      reason: 'Un motif est saisi, mais le champ des symptômes et de leur évolution est encore vide.',
+      checks: [
+        'Préciser le début, la durée et le mode d’installation.',
+        'Décrire l’évolution, l’intensité et les facteurs aggravants ou soulageants.',
+        'Rechercher les symptômes associés et les signes d’alarme pertinents pour le motif.',
+      ],
+    });
+  }
+
+  if (input.patient && !input.history.trim() && !hasPatientHistory) {
+    suggestions.push({
+      id: 'missing-medical-history',
+      priority: 'routine',
+      title: 'Antécédents et traitements à vérifier',
+      reason: 'Aucun antécédent ni traitement n’est renseigné dans cette consultation ou dans les rubriques structurées du dossier patient.',
+      checks: [
+        'Vérifier les antécédents médicaux et chirurgicaux.',
+        'Vérifier les allergies et intolérances.',
+        'Faire le point sur les traitements en cours et l’automédication.',
+      ],
+    });
+  }
+
+
   if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
     suggestions.push({
       id: 'chest-pain',
