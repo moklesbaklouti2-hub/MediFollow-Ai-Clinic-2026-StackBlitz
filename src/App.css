@@ -5057,3 +5057,49 @@ textarea {
 @media (min-width: 1151px) {
   .mf-dashboard .mf-copilot-card { grid-column: 3; grid-row: 2; }
 }
+
+
+/* Global header — quiet, precise, luminous clinical workspace */
+:root[data-theme="dark"] .premium-topbar {
+  position: relative;
+  padding: 16px 20px;
+  border: 1px solid rgba(75, 156, 211, .22);
+  border-radius: 17px;
+  background: linear-gradient(105deg, rgba(8, 29, 57, .92), rgba(9, 38, 70, .72));
+  box-shadow: 0 10px 30px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.045);
+  backdrop-filter: blur(16px);
+}
+:root[data-theme="dark"] .premium-topbar::after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  bottom: -1px;
+  width: 84px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #00dfff, rgba(0,223,255,0));
+  box-shadow: 0 0 12px rgba(0,223,255,.6);
+}
+:root[data-theme="dark"] .premium-topbar h1 {
+  letter-spacing: -.55px;
+  text-shadow: 0 0 18px rgba(0, 174, 255, .12);
+}
+:root[data-theme="dark"] .header-date {
+  background: linear-gradient(120deg, rgba(11, 52, 86, .72), rgba(7, 32, 60, .78));
+  border-color: rgba(69, 184, 221, .24);
+  box-shadow: inset 0 1px rgba(255,255,255,.035);
+}
+:root[data-theme="dark"] .premium-status {
+  border-color: rgba(0, 225, 194, .28);
+  background: rgba(0, 120, 111, .14);
+  box-shadow: inset 0 1px rgba(255,255,255,.04);
+}
+:root[data-theme="dark"] .status-dot {
+  box-shadow: 0 0 10px rgba(0, 230, 195, .8);
+}
+@media (max-width: 650px) {
+  :root[data-theme="dark"] .premium-topbar {
+    padding: 13px 14px;
+    border-radius: 14px;
+  }
+}
