@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
+import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 
 
 const specialtyGroups = [
@@ -147,6 +148,7 @@ export default function Consultations() {
   const [plan, setPlan] = useState('');
   const [saved, setSaved] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
 
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
@@ -248,6 +250,16 @@ export default function Consultations() {
   const sortedConsultations = [...consultations].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+
+  const selectedPatient = patients.find((patient) => patient.id === patientId);
+  const clinicalSuggestions = detectClinicalSuggestions({
+    patient: selectedPatient,
+    specialty,
+    motif,
+    symptoms,
+    history,
+    vitals,
+  }).filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`));
 
   return (
     <section className="consultation-page">
@@ -458,6 +470,59 @@ export default function Consultations() {
         </div>
         <span className="consultation-badge">Consultation médicale</span>
       </header>
+
+      {clinicalSuggestions.length > 0 && (
+        <section
+          aria-live="polite"
+          aria-label="Suggestions du copilote clinique"
+          style={{
+            display: 'grid',
+            gap: 12,
+            padding: 16,
+            border: '1px solid var(--border,#dce4e8)',
+            borderLeft: clinicalSuggestions.some((item) => item.priority === 'high')
+              ? '4px solid #d97706'
+              : '4px solid #38bfa6',
+            borderRadius: 13,
+            background: 'var(--surface,#fff)',
+          }}
+        >
+          <div>
+            <strong style={{ fontSize: 15 }}>Copilote clinique · Suggestions contextuelles</strong>
+            <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 12 }}>
+              Détection locale à partir des champs saisis. Ces rappels ne constituent ni un diagnostic ni une validation médicale.
+            </p>
+          </div>
+          {clinicalSuggestions.map((suggestion) => (
+            <article
+              key={suggestion.id}
+              style={{
+                padding: 13,
+                border: '1px solid var(--border,#e5ebef)',
+                borderRadius: 10,
+                background: 'var(--background,rgba(127,127,127,.04))',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <strong style={{ fontSize: 13 }}>
+                  {suggestion.priority === 'high' ? 'Priorité clinique · ' : ''}{suggestion.title}
+                </strong>
+                <button
+                  type="button"
+                  onClick={() => setDismissedSuggestions((previous) => [...previous, `${patientId}:${suggestion.id}`])}
+                  style={{ border: '1px solid var(--border,#dce4e8)', borderRadius: 7, padding: '5px 9px', background: 'transparent', color: 'inherit', fontSize: 11 }}
+                >
+                  Ignorer
+                </button>
+              </div>
+              <p style={{ margin: '7px 0', fontSize: 12, lineHeight: 1.5 }}>{suggestion.reason}</p>
+              <ul style={{ margin: '6px 0 0', paddingLeft: 19, fontSize: 12, lineHeight: 1.65 }}>
+                {suggestion.checks.map((check) => <li key={check}>{check}</li>)}
+              </ul>
+            </article>
+          ))}
+        </section>
+      )}
 
       <div className="consultation-section">
         <h3>01 · Identification</h3>
