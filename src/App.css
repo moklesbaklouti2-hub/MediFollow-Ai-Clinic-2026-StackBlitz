@@ -5741,3 +5741,48 @@ textarea {
 @media (prefers-reduced-motion: reduce) {
   .premium-nav-item { transition: none !important; }
 }
+
+
+/* FINAL POLISH — colored header, tighter dashboard rhythm, brain artwork */
+.main > .premium-topbar {
+  position: relative !important; display: flex !important; align-items: center !important;
+  justify-content: space-between !important; gap: 20px !important; min-height: 88px !important;
+  margin: 0 0 14px !important; padding: 15px 22px !important; color: #edf8ff !important;
+  border: 1px solid rgba(76,171,225,.34) !important; border-radius: 16px !important;
+  background: radial-gradient(ellipse at 92% 0%,rgba(0,190,220,.16),transparent 38%),linear-gradient(112deg,#071b36 0%,#0b2c50 58%,#092443 100%) !important;
+  box-shadow: 0 9px 26px rgba(2,15,32,.22),inset 0 1px rgba(255,255,255,.07) !important;
+}
+.main > .premium-topbar h1 { margin: 2px 0 !important; color: #f5fbff !important; }
+.main > .premium-topbar .top-label { color: #70d9f1 !important; }
+.main > .premium-topbar .header-subtitle { color: #a9c4dc !important; }
+.main > .premium-topbar .header-date {
+  color: #e7f5ff !important; background: rgba(9,49,81,.78) !important;
+  border: 1px solid rgba(83,183,221,.28) !important;
+}
+.main > .premium-topbar .header-date strong { color: #eaf8ff !important; }
+.main > .premium-topbar .header-date small { color: #9bbbd5 !important; }
+.main > .premium-topbar .premium-status {
+  color: #a8fff0 !important; background: rgba(0,133,120,.18) !important;
+  border: 1px solid rgba(49,225,196,.3) !important;
+}
+.main > .premium-topbar::after {
+  content: "" !important; position: absolute !important; left: 22px !important; bottom: -1px !important;
+  width: 76px !important; height: 2px !important; border-radius: 2px !important;
+  background: linear-gradient(90deg,#28e2df,transparent) !important; box-shadow: 0 0 12px rgba(40,226,223,.48) !important;
+}
+.mf-dashboard { gap: 14px !important; }
+.mf-dashboard .mf-stats { gap: 12px !important; }
+.mf-dashboard-grid { gap: 12px !important; }
+.mf-dashboard .mf-panel,.mf-dashboard-grid .mf-panel { padding: 19px !important; }
+.mf-hero-art .mf-brain-art {
+  display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important;
+  z-index: 3 !important; width: min(100%,370px) !important; height: auto !important;
+  max-height: 225px !important; overflow: visible !important;
+  filter: drop-shadow(0 0 17px rgba(0,207,255,.52));
+}
+@media (max-width: 720px) {
+  .main > .premium-topbar { min-height: 0 !important; padding: 13px 14px !important; }
+  .mf-dashboard { gap: 12px !important; }
+  .mf-dashboard .mf-stats,.mf-dashboard-grid { gap: 10px !important; }
+  .mf-hero-art .mf-brain-art { width: min(100%,245px) !important; max-height: 160px !important; }
+}
