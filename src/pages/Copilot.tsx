@@ -93,56 +93,8 @@ export default function Copilot({
       </div>
 
 
-      <section className="copilot-context-panel" aria-label="Contexte clinique">
-        <div className="copilot-context-heading">
-          <div className="copilot-context-title">
-            <span className="copilot-context-icon" aria-hidden="true">⌘</span>
-            <div>
-              <strong>Contexte clinique</strong>
-              <small>Choisissez les données enregistrées à associer à votre demande</small>
-            </div>
-          </div>
-          <span className="copilot-context-secure">Données enregistrées</span>
-        </div>
-        <label className="copilot-context-label" htmlFor="copilot-consultation-context">
-          Consultation de référence
-        </label>
-        <select
-          id="copilot-consultation-context"
-          className="copilot-context-select"
-          value={selectedConsultationId}
-          onChange={(event) => setChosenConsultationId(event.target.value)}
-          disabled={loading || consultations.length === 0}
-        >
-          {consultations.length === 0 && (
-            <option value="">Aucune consultation enregistrée</option>
-          )}
-          {consultations.length > 0 && (
-            <option value="">Aucun contexte — question générale</option>
-          )}
-          {consultations
-            .slice()
-            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-            .map((item) => {
-              const linkedPatient = patients.find((patient) => patient.id === item.patientId);
-              const dateLabel = new Date(item.date).toLocaleDateString('fr-FR');
-              return (
-                <option key={item.id} value={item.id}>
-                  {dateLabel} · {item.specialty || 'Spécialité non précisée'} · {item.motif} · {linkedPatient?.name || 'Patient'}
-                </option>
-              );
-            })}
-        </select>
-        <div className="copilot-context-summary" aria-live="polite">
-          <span className="context-summary-dot" />
-          <p>
-            {selectedConsultation
-              ? `Contexte actif : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
-              : 'Aucun dossier associé : le copilote répondra en mode question générale.'}
-          </p>
-        </div>
-      </section>
-
+      <div className="copilot-workspace">
+        <main className="copilot-main-column">
       <div className="copilot-conversation" ref={conversationRef}>
         {messages.length === 0 && (
           <div className="copilot-welcome">
@@ -267,7 +219,8 @@ export default function Copilot({
         )}
       </div>
 
-      <div className="premium-input-area">
+
+          <div className="premium-input-area">
         <div className="premium-chat-input">
           <textarea
             value={question}
@@ -301,6 +254,76 @@ export default function Copilot({
             L'IA assiste le médecin. La décision clinique reste médicale.
           </span>
         </div>
+      </div>
+        </main>
+
+        <aside className="copilot-side-column" aria-label="Outils du copilote">
+                <section className="copilot-context-panel" aria-label="Contexte clinique">
+                  <div className="copilot-context-heading">
+                    <div className="copilot-context-title">
+                      <span className="copilot-context-icon" aria-hidden="true">⌘</span>
+                      <div>
+                        <strong>Contexte clinique</strong>
+                        <small>Choisissez les données enregistrées à associer à votre demande</small>
+                      </div>
+                    </div>
+                    <span className="copilot-context-secure">Données enregistrées</span>
+                  </div>
+                  <label className="copilot-context-label" htmlFor="copilot-consultation-context">
+                    Consultation de référence
+                  </label>
+                  <select
+                    id="copilot-consultation-context"
+                    className="copilot-context-select"
+                    value={selectedConsultationId}
+                    onChange={(event) => setChosenConsultationId(event.target.value)}
+                    disabled={loading || consultations.length === 0}
+                  >
+                    {consultations.length === 0 && (
+                      <option value="">Aucune consultation enregistrée</option>
+                    )}
+                    {consultations.length > 0 && (
+                      <option value="">Aucun contexte — question générale</option>
+                    )}
+                    {consultations
+                      .slice()
+                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                      .map((item) => {
+                        const linkedPatient = patients.find((patient) => patient.id === item.patientId);
+                        const dateLabel = new Date(item.date).toLocaleDateString('fr-FR');
+                        return (
+                          <option key={item.id} value={item.id}>
+                            {dateLabel} · {item.specialty || 'Spécialité non précisée'} · {item.motif} · {linkedPatient?.name || 'Patient'}
+                          </option>
+                        );
+                      })}
+                  </select>
+                  <div className="copilot-context-summary" aria-live="polite">
+                    <span className="context-summary-dot" />
+                    <p>
+                      {selectedConsultation
+                        ? `Contexte actif : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
+                        : 'Aucun dossier associé : le copilote répondra en mode question générale.'}
+                    </p>
+                  </div>
+                </section>
+          <section className="copilot-side-card">
+            <div className="copilot-side-card-heading">
+              <span aria-hidden="true">✧</span>
+              <div><strong>Suggestions rapides</strong><small>Accès direct à vos demandes fréquentes</small></div>
+            </div>
+            <div className="copilot-side-actions">
+              <button type="button" onClick={() => onQuestionChange('Aide-moi à analyser ce cas clinique étape par étape.')} disabled={loading}>Analyse d’un cas clinique <span>→</span></button>
+              <button type="button" onClick={() => onQuestionChange('Établis un diagnostic différentiel argumenté à partir des données disponibles.')} disabled={loading}>Diagnostic différentiel <span>→</span></button>
+              <button type="button" onClick={() => onQuestionChange('Recherche les recommandations récentes et les sources fiables concernant : ')} disabled={loading}>Recommandations récentes <span>→</span></button>
+              <button type="button" onClick={() => onQuestionChange('Aide-moi à préparer un plan de prise en charge adapté à ce contexte : ')} disabled={loading}>Plan de prise en charge <span>→</span></button>
+            </div>
+          </section>
+          <section className="copilot-side-note">
+            <span aria-hidden="true">ⓘ</span>
+            <p>L’IA soutient la réflexion médicale. Vérifiez les informations et les sources avant toute décision clinique.</p>
+          </section>
+        </aside>
       </div>
     </section>
   );
