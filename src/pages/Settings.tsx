@@ -62,7 +62,7 @@ export default function Settings({
       const parsed = JSON.parse(await file.text());
       const backupData = parsed?.data;
 
-      const isRecord = (value: unknown) =>
+      const isRecord = (value: unknown): value is Record<string, any> =>
         typeof value === 'object' && value !== null && !Array.isArray(value);
 
       const isValidDeletedPatient = (value: unknown) =>
