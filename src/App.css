@@ -6364,3 +6364,29 @@ textarea {
 @media (prefers-reduced-motion: reduce) {
   .mf-hero-art .mf-brain-art { animation: none !important; }
 }
+
+
+/* Dashboard canvas — slightly brighter midnight blue for a softer workspace */
+#root .app .main .mf-dashboard-page {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(45, 112, 151, .16), transparent 58%),
+    linear-gradient(145deg, #142f48 0%, #102941 52%, #122d45 100%) !important;
+  border-radius: 18px;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-hero {
+  background:
+    radial-gradient(ellipse at 82% 48%, rgba(29, 196, 207, .17), transparent 42%),
+    linear-gradient(115deg, #153c5c 0%, #12334f 54%, #102b46 100%) !important;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard-grid > .mf-panel,
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-recent-panel {
+  background: linear-gradient(145deg, #153651 0%, #112e49 100%) !important;
+}
+.mf-hero-art .mf-stethoscope-art {
+  filter: drop-shadow(0 0 14px rgba(35, 235, 224, .34))
+          drop-shadow(0 0 28px rgba(0, 170, 220, .2)) !important;
+  mix-blend-mode: screen;
+}
+@media (max-width: 720px) {
+  #root .app .main .mf-dashboard-page { border-radius: 14px; }
+}
