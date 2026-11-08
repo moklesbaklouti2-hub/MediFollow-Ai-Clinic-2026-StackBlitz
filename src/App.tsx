@@ -13,6 +13,7 @@ import Protocols from './pages/Protocols';
 import Prescriptions from './pages/Prescriptions';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
+import OrbAssistant from './components/OrbAssistant';
 
 // ============================================
 // MEDIFOLLOW AI — APPLICATION PRINCIPALE
@@ -293,6 +294,11 @@ function App() {
         )}
         {renderContent()}
       </main>
+
+      <OrbAssistant
+        isThinking={loading}
+        onOpenCopilot={() => setActive('Copilote IA')}
+      />
     </div>
   );
 }
