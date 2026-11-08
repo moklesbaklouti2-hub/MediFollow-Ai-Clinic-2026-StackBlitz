@@ -32,7 +32,7 @@ export const DEFAULT_SETTINGS: DoctorSettings = {
   email: '',
   copilotEnabled: true,
   confirmBeforePrescription: true,
-  themePreference: 'auto',
+  themePreference: 'dark',
 };
 
 // ---------- OUTILS INTERNES ----------
