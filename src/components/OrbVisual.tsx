@@ -80,15 +80,15 @@ const coreFragmentShader = `
     float filament = smoothstep(0.68, 0.96, current * 0.5 + veins * 0.85);
     float innerPulse = 0.5 + 0.5 * sin(uTime * (1.35 + uThinking * 2.4) + clouds * 8.0);
 
-    vec3 deep = vec3(0.018, 0.075, 0.19);
-    vec3 teal = vec3(0.10, 0.91, 0.79);
-    vec3 aqua = vec3(0.58, 1.0, 0.94);
-    vec3 violet = vec3(0.49, 0.22, 0.88);
+    vec3 deep = vec3(0.004, 0.012, 0.035);
+    vec3 teal = vec3(0.015, 0.78, 0.70);
+    vec3 aqua = vec3(0.12, 0.88, 0.78);
+    vec3 violet = vec3(0.58, 0.13, 0.92);
     vec3 plasma = mix(deep, teal, smoothstep(0.22, 0.72, clouds));
     plasma = mix(plasma, violet, smoothstep(0.48, 0.86, veins) * 0.82);
-    plasma = mix(plasma, aqua, filament * 0.82);
+    plasma = mix(plasma, teal * 1.12, filament * 0.66);
     plasma += teal * (innerPulse * 0.13 + uThinking * 0.12);
-    plasma += violet * fresnel * (0.55 + uThinking * 0.4);
+    plasma += violet * fresnel * (0.48 + uThinking * 0.38);
 
     float alpha = 0.93 + fresnel * 0.07;
     gl_FragColor = vec4(plasma * (1.12 + fresnel * 0.75), alpha);
@@ -144,15 +144,15 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
 
   const ringMaterials = useMemo(() => [
     new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#35f3dc') }, uColorB: { value: new THREE.Color('#e1fff9') }, uOpacity: { value: 0.92 }, uThinking: { value: 0 } },
+      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#35f3dc') }, uColorB: { value: new THREE.Color('#67f5df') }, uOpacity: { value: 0.92 }, uThinking: { value: 0 } },
       vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
     }),
     new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#a36bff') }, uColorB: { value: new THREE.Color('#e5c7ff') }, uOpacity: { value: 0.88 }, uThinking: { value: 0 } },
+      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#a36bff') }, uColorB: { value: new THREE.Color('#c49aff') }, uOpacity: { value: 0.88 }, uThinking: { value: 0 } },
       vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
     }),
     new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#42bfff') }, uColorB: { value: new THREE.Color('#c0fff8') }, uOpacity: { value: 0.72 }, uThinking: { value: 0 } },
+      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#42bfff') }, uColorB: { value: new THREE.Color('#65d9ef') }, uOpacity: { value: 0.56 }, uThinking: { value: 0 } },
       vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
     }),
   ], []);
