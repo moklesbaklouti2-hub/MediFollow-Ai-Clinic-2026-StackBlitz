@@ -1,7 +1,13 @@
 
 import { useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
-import { getMedicalData } from '../services/storage';
+import {
+  getMedicalData,
+  savePatients,
+  saveConsultations,
+  savePrescriptions,
+  saveSettings as saveStoredSettings,
+} from '../services/storage';
 
 type SettingsProps = {
   themePreference: string;
@@ -44,6 +50,74 @@ export default function Settings({
     link.remove();
     URL.revokeObjectURL(url);
     setMessage('Sauvegarde téléchargée. Conservez ce fichier dans un endroit sûr.');
+  }
+
+  async function importBackup(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      const parsed = JSON.parse(await file.text());
+      const backupData = parsed?.data;
+
+      const isRecord = (value: unknown) =>
+        typeof value === 'object' && value !== null && !Array.isArray(value);
+
+      if (
+        parsed?.application !== 'MediFollow AI' ||
+        parsed?.formatVersion !== 1 ||
+        !isRecord(backupData) ||
+        !Array.isArray(backupData.patients) ||
+        !Array.isArray(backupData.consultations) ||
+        !Array.isArray(backupData.prescriptions) ||
+        !isRecord(backupData.settings)
+      ) {
+        setMessage('Fichier refusé : sauvegarde MediFollow AI invalide ou incompatible.');
+        return;
+      }
+
+      if (!window.confirm(
+        'La restauration va remplacer les patients, consultations, ordonnances et paramètres actuellement enregistrés sur cet appareil. Voulez-vous continuer ?'
+      )) {
+        setMessage('Restauration annulée. Aucune donnée n’a été modifiée.');
+        return;
+      }
+
+      const previous = getMedicalData();
+      const restored =
+        savePatients(backupData.patients) &&
+        saveConsultations(backupData.consultations) &&
+        savePrescriptions(backupData.prescriptions) &&
+        saveStoredSettings(backupData.settings);
+
+      if (!restored) {
+        savePatients(previous.patients);
+        saveConsultations(previous.consultations);
+        savePrescriptions(previous.prescriptions);
+        saveStoredSettings(previous.settings);
+        setMessage('Échec de la restauration. Les données précédentes ont été rétablies si le navigateur l’a permis.');
+        return;
+      }
+
+      const restoredSettings = backupData.settings;
+      setDoctorName(String(restoredSettings.doctorName ?? ''));
+      setSpecialty(String(restoredSettings.specialty ?? ''));
+      setCabinetName(String(restoredSettings.cabinetName ?? ''));
+      setAddress(String(restoredSettings.address ?? ''));
+      setPhone(String(restoredSettings.phone ?? ''));
+      setEmail(String(restoredSettings.email ?? ''));
+      setCopilotEnabled(restoredSettings.copilotEnabled !== false);
+      setConfirmBeforePrescription(restoredSettings.confirmBeforePrescription !== false);
+      if (['auto', 'light', 'dark'].includes(restoredSettings.themePreference)) {
+        onThemeChange(restoredSettings.themePreference);
+      }
+      setMessage(
+        `Restauration réussie : ${backupData.patients.length} patient(s), ${backupData.consultations.length} consultation(s) et ${backupData.prescriptions.length} ordonnance(s).`
+      );
+    } catch {
+      setMessage('Impossible de lire ce fichier. Vérifiez qu’il s’agit d’une sauvegarde JSON valide.');
+    }
   }
 
   function saveSettings() {
@@ -183,6 +257,11 @@ export default function Settings({
           color:#21866e;
           font-size:13px;
           line-height:1.5;
+        }
+        .settings-backup-actions {
+          display:flex;
+          flex-wrap:wrap;
+          gap:10px;
         }
         .settings-backup-button {
           border:1px solid #42bfa4;
@@ -344,9 +423,20 @@ export default function Settings({
         <p className="settings-description">
           Exportez les patients, consultations, ordonnances et paramètres dans un fichier de sauvegarde JSON.
         </p>
-        <button className="settings-backup-button" onClick={exportBackup}>
-          Télécharger une sauvegarde complète
-        </button>
+        <div className="settings-backup-actions">
+          <button className="settings-backup-button" onClick={exportBackup}>
+            Télécharger une sauvegarde complète
+          </button>
+          <label className="settings-backup-button">
+            Restaurer une sauvegarde
+            <input
+              type="file"
+              accept=".json,application/json"
+              onChange={(event) => void importBackup(event)}
+              style={{ display: 'none' }}
+            />
+          </label>
+        </div>
         <p className="settings-note">
           Faites régulièrement une sauvegarde et conservez-la dans un emplacement sûr. Ce fichier contient des données potentiellement sensibles.
         </p>
