@@ -5789,3 +5789,43 @@ textarea {
 
 /* Ensure the new brain SVG remains visible despite legacy illustration filters */
 .mf-hero-art > svg.mf-brain-art { display: block !important; }
+
+
+/* FINAL ALIGNMENT — header flush with the content start, tighter cards, real anatomical brain */
+.main > .premium-topbar {
+  box-sizing: border-box !important;
+  width: calc(100% + 2 * clamp(14px, 1.8vw, 26px)) !important;
+  max-width: none !important;
+  margin-left: calc(-1 * clamp(14px, 1.8vw, 26px)) !important;
+  margin-right: 0 !important;
+}
+.mf-dashboard { gap: 10px !important; }
+.mf-dashboard .mf-stats { gap: 9px !important; }
+.mf-dashboard-grid { gap: 9px !important; }
+.mf-dashboard .mf-panel,
+.mf-dashboard-grid .mf-panel { padding: 18px !important; }
+.mf-hero-art .mf-brain-art {
+  display: block !important;
+  width: min(100%, 350px) !important;
+  height: auto !important;
+  max-height: 228px !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  filter: drop-shadow(0 8px 20px rgba(0, 190, 255, .28)) !important;
+  mix-blend-mode: screen;
+}
+@media (max-width: 900px) {
+  .main > .premium-topbar {
+    width: calc(100% + 28px) !important;
+    margin-left: -14px !important;
+  }
+}
+@media (max-width: 720px) {
+  .mf-dashboard { gap: 9px !important; }
+  .mf-dashboard .mf-stats,
+  .mf-dashboard-grid { gap: 8px !important; }
+  .mf-hero-art .mf-brain-art {
+    width: min(100%, 225px) !important;
+    max-height: 158px !important;
+  }
+}
