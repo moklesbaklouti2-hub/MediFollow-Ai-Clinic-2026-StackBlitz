@@ -39,9 +39,45 @@ export default function Patients() {
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     : [];
 
-  const latestVitals = patientConsultations.find((item) =>
-    Object.values(item.vitals).some((value) => String(value ?? '').trim() !== '')
-  )?.vitals;
+  const lastVisitByPatient = useMemo(() => {
+    const result: Record<string, string> = {};
+    const ordered = [...consultations].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+
+    ordered.forEach((consultation) => {
+      if (consultation.patientId && !result[consultation.patientId]) {
+        result[consultation.patientId] = consultation.date;
+      }
+    });
+
+    return result;
+  }, [consultations]);
+
+  const latestVitals = selected
+    ? patientConsultations.reduce(
+        (latest, consultation) => {
+          (Object.keys(latest) as (keyof typeof latest)[]).forEach((key) => {
+            const currentValue = String(consultation.vitals[key] ?? '').trim();
+            if (!String(latest[key] ?? '').trim() && currentValue) {
+              latest[key] = currentValue;
+            }
+          });
+          return latest;
+        },
+        {
+          systolic: '',
+          diastolic: '',
+          heartRate: '',
+          spo2: '',
+          temperature: '',
+          respiratoryRate: '',
+          weight: '',
+          height: '',
+          glycemia: '',
+        }
+      )
+    : null;
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -202,7 +238,11 @@ export default function Patients() {
             <div>
               <div className="patient-name">{patient.name}</div>
               <div className="patient-meta">{patient.age} ans · {patient.sex} · {patient.phone}</div>
-              <div className="patient-meta">Dernière visite : {patient.lastVisit}</div>
+              <div className="patient-meta">
+                Dernière visite : {lastVisitByPatient[patient.id]
+                  ? new Date(lastVisitByPatient[patient.id]).toLocaleDateString('fr-FR')
+                  : 'Aucune visite'}
+              </div>
             </div>
             <span className="patient-status">{patient.status}</span>
             <button className="patient-view" onClick={() => setSelectedId(patient.id)}>Ouvrir le dossier</button>
@@ -249,7 +289,7 @@ export default function Patients() {
           <div className="patient-summary-grid">
             <div className="patient-summary-item"><span>Consultations</span><strong>{patientConsultations.length}</strong></div>
             <div className="patient-summary-item"><span>Ordonnances</span><strong>{patientPrescriptions.length}</strong></div>
-            <div className="patient-summary-item"><span>Dernière consultation</span><strong>{patientConsultations[0] ? displayDate(patientConsultations[0].date) : 'Aucune'}</strong></div>
+            <div className="patient-summary-item"><span>Dernière consultation</span><strong>{lastVisitByPatient[selected.id] ? displayDate(lastVisitByPatient[selected.id]) : 'Aucune'}</strong></div>
             <div className="patient-summary-item"><span>Dernière ordonnance</span><strong>{patientPrescriptions[0] ? displayDate(patientPrescriptions[0].date) : 'Aucune'}</strong></div>
           </div>
 
