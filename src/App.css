@@ -6305,3 +6305,31 @@ textarea {
     transform: none !important;
   }
 }
+
+
+/* DARK MODE — softer, less contrast-heavy workspace background */
+:root[data-theme="dark"] {
+  --background: #0d2033;
+  --surface: #142a40;
+  --border: #29445d;
+  --navy: #0b1d32;
+  --navy-light: #173650;
+  --color-background: #0d2033;
+  --color-surface: #142a40;
+  --color-surface-secondary: #19344c;
+  --mf-page-bg: #0d2033;
+  --mf-panel-bg: #142a40;
+  --mf-panel-soft: #19344c;
+  --mf-panel-border: rgba(112, 160, 198, .25);
+  --mf-control-bg: #10263c;
+  --mf-control-border: rgba(112, 160, 198, .34);
+}
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root,
+:root[data-theme="dark"] .app,
+:root[data-theme="dark"] .main {
+  background-color: #0d2033 !important;
+}
+:root[data-theme="dark"] .sidebar {
+  background: #0b1d32 !important;
+}
