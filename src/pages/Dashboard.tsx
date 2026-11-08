@@ -169,6 +169,7 @@ export default function Dashboard({
             <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Données réelles enregistrées</span></div>
             <div className="mf-chart-wrap">
               <svg viewBox="0 0 520 170" preserveAspectRatio="none" aria-label="Consultations mensuelles">
+                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#13c9ff" stopOpacity=".42" /><stop offset="1" stopColor="#13c9ff" stopOpacity="0" /></linearGradient></defs>
                 {[30, 70, 110, 150].map((y) => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline" />)}
                 <polygon points={`20,150 ${chartPoints.map((p) => `${p.x},${p.y}`).join(' ')} 480,150`} className="mf-chart-area" />
                 <polyline points={chartPoints.map((p) => `${p.x},${p.y}`).join(' ')} className="mf-chart-line" />
