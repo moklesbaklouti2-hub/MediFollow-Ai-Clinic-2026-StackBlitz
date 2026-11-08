@@ -6390,3 +6390,30 @@ textarea {
 @media (max-width: 720px) {
   #root .app .main .mf-dashboard-page { border-radius: 14px; }
 }
+
+
+/* Dashboard hero — compact photographic stethoscope */
+.mf-hero-art .mf-stethoscope-photo {
+  display: block !important;
+  position: relative !important;
+  z-index: 3 !important;
+  width: min(100%, 185px) !important;
+  height: 132px !important;
+  max-height: 132px !important;
+  object-fit: cover !important;
+  object-position: center 54% !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(178, 224, 246, .2) !important;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .24) !important;
+  filter: none !important;
+  mix-blend-mode: normal !important;
+  animation: none !important;
+}
+@media (max-width: 720px) {
+  .mf-hero-art .mf-stethoscope-photo {
+    width: min(100%, 132px) !important;
+    height: 96px !important;
+    max-height: 96px !important;
+    border-radius: 12px !important;
+  }
+}
