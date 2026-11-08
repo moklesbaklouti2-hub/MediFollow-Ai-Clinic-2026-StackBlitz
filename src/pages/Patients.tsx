@@ -198,19 +198,30 @@ export default function Patients() {
     }
 
     const width = 560;
-    const height = 150;
-    const paddingX = 28;
-    const paddingY = 24;
+    const height = 180;
+    const paddingLeft = 62;
+    const paddingRight = 18;
+    const paddingTop = 22;
+    const paddingBottom = 28;
     const values = points.map((point) => point.value);
     const minValue = Math.min(...values);
     const maxValue = Math.max(...values);
-    const range = maxValue - minValue || Math.max(Math.abs(maxValue) * 0.1, 1);
+    const rawRange = maxValue - minValue;
+    const range = rawRange || Math.max(Math.abs(maxValue) * 0.1, 1);
+    const scaleMin = minValue - range * 0.1;
+    const scaleMax = maxValue + range * 0.1;
+    const scaleRange = scaleMax - scaleMin;
+    const plotHeight = height - paddingTop - paddingBottom;
+    const plotWidth = width - paddingLeft - paddingRight;
+    const yTicks = [scaleMin, (scaleMin + scaleMax) / 2, scaleMax];
+    const formatValue = (value: number) =>
+      new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(value);
     const coordinates = points.map((point, index) => ({
       ...point,
       x: points.length === 1
-        ? width / 2
-        : paddingX + (index / (points.length - 1)) * (width - paddingX * 2),
-      y: height - paddingY - ((point.value - minValue) / range) * (height - paddingY * 2),
+        ? paddingLeft + plotWidth / 2
+        : paddingLeft + (index / (points.length - 1)) * plotWidth,
+      y: paddingTop + ((scaleMax - point.value) / scaleRange) * plotHeight,
     }));
     const polyline = coordinates.map((point) => `${point.x},${point.y}`).join(' ');
 
@@ -218,8 +229,18 @@ export default function Patients() {
       <div className="patient-trend-card" key={key}>
         <strong>{label}</strong>
         <div className="patient-trend-chart">
-          <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Évolution de ${label}`}>
-            <line x1={paddingX} y1={height - paddingY} x2={width - paddingX} y2={height - paddingY} stroke="var(--border,#dce4e8)" strokeWidth="1" />
+          <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Évolution de ${label} en ${unit}`}>
+            {yTicks.map((tick, index) => {
+              const y = paddingTop + ((scaleMax - tick) / scaleRange) * plotHeight;
+              return (
+                <g key={index}>
+                  <line x1={paddingLeft} y1={y} x2={width - paddingRight} y2={y} stroke="var(--border,#dce4e8)" strokeWidth="1" strokeDasharray="4 4" />
+                  <text x={paddingLeft - 9} y={y + 4} textAnchor="end" fontSize="11" fill="currentColor">
+                    {formatValue(tick)}
+                  </text>
+                </g>
+              );
+            })}
             {points.length > 1 && (
               <polyline points={polyline} fill="none" stroke="#24a98e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             )}
@@ -227,7 +248,7 @@ export default function Patients() {
               <g key={point.id}>
                 <circle cx={point.x} cy={point.y} r="5" fill="#24a98e" />
                 <text x={point.x} y={Math.max(13, point.y - 10)} textAnchor="middle" fontSize="12" fill="currentColor">
-                  {point.value} {unit}
+                  {formatValue(point.value)} {unit}
                 </text>
               </g>
             ))}
@@ -279,7 +300,8 @@ export default function Patients() {
         .patient-vital strong { font-size:18px; }
         .patient-consultation,.patient-prescription { padding:14px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:7px; }
         .patient-timeline-entry { padding:15px; border:1px solid var(--border,#e5ebef); border-left:4px solid #42d5b4; border-radius:12px; display:grid; gap:8px; }
-        .patient-trends-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+        .patient-trends-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+        @media(max-width:700px) { .patient-trends-grid { grid-template-columns:1fr; } }
         .patient-trend-card { padding:15px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:9px; min-width:0; }
         .patient-trend-chart { width:100%; overflow:hidden; }
         .patient-trend-chart svg { display:block; width:100%; height:auto; overflow:visible; }
