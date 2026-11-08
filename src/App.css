@@ -6348,3 +6348,19 @@ textarea {
 @media (prefers-reduced-motion: reduce) {
   .mf-hero-art .mf-brain-art { animation: none !important; }
 }
+
+
+/* Dashboard brain — subtle dimensional light and motion refinement */
+.mf-hero-art .mf-brain-art {
+  transform-origin: 50% 52%;
+  animation: mfAnatomicalFloat 7s ease-in-out infinite,
+             mfBrainLight 5.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 13px rgba(36, 235, 224, .24));
+}
+@keyframes mfBrainLight {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(36, 235, 224, .20)) brightness(1); }
+  50% { filter: drop-shadow(0 0 19px rgba(36, 235, 224, .38)) brightness(1.055); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mf-hero-art .mf-brain-art { animation: none !important; }
+}
