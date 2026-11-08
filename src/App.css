@@ -5846,3 +5846,40 @@ textarea {
   .mf-dashboard .mf-stats,
   .mf-dashboard-grid { gap: 6px !important; }
 }
+
+
+/* DASHBOARD GAP — explicit high-specificity override */
+#root .app .main .mf-dashboard-page .mf-dashboard {
+  row-gap: 5px !important;
+  column-gap: 5px !important;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-hero,
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-stats,
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-dashboard-grid,
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-recent-panel,
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-dashboard-footer {
+  margin-block: 0 !important;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-stats {
+  gap: 5px !important;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard > .mf-dashboard-grid {
+  gap: 5px !important;
+}
+#root .app .main .mf-dashboard-page .mf-dashboard .mf-stat,
+#root .app .main .mf-dashboard-page .mf-dashboard .mf-panel,
+#root .app .main .mf-dashboard-page .mf-dashboard-grid .mf-copilot-card {
+  padding: 15px !important;
+}
+@media (max-width: 720px) {
+  #root .app .main .mf-dashboard-page .mf-dashboard { row-gap: 4px !important; }
+  #root .app .main .mf-dashboard-page .mf-dashboard > .mf-stats,
+  #root .app .main .mf-dashboard-page .mf-dashboard > .mf-dashboard-grid {
+    gap: 4px !important;
+  }
+  #root .app .main .mf-dashboard-page .mf-dashboard .mf-stat,
+  #root .app .main .mf-dashboard-page .mf-dashboard .mf-panel,
+  #root .app .main .mf-dashboard-page .mf-dashboard-grid .mf-copilot-card {
+    padding: 12px !important;
+  }
+}
