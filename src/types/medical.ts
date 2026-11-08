@@ -93,11 +93,19 @@ export type Patient = {
     createdAt: string;
   };
   
-  // ---------- ÉTAT GLOBAL DES DONNÉES ----------
-  
-  export type MedicalData = {
+  // ---------- CORBEILLE PATIENTS ----------
+
+export type DeletedPatient = {
+  patient: Patient;
+  deletedAt: string;
+};
+
+// ---------- ÉTAT GLOBAL DES DONNÉES ----------
+
+export type MedicalData = {
     patients: Patient[];
     consultations: Consultation[];
     prescriptions: Prescription[];
     settings: DoctorSettings;
+  deletedPatients?: DeletedPatient[];
   };
