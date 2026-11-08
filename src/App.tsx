@@ -12,6 +12,7 @@ import Copilot, { type Message } from './pages/Copilot';
 import Protocols from './pages/Protocols';
 import Prescriptions from './pages/Prescriptions';
 import Settings from './pages/Settings';
+import { useMedicalData } from './hooks/useMedicalData';
 
 // ============================================
 // MEDIFOLLOW AI — APPLICATION PRINCIPALE
@@ -30,6 +31,7 @@ function getStoredCount(key: string): number {
 }
 
 function App() {
+  const { consultations, patients } = useMedicalData();
   const [storageWarning, setStorageWarning] = useState('');
 
   useEffect(() => {
@@ -97,7 +99,7 @@ function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
 
-  async function sendMessage() {
+  async function sendMessage(consultationId?: string) {
     const message = question.trim();
 
     if (!message || loading) return;
@@ -111,12 +113,41 @@ function App() {
     setLoading(true);
 
     try {
+      const consultation = consultationId
+        ? consultations.find((item) => item.id === consultationId)
+        : undefined;
+      const patient = consultation
+        ? patients.find((item) => item.id === consultation.patientId)
+        : undefined;
+
+      const clinicalContext = consultation
+        ? {
+            specialty: consultation.specialty || 'Non précisée',
+            motif: consultation.motif,
+            symptoms: consultation.symptoms,
+            history: consultation.history,
+            vitals: consultation.vitals,
+            physicalExamination: consultation.physicalExamination,
+            legacyExaminationNotes: consultation.examination,
+            diagnosisAlreadyEntered: consultation.diagnosis,
+            managementPlanAlreadyEntered: consultation.plan,
+            patient: patient
+              ? {
+                  age: patient.age,
+                  sex: patient.sex,
+                  clinicalHistory: patient.clinicalHistory,
+                  currentMedications: patient.currentMedications,
+                }
+              : undefined,
+          }
+        : undefined;
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, context: clinicalContext }),
       });
 
       const contentType = response.headers.get('content-type') || '';
@@ -183,6 +214,8 @@ function App() {
         return (
           <Copilot
             messages={messages}
+            consultations={consultations}
+            patients={patients}
             question={question}
             onQuestionChange={setQuestion}
             loading={loading}
