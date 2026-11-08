@@ -34,6 +34,20 @@ export function useClinicalReasoning(input: ReasoningInput) {
   const lastRequestAt = useRef(0);
   const inFlight = useRef(false);
 
+  const previousPatientId = useRef(input.patient?.id ?? '');
+
+  useEffect(() => {
+    const nextPatientId = input.patient?.id ?? '';
+    if (previousPatientId.current !== nextPatientId) {
+      previousPatientId.current = nextPatientId;
+      lastSnapshot.current = '';
+      setAnalysis(null);
+      setError('');
+      setUpdatedAt('');
+      setStatus('idle');
+    }
+  }, [input.patient?.id]);
+
   const safeContext = useMemo(() => ({
     patient: input.patient ? {
       age: input.patient.age,
