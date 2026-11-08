@@ -501,11 +501,10 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
           background: 'var(--surface,#fff)',
         }}
       >
-        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: selectedPatient ? 'pointer' : 'not-allowed' }}>
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
           <input
             type="checkbox"
             checked={smartCopilotEnabled}
-            disabled={!selectedPatient}
             onChange={(event) => setSmartCopilotEnabled(event.target.checked)}
             style={{ marginTop: 3 }}
           />
@@ -519,8 +518,8 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
         <p style={{ margin: 0, fontSize: 10, lineHeight: 1.5, color: 'var(--text-secondary,#81909c)' }}>
           En activant cette option, vous autorisez l’envoi à Groq du contexte clinique sans nom, téléphone ni identifiant direct. N’utilisez que des données fictives pendant le développement. L’IA propose une aide à la réflexion ; vous gardez la décision médicale.
         </p>
-        {!selectedPatient && (
-          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>Sélectionnez d’abord un patient pour activer l’analyse.</p>
+        {!selectedPatient && smartCopilotEnabled && (
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>Activation enregistrée pour cette consultation. Sélectionnez un patient dans la rubrique « 01 · Identification » pour que l’analyse puisse commencer.</p>
         )}
         {smartCopilotEnabled && (
           <div style={{ display: 'grid', gap: 8, paddingTop: 8, borderTop: '1px solid var(--border,#e5ebef)' }}>
