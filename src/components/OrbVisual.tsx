@@ -54,11 +54,18 @@ const coreFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 p = normalize(vLocal);
+    vec3 waveSourceA = normalize(vec3(0.35, 0.72, 0.60));
+    vec3 waveSourceB = normalize(vec3(-0.68, -0.24, 0.69));
+    float waveDistanceA = acos(clamp(dot(p, waveSourceA), -1.0, 1.0));
+    float waveDistanceB = acos(clamp(dot(p, waveSourceB), -1.0, 1.0));
+    float waveOut = sin(waveDistanceA * 8.2 - uTime * 0.56);
+    float waveIn = sin(waveDistanceB * 7.1 + uTime * 0.43);
+    float livingWave = waveOut * 0.58 + waveIn * 0.42;
     float motionTime = uTime * (1.0 - uThinking * 0.84);
     float speed = 0.12 - uThinking * 0.055;
     vec3 drift = vec3(motionTime * speed, -motionTime * speed * 0.73, motionTime * speed * 0.49);
     vec3 warp = vec3(fbm3(p * 2.8 + drift), fbm3(p * 2.8 + drift + 7.1), fbm3(p * 2.8 + drift + 13.7));
-    vec3 q = p * 5.2 + (warp - 0.5) * 3.4;
+    vec3 q = p * 5.2 + (warp - 0.5) * 3.4 + p * livingWave * uThinking * 0.12;
     float cloud = fbm3(q + drift * 1.3);
     float detail = fbm3(q * 2.1 - drift * 0.9);
     float flowA = dot(q, vec3(1.35, 2.1, -1.25)) * 3.6 + cloud * 8.0 - motionTime * (0.48 - uThinking * 0.22);
@@ -70,12 +77,12 @@ const coreFragmentShader = `
     float cyanField = smoothstep(0.27, 0.62, cloud);
     float violetField = smoothstep(0.20, 0.58, detail) * (0.72 + 0.28 * sin(q.y * 1.8 + motionTime * 0.18));
     float energy = strandA * 0.82 + strandB * 0.68 + strandC * 0.48;
-    vec3 deepBlack = vec3(0.004, 0.009, 0.025);
+    vec3 deepBlack = vec3(0.002, 0.004, 0.014);
     vec3 cyan = vec3(0.025, 0.82, 0.78);
     vec3 turquoise = vec3(0.018, 0.62, 0.70);
     vec3 violet = vec3(0.78, 0.28, 1.0);
     vec3 basePlasma = mix(turquoise, violet, smoothstep(0.28, 0.72, detail));
-    float plasmaCoverage = clamp(0.42 + cyanField * 0.10 + violetField * 0.18, 0.0, 0.78);
+    float plasmaCoverage = clamp(0.40 + cyanField * 0.10 + violetField * 0.18, 0.0, 0.78);
     vec3 color = mix(deepBlack, basePlasma, plasmaCoverage);
     color += cyan * cyanField * 0.38;
     color += violet * violetField * 0.34;
@@ -94,6 +101,8 @@ const coreFragmentShader = `
     color *= 0.48 + diffuse * 0.58;
     color += mix(cyan, violet, 0.38) * rim * 0.34;
     color += vec3(0.10, 0.025, 0.16) * specular * 0.30;
+    float darkVeil = smoothstep(0.20, 0.46, 1.0 - cloud) * smoothstep(0.16, 0.48, 1.0 - detail);
+    color = mix(color, deepBlack, darkVeil * 0.10);
     float pulse = 0.96 + 0.04 * sin(motionTime * (0.9 + uThinking * 0.12) + cloud * 6.0);
     gl_FragColor = vec4(color * pulse * 1.52, 1.0);
   }
@@ -106,12 +115,17 @@ const coreFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 direction = normalize(position);
-    float n1 = fbm3(direction * 4.0 + vec3(0.0, uTime * 0.20, -uTime * 0.15));
-    float n2 = fbm3(direction * 7.5 - vec3(uTime * 0.17, 0.0, uTime * 0.12));
+    float motionTime = uTime * (1.0 - uThinking * 0.84);
+    float n1 = fbm3(direction * 4.0 + vec3(0.0, motionTime * 0.20, -motionTime * 0.15));
+    float n2 = fbm3(direction * 7.5 - vec3(motionTime * 0.17, 0.0, motionTime * 0.12));
     float tongues = pow(max(0.0, n1 * 0.70 + n2 * 0.40 - 0.42), 1.28);
-    float ripple = sin(direction.x * 7.5 + direction.y * 5.8 - uTime * 0.62) * sin(direction.z * 6.8 + uTime * 0.48);
-    float inwardOutwardWave = sin(uTime * 0.62 + n1 * 5.0 + n2 * 2.0);
-    float displacement = 0.035 + tongues * (0.15 + uThinking * 0.045) + ripple * 0.012 + inwardOutwardWave * uThinking * 0.028;
+    float ripple = sin(direction.x * 7.5 + direction.y * 5.8 - motionTime * 0.62) * sin(direction.z * 6.8 + motionTime * 0.48);
+    float waveDistanceA = acos(clamp(dot(direction, normalize(vec3(0.35, 0.72, 0.60))), -1.0, 1.0));
+    float waveDistanceB = acos(clamp(dot(direction, normalize(vec3(-0.68, -0.24, 0.69))), -1.0, 1.0));
+    float waveOut = sin(waveDistanceA * 8.2 - uTime * 0.56);
+    float waveIn = sin(waveDistanceB * 7.1 + uTime * 0.43);
+    float inwardOutwardWave = waveOut * 0.58 + waveIn * 0.42;
+    float displacement = 0.035 + tongues * (0.15 + uThinking * 0.035) + ripple * 0.010 + inwardOutwardWave * uThinking * 0.024;
     vec3 p = direction * (0.80 + displacement);
     vLocal = direction;
     vec4 world = modelMatrix * vec4(p, 1.0);
@@ -131,10 +145,16 @@ const plasmaFragmentShader = `
   void main() {
     vec3 d = normalize(vLocal);
     float motionTime = uTime * (1.0 - uThinking * 0.84);
+    float waveTime = uTime * (1.0 - uThinking * 0.72);
+    float waveDistanceA = acos(clamp(dot(d, normalize(vec3(0.35, 0.72, 0.60))), -1.0, 1.0));
+    float waveDistanceB = acos(clamp(dot(d, normalize(vec3(-0.68, -0.24, 0.69))), -1.0, 1.0));
+    float waveOut = sin(waveDistanceA * 8.2 - waveTime * 0.56);
+    float waveIn = sin(waveDistanceB * 7.1 + waveTime * 0.43);
+    float livingWave = waveOut * 0.58 + waveIn * 0.42;
     float t = motionTime * 0.14;
     vec3 flow = d * 6.0 + vec3(t, -t * 0.76, t * 0.56);
     vec3 warp = vec3(fbm3(flow + 2.0), fbm3(flow + 8.0), fbm3(flow + 14.0));
-    vec3 q = flow + (warp - 0.5) * 4.0;
+    vec3 q = flow + (warp - 0.5) * 4.0 + d * livingWave * uThinking * 0.16;
     float cloud = fbm3(q * 1.15);
     float detail = fbm3(q * 2.0);
     float lineA = dot(q, vec3(1.2, 2.0, -1.4)) * 4.1 + cloud * 8.0 - t * 2.2;
@@ -152,7 +172,7 @@ const plasmaFragmentShader = `
     float facing = max(dot(normalize(vNormal), normalize(cameraPosition - vWorld)), 0.0);
     float rim = pow(1.0 - facing, 1.55);
     float alpha = clamp(filament * 0.76 + sparks * 0.22 + rim * filament * 0.12, 0.0, 0.78);
-    float brightness = 0.68 + filament * 1.28 + sparks * 0.48;
+    float brightness = 0.68 + filament * 1.28 + sparks * 0.48 + abs(livingWave) * uThinking * 0.08;
     gl_FragColor = vec4(color * brightness, alpha);
   }
 `;function LivingOrb({ isThinking }: OrbVisualProps) {
@@ -184,11 +204,11 @@ const plasmaFragmentShader = `
       const breath = 1 + Math.sin(t * (isThinking ? 0.72 : 1.05)) * (isThinking ? 0.038 : 0.026);
       core.current.scale.setScalar(breath);
       core.current.rotation.y = t * 0.11 * speed;
-      core.current.rotation.x = Math.sin(t * (isThinking ? 0.07 : 0.27)) * 0.045;
+      core.current.rotation.x = Math.sin(t * (isThinking ? 0.035 : 0.27)) * (isThinking ? 0.018 : 0.045);
     }
     if (plasmaShell.current) {
       plasmaShell.current.rotation.y = -t * 0.075 * speed;
-      plasmaShell.current.rotation.x = Math.sin(t * (isThinking ? 0.055 : 0.21)) * 0.06;
+      plasmaShell.current.rotation.x = Math.sin(t * (isThinking ? 0.028 : 0.21)) * (isThinking ? 0.022 : 0.06);
       plasmaShell.current.scale.setScalar(1 + Math.sin(t * (isThinking ? 0.68 : 0.9)) * 0.018);
     }
   });
