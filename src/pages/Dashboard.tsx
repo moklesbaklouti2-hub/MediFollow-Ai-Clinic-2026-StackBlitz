@@ -64,133 +64,85 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
 
 function BrainArtwork() {
   return (
-    <svg className="mf-brain-art mf-brain-neon" viewBox="0 0 520 340" role="img" aria-label="Illustration anatomique tridimensionnelle du cerveau humain, relief cortical détaillé et lumière turquoise">
+    <svg className="mf-brain-art mf-stethoscope-art" viewBox="0 0 520 340" role="img" aria-label="Stéthoscope médical tridimensionnel en métal chromé et lumière turquoise">
       <defs>
-        <radialGradient id="mfBrainVolume" cx="38%" cy="28%" r="78%">
-          <stop offset="0" stopColor="#eaffff"/>
-          <stop offset=".16" stopColor="#a2fff8"/>
-          <stop offset=".38" stopColor="#42e8e1"/>
-          <stop offset=".68" stopColor="#119bb9"/>
-          <stop offset=".9" stopColor="#07517e"/>
-          <stop offset="1" stopColor="#032b50"/>
-        </radialGradient>
-        <linearGradient id="mfBrainRim" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#e4ffff"/><stop offset=".35" stopColor="#6afff1"/>
-          <stop offset=".72" stopColor="#0ba9c4"/><stop offset="1" stopColor="#06345f"/>
+        <linearGradient id="mfStethTube" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#eaffff"/><stop offset=".2" stopColor="#52f3e7"/>
+          <stop offset=".52" stopColor="#0b9dbd"/><stop offset=".78" stopColor="#07517f"/>
+          <stop offset="1" stopColor="#c8ffff"/>
         </linearGradient>
-        <radialGradient id="mfBrainCerebellum" cx="35%" cy="25%" r="85%">
-          <stop stopColor="#aafff6"/><stop offset=".42" stopColor="#24c8d1"/>
-          <stop offset="1" stopColor="#06416c"/>
+        <linearGradient id="mfStethMetal" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#ffffff"/><stop offset=".18" stopColor="#9cefff"/>
+          <stop offset=".38" stopColor="#f5ffff"/><stop offset=".62" stopColor="#3caecb"/>
+          <stop offset=".82" stopColor="#e7ffff"/><stop offset="1" stopColor="#347a9f"/>
+        </linearGradient>
+        <radialGradient id="mfStethChest" cx="32%" cy="25%" r="78%">
+          <stop stopColor="#efffff"/><stop offset=".22" stopColor="#8bfff4"/>
+          <stop offset=".52" stopColor="#1ccbd2"/><stop offset=".8" stopColor="#08749f"/>
+          <stop offset="1" stopColor="#062c55"/>
         </radialGradient>
-        <filter id="mfBrainBloom" x="-45%" y="-45%" width="190%" height="190%">
-          <feGaussianBlur stdDeviation="11" result="blur"/>
-          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.86 0 0 0 0 0.88 0 0 0 .82 0" result="glow"/>
-          <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <radialGradient id="mfStethAura">
+          <stop stopColor="#18e9e3" stopOpacity=".32"/><stop offset="1" stopColor="#18e9e3" stopOpacity="0"/>
+        </radialGradient>
+        <filter id="mfStethGlow" x="-45%" y="-45%" width="190%" height="190%">
+          <feGaussianBlur stdDeviation="9" result="b"/>
+          <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.82 0 0 0 0 0.9 0 0 0 .78 0" result="g"/>
+          <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="mfBrainShadow"><feGaussianBlur stdDeviation="17"/></filter>
-        <clipPath id="mfBrainSideClip">
-          <path d="M104 189 C83 168 88 136 111 119 C107 91 133 68 163 73 C181 44 219 38 249 52 C277 27 319 39 334 66 C369 56 399 79 401 108 C434 122 445 157 427 182 C443 210 425 239 397 245 C383 274 348 281 321 267 C294 291 258 280 244 261 C216 276 182 262 177 238 C143 248 112 224 104 189 Z"/>
-        </clipPath>
+        <filter id="mfStethShadow"><feGaussianBlur stdDeviation="15"/></filter>
       </defs>
 
-      <ellipse cx="264" cy="190" rx="190" ry="125" fill="#00e8e1" opacity=".16" filter="url(#mfBrainShadow)"/>
-      <ellipse cx="265" cy="300" rx="142" ry="13" fill="#00d9ed" opacity=".15" filter="url(#mfBrainShadow)"/>
+      <ellipse cx="263" cy="176" rx="194" ry="145" fill="url(#mfStethAura)"/>
+      <ellipse cx="263" cy="302" rx="140" ry="12" fill="#00d9ed" opacity=".17" filter="url(#mfStethShadow)"/>
 
-      <g filter="url(#mfBrainBloom)">
-        <path d="M104 189 C83 168 88 136 111 119 C107 91 133 68 163 73 C181 44 219 38 249 52 C277 27 319 39 334 66 C369 56 399 79 401 108 C434 122 445 157 427 182 C443 210 425 239 397 245 C383 274 348 281 321 267 C294 291 258 280 244 261 C216 276 182 262 177 238 C143 248 112 224 104 189 Z"
-          fill="url(#mfBrainVolume)" stroke="#c9fffb" strokeWidth="3.4"/>
-        <path d="M155 91 C177 57 221 57 246 76 C270 48 311 51 326 82 C355 73 385 91 385 119 C414 135 418 164 399 185 C411 211 391 235 365 235 C349 261 317 260 297 243 C273 265 245 249 235 229 C209 245 180 225 183 202 C151 203 136 177 151 155 C131 133 137 108 155 91 Z"
-          fill="none" stroke="#e2fffc" strokeWidth="2.1" opacity=".42"/>
-
-        <g clipPath="url(#mfBrainSideClip)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <g stroke="#e4fffc" strokeWidth="5.2" opacity=".76">
-            <path d="M101 126 C123 94 158 93 169 119 C180 145 148 163 130 145 C111 126 128 94 151 82"/>
-            <path d="M158 76 C183 86 196 108 181 129 C166 151 143 138 148 116"/>
-            <path d="M205 49 C231 66 235 91 214 108 C192 126 174 106 186 84"/>
-            <path d="M257 48 C281 64 286 91 266 107 C244 125 225 107 237 85"/>
-            <path d="M306 54 C328 73 326 98 304 111 C283 124 269 105 282 85"/>
-            <path d="M354 72 C373 92 366 116 345 125 C323 135 311 115 325 97"/>
-            <path d="M402 113 C423 139 409 163 385 166 C361 169 355 145 373 132"/>
-            <path d="M112 169 C138 147 169 157 168 184 C167 211 134 220 117 198"/>
-            <path d="M164 145 C189 127 215 141 210 168 C205 194 176 202 159 183"/>
-            <path d="M218 126 C242 108 270 122 263 150 C256 177 226 184 211 165"/>
-            <path d="M276 122 C301 104 329 119 321 146 C313 172 285 181 270 161"/>
-            <path d="M333 137 C357 120 382 135 375 160 C368 185 342 190 327 173"/>
-            <path d="M127 218 C151 195 181 203 184 228 C187 250 161 265 142 248"/>
-            <path d="M190 202 C214 183 241 194 238 219 C235 244 209 253 191 235"/>
-            <path d="M250 190 C275 171 302 185 296 211 C290 237 263 243 247 225"/>
-            <path d="M309 194 C332 176 360 189 354 215 C348 239 322 247 305 228"/>
-            <path d="M370 194 C391 180 412 193 406 215 C400 235 380 240 367 225"/>
-          </g>
-          <g stroke="#034c77" strokeWidth="7" opacity=".47">
-            <path d="M112 111 C132 125 147 116 151 97"/>
-            <path d="M175 72 C164 96 181 111 201 108"/>
-            <path d="M224 58 C211 81 226 96 246 96"/>
-            <path d="M280 58 C267 81 282 98 301 96"/>
-            <path d="M335 75 C321 94 335 111 354 109"/>
-            <path d="M397 127 C377 119 363 135 369 153"/>
-            <path d="M116 183 C139 169 153 181 150 202"/>
-            <path d="M174 159 C194 171 189 191 170 198"/>
-            <path d="M232 139 C251 151 247 172 229 180"/>
-            <path d="M290 137 C309 150 304 171 286 179"/>
-            <path d="M347 151 C365 164 358 184 341 190"/>
-            <path d="M151 235 C168 220 182 229 179 247"/>
-            <path d="M211 218 C230 230 224 248 206 255"/>
-            <path d="M270 207 C288 219 283 238 265 245"/>
-            <path d="M329 210 C346 222 341 241 324 249"/>
-          </g>
-          <g stroke="#f0ffff" strokeWidth="2.4" opacity=".7">
-            <path d="M126 101q15-17 31-8M192 64q20-10 34 5M253 62q18-10 31 4M318 72q17-5 27 10"/>
-            <path d="M108 151q13-14 27-9M183 132q14-12 26-3M244 112q15-11 27 0M303 119q15-11 28 0M363 128q14-6 21 7"/>
-            <path d="M139 207q15-12 29-2M202 190q16-12 28-1M262 179q15-11 28 0M321 181q15-10 27 2"/>
-          </g>
-        </g>
-
-        {/* Fine cortical sulci and specular ridges for a more dimensional anatomical finish */}
-        <g clipPath="url(#mfBrainSideClip)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <g stroke="#042f58" strokeWidth="3.2" opacity=".56">
-            <path d="M119 118 C137 99 158 103 164 122 C171 145 148 158 132 147"/>
-            <path d="M174 86 C194 72 214 82 216 101 C218 119 202 131 187 126"/>
-            <path d="M230 70 C250 58 270 69 270 89 C270 108 253 120 238 112"/>
-            <path d="M286 72 C305 61 324 73 322 92 C320 110 304 119 290 110"/>
-            <path d="M344 91 C363 83 379 97 373 115 C367 132 351 137 339 125"/>
-            <path d="M391 145 C405 132 420 144 414 161 C408 177 393 181 382 170"/>
-            <path d="M121 179 C139 163 158 171 157 190 C156 207 140 216 126 207"/>
-            <path d="M181 157 C199 145 217 156 214 175 C211 194 194 203 179 193"/>
-            <path d="M239 143 C258 130 278 142 274 162 C270 181 252 189 237 179"/>
-            <path d="M298 145 C317 132 337 145 332 164 C327 183 310 191 295 180"/>
-            <path d="M354 164 C371 152 388 164 383 182 C378 199 361 205 348 194"/>
-            <path d="M147 225 C164 210 181 218 181 237 M207 211 C225 198 243 210 239 229"/>
-            <path d="M267 201 C285 188 303 201 298 220 M326 211 C344 198 362 211 356 229"/>
-          </g>
-          <g stroke="#efffff" strokeWidth="1.65" opacity=".88">
-            <path d="M111 135q13-21 29-18M169 98q15-17 30-8M225 83q17-15 31-4M282 87q17-14 30-3"/>
-            <path d="M342 105q15-11 25 0M390 151q12-9 19 1M119 188q15-15 28-5"/>
-            <path d="M179 169q15-13 28-3M238 154q17-14 30-3M296 157q16-13 29-2"/>
-            <path d="M354 176q13-12 24-2M151 232q13-11 24-3M211 219q14-11 24-2"/>
-            <path d="M270 209q14-11 24-1M328 220q14-11 24-1"/>
-          </g>
-          <g stroke="#8afff2" strokeWidth="1.1" opacity=".48">
-            <path d="M135 111q8-9 17-5M195 80q9-8 19-3M250 69q9-7 18-2M309 77q9-6 17 1"/>
-            <path d="M161 181q9-8 17-3M220 163q9-8 18-2M279 158q9-8 18-2M338 169q9-8 17-2"/>
-          </g>
-        </g>
-
-        <path d="M365 224 C390 215 417 226 419 247 C421 270 394 288 367 278 C344 270 341 244 365 224 Z"
-          fill="url(#mfBrainCerebellum)" stroke="#9dfff5" strokeWidth="2.6"/>
-        <g fill="none" stroke="#cafff8" strokeWidth="3" opacity=".76" strokeLinecap="round">
-          <path d="M355 239q27-17 52 0M350 249q34-17 62 2M352 261q28-13 54 5M365 273q19-8 34 1"/>
-          <path d="M369 232q-8 17 1 35M384 229q-7 23 5 46M399 237q-5 18 5 31"/>
-        </g>
-        <path d="M340 259 C336 280 330 291 338 310 C347 294 351 281 347 261Z" fill="url(#mfBrainRim)" stroke="#9bfff6" strokeWidth="2.2"/>
-        <path d="M344 277q-10 10-6 24" fill="none" stroke="#e0fffc" strokeWidth="2" opacity=".8"/>
+      <g filter="url(#mfStethGlow)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        {/* Flexible acoustic tubing */}
+        <path d="M151 77 C115 95 105 145 126 190 C151 244 207 269 264 250 C310 235 329 196 329 157"
+          stroke="#032e50" strokeWidth="25" opacity=".65"/>
+        <path d="M151 77 C115 95 105 145 126 190 C151 244 207 269 264 250 C310 235 329 196 329 157"
+          stroke="url(#mfStethTube)" strokeWidth="17"/>
+        <path d="M146 82 C117 105 115 145 133 183 C156 228 207 251 258 236"
+          stroke="#eaffff" strokeWidth="3.2" opacity=".78"/>
+        {/* Metal ear tubes and binaural arms */}
+        <path d="M151 76 L151 49 Q151 37 163 37 L183 37" stroke="url(#mfStethMetal)" strokeWidth="12"/>
+        <path d="M151 76 L151 49 Q151 37 163 37 L183 37" stroke="#ffffff" strokeWidth="2.1" opacity=".85"/>
+        <path d="M329 157 L329 91 Q329 72 311 72 L288 72" stroke="url(#mfStethMetal)" strokeWidth="12"/>
+        <path d="M329 157 L329 91 Q329 72 311 72 L288 72" stroke="#ffffff" strokeWidth="2.1" opacity=".8"/>
+        {/* Soft ear tips */}
+        <path d="M179 37h18" stroke="#9efff5" strokeWidth="17"/>
+        <path d="M279 72h-18" stroke="#9efff5" strokeWidth="17"/>
       </g>
 
-      <g fill="#cffffa">
-        <circle cx="92" cy="132" r="2.8"/><circle cx="430" cy="155" r="2.4"/>
-        <circle cx="122" cy="254" r="2.2"/><circle cx="318" cy="39" r="2.1"/>
+      {/* Precision metal couplings */}
+      <g>
+        <rect x="143" y="64" width="17" height="25" rx="7" fill="url(#mfStethMetal)" stroke="#d9ffff" strokeWidth="1.6"/>
+        <rect x="320" y="145" width="18" height="25" rx="7" fill="url(#mfStethMetal)" stroke="#d9ffff" strokeWidth="1.6"/>
+        <path d="M145 71h13M145 78h13M322 152h14M322 160h14" stroke="#ffffff" strokeWidth="1.5" opacity=".8"/>
       </g>
-      <path d="M74 286 C159 309 345 309 447 274" fill="none" stroke="#20dce8" strokeWidth="1.2" opacity=".22"/>
+
+      {/* Chestpiece stem and floating diaphragm */}
+      <g filter="url(#mfStethGlow)">
+        <path d="M329 157 C350 158 359 173 359 190 L359 213" fill="none" stroke="url(#mfStethMetal)" strokeWidth="14" strokeLinecap="round"/>
+        <path d="M329 157 C350 158 359 173 359 190 L359 213" fill="none" stroke="#f2ffff" strokeWidth="2.2" opacity=".85"/>
+        <circle cx="359" cy="245" r="55" fill="#042d50" opacity=".58"/>
+        <circle cx="359" cy="239" r="48" fill="url(#mfStethChest)" stroke="#c7fffb" strokeWidth="4"/>
+        <circle cx="359" cy="239" r="37" fill="none" stroke="#e5ffff" strokeWidth="2.4" opacity=".78"/>
+        <circle cx="359" cy="239" r="27" fill="none" stroke="#64fff0" strokeWidth="2" opacity=".76"/>
+        <circle cx="359" cy="239" r="12" fill="#dfffff" opacity=".88"/>
+        <path d="M333 215q19-18 39-8" fill="none" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" opacity=".85"/>
+      </g>
+
+      {/* Fine highlights and acoustic pulse */}
+      <g fill="none" strokeLinecap="round">
+        <path d="M191 278 C224 291 267 288 294 271" stroke="#64fff1" strokeWidth="2" opacity=".62"/>
+        <path d="M374 173q18 7 23 24" stroke="#b9fff9" strokeWidth="2" opacity=".55"/>
+        <path d="M88 117q-12 24-4 49M432 119q13 24 7 48" stroke="#27dce8" strokeWidth="1.5" opacity=".3"/>
+      </g>
+      <g fill="#d7fffb">
+        <circle cx="151" cy="37" r="3"/><circle cx="288" cy="72" r="3"/>
+        <circle cx="411" cy="220" r="2.4"/><circle cx="108" cy="232" r="2"/>
+      </g>
+      <path d="M74 304 C164 323 354 321 452 286" fill="none" stroke="#20dce8" strokeWidth="1.2" opacity=".2"/>
     </svg>
   );
 }
