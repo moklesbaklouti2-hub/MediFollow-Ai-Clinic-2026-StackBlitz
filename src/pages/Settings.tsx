@@ -65,6 +65,13 @@ export default function Settings({
       const isRecord = (value: unknown) =>
         typeof value === 'object' && value !== null && !Array.isArray(value);
 
+      const isValidDeletedPatient = (value: unknown) =>
+        isRecord(value) &&
+        isRecord(value.patient) &&
+        typeof value.patient.id === 'string' &&
+        typeof value.patient.name === 'string' &&
+        typeof value.deletedAt === 'string';
+
       if (
         parsed?.application !== 'MediFollow AI' ||
         parsed?.formatVersion !== 1 ||
@@ -72,7 +79,9 @@ export default function Settings({
         !Array.isArray(backupData.patients) ||
         !Array.isArray(backupData.consultations) ||
         !Array.isArray(backupData.prescriptions) ||
-        (backupData.deletedPatients !== undefined && !Array.isArray(backupData.deletedPatients)) ||
+        (backupData.deletedPatients !== undefined &&
+          (!Array.isArray(backupData.deletedPatients) ||
+            !backupData.deletedPatients.every(isValidDeletedPatient))) ||
         !isRecord(backupData.settings)
       ) {
         setMessage('Fichier refusé : sauvegarde MediFollow AI invalide ou incompatible.');
@@ -80,7 +89,7 @@ export default function Settings({
       }
 
       if (!window.confirm(
-        'La restauration va remplacer les patients, consultations, ordonnances et paramètres actuellement enregistrés sur cet appareil. Voulez-vous continuer ?'
+        'La restauration va remplacer les patients actifs, la corbeille, les consultations, les ordonnances et les paramètres actuellement enregistrés sur cet appareil. Voulez-vous continuer ?'
       )) {
         setMessage('Restauration annulée. Aucune donnée n’a été modifiée.');
         return;
@@ -117,7 +126,7 @@ export default function Settings({
         onThemeChange(restoredSettings.themePreference);
       }
       setMessage(
-        `Restauration réussie : ${backupData.patients.length} patient(s), ${backupData.consultations.length} consultation(s) et ${backupData.prescriptions.length} ordonnance(s).`
+        `Restauration réussie : ${backupData.patients.length} patient(s) actif(s), ${(backupData.deletedPatients ?? []).length} dossier(s) dans la corbeille, ${backupData.consultations.length} consultation(s) et ${backupData.prescriptions.length} ordonnance(s).`
       );
     } catch {
       setMessage('Impossible de lire ce fichier. Vérifiez qu’il s’agit d’une sauvegarde JSON valide.');
