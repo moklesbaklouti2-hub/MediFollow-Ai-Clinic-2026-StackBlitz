@@ -20,9 +20,11 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
     <aside className="sidebar premium-sidebar">
 
       <div className="brand sidebar-brand">
-        <div className="brand-mark">
-          <span>M</span>
-          <i>+</i>
+        <div className="brand-mark" aria-label="MediFollow AI">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M24 40S7 29 7 17.5C7 9.5 17 5.5 24 14c7-8.5 17-4.5 17 3.5C41 29 24 40 24 40Z" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinejoin="round"/>
+            <path d="M8 24h9l4-8 6 17 4-9h9" fill="none" stroke="#00e6c3" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
 
         <div className="brand-copy">
@@ -67,6 +69,20 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
+
+      <div className="sidebar-motto-card">
+        <div className="sidebar-motto-art" aria-hidden="true">
+          <span className="motto-cross">✚</span>
+          <span className="motto-pulse">⌁</span>
+        </div>
+        <p>Ensemble<br />pour votre santé</p>
+        <span className="sidebar-motto-line"></span>
+      </div>
+
+      <div className="sidebar-security-note">
+        <span>◈</span>
+        <div><strong>Sécurité & confidentialité</strong><small>Vos données restent sous votre contrôle</small></div>
+      </div>
 
       <div className="sidebar-bottom premium-sidebar-bottom">
         <div className="doctor-avatar premium-doctor-avatar">MB</div>
