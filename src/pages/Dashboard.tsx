@@ -66,64 +66,97 @@ function BrainArtwork() {
   return (
     <svg
       className="mf-brain-art mf-medical-ai-art"
-      viewBox="0 0 300 240"
+      viewBox="0 0 320 250"
       role="img"
-      aria-label="Emblème lumineux d’intelligence médicale MediFollow AI"
+      aria-label="Illustration tridimensionnelle d’un noyau d’intelligence médicale relié à un réseau de données"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="mfCoreMetal" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#e9ffff" />
-          <stop offset=".38" stopColor="#5ce8e4" />
-          <stop offset=".72" stopColor="#168cb8" />
-          <stop offset="1" stopColor="#123b69" />
-        </linearGradient>
-        <linearGradient id="mfCoreGlass" x1="0" y1="0" x2="0.9" y2="1">
-          <stop offset="0" stopColor="#153f66" />
-          <stop offset=".55" stopColor="#092746" />
-          <stop offset="1" stopColor="#061b35" />
-        </linearGradient>
-        <radialGradient id="mfCoreAura">
-          <stop offset="0" stopColor="#39e9e1" stopOpacity=".34" />
-          <stop offset=".58" stopColor="#18b8df" stopOpacity=".12" />
-          <stop offset="1" stopColor="#18b8df" stopOpacity="0" />
+        <radialGradient id="mfAiAtmosphere">
+          <stop offset="0" stopColor="#38e9e1" stopOpacity=".25" />
+          <stop offset=".62" stopColor="#168fc7" stopOpacity=".10" />
+          <stop offset="1" stopColor="#168fc7" stopOpacity="0" />
         </radialGradient>
-        <filter id="mfCoreGlow" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="7" />
+        <linearGradient id="mfAiRing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#d9ffff" stopOpacity=".9" />
+          <stop offset=".35" stopColor="#55e7e5" stopOpacity=".72" />
+          <stop offset=".72" stopColor="#238fc5" stopOpacity=".28" />
+          <stop offset="1" stopColor="#8af8f1" stopOpacity=".82" />
+        </linearGradient>
+        <radialGradient id="mfAiGlass" cx="34%" cy="24%" r="78%">
+          <stop offset="0" stopColor="#245b7d" />
+          <stop offset=".48" stopColor="#103958" />
+          <stop offset="1" stopColor="#061c36" />
+        </radialGradient>
+        <linearGradient id="mfAiCross" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" />
+          <stop offset=".45" stopColor="#a9fff7" />
+          <stop offset="1" stopColor="#35cbdc" />
+        </linearGradient>
+        <filter id="mfAiBlur" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="11" />
+        </filter>
+        <filter id="mfAiSoftGlow" x="-80%" y="-80%" width="260%" height="260%">
+          <feGaussianBlur stdDeviation="3.5" />
         </filter>
       </defs>
 
-      <ellipse cx="150" cy="119" rx="119" ry="108" fill="url(#mfCoreAura)" />
-      <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-        <ellipse cx="150" cy="119" rx="105" ry="77" stroke="#55dce8" strokeOpacity=".28" strokeWidth="1.4" transform="rotate(-24 150 119)" />
-        <ellipse cx="150" cy="119" rx="105" ry="77" stroke="#8af7ef" strokeOpacity=".22" strokeWidth="1.2" transform="rotate(36 150 119)" />
-        <path d="M42 119h38l15-18 17 37 17-25h42l13-16 17 22h40" stroke="#5cece5" strokeOpacity=".75" strokeWidth="2.2" />
-        <path d="M150 28v30M150 180v31M49 66l22 17M229 66l-22 17M48 174l25-18M227 174l-24-18" stroke="#6ce9ed" strokeOpacity=".55" strokeWidth="1.5" />
+      <ellipse cx="160" cy="125" rx="142" ry="112" fill="url(#mfAiAtmosphere)" />
+      <ellipse cx="160" cy="220" rx="76" ry="9" fill="#21d6df" opacity=".16" filter="url(#mfAiBlur)" />
+
+      <g fill="none" strokeLinecap="round">
+        <ellipse cx="160" cy="119" rx="119" ry="69" stroke="#69e9ed" strokeOpacity=".24" strokeWidth="1.3" transform="rotate(-23 160 119)" />
+        <ellipse cx="160" cy="119" rx="111" ry="83" stroke="#8df9f0" strokeOpacity=".20" strokeWidth="1.2" transform="rotate(36 160 119)" />
+        <ellipse cx="160" cy="119" rx="91" ry="103" stroke="#48c9e5" strokeOpacity=".17" strokeWidth="1" transform="rotate(72 160 119)" />
+        <path d="M43 119h35l15-13 12 26 13-19h25" stroke="#56e6e4" strokeOpacity=".48" strokeWidth="1.8" />
+        <path d="M217 119h18l12-15 12 27 11-12h17" stroke="#56e6e4" strokeOpacity=".48" strokeWidth="1.8" />
+        <path d="M160 22v27M160 190v29M65 58l22 19M255 58l-22 19M64 180l24-17M256 180l-24-17" stroke="#8cf7f0" strokeOpacity=".42" strokeWidth="1.5" />
       </g>
 
-      <g filter="url(#mfCoreGlow)" opacity=".75">
-        <path d="M150 48l67 39v67l-67 39-67-39V87z" fill="#1ddbdc" />
+      <g fill="none" stroke="#57dce7" strokeOpacity=".42" strokeWidth="1.4">
+        <path d="M66 77L101 91L111 67M254 77L219 91L209 67M65 164L102 151L111 174M255 164L218 151L209 174" />
+        <path d="M111 67L132 57M209 67L188 57M111 174L132 184M209 174L188 184" />
       </g>
-      <path d="M150 48l67 39v67l-67 39-67-39V87z" fill="url(#mfCoreMetal)" stroke="#b5fffb" strokeWidth="2" />
-      <path d="M150 59l56 32v58l-56 32-56-32V91z" fill="url(#mfCoreGlass)" stroke="#63e8e6" strokeOpacity=".8" strokeWidth="1.5" />
 
-      <g fill="none" stroke="#8af7ef" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M150 83v73M113.5 119.5h73" />
-        <path d="M122 96l28-13 28 13v24c0 19-12 31-28 39-16-8-28-20-28-39z" stroke="#b8fffb" strokeWidth="2" />
+      <g fill="#aafff8" stroke="#1b789c" strokeWidth="2">
+        <circle cx="65" cy="77" r="4.5" />
+        <circle cx="255" cy="77" r="4.5" />
+        <circle cx="65" cy="164" r="4.5" />
+        <circle cx="255" cy="164" r="4.5" />
+        <circle cx="160" cy="22" r="4.5" />
+        <circle cx="160" cy="219" r="4.5" />
+        <circle cx="111" cy="67" r="3.2" />
+        <circle cx="209" cy="67" r="3.2" />
+        <circle cx="111" cy="174" r="3.2" />
+        <circle cx="209" cy="174" r="3.2" />
       </g>
-      <path d="M128 120h13l7-12 8 24 7-12h10" fill="none" stroke="#e5ffff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" />
 
-      <g fill="#b9fffb" stroke="#174e70" strokeWidth="2">
-        <circle cx="42" cy="119" r="5" />
-        <circle cx="258" cy="119" r="5" />
-        <circle cx="150" cy="28" r="5" />
-        <circle cx="150" cy="211" r="5" />
-        <circle cx="49" cy="66" r="4" />
-        <circle cx="229" cy="66" r="4" />
-        <circle cx="48" cy="174" r="4" />
-        <circle cx="227" cy="174" r="4" />
+      <circle cx="160" cy="119" r="65" fill="#29dce1" opacity=".22" filter="url(#mfAiBlur)" />
+      <circle cx="160" cy="119" r="58" fill="none" stroke="url(#mfAiRing)" strokeWidth="2.4" />
+      <circle cx="160" cy="119" r="51" fill="url(#mfAiGlass)" stroke="#83f6ef" strokeOpacity=".72" strokeWidth="1.5" />
+      <circle cx="160" cy="119" r="43" fill="none" stroke="#a2fff7" strokeOpacity=".13" strokeWidth="1" />
+      <path d="M124 91a45 45 0 0 1 57-14" fill="none" stroke="#ffffff" strokeOpacity=".42" strokeWidth="2.2" strokeLinecap="round" />
+
+      <g filter="url(#mfAiSoftGlow)" opacity=".65" fill="#68fff0">
+        <rect x="151" y="85" width="18" height="68" rx="4" />
+        <rect x="126" y="110" width="68" height="18" rx="4" />
       </g>
-      <circle cx="150" cy="119" r="3.5" fill="#ffffff" />
+      <g fill="url(#mfAiCross)">
+        <rect x="152" y="87" width="16" height="64" rx="3.5" />
+        <rect x="128" y="111" width="64" height="16" rx="3.5" />
+      </g>
+      <path d="M160 91v56M132 119h56" stroke="#ffffff" strokeOpacity=".48" strokeWidth="1" strokeLinecap="round" />
+      <circle cx="160" cy="119" r="3" fill="#ffffff" />
+
+      <g fill="none" stroke="#b5fff9" strokeWidth="1.4" strokeOpacity=".8">
+        <path d="M45 119h20M255 119h20M160 26v18M160 194v21" />
+      </g>
+      <g fill="#e2ffff">
+        <circle cx="45" cy="119" r="2.2" />
+        <circle cx="275" cy="119" r="2.2" />
+        <circle cx="160" cy="26" r="2.2" />
+        <circle cx="160" cy="215" r="2.2" />
+      </g>
     </svg>
   );
 }
