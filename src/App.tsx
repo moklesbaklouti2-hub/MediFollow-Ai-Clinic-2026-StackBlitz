@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import './mobile-navigation.css';
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
