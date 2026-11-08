@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
+import PatientClinicalInfo from '../components/PatientClinicalInfo';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -473,6 +474,11 @@ export default function Patients() {
               <p className="patient-empty-history">La modification des informations administratives ne supprime ni ne modifie les consultations et ordonnances.</p>
             </div>
           )}
+
+          <PatientClinicalInfo
+            patient={selected}
+            onSave={(changes) => updatePatient(selected.id, changes)}
+          />
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">
