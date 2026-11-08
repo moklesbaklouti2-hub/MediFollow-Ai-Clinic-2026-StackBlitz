@@ -64,85 +64,81 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
 
 function BrainArtwork() {
   return (
-    <svg className="mf-brain-art mf-stethoscope-art" viewBox="0 0 520 340" role="img" aria-label="Stéthoscope médical tridimensionnel en métal chromé et lumière turquoise">
+    <svg className="mf-brain-art mf-stethoscope-art" viewBox="0 0 520 340" role="img" aria-label="Stéthoscope médical professionnel, métal chromé et tube turquoise">
       <defs>
-        <linearGradient id="mfStethTube" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#eaffff"/><stop offset=".2" stopColor="#52f3e7"/>
-          <stop offset=".52" stopColor="#0b9dbd"/><stop offset=".78" stopColor="#07517f"/>
-          <stop offset="1" stopColor="#c8ffff"/>
+        <linearGradient id="mfScopeChrome" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#ffffff"/><stop offset=".22" stopColor="#8defff"/>
+          <stop offset=".48" stopColor="#f5ffff"/><stop offset=".72" stopColor="#438eaf"/>
+          <stop offset="1" stopColor="#dfffff"/>
         </linearGradient>
-        <linearGradient id="mfStethMetal" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#ffffff"/><stop offset=".18" stopColor="#9cefff"/>
-          <stop offset=".38" stopColor="#f5ffff"/><stop offset=".62" stopColor="#3caecb"/>
-          <stop offset=".82" stopColor="#e7ffff"/><stop offset="1" stopColor="#347a9f"/>
+        <linearGradient id="mfScopeTube" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#bafffb"/><stop offset=".25" stopColor="#25e4d8"/>
+          <stop offset=".62" stopColor="#087fa8"/><stop offset="1" stopColor="#06436f"/>
         </linearGradient>
-        <radialGradient id="mfStethChest" cx="32%" cy="25%" r="78%">
-          <stop stopColor="#efffff"/><stop offset=".22" stopColor="#8bfff4"/>
-          <stop offset=".52" stopColor="#1ccbd2"/><stop offset=".8" stopColor="#08749f"/>
-          <stop offset="1" stopColor="#062c55"/>
+        <radialGradient id="mfScopeDiaphragm" cx="32%" cy="25%" r="78%">
+          <stop stopColor="#eaffff"/><stop offset=".22" stopColor="#9afff2"/>
+          <stop offset=".52" stopColor="#22cbd0"/><stop offset=".82" stopColor="#08749c"/>
+          <stop offset="1" stopColor="#052b50"/>
         </radialGradient>
-        <radialGradient id="mfStethAura">
-          <stop stopColor="#18e9e3" stopOpacity=".32"/><stop offset="1" stopColor="#18e9e3" stopOpacity="0"/>
+        <radialGradient id="mfScopeAura">
+          <stop stopColor="#20e9e1" stopOpacity=".3"/><stop offset="1" stopColor="#20e9e1" stopOpacity="0"/>
         </radialGradient>
-        <filter id="mfStethGlow" x="-45%" y="-45%" width="190%" height="190%">
-          <feGaussianBlur stdDeviation="9" result="b"/>
-          <feColorMatrix in="b" type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.82 0 0 0 0 0.9 0 0 0 .78 0" result="g"/>
-          <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <filter id="mfScopeGlow" x="-45%" y="-45%" width="190%" height="190%">
+          <feGaussianBlur stdDeviation="7" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="mfStethShadow"><feGaussianBlur stdDeviation="15"/></filter>
+        <filter id="mfScopeShadow"><feGaussianBlur stdDeviation="13"/></filter>
       </defs>
 
-      <ellipse cx="263" cy="176" rx="194" ry="145" fill="url(#mfStethAura)"/>
-      <ellipse cx="263" cy="302" rx="140" ry="12" fill="#00d9ed" opacity=".17" filter="url(#mfStethShadow)"/>
+      <ellipse cx="260" cy="166" rx="190" ry="145" fill="url(#mfScopeAura)"/>
+      <ellipse cx="263" cy="302" rx="118" ry="10" fill="#00d9ed" opacity=".16" filter="url(#mfScopeShadow)"/>
 
-      <g filter="url(#mfStethGlow)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-        {/* Flexible acoustic tubing */}
-        <path d="M151 77 C115 95 105 145 126 190 C151 244 207 269 264 250 C310 235 329 196 329 157"
-          stroke="#032e50" strokeWidth="25" opacity=".65"/>
-        <path d="M151 77 C115 95 105 145 126 190 C151 244 207 269 264 250 C310 235 329 196 329 157"
-          stroke="url(#mfStethTube)" strokeWidth="17"/>
-        <path d="M146 82 C117 105 115 145 133 183 C156 228 207 251 258 236"
-          stroke="#eaffff" strokeWidth="3.2" opacity=".78"/>
-        {/* Metal ear tubes and binaural arms */}
-        <path d="M151 76 L151 49 Q151 37 163 37 L183 37" stroke="url(#mfStethMetal)" strokeWidth="12"/>
-        <path d="M151 76 L151 49 Q151 37 163 37 L183 37" stroke="#ffffff" strokeWidth="2.1" opacity=".85"/>
-        <path d="M329 157 L329 91 Q329 72 311 72 L288 72" stroke="url(#mfStethMetal)" strokeWidth="12"/>
-        <path d="M329 157 L329 91 Q329 72 311 72 L288 72" stroke="#ffffff" strokeWidth="2.1" opacity=".8"/>
-        {/* Soft ear tips */}
-        <path d="M179 37h18" stroke="#9efff5" strokeWidth="17"/>
-        <path d="M279 72h-18" stroke="#9efff5" strokeWidth="17"/>
+      {/* Ear tips and polished binaural tubes */}
+      <g filter="url(#mfScopeGlow)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M176 47 L176 82 Q176 105 197 117 L214 127" stroke="url(#mfScopeChrome)" strokeWidth="13"/>
+        <path d="M344 47 L344 82 Q344 105 323 117 L306 127" stroke="url(#mfScopeChrome)" strokeWidth="13"/>
+        <path d="M176 48 L176 81 Q176 101 194 112" stroke="#ffffff" strokeWidth="2.2" opacity=".8"/>
+        <path d="M344 48 L344 81 Q344 101 326 112" stroke="#ffffff" strokeWidth="2.2" opacity=".8"/>
+        <path d="M176 116 Q260 168 344 116" stroke="url(#mfScopeChrome)" strokeWidth="15"/>
+        <path d="M181 117 Q260 160 339 117" stroke="#ffffff" strokeWidth="2.5" opacity=".7"/>
+        {/* One continuous acoustic tube, hanging in a classic loop */}
+        <path d="M260 151 L260 183 C260 218 226 229 198 247 C166 267 171 304 211 306 L286 306 C325 306 350 279 350 246 L350 224"
+          stroke="#042e50" strokeWidth="24" opacity=".65"/>
+        <path d="M260 151 L260 183 C260 218 226 229 198 247 C166 267 171 304 211 306 L286 306 C325 306 350 279 350 246 L350 224"
+          stroke="url(#mfScopeTube)" strokeWidth="17"/>
+        <path d="M255 157 L255 183 C255 214 220 230 194 249 C172 266 180 295 212 297 L286 297 C316 297 340 276 340 246"
+          stroke="#d5fffb" strokeWidth="2.4" opacity=".65"/>
       </g>
 
-      {/* Precision metal couplings */}
+      {/* Soft silicone ear pieces */}
       <g>
-        <rect x="143" y="64" width="17" height="25" rx="7" fill="url(#mfStethMetal)" stroke="#d9ffff" strokeWidth="1.6"/>
-        <rect x="320" y="145" width="18" height="25" rx="7" fill="url(#mfStethMetal)" stroke="#d9ffff" strokeWidth="1.6"/>
-        <path d="M145 71h13M145 78h13M322 152h14M322 160h14" stroke="#ffffff" strokeWidth="1.5" opacity=".8"/>
+        <path d="M176 48v-15" stroke="#d8ffff" strokeWidth="15" strokeLinecap="round"/>
+        <path d="M344 48v-15" stroke="#d8ffff" strokeWidth="15" strokeLinecap="round"/>
+        <path d="M176 32v-5M344 32v-5" stroke="#ffffff" strokeWidth="2.2" strokeLinecap="round"/>
       </g>
 
-      {/* Chestpiece stem and floating diaphragm */}
-      <g filter="url(#mfStethGlow)">
-        <path d="M329 157 C350 158 359 173 359 190 L359 213" fill="none" stroke="url(#mfStethMetal)" strokeWidth="14" strokeLinecap="round"/>
-        <path d="M329 157 C350 158 359 173 359 190 L359 213" fill="none" stroke="#f2ffff" strokeWidth="2.2" opacity=".85"/>
-        <circle cx="359" cy="245" r="55" fill="#042d50" opacity=".58"/>
-        <circle cx="359" cy="239" r="48" fill="url(#mfStethChest)" stroke="#c7fffb" strokeWidth="4"/>
-        <circle cx="359" cy="239" r="37" fill="none" stroke="#e5ffff" strokeWidth="2.4" opacity=".78"/>
-        <circle cx="359" cy="239" r="27" fill="none" stroke="#64fff0" strokeWidth="2" opacity=".76"/>
-        <circle cx="359" cy="239" r="12" fill="#dfffff" opacity=".88"/>
-        <path d="M333 215q19-18 39-8" fill="none" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" opacity=".85"/>
+      {/* Yoke and chestpiece */}
+      <g filter="url(#mfScopeGlow)">
+        <path d="M350 224 C367 211 382 205 394 194" fill="none" stroke="url(#mfScopeChrome)" strokeWidth="13" strokeLinecap="round"/>
+        <path d="M350 224 C367 211 382 205 394 194" fill="none" stroke="#ffffff" strokeWidth="2" opacity=".8"/>
+        <circle cx="408" cy="178" r="49" fill="#032b4a" opacity=".65"/>
+        <circle cx="408" cy="174" r="43" fill="url(#mfScopeDiaphragm)" stroke="#d8ffff" strokeWidth="4"/>
+        <circle cx="408" cy="174" r="33" fill="none" stroke="#f0ffff" strokeWidth="2.2" opacity=".85"/>
+        <circle cx="408" cy="174" r="23" fill="none" stroke="#67fff0" strokeWidth="2" opacity=".85"/>
+        <circle cx="408" cy="174" r="9" fill="#eaffff" opacity=".9"/>
+        <path d="M383 151q17-16 36-9" fill="none" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" opacity=".9"/>
       </g>
 
-      {/* Fine highlights and acoustic pulse */}
+      {/* Small authentic construction details */}
       <g fill="none" strokeLinecap="round">
-        <path d="M191 278 C224 291 267 288 294 271" stroke="#64fff1" strokeWidth="2" opacity=".62"/>
-        <path d="M374 173q18 7 23 24" stroke="#b9fff9" strokeWidth="2" opacity=".55"/>
-        <path d="M88 117q-12 24-4 49M432 119q13 24 7 48" stroke="#27dce8" strokeWidth="1.5" opacity=".3"/>
+        <path d="M166 76h20M334 76h20" stroke="#ffffff" strokeWidth="2" opacity=".65"/>
+        <path d="M248 173h24" stroke="#b9fff9" strokeWidth="2" opacity=".7"/>
+        <path d="M75 150q-10 20-3 39M447 91q12 20 8 38" stroke="#2be5e4" strokeWidth="1.5" opacity=".3"/>
       </g>
-      <g fill="#d7fffb">
-        <circle cx="151" cy="37" r="3"/><circle cx="288" cy="72" r="3"/>
-        <circle cx="411" cy="220" r="2.4"/><circle cx="108" cy="232" r="2"/>
+      <g fill="#e4ffff">
+        <circle cx="176" cy="27" r="2.5"/><circle cx="344" cy="27" r="2.5"/>
+        <circle cx="460" cy="166" r="2.2"/><circle cx="111" cy="258" r="2"/>
       </g>
-      <path d="M74 304 C164 323 354 321 452 286" fill="none" stroke="#20dce8" strokeWidth="1.2" opacity=".2"/>
     </svg>
   );
 }
