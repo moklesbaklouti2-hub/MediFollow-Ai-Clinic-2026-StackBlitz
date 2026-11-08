@@ -3,6 +3,123 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 
+
+const specialtyGroups = [
+  {
+    label: 'Soins primaires et médecine polyvalente',
+    options: [
+      'Médecine de famille',
+      'Médecine générale',
+      'Médecine interne',
+      'Gériatrie',
+      'Médecine d’urgence',
+      'Médecine intensive-réanimation',
+      'Médecine polyvalente',
+    ],
+  },
+  {
+    label: 'Spécialités médicales',
+    options: [
+      'Allergologie',
+      'Anatomie et cytologie pathologiques',
+      'Cardiologie',
+      'Dermatologie et vénéréologie',
+      'Endocrinologie-diabétologie',
+      'Gastro-entérologie et hépatologie',
+      'Hématologie',
+      'Hépato-gastro-entérologie',
+      'Maladies infectieuses et tropicales',
+      'Médecine cardiovasculaire',
+      'Médecine du sport',
+      'Médecine du travail',
+      'Médecine légale',
+      'Médecine physique et de réadaptation',
+      'Médecine vasculaire',
+      'Néphrologie',
+      'Neurologie',
+      'Oncologie médicale',
+      'Pneumologie',
+      'Psychiatrie',
+      'Rhumatologie',
+      'Nutrition',
+      'Médecine de la douleur',
+      'Médecine palliative',
+      'Immunologie clinique',
+      'Génétique médicale',
+      'Pharmacologie clinique',
+      'Toxicologie médicale',
+      'Médecine du sommeil',
+    ],
+  },
+  {
+    label: 'Pédiatrie et surspécialités pédiatriques',
+    options: [
+      'Pédiatrie',
+      'Néonatologie',
+      'Cardiologie pédiatrique',
+      'Neurologie pédiatrique',
+      'Endocrinologie pédiatrique',
+      'Pneumologie pédiatrique',
+      'Néphrologie pédiatrique',
+      'Gastro-entérologie pédiatrique',
+      'Hémato-oncologie pédiatrique',
+      'Pédopsychiatrie',
+      'Chirurgie pédiatrique',
+    ],
+  },
+  {
+    label: 'Spécialités chirurgicales',
+    options: [
+      'Chirurgie générale',
+      'Chirurgie digestive',
+      'Chirurgie viscérale',
+      'Chirurgie thoracique',
+      'Chirurgie cardiovasculaire',
+      'Chirurgie vasculaire',
+      'Neurochirurgie',
+      'Chirurgie orthopédique et traumatologie',
+      'Urologie',
+      'Gynécologie-obstétrique',
+      'Oto-rhino-laryngologie (ORL)',
+      'Ophtalmologie',
+      'Chirurgie plastique, reconstructrice et esthétique',
+      'Chirurgie maxillo-faciale',
+      'Chirurgie orale',
+      'Chirurgie endocrinienne',
+      'Chirurgie mammaire',
+      'Chirurgie de transplantation',
+    ],
+  },
+  {
+    label: 'Spécialités médico-techniques et diagnostiques',
+    options: [
+      'Anesthésie-réanimation',
+      'Radiologie et imagerie médicale',
+      'Radiologie interventionnelle',
+      'Médecine nucléaire',
+      'Radiothérapie-oncologie',
+      'Biologie médicale',
+      'Biochimie médicale',
+      'Microbiologie médicale',
+      'Hémobiologie et transfusion',
+      'Génétique et biologie moléculaire',
+      'Neurophysiologie clinique',
+      'Explorations fonctionnelles',
+    ],
+  },
+  {
+    label: 'Psychiatrie et santé publique',
+    options: [
+      'Psychiatrie de l’adulte',
+      'Psychiatrie de l’enfant et de l’adolescent',
+      'Addictologie',
+      'Santé publique',
+      'Épidémiologie',
+      'Hygiène hospitalière',
+    ],
+  },
+];
+
 const emptyVitals: Vitals = {
   systolic: '',
   diastolic: '',
@@ -19,6 +136,7 @@ export default function Consultations() {
   const { patients, consultations, addConsultation, updateConsultation } = useMedicalData();
 
   const [patientId, setPatientId] = useState('');
+  const [specialty, setSpecialty] = useState('');
   const [motif, setMotif] = useState('');
   const [symptoms, setSymptoms] = useState('');
   const [history, setHistory] = useState('');
@@ -38,6 +156,7 @@ export default function Consultations() {
   function startEditing(item: (typeof consultations)[number]) {
     setEditingId(item.id);
     setPatientId(item.patientId);
+    setSpecialty(item.specialty ?? '');
     setMotif(item.motif);
     setSymptoms(item.symptoms);
     setHistory(item.history);
@@ -53,6 +172,7 @@ export default function Consultations() {
   function cancelEditing() {
     setEditingId(null);
     setPatientId('');
+    setSpecialty('');
     setMotif('');
     setSymptoms('');
     setHistory('');
@@ -65,13 +185,14 @@ export default function Consultations() {
   }
 
   function saveConsultation() {
-    if (!patientId || !motif.trim()) {
-      alert('Veuillez sélectionner un patient enregistré et renseigner le motif.');
+    if (!patientId || !motif.trim() || (!editingId && !specialty)) {
+      alert('Veuillez sélectionner un patient, choisir une spécialité et renseigner le motif.');
       return;
     }
 
     const changes = {
       patientId,
+      specialty: specialty || undefined,
       motif: motif.trim(),
       symptoms: symptoms.trim(),
       history: history.trim(),
@@ -364,6 +485,27 @@ export default function Consultations() {
           </div>
 
           <div className="consultation-field">
+            <label>Spécialité de consultation *</label>
+            <select
+              value={specialty}
+              onChange={(e) => {
+                setSpecialty(e.target.value);
+                setSaved(false);
+              }}
+            >
+              <option value="">Choisir la spécialité</option>
+              {specialtyGroups.map((group) => (
+                <optgroup key={group.label} label={group.label}>
+                  {group.options.map((option) => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </optgroup>
+              ))}
+              <option value="Autre spécialité">Autre spécialité</option>
+            </select>
+          </div>
+
+          <div className="consultation-field">
             <label>Motif de consultation *</label>
             <input
               value={motif}
@@ -489,6 +631,7 @@ export default function Consultations() {
               <div className="saved-consultation" key={item.id}>
                 <strong>{linkedPatient?.name || legacyPatientName || 'Patient non identifié'}</strong>
                 <span>{new Date(item.date).toLocaleString('fr-FR')}</span>
+                <p><b>Spécialité :</b> {item.specialty || 'Non précisée'}</p>
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
                 <button
