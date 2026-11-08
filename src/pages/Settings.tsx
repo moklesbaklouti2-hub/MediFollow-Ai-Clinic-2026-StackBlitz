@@ -1,6 +1,7 @@
 
 import { useState, type ChangeEvent } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
+import type { DoctorSettings } from '../types/medical';
 import {
   getMedicalData,
   savePatients,
@@ -72,6 +73,18 @@ export default function Settings({
         typeof value.patient.name === 'string' &&
         typeof value.deletedAt === 'string';
 
+      const isValidSettings = (value: unknown): value is DoctorSettings =>
+        isRecord(value) &&
+        typeof value.doctorName === 'string' &&
+        typeof value.specialty === 'string' &&
+        typeof value.cabinetName === 'string' &&
+        typeof value.address === 'string' &&
+        typeof value.phone === 'string' &&
+        typeof value.email === 'string' &&
+        typeof value.copilotEnabled === 'boolean' &&
+        typeof value.confirmBeforePrescription === 'boolean' &&
+        ['auto', 'light', 'dark'].includes(value.themePreference);
+
       if (
         parsed?.application !== 'MediFollow AI' ||
         parsed?.formatVersion !== 1 ||
@@ -82,7 +95,7 @@ export default function Settings({
         (backupData.deletedPatients !== undefined &&
           (!Array.isArray(backupData.deletedPatients) ||
             !backupData.deletedPatients.every(isValidDeletedPatient))) ||
-        !isRecord(backupData.settings)
+        !isValidSettings(backupData.settings)
       ) {
         setMessage('Fichier refusé : sauvegarde MediFollow AI invalide ou incompatible.');
         return;
