@@ -5046,3 +5046,14 @@ textarea {
 @media (max-width: 650px) {
   .sidebar-motto-card, .sidebar-security-note { display: none; }
 }
+
+:root[data-theme="dark"] .brand-mark svg {
+  display: block;
+  width: 42px;
+  height: 42px;
+  color: #d8fbff;
+  filter: drop-shadow(0 0 8px rgba(0, 221, 255, .48));
+}
+@media (min-width: 1151px) {
+  .mf-dashboard .mf-copilot-card { grid-column: 3; grid-row: 2; }
+}
