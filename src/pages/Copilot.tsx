@@ -1,5 +1,6 @@
 
-import type { KeyboardEvent } from 'react';
+import { useState, type KeyboardEvent } from 'react';
+import type { Consultation, Patient } from '../types/medical';
 import Orb3D from '../components/Orb3D';
 
 export type Message = {
@@ -9,10 +10,12 @@ export type Message = {
 
 type CopilotProps = {
   messages: Message[];
+  consultations: Consultation[];
+  patients: Patient[];
   question: string;
   onQuestionChange: (value: string) => void;
   loading: boolean;
-  onSend: () => void;
+  onSend: (consultationId?: string) => void;
 };
 
 const suggestions = [
@@ -23,17 +26,37 @@ const suggestions = [
 
 export default function Copilot({
   messages,
+  consultations,
+  patients,
   question,
   onQuestionChange,
   loading,
   onSend,
 }: CopilotProps) {
+  const latestConsultation = consultations.length
+    ? [...consultations].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      )[0]
+    : undefined;
+  const [chosenConsultationId, setChosenConsultationId] = useState('');
+  const selectedConsultationId = consultations.some(
+    (item) => item.id === chosenConsultationId
+  )
+    ? chosenConsultationId
+    : latestConsultation?.id ?? '';
+  const selectedConsultation = consultations.find(
+    (item) => item.id === selectedConsultationId
+  );
+  const selectedPatient = selectedConsultation
+    ? patients.find((item) => item.id === selectedConsultation.patientId)
+    : undefined;
+
   const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
 
       if (question.trim() && !loading) {
-        onSend();
+        onSend(selectedConsultationId || undefined);
       }
     }
   };
@@ -59,6 +82,60 @@ export default function Copilot({
           <span></span>
           {loading ? 'Analyse en cours...' : 'Assistant disponible'}
         </div>
+      </div>
+
+
+      <div
+        style={{
+          padding: '12px 16px',
+          borderBottom: '1px solid var(--border, #e5ebef)',
+          display: 'grid',
+          gap: 7,
+        }}
+      >
+        <label htmlFor="copilot-consultation-context" style={{ fontSize: 13, fontWeight: 700 }}>
+          Contexte de consultation à transmettre au copilote
+        </label>
+        <select
+          id="copilot-consultation-context"
+          value={selectedConsultationId}
+          onChange={(event) => setChosenConsultationId(event.target.value)}
+          disabled={loading || consultations.length === 0}
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: 11,
+            border: '1px solid var(--border, #dce4e8)',
+            borderRadius: 10,
+            background: 'var(--surface, #fff)',
+            color: 'inherit',
+            font: 'inherit',
+          }}
+        >
+          {consultations.length === 0 && (
+            <option value="">Aucune consultation enregistrée</option>
+          )}
+          {consultations.length > 0 && (
+            <option value="">Aucun contexte — question générale</option>
+          )}
+          {consultations
+            .slice()
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map((item) => {
+              const linkedPatient = patients.find((patient) => patient.id === item.patientId);
+              const dateLabel = new Date(item.date).toLocaleDateString('fr-FR');
+              return (
+                <option key={item.id} value={item.id}>
+                  {dateLabel} · {item.specialty || 'Spécialité non précisée'} · {item.motif} · {linkedPatient?.name || 'Patient'}
+                </option>
+              );
+            })}
+        </select>
+        <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary, #73838a)' }}>
+          {selectedConsultation
+            ? `Contexte sélectionné : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
+            : 'Sans consultation sélectionnée, le copilote répondra à une question générale.'}
+        </p>
       </div>
 
       <div className="copilot-conversation">
@@ -203,7 +280,7 @@ export default function Copilot({
           <button
             type="button"
             className="copilot-send-button"
-            onClick={onSend}
+            onClick={() => onSend(selectedConsultationId || undefined)}
             disabled={!question.trim() || loading}
             aria-label="Envoyer le message"
           >
