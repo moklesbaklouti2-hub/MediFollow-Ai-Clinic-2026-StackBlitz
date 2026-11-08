@@ -7,6 +7,7 @@ import type {
   Prescription,
   DoctorSettings,
   MedicalData,
+  DeletedPatient,
 } from '../types/medical';
 
 import {
@@ -15,6 +16,8 @@ import {
   saveConsultations,
   savePrescriptions,
   saveSettings,
+  getDeletedPatients,
+  saveDeletedPatients,
   subscribeToMedicalData,
   createId,
 } from '../services/storage';
@@ -81,7 +84,30 @@ export function useMedicalData() {
       return false;
     }
 
-    savePatients(current.patients.filter((patient) => patient.id !== id));
+    const patient = current.patients.find((item) => item.id === id);
+    if (!patient) return false;
+
+    const deletedPatients = getDeletedPatients();
+    const deletedRecord: DeletedPatient = {
+      patient,
+      deletedAt: new Date().toISOString(),
+    };
+
+    // Écrire d'abord dans la corbeille pour éviter toute perte en cas d'échec.
+    if (!saveDeletedPatients([...deletedPatients, deletedRecord])) return false;
+    if (!savePatients(current.patients.filter((item) => item.id !== id))) return false;
+    return true;
+  }, []);
+
+  const restoreDeletedPatient = useCallback((id: string) => {
+    const deletedPatients = getDeletedPatients();
+    const record = deletedPatients.find((item) => item.patient.id === id);
+    if (!record) return false;
+
+    const currentPatients = getMedicalData().patients;
+    if (currentPatients.some((item) => item.id === id)) return false;
+    if (!savePatients([...currentPatients, record.patient])) return false;
+    if (!saveDeletedPatients(deletedPatients.filter((item) => item.patient.id !== id))) return false;
     return true;
   }, []);
 
@@ -200,6 +226,8 @@ export function useMedicalData() {
     addPatient,
     updatePatient,
     deletePatient,
+    restoreDeletedPatient,
+    deletedPatients: data.deletedPatients ?? [],
     addConsultation,
     updateConsultation,
     deleteConsultation,
