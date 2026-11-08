@@ -54,43 +54,47 @@ const coreFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 p = normalize(vLocal);
-    float speed = 0.16 + uThinking * 0.25;
-    vec3 drift = vec3(uTime * speed, -uTime * speed * 0.72, uTime * speed * 0.52);
-    vec3 warp = vec3(fbm3(p * 3.1 + drift), fbm3(p * 3.1 + drift + 7.1), fbm3(p * 3.1 + drift + 13.7));
-    vec3 q = p * 5.0 + (warp - 0.5) * 3.25;
-    float cloud = fbm3(q + drift * 1.5);
-    float detail = fbm3(q * 2.25 - drift * 1.1);
-    float waveA = sin((q.x * 1.65 + q.y * 2.15 - q.z * 1.35) * 4.0 + cloud * 8.0 - uTime * (1.0 + uThinking * 1.7));
-    float waveB = sin((q.z * 2.1 - q.x * 1.2 + q.y * 1.55) * 3.1 - detail * 7.0 + uTime * 0.62);
-    float filaments = pow(max(0.0, 1.0 - abs(waveA)), 11.0) * smoothstep(0.30, 0.68, detail);
-    float secondary = pow(max(0.0, 1.0 - abs(waveB)), 15.0) * smoothstep(0.42, 0.72, cloud);
-    float cyanField = smoothstep(0.34, 0.66, cloud);
-    float violetField = smoothstep(0.36, 0.70, detail) * (0.55 + 0.45 * sin(q.y * 2.0 + uTime * 0.22));
-    vec3 deepBlack = vec3(0.0025, 0.006, 0.018);
-    vec3 cyan = vec3(0.018, 0.78, 0.72);
-    vec3 turquoise = vec3(0.025, 0.48, 0.58);
-    vec3 violet = vec3(0.43, 0.075, 0.82);
-    vec3 plasmaColor = cyan * cyanField * 0.92;
-    plasmaColor += turquoise * filaments * 0.72;
-    plasmaColor += violet * violetField * 0.78;
-    plasmaColor += vec3(0.58, 0.88, 0.96) * (secondary * 0.16 + filaments * 0.10);
-    vec3 color = deepBlack + plasmaColor;
+    float speed = 0.12 + uThinking * 0.24;
+    vec3 drift = vec3(uTime * speed, -uTime * speed * 0.73, uTime * speed * 0.49);
+    vec3 warp = vec3(fbm3(p * 2.8 + drift), fbm3(p * 2.8 + drift + 7.1), fbm3(p * 2.8 + drift + 13.7));
+    vec3 q = p * 5.2 + (warp - 0.5) * 3.4;
+    float cloud = fbm3(q + drift * 1.3);
+    float detail = fbm3(q * 2.1 - drift * 0.9);
+    float flowA = dot(q, vec3(1.35, 2.1, -1.25)) * 3.6 + cloud * 8.0 - uTime * (0.72 + uThinking * 1.5);
+    float flowB = dot(q, vec3(-1.8, 0.75, 1.65)) * 3.1 - detail * 7.2 + uTime * 0.48;
+    float flowC = dot(q, vec3(0.6, -1.9, 1.2)) * 5.0 + cloud * 5.0 + uTime * 0.34;
+    float strandA = pow(max(0.0, 1.0 - abs(sin(flowA))), 13.0) * smoothstep(0.37, 0.69, detail), 1.0);
+    float strandB = pow(max(0.0, 1.0 - abs(sin(flowB))), 17.0) * smoothstep(0.40, 0.72, cloud), 1.0);
+    float strandC = pow(max(0.0, 1.0 - abs(sin(flowC))), 22.0) * smoothstep(0.47, 0.76, detail), 1.0);
+    float cyanField = smoothstep(0.43, 0.73, cloud);
+    float violetField = smoothstep(0.40, 0.72, detail) * (0.58 + 0.42 * sin(q.y * 1.8 + uTime * 0.18));
+    float energy = strandA * 0.82 + strandB * 0.68 + strandC * 0.48;
+    vec3 deepBlack = vec3(0.0018, 0.004, 0.014);
+    vec3 cyan = vec3(0.025, 0.82, 0.76);
+    vec3 turquoise = vec3(0.012, 0.48, 0.58);
+    vec3 violet = vec3(0.49, 0.10, 0.91);
+    vec3 color = deepBlack;
+    color += cyan * cyanField * 0.24;
+    color += violet * violetField * 0.20;
+    color += turquoise * strandA * 1.25;
+    color += cyan * strandB * 1.12;
+    color += violet * strandC * 1.04;
+    color += vec3(0.64, 0.90, 1.0) * pow(energy, 2.4) * 0.34;
     vec3 N = normalize(vNormal);
     vec3 V = normalize(cameraPosition - vWorld);
     vec3 L = normalize(vec3(-0.48, 0.62, 0.78));
     float diffuse = max(dot(N, L), 0.0);
-    float fresnel = pow(1.0 - max(dot(N, V), 0.0), 2.35);
+    float fresnel = pow(1.0 - max(dot(N, V), 0.0), 2.2);
     vec3 H = normalize(L + V);
-    float specular = pow(max(dot(N, H), 0.0), 42.0);
-    color *= 0.48 + diffuse * 0.72;
-    color += mix(cyan, violet, 0.42) * fresnel * 0.58;
-    color += vec3(0.62, 0.91, 1.0) * specular * 0.20;
-    float pulse = 0.94 + 0.06 * sin(uTime * (1.0 + uThinking * 1.8) + cloud * 7.0);
-    gl_FragColor = vec4(color * pulse * 1.85, 1.0);
+    float specular = pow(max(dot(N, H), 0.0), 48.0);
+    float rim = smoothstep(0.20, 0.92, fresnel);
+    color *= 0.56 + diffuse * 0.68;
+    color += mix(cyan, violet, 0.38) * rim * 0.34;
+    color += vec3(0.72, 0.94, 1.0) * specular * 0.24;
+    float pulse = 0.96 + 0.04 * sin(uTime * (0.9 + uThinking * 1.5) + cloud * 6.0);
+    gl_FragColor = vec4(color * pulse * 2.05, 1.0);
   }
-`;
-
-const plasmaVertexShader = `
+`;const plasmaVertexShader = `
   varying vec3 vLocal;
   varying vec3 vWorld;
   varying vec3 vNormal;
@@ -122,28 +126,31 @@ const plasmaFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 d = normalize(vLocal);
-    float t = uTime * (0.22 + uThinking * 0.34);
-    vec3 flow = d * 6.2 + vec3(t, -t * 0.78, t * 0.58);
+    float t = uTime * (0.18 + uThinking * 0.32);
+    vec3 flow = d * 6.0 + vec3(t, -t * 0.76, t * 0.56);
     vec3 warp = vec3(fbm3(flow + 2.0), fbm3(flow + 8.0), fbm3(flow + 14.0));
-    vec3 q = flow + (warp - 0.5) * 4.2;
-    float smoke = fbm3(q * 1.25);
-    float noiseLine = fbm3(q * 2.05);
-    float filament = pow(max(0.0, 1.0 - abs(noiseLine * 2.0 - 1.0)), 10.0);
-    filament *= smoothstep(0.36, 0.66, smoke);
-    float accent = pow(max(0.0, 1.0 - abs(fbm3(q * 3.1 + 4.0) * 2.0 - 1.0)), 15.0);
-    accent *= smoothstep(0.42, 0.70, smoke);
-    vec3 cyan = vec3(0.025, 0.88, 0.80);
-    vec3 violet = vec3(0.62, 0.16, 1.0);
-    float colorMix = smoothstep(0.34, 0.70, fbm3(q * 0.72 + 4.0));
+    vec3 q = flow + (warp - 0.5) * 4.0;
+    float cloud = fbm3(q * 1.15);
+    float detail = fbm3(q * 2.0);
+    float lineA = dot(q, vec3(1.2, 2.0, -1.4)) * 4.1 + cloud * 8.0 - t * 2.2;
+    float lineB = dot(q, vec3(-1.6, 0.8, 1.7)) * 3.5 - detail * 7.0 + t * 1.7;
+    float ridgesA = pow(max(0.0, 1.0 - abs(sin(lineA))), 15.0) * smoothstep(0.40, 0.72, cloud), 1.0);
+    float ridgesB = pow(max(0.0, 1.0 - abs(sin(lineB))), 19.0) * smoothstep(0.43, 0.74, detail), 1.0);
+    float filament = clamp(ridgesA * 0.82 + ridgesB * 0.72, 0.0, 1.0);
+    float sparks = pow(max(0.0, 1.0 - abs(fbm3(q * 3.2 + 4.0) * 2.0 - 1.0)), 19.0);
+    sparks *= smoothstep(0.48, 0.76, cloud) * smoothstep(0.32, 0.66, detail);
+    vec3 cyan = vec3(0.025, 0.92, 0.83);
+    vec3 violet = vec3(0.67, 0.20, 1.0);
+    float colorMix = smoothstep(0.38, 0.70, fbm3(q * 0.68 + 4.0));
     vec3 color = mix(cyan, violet, colorMix);
-    color += vec3(0.58, 0.92, 1.0) * accent * 0.32;
-    float edge = pow(1.0 - abs(dot(normalize(vNormal), normalize(cameraPosition - vWorld))), 1.45);
-    float alpha = clamp(filament * 0.68 + accent * 0.24 + edge * filament * 0.16, 0.0, 0.72);
-    gl_FragColor = vec4(color * (0.82 + filament * 1.25 + accent * 0.55), alpha);
+    color += vec3(0.70, 0.94, 1.0) * sparks * 0.48;
+    float facing = max(dot(normalize(vNormal), normalize(cameraPosition - vWorld)), 0.0);
+    float rim = pow(1.0 - facing, 1.55);
+    float alpha = clamp(filament * 0.76 + sparks * 0.22 + rim * filament * 0.12, 0.0, 0.78);
+    float brightness = 0.86 + filament * 1.65 + sparks * 0.75;
+    gl_FragColor = vec4(color * brightness, alpha);
   }
-`;
-
-const ringVertexShader = `
+`;const ringVertexShader = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
