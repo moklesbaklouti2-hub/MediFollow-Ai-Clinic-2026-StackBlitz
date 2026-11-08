@@ -1,0 +1,52 @@
+/* =========================================
+   MEDIFOLLOW — NAVIGATION MOBILE
+   Amélioration tactile sans modifier les pages
+========================================= */
+
+@media (max-width: 650px) {
+  .premium-sidebar {
+    padding: 14px 10px 10px;
+  }
+
+  .sidebar-workspace,
+  .sidebar-section-label,
+  .sidebar-version,
+  .premium-sidebar-bottom {
+    display: none;
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 11px 0 5px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar-nav > div {
+    flex: 0 0 auto;
+  }
+
+  .premium-nav-item {
+    width: auto;
+    min-width: max-content;
+    min-height: 44px;
+    margin: 0;
+    padding: 0 13px;
+    border-radius: 10px;
+  }
+
+  .premium-nav-item:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .premium-nav-item {
+    transition: none !important;
+  }
+}
