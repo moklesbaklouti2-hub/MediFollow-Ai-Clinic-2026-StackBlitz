@@ -38,10 +38,8 @@ export default function Copilot({
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       )[0]
     : undefined;
-  const [chosenConsultationId, setChosenConsultationId] = useState('');
-  const selectedConsultationId = consultations.some(
-    (item) => item.id === chosenConsultationId
-  )
+  const [chosenConsultationId, setChosenConsultationId] = useState<string | null>(null);
+  const selectedConsultationId = chosenConsultationId !== null
     ? chosenConsultationId
     : latestConsultation?.id ?? '';
   const selectedConsultation = consultations.find(
