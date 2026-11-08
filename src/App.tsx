@@ -60,7 +60,13 @@ function App() {
   // ---------- THÈME ----------
 
   const [themePreference, setThemePreference] = useState(() => {
-    return 'dark';
+    const migrationKey = 'medifollow-theme-v2-initialized';
+    if (!localStorage.getItem(migrationKey)) {
+      localStorage.setItem('medifollow-theme', 'dark');
+      localStorage.setItem(migrationKey, 'true');
+      return 'dark';
+    }
+    return localStorage.getItem('medifollow-theme') || 'dark';
   });
 
   useEffect(() => {
@@ -247,6 +253,7 @@ function App() {
             consultationCount={getStoredCount('medifollow-consultations')}
             onStartConsultation={() => setActive('Consultations')}
             onOpenCopilot={() => setActive('Copilote IA')}
+            onOpenPatients={() => setActive('Patients')}
           />
         );
     }
