@@ -39,6 +39,21 @@ export default function Patients() {
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     : [];
 
+  const medicalTimeline = [
+    ...patientConsultations.map((consultation) => ({
+      type: 'consultation' as const,
+      id: consultation.id,
+      date: consultation.date,
+      consultation,
+    })),
+    ...patientPrescriptions.map((prescription) => ({
+      type: 'prescription' as const,
+      id: prescription.id,
+      date: prescription.date,
+      prescription,
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   const lastVisitByPatient = useMemo(() => {
     const result: Record<string, string> = {};
     const ordered = [...consultations].sort(
@@ -186,6 +201,9 @@ export default function Patients() {
         .patient-summary-item strong,.patient-vital strong { overflow-wrap:anywhere; }
         .patient-vital strong { font-size:18px; }
         .patient-consultation,.patient-prescription { padding:14px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:7px; }
+        .patient-timeline-entry { padding:15px; border:1px solid var(--border,#e5ebef); border-left:4px solid #42d5b4; border-radius:12px; display:grid; gap:8px; }
+        .patient-timeline-entry > span { font-size:12px; color:#81909c; }
+        .patient-timeline-kind { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#21866e; }
         .patient-consultation strong,.patient-prescription strong { font-size:14px; }
         .patient-consultation span,.patient-prescription span { font-size:12px; color:#81909c; }
         .patient-consultation p,.patient-prescription p { font-size:13px; line-height:1.5; }
@@ -307,41 +325,41 @@ export default function Patients() {
             </div>
           )}
 
-          <h3 className="patient-section-title">Historique des consultations ({patientConsultations.length})</h3>
-          {patientConsultations.length === 0 ? (
-            <p className="patient-empty-history">Aucune consultation enregistrée pour ce patient.</p>
+          <h3 className="patient-section-title">Chronologie médicale ({medicalTimeline.length} événements)</h3>
+          {medicalTimeline.length === 0 ? (
+            <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
           ) : (
-            patientConsultations.map((consultation) => (
-              <article className="patient-consultation" key={consultation.id}>
-                <strong>{consultation.motif || 'Consultation'}</strong>
-                <span>{displayDate(consultation.date)}</span>
-                {consultation.symptoms && <p><b>Symptômes :</b> {consultation.symptoms}</p>}
-                {consultation.history && <p><b>Antécédents / traitements :</b> {consultation.history}</p>}
-                {consultation.examination && <p><b>Examen clinique :</b> {consultation.examination}</p>}
-                {consultation.diagnosis && <p><b>Diagnostic :</b> {consultation.diagnosis}</p>}
-                {consultation.plan && <p><b>Conduite à tenir :</b> {consultation.plan}</p>}
-              </article>
-            ))
-          )}
-
-          <h3 className="patient-section-title">Historique des ordonnances ({patientPrescriptions.length})</h3>
-          {patientPrescriptions.length === 0 ? (
-            <p className="patient-empty-history">Aucune ordonnance enregistrée pour ce patient.</p>
-          ) : (
-            patientPrescriptions.map((prescription) => (
-              <article className="patient-prescription" key={prescription.id}>
-                <strong>Ordonnance du {displayDate(prescription.date)}</strong>
-                <span>{prescription.medications.length} médicament(s)</span>
-                {prescription.medications.length > 0 && (
-                  <ul className="patient-medication-list">
-                    {prescription.medications.map((medication) => (
-                      <li key={medication.id}>
-                        {medication.name} — {medication.dosage}; {medication.frequency}; durée : {medication.duration}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {prescription.advice && <p><b>Conseils :</b> {prescription.advice}</p>}
+            medicalTimeline.map((entry) => (
+              <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
+                {entry.type === 'consultation' && entry.consultation ? (
+                  <>
+                    <span className="patient-timeline-kind">Consultation</span>
+                    <strong>{entry.consultation.motif || 'Consultation'}</strong>
+                    <span>{displayDate(entry.date)}</span>
+                    {entry.consultation.symptoms && <p><b>Symptômes :</b> {entry.consultation.symptoms}</p>}
+                    {entry.consultation.history && <p><b>Antécédents / traitements :</b> {entry.consultation.history}</p>}
+                    {entry.consultation.examination && <p><b>Examen clinique :</b> {entry.consultation.examination}</p>}
+                    {entry.consultation.diagnosis && <p><b>Diagnostic :</b> {entry.consultation.diagnosis}</p>}
+                    {entry.consultation.plan && <p><b>Conduite à tenir :</b> {entry.consultation.plan}</p>}
+                  </>
+                ) : entry.prescription ? (
+                  <>
+                    <span className="patient-timeline-kind">Ordonnance</span>
+                    <strong>Ordonnance médicale</strong>
+                    <span>{displayDate(entry.date)}</span>
+                    <span>{entry.prescription.medications.length} médicament(s)</span>
+                    {entry.prescription.medications.length > 0 && (
+                      <ul className="patient-medication-list">
+                        {entry.prescription.medications.map((medication) => (
+                          <li key={medication.id}>
+                            {medication.name} — {medication.dosage}; {medication.frequency}; durée : {medication.duration}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {entry.prescription.advice && <p><b>Conseils :</b> {entry.prescription.advice}</p>}
+                  </>
+                ) : null}
               </article>
             ))
           )}
