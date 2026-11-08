@@ -15,7 +15,7 @@
 .mf-orb-fallback {
   position: absolute; inset: 28px; border-radius: 50%;
   background: radial-gradient(circle at 32% 28%, #174b50, #126b70 27%, #123b50 55%, #49316f 79%, #080d20);
-  box-shadow: 0 0 24px #42dcca, 0 0 42px rgba(148,91,255,.6);
+  box-shadow: 0 0 9px rgba(36,151,151,.28), 0 0 16px rgba(105,75,155,.18);
 }
 .mf-orb-caption {
   margin-top: -7px; color: #83eee5; font-size: 8px; font-weight: 800;
