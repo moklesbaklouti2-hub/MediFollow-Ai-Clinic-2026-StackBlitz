@@ -413,12 +413,39 @@ export default function Consultations() {
 
       <div className="consultation-section">
         <h3>04 · Examen physique</h3>
-        <div className="consultation-field">
-          <label>Examen clinique détaillé</label>
-          <textarea value={examination} onChange={(e) => setExamination(e.target.value)} placeholder="Examen cardiovasculaire, respiratoire, abdominal, neurologique..." />
-          <label>Examen clinique structuré par appareil</label>
-          <PhysicalExaminationEditor value={physicalExamination} onChange={(next) => setPhysicalExamination(next)} />
+
+        <div
+          style={{
+            marginBottom: 18,
+            padding: 14,
+            border: '1px solid var(--border, #dce4e8)',
+            borderRadius: 12,
+            background: 'var(--surface, #fff)',
+          }}
+        >
+          <strong style={{ display: 'block', marginBottom: 8 }}>Examen clinique structuré par appareil</strong>
+          <p style={{ margin: '0 0 14px', color: 'var(--color-text-secondary, #73838a)', fontSize: 13, lineHeight: 1.5 }}>
+            Chaque appareil possède ses propres éléments cliniques. Ouvrez une rubrique pour saisir les constatations réellement examinées.
+          </p>
+          <PhysicalExaminationEditor
+            value={physicalExamination}
+            onChange={(next) => setPhysicalExamination(next)}
+          />
         </div>
+
+        <details style={{ padding: 12, border: '1px solid var(--border, #dce4e8)', borderRadius: 10 }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 600 }}>
+            Ancien examen libre (facultatif) — conserver les notes historiques
+          </summary>
+          <div className="consultation-field" style={{ marginTop: 12 }}>
+            <label>Notes libres de l’examen clinique</label>
+            <textarea
+              value={examination}
+              onChange={(e) => setExamination(e.target.value)}
+              placeholder="Notes complémentaires libres..."
+            />
+          </div>
+        </details>
       </div>
 
       <div className="consultation-section">
