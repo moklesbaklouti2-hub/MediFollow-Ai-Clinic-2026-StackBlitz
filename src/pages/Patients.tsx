@@ -3,7 +3,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 
 export default function Patients() {
-  const { patients, consultations, prescriptions, addPatient, updatePatient, deletePatient } = useMedicalData();
+  const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
 
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -175,6 +175,15 @@ export default function Patients() {
     window.alert('Le dossier patient a été supprimé.');
   }
 
+  function handleRestorePatient(patientId: string) {
+    const confirmed = window.confirm('Voulez-vous restaurer ce dossier patient dans la liste active ?');
+    if (!confirmed) return;
+    const restored = restoreDeletedPatient(patientId);
+    window.alert(restored
+      ? 'Le dossier patient a été restauré.'
+      : 'La restauration a échoué. Vérifiez que le patient n’existe pas déjà dans la liste active.');
+  }
+
   function displayDate(value: string) {
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? value : date.toLocaleString('fr-FR');
@@ -310,7 +319,7 @@ export default function Patients() {
         .patient-status { background:#e2f8f1; color:#21866e; border-radius:20px; padding:6px 11px; font-size:12px; font-weight:600; }
         .patient-view { border:1px solid #42d5b4; background:transparent; color:inherit; border-radius:9px; padding:8px 12px; cursor:pointer; }
         .patient-delete { border:1px solid #d97777; background:transparent; color:#b54747; border-radius:9px; padding:8px 12px; cursor:pointer; font-weight:600; }
-        .patient-form,.patient-detail { display:grid; gap:14px; padding:20px; background:var(--surface,#fff); border:1px solid var(--border,#e5ebef); border-radius:16px; }
+        .patient-trash { display:grid; gap:12px; padding:18px; border:1px solid var(--border,#e5ebef); border-radius:16px; background:var(--surface,#fff); }\n        .patient-trash-item { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:12px; border:1px solid var(--border,#e5ebef); border-radius:11px; }\n        .patient-form,.patient-detail { display:grid; gap:14px; padding:20px; background:var(--surface,#fff); border:1px solid var(--border,#e5ebef); border-radius:16px; }
         .patient-form input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--border,#dce4e8); border-radius:10px; background:var(--surface,#fff); color:inherit; font:inherit; }
         .patient-detail h3 { margin:0; }
         .patient-detail p { margin:0; }
@@ -397,6 +406,30 @@ export default function Patients() {
         ))}
         {filtered.length === 0 && <p>Aucun patient trouvé.</p>}
       </div>
+
+      <section className="patient-trash">
+        <div>
+          <h3 style={{ margin: '0 0 5px' }}>Corbeille des patients ({deletedPatients.length})</h3>
+          <p className="patient-empty-history">Les dossiers supprimés sans historique médical sont conservés ici et peuvent être restaurés.</p>
+        </div>
+        {deletedPatients.length === 0 ? (
+          <p className="patient-empty-history">La corbeille est vide.</p>
+        ) : (
+          [...deletedPatients]
+            .sort((a, b) => new Date(b.deletedAt).getTime() - new Date(a.deletedAt).getTime())
+            .map((record) => (
+              <div className="patient-trash-item" key={record.patient.id}>
+                <div>
+                  <strong>{record.patient.name}</strong>
+                  <div className="patient-meta">Supprimé le {displayDate(record.deletedAt)}</div>
+                </div>
+                <button className="patient-view" onClick={() => handleRestorePatient(record.patient.id)}>
+                  Restaurer le dossier
+                </button>
+              </div>
+            ))
+        )}
+      </section>
 
       {selected && (
         <div className="patient-detail">
