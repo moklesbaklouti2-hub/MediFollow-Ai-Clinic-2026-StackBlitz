@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useClinicalReasoning } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
@@ -150,6 +151,7 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
   const [editingId, setEditingId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
   const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
+  const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(false);
 
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
@@ -263,6 +265,20 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
   })
     .filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`))
     .sort((a, b) => (a.priority === 'high' ? -1 : 0) - (b.priority === 'high' ? -1 : 0));
+
+  const clinicalReasoning = useClinicalReasoning({
+    enabled: smartCopilotEnabled,
+    patient: selectedPatient,
+    specialty,
+    motif,
+    symptoms,
+    history,
+    vitals,
+    physicalExamination,
+    examination,
+    diagnosis,
+    plan,
+  });
 
   return (
     <section className="consultation-page">
@@ -474,6 +490,109 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
         <span className="consultation-badge">Consultation médicale</span>
       </header>
 
+      <section
+        aria-label="Copilote clinique intelligent"
+        style={{
+          display: 'grid',
+          gap: 12,
+          padding: 16,
+          border: '1px solid var(--border,#dce4e8)',
+          borderRadius: 14,
+          background: 'var(--surface,#fff)',
+        }}
+      >
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: selectedPatient ? 'pointer' : 'not-allowed' }}>
+          <input
+            type="checkbox"
+            checked={smartCopilotEnabled}
+            disabled={!selectedPatient}
+            onChange={(event) => setSmartCopilotEnabled(event.target.checked)}
+            style={{ marginTop: 3 }}
+          />
+          <span>
+            <strong style={{ display: 'block', fontSize: 14 }}>Activer le raisonnement clinique intelligent</strong>
+            <span style={{ display: 'block', marginTop: 4, fontSize: 12, lineHeight: 1.5, color: 'var(--text-secondary,#81909c)' }}>
+              Après une pause de saisie, MediFollow analyse l’ensemble des informations disponibles et choisit la prochaine question utile. L’analyse se met à jour au fil de la consultation, avec une limitation de fréquence.
+            </span>
+          </span>
+        </label>
+        <p style={{ margin: 0, fontSize: 10, lineHeight: 1.5, color: 'var(--text-secondary,#81909c)' }}>
+          En activant cette option, vous autorisez l’envoi à Groq du contexte clinique sans nom, téléphone ni identifiant direct. N’utilisez que des données fictives pendant le développement. L’IA propose une aide à la réflexion ; vous gardez la décision médicale.
+        </p>
+        {!selectedPatient && (
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>Sélectionnez d’abord un patient pour activer l’analyse.</p>
+        )}
+        {smartCopilotEnabled && (
+          <div style={{ display: 'grid', gap: 8, paddingTop: 8, borderTop: '1px solid var(--border,#e5ebef)' }}>
+            <strong style={{ fontSize: 12 }}>
+              {clinicalReasoning.status === 'analyzing' ? 'MediFollow analyse le cas…' :
+               clinicalReasoning.status === 'error' ? 'Analyse momentanément indisponible' :
+               clinicalReasoning.analysis ? 'Analyse clinique évolutive' : 'En attente d’informations cliniques'}
+            </strong>
+            {clinicalReasoning.error && (
+              <p role="status" style={{ margin: 0, color: '#c07836', fontSize: 12 }}>{clinicalReasoning.error}</p>
+            )}
+            {clinicalReasoning.analysis && (
+              <div style={{ display: 'grid', gap: 9, fontSize: 12, lineHeight: 1.55 }}>
+                <div style={{
+                  padding: 11,
+                  borderRadius: 9,
+                  border: '1px solid var(--border,#e5ebef)',
+                  background: 'var(--background,rgba(127,127,127,.04))',
+                }}>
+                  <strong>
+                    {clinicalReasoning.analysis.priority === 'urgent' ? 'Priorité urgente — vérification immédiate' :
+                     clinicalReasoning.analysis.priority === 'attention' ? 'Point nécessitant une attention particulière' :
+                     'Lecture clinique'}
+                  </strong>
+                  <p style={{ margin: '5px 0 0' }}>{clinicalReasoning.analysis.situationSummary}</p>
+                  {clinicalReasoning.analysis.priorityReason && (
+                    <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.priorityReason}</p>
+                  )}
+                </div>
+                {clinicalReasoning.analysis.nextQuestion && (
+                  <div style={{ padding: 11, borderRadius: 9, borderLeft: '3px solid #38bfa6', background: 'var(--background,rgba(127,127,127,.04))' }}>
+                    <strong>Prochaine question utile</strong>
+                    <p style={{ margin: '5px 0' }}>{clinicalReasoning.analysis.nextQuestion}</p>
+                    {clinicalReasoning.analysis.whyThisQuestion && (
+                      <p style={{ margin: 0, color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.whyThisQuestion}</p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => onAskCopilot?.(clinicalReasoning.analysis!.nextQuestion)}
+                      style={{ marginTop: 8, border: 0, borderRadius: 7, padding: '8px 11px', background: '#42d5b4', color: '#12332f', fontWeight: 700, fontSize: 11 }}
+                    >
+                      Continuer avec l’Orb
+                    </button>
+                  </div>
+                )}
+                {clinicalReasoning.analysis.pointsToVerify.length > 0 && (
+                  <div>
+                    <strong>Points à vérifier</strong>
+                    <ul style={{ margin: '5px 0 0', paddingLeft: 19 }}>
+                      {clinicalReasoning.analysis.pointsToVerify.map((point, index) => <li key={index}>{point}</li>)}
+                    </ul>
+                  </div>
+                )}
+                {clinicalReasoning.analysis.hypotheses.length > 0 && (
+                  <div>
+                    <strong>Hypothèses à discuter — non confirmées</strong>
+                    {clinicalReasoning.analysis.hypotheses.map((item, index) => (
+                      <p key={index} style={{ margin: '5px 0' }}>
+                        <b>{item.label}</b> · confiance {item.confidence}. {item.reason}
+                      </p>
+                    ))}
+                  </div>
+                )}
+                <span style={{ color: 'var(--text-secondary,#81909c)', fontSize: 10 }}>
+                  Dernière analyse : {clinicalReasoning.updatedAt}. À vérifier par le médecin ; ce résultat n’est pas un diagnostic.
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+      </section>
+
       {clinicalSuggestions.length > 0 && (
         <section
           aria-live="polite"
@@ -491,9 +610,9 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
           }}
         >
           <div>
-            <strong style={{ fontSize: 15 }}>Copilote clinique · Suggestions contextuelles</strong>
+            <strong style={{ fontSize: 15 }}>Rappels cliniques locaux</strong>
             <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 12 }}>
-              Détection locale à partir des champs saisis. Ces rappels ne constituent ni un diagnostic ni une validation médicale.
+              Rappels déterministes limités, distincts du raisonnement intelligent évolutif ci-dessus. Ils ne constituent ni un diagnostic ni une validation médicale.
             </p>
           </div>
           {clinicalSuggestions.map((suggestion) => (
