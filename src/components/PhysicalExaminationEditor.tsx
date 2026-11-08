@@ -171,12 +171,12 @@ export default function PhysicalExaminationEditor({ value = {}, onChange }: Prop
         .physical-exam-editor { display:grid; gap:12px; }
         .pex-section { border:1px solid var(--border,#e5ebef); border-radius:12px; padding:14px; display:grid; gap:12px; }
         .pex-section h4 { margin:0; font-size:15px; }
-        .pex-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(125px,.55fr) minmax(0,1fr); gap:8px; align-items:center; }
+        .pex-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(150px,.55fr); gap:8px; align-items:center; }
         .pex-row label { font-size:13px; font-weight:600; }
-        .pex-row input,.pex-row select { min-width:0; width:100%; box-sizing:border-box; padding:9px; border:1px solid var(--border,#dce4e8); border-radius:8px; background:var(--surface,#fff); color:inherit; font:inherit; }
+        .pex-row select,.pex-row textarea { min-width:0; width:100%; box-sizing:border-box; padding:9px; border:1px solid var(--border,#dce4e8); border-radius:8px; background:var(--surface,#fff); color:inherit; font:inherit; }
+        .pex-row textarea { grid-column:1/-1; resize:vertical; }
         .pex-note { margin:0; font-size:12px; color:#81909c; }
-        @media(max-width:650px) { .pex-row { grid-template-columns:1fr 1fr; } .pex-row label { grid-column:1/-1; } }
-        @media(max-width:390px) { .pex-row { grid-template-columns:1fr; } .pex-row label { grid-column:auto; } }
+        @media(max-width:480px) { .pex-row { grid-template-columns:1fr; } }
       `}</style>
       <p className="pex-note">Renseignez uniquement les éléments réellement examinés. Un champ vide ou « Non renseigné » ne signifie jamais « normal ».</p>
       {sections.map((section) => (
@@ -196,33 +196,18 @@ export default function PhysicalExaminationEditor({ value = {}, onChange }: Prop
                     <option key={status} value={status}>{statusLabels[status]}</option>
                   ))}
                 </select>
-                <input
-                  aria-label={`Valeur ou constatation : ${finding.label}`}
-                  placeholder="Valeur / constatation"
-                  value={current?.value ?? ''}
-                  onChange={(event) => updateFinding(section.key, finding.key, { value: event.target.value })}
-                />
-                <input
-                  aria-label={`Commentaire : ${finding.label}`}
-                  placeholder="Commentaire (facultatif)"
-                  value={current?.comment ?? ''}
-                  onChange={(event) => updateFinding(section.key, finding.key, { comment: event.target.value })}
+                <textarea
+                  aria-label={`Constatations et commentaires : ${finding.label}`}
+                  rows={2}
+                  placeholder="Valeur, constatations et commentaires…"
+                  value={[current?.value, current?.comment].filter(Boolean).join(' — ')}
+                  onChange={(event) => updateFinding(section.key, finding.key, { value: event.target.value, comment: '' })}
                 />
               </div>
             );
           })}
         </details>
       ))}
-      <div className="pex-section">
-        <strong>Commentaires complémentaires</strong>
-        <textarea
-          rows={4}
-          value={value.detailedComment ?? ''}
-          onChange={(event) => onChange({ ...value, detailedComment: event.target.value })}
-          placeholder="Précisions libres sur l’examen clinique…"
-          style={{ width: '100%', boxSizing: 'border-box', padding: 12, border: '1px solid var(--border,#dce4e8)', borderRadius: 9, background: 'var(--surface,#fff)', color: 'inherit', font: 'inherit' }}
-        />
-      </div>
     </div>
   );
 }
