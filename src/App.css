@@ -6609,3 +6609,46 @@ textarea {
     animation: none !important;
   }
 }
+
+
+/* COPILOT IA — orb compact, sans modifier le réseau neuronal */
+.premium-copilot .premium-copilot-header {
+  min-height: 142px !important;
+}
+.premium-copilot .holographic-orb {
+  width: 116px !important;
+  height: 116px !important;
+  flex: 0 0 116px !important;
+}
+.premium-copilot .holographic-orb > div {
+  width: 112px !important;
+  height: 112px !important;
+}
+.premium-copilot .copilot-identity {
+  gap: 16px !important;
+}
+@media (max-width: 750px) {
+  .premium-copilot .premium-copilot-header {
+    min-height: 112px !important;
+  }
+  .premium-copilot .holographic-orb {
+    width: 92px !important;
+    height: 92px !important;
+    flex-basis: 92px !important;
+  }
+  .premium-copilot .holographic-orb > div {
+    width: 90px !important;
+    height: 90px !important;
+  }
+}
+@media (max-width: 450px) {
+  .premium-copilot .holographic-orb {
+    width: 78px !important;
+    height: 78px !important;
+    flex-basis: 78px !important;
+  }
+  .premium-copilot .holographic-orb > div {
+    width: 76px !important;
+    height: 76px !important;
+  }
+}
