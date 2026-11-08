@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
+import { getMedicalData } from '../services/storage';
 
 type SettingsProps = {
   themePreference: string;
@@ -22,6 +23,28 @@ export default function Settings({
   const [confirmBeforePrescription, setConfirmBeforePrescription] =
     useState(settings.confirmBeforePrescription);
   const [message, setMessage] = useState('');
+
+  function exportBackup() {
+    const backup = {
+      application: 'MediFollow AI',
+      formatVersion: 1,
+      exportedAt: new Date().toISOString(),
+      data: getMedicalData(),
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], {
+      type: 'application/json;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    link.href = url;
+    link.download = `medifollow-sauvegarde-${date}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setMessage('Sauvegarde téléchargée. Conservez ce fichier dans un endroit sûr.');
+  }
 
   function saveSettings() {
     updateSettings({
@@ -160,6 +183,15 @@ export default function Settings({
           color:#21866e;
           font-size:13px;
           line-height:1.5;
+        }
+        .settings-backup-button {
+          border:1px solid #42bfa4;
+          border-radius:11px;
+          padding:13px 18px;
+          background:var(--surface,#fff);
+          color:var(--text-primary,#20334b);
+          font-weight:700;
+          cursor:pointer;
         }
         .settings-note {
           color:#81909c;
@@ -305,6 +337,19 @@ export default function Settings({
             }
           />
         </div>
+      </div>
+
+      <div className="settings-section">
+        <h3>05 · Sauvegarde des données</h3>
+        <p className="settings-description">
+          Exportez les patients, consultations, ordonnances et paramètres dans un fichier de sauvegarde JSON.
+        </p>
+        <button className="settings-backup-button" onClick={exportBackup}>
+          Télécharger une sauvegarde complète
+        </button>
+        <p className="settings-note">
+          Faites régulièrement une sauvegarde et conservez-la dans un emplacement sûr. Ce fichier contient des données potentiellement sensibles.
+        </p>
       </div>
 
       <button className="settings-save" onClick={saveSettings}>
