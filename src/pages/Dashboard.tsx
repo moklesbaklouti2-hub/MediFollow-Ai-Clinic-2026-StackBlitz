@@ -7,220 +7,293 @@ type DashboardProps = {
   onOpenCopilot: () => void;
 };
 
+type PatientRecord = {
+  id: string;
+  name: string;
+  status?: string;
+};
+
 type ConsultationRecord = {
   id: string;
   date: string;
   patient: string;
   motif: string;
   diagnosis?: string;
+  vitals?: {
+    systolic?: string;
+    diastolic?: string;
+    heartRate?: string;
+    spo2?: string;
+    temperature?: string;
+    respiratoryRate?: string;
+    weight?: string;
+    glycemia?: string;
+  };
 };
+
+type PrescriptionRecord = { id: string; date?: string };
 
 type DashboardData = {
-  patients: number;
-  consultations: number;
-  prescriptions: number;
-  recentConsultations: ConsultationRecord[];
-  monthlyActivity: { label: string; count: number }[];
-  last30Days: number;
+  patients: PatientRecord[];
+  consultations: ConsultationRecord[];
+  prescriptions: PrescriptionRecord[];
 };
 
-function readArray(key: string): unknown[] | null {
+function readArray<T>(key: string): T[] {
   try {
-    const saved = localStorage.getItem(key);
-    if (saved === null) return null;
-    const parsed = JSON.parse(saved);
-    return Array.isArray(parsed) ? parsed : null;
-  } catch (error) {
-    console.error('Erreur de lecture du tableau de bord :', error);
-    return null;
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed as T[] : [];
+  } catch {
+    return [];
   }
 }
 
 function loadDashboardData(patientFallback: number, consultationFallback: number): DashboardData {
-  const patients = readArray('medifollow-patients');
-  const consultations = readArray('medifollow-consultations');
-  const prescriptions = readArray('medifollow-prescriptions');
-  const valid = ((consultations || []) as ConsultationRecord[])
-    .filter((item) => item && item.date && item.patient)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  const now = new Date();
-  const monthlyActivity = Array.from({ length: 6 }, (_, index) => {
-    const monthDate = new Date(now.getFullYear(), now.getMonth() - (5 - index), 1);
-    const count = valid.filter((item) => {
-      const date = new Date(item.date);
-      return date.getFullYear() === monthDate.getFullYear() && date.getMonth() === monthDate.getMonth();
-    }).length;
-    return {
-      label: monthDate.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''),
-      count,
-    };
-  });
-
-  const thirtyDaysAgo = new Date(now);
-  thirtyDaysAgo.setDate(now.getDate() - 30);
-
+  const patients = readArray<PatientRecord>('medifollow-patients');
+  const consultations = readArray<ConsultationRecord>('medifollow-consultations');
+  const prescriptions = readArray<PrescriptionRecord>('medifollow-prescriptions');
   return {
-    patients: patients === null ? patientFallback : patients.length,
-    consultations: consultations === null ? consultationFallback : consultations.length,
-    prescriptions: prescriptions === null ? 0 : prescriptions.length,
-    recentConsultations: valid.slice(0, 5),
-    monthlyActivity,
-    last30Days: valid.filter((item) => new Date(item.date) >= thirtyDaysAgo && new Date(item.date) <= now).length,
+    patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
+    consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
+    prescriptions,
   };
 }
 
-export default function Dashboard({
-  patientCount,
-  consultationCount,
-  onStartConsultation,
-  onOpenCopilot,
-}: DashboardProps) {
+function StethoscopeArtwork() {
+  return (
+    <svg className="mf-stethoscope-art" viewBox="0 0 300 220" role="img" aria-label="Illustration lumineuse d'un stéthoscope médical">
+      <defs>
+        <linearGradient id="mfScopeMetal" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f4ffff" />
+          <stop offset=".42" stopColor="#69eaff" />
+          <stop offset="1" stopColor="#168bff" />
+        </linearGradient>
+        <radialGradient id="mfScopeGlow"><stop stopColor="#00dfff" stopOpacity=".38"/><stop offset="1" stopColor="#00dfff" stopOpacity="0"/></radialGradient>
+        <filter id="mfScopeShadow"><feGaussianBlur stdDeviation="5"/></filter>
+      </defs>
+      <ellipse cx="154" cy="117" rx="128" ry="105" fill="url(#mfScopeGlow)"/>
+      <ellipse cx="154" cy="117" rx="104" ry="88" fill="none" stroke="#42dfff" strokeOpacity=".16" strokeWidth="1.2"/>
+      <path d="M78 32v50c0 44 22 69 67 69s68-25 68-69V32" fill="none" stroke="#0076bd" strokeOpacity=".35" strokeWidth="19" strokeLinecap="round" filter="url(#mfScopeShadow)"/>
+      <path d="M78 30v51c0 44 22 69 67 69s68-25 68-69V30" fill="none" stroke="url(#mfScopeMetal)" strokeWidth="12" strokeLinecap="round"/>
+      <path d="M78 30v51c0 44 22 69 67 69s68-25 68-69V30" fill="none" stroke="#f4ffff" strokeOpacity=".72" strokeWidth="2.2" strokeLinecap="round"/>
+      <rect x="62" y="18" width="32" height="24" rx="9" fill="#0a3e68" stroke="#74eaff" strokeWidth="3"/>
+      <rect x="197" y="18" width="32" height="24" rx="9" fill="#0a3e68" stroke="#74eaff" strokeWidth="3"/>
+      <path d="M145 150v23c0 18 14 29 30 29s29-11 29-27" fill="none" stroke="url(#mfScopeMetal)" strokeWidth="10" strokeLinecap="round"/>
+      <circle cx="204" cy="174" r="24" fill="#0a3761" stroke="#5be8ff" strokeWidth="5"/>
+      <circle cx="204" cy="174" r="13" fill="#123e68" stroke="#d6fbff" strokeOpacity=".8" strokeWidth="2"/>
+      <circle cx="204" cy="174" r="5" fill="#00e6c3"/>
+      <path d="M145 145v16" stroke="#eaffff" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="145" cy="145" r="5" fill="#eaffff"/>
+    </svg>
+  );
+}
+
+function DoctorRobotArtwork() {
+  return (
+    <svg className="mf-doctor-robot" viewBox="0 0 260 290" role="img" aria-label="Robot assistant médical en blouse blanche avec stéthoscope">
+      <defs>
+        <linearGradient id="mfRobotCoat" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ffffff"/><stop offset=".55" stopColor="#d9f2ff"/><stop offset="1" stopColor="#8ec9e8"/></linearGradient>
+        <linearGradient id="mfRobotMetal" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#b9fbff"/><stop offset=".5" stopColor="#24c8f2"/><stop offset="1" stopColor="#1472bf"/></linearGradient>
+        <radialGradient id="mfRobotAura"><stop stopColor="#00dfff" stopOpacity=".34"/><stop offset="1" stopColor="#00dfff" stopOpacity="0"/></radialGradient>
+        <filter id="mfRobotGlow"><feGaussianBlur stdDeviation="7"/></filter>
+      </defs>
+      <ellipse cx="130" cy="152" rx="119" ry="132" fill="url(#mfRobotAura)"/>
+      <ellipse cx="130" cy="271" rx="75" ry="10" fill="#00b9ed" opacity=".24" filter="url(#mfRobotGlow)"/>
+      <path d="M104 66V48M156 66V48" stroke="#7beaff" strokeWidth="6" strokeLinecap="round"/>
+      <circle cx="104" cy="43" r="7" fill="#0d5e93" stroke="#a8f6ff" strokeWidth="3"/>
+      <circle cx="156" cy="43" r="7" fill="#0d5e93" stroke="#a8f6ff" strokeWidth="3"/>
+      <rect x="77" y="58" width="106" height="94" rx="35" fill="url(#mfRobotMetal)" stroke="#9af5ff" strokeWidth="3"/>
+      <rect x="87" y="70" width="86" height="66" rx="25" fill="#082b50" stroke="#4fdcf8" strokeWidth="2"/>
+      <ellipse cx="111" cy="101" rx="8" ry="11" fill="#b5fbff"/>
+      <ellipse cx="149" cy="101" rx="8" ry="11" fill="#b5fbff"/>
+      <path d="M113 120q17 13 34 0" fill="none" stroke="#4ce7e0" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="92" cy="112" r="4" fill="#00e6c3"/><circle cx="168" cy="112" r="4" fill="#00e6c3"/>
+      <path d="M64 177q7-25 34-29h64q27 4 34 29l18 82H46Z" fill="url(#mfRobotCoat)" stroke="#bcecff" strokeWidth="3"/>
+      <path d="M99 151l31 33 31-33-10 108h-42Z" fill="#f8fdff" stroke="#b5dff4" strokeWidth="2"/>
+      <path d="M130 184v74" stroke="#8bbbd5" strokeWidth="2"/>
+      <path d="M95 163q-23 28-25 74M165 163q23 28 25 74" fill="none" stroke="#9bcce5" strokeWidth="4" strokeLinecap="round"/>
+      <path d="M103 169q-13 15-13 40t16 29q15 7 24-10" fill="none" stroke="#118fc4" strokeWidth="5" strokeLinecap="round"/>
+      <circle cx="130" cy="228" r="9" fill="#0c5684" stroke="#65eaff" strokeWidth="3"/>
+      <path d="M130 219v-9q0-8 9-8h8" fill="none" stroke="#168fc7" strokeWidth="4" strokeLinecap="round"/>
+      <path d="M115 188h10v13h-10z" fill="#168fc7" opacity=".75"/>
+      <path d="M139 188h10v13h-10z" fill="#168fc7" opacity=".75"/>
+      <circle cx="130" cy="17" r="3" fill="#b5fbff"/><circle cx="36" cy="115" r="3" fill="#6feaff"/><circle cx="218" cy="92" r="3" fill="#00e6c3"/>
+    </svg>
+  );
+}
+
+export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot }: DashboardProps) {
   const [data, setData] = useState<DashboardData>(() => loadDashboardData(patientCount, consultationCount));
 
   useEffect(() => {
-    const refreshData = () => setData(loadDashboardData(patientCount, consultationCount));
-    refreshData();
-    window.addEventListener('storage', refreshData);
-    window.addEventListener('focus', refreshData);
-    window.addEventListener('medifollow:data-updated', refreshData);
+    const refresh = () => setData(loadDashboardData(patientCount, consultationCount));
+    refresh();
+    window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('medifollow:data-updated', refresh);
     return () => {
-      window.removeEventListener('storage', refreshData);
-      window.removeEventListener('focus', refreshData);
-      window.removeEventListener('medifollow:data-updated', refreshData);
+      window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('medifollow:data-updated', refresh);
     };
   }, [patientCount, consultationCount]);
 
-  const chartPoints = useMemo(() => {
-    const max = Math.max(1, ...data.monthlyActivity.map((item) => item.count));
-    return data.monthlyActivity.map((item, index) => ({
-      ...item,
-      x: 24 + index * 92,
-      y: 132 - (item.count / max) * 104,
-    }));
-  }, [data.monthlyActivity]);
+  const now = new Date();
+  const currentMonth = data.consultations.filter(item => {
+    if (!item.date) return false;
+    const date = new Date(item.date);
+    return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+  }).length;
+  const followUpCount = data.patients.filter(item => /suivi|actif|en cours/i.test(item.status || '')).length;
+  const validConsultations = data.consultations.filter(item => item.date && item.patient)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  const recentConsultations = validConsultations.slice(0, 4);
+  const latestVitals = validConsultations.find(item => item.vitals)?.vitals || {};
 
-  const today = new Date().toLocaleDateString('fr-FR', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  });
+  const monthlyActivity = useMemo(() => Array.from({ length: 6 }, (_, index) => {
+    const date = new Date(now.getFullYear(), now.getMonth() - 5 + index, 1);
+    return {
+      label: date.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''),
+      count: data.consultations.filter(item => {
+        if (!item.date) return false;
+        const d = new Date(item.date);
+        return d.getFullYear() === date.getFullYear() && d.getMonth() === date.getMonth();
+      }).length,
+    };
+  }), [data.consultations]);
+
+  const maxActivity = Math.max(1, ...monthlyActivity.map(item => item.count));
+  const chartPoints = monthlyActivity.map((item, index) => ({
+    ...item, x: 28 + index * 92, y: 122 - (item.count / maxActivity) * 88,
+  }));
+  const monthName = now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+  const indicators = [
+    { label: 'Tension artérielle', value: latestVitals.systolic && latestVitals.diastolic ? `${latestVitals.systolic}/${latestVitals.diastolic}` : '—', unit: 'mmHg', icon: '♥', tone: 'blue' },
+    { label: 'Fréquence cardiaque', value: latestVitals.heartRate || '—', unit: 'bpm', icon: '⌁', tone: 'teal' },
+    { label: 'Saturation SpO₂', value: latestVitals.spo2 || '—', unit: '%', icon: '◉', tone: 'violet' },
+    { label: 'Température', value: latestVitals.temperature || '—', unit: '°C', icon: '♨', tone: 'amber' },
+  ];
 
   return (
-    <section className="dashboard">
+    <section className="dashboard mf-dashboard-page">
       <div className="mf-dashboard">
         <section className="mf-hero">
           <div className="mf-hero-copy">
             <span className="mf-eyebrow">PLATEFORME D'INTELLIGENCE MÉDICALE</span>
             <h2>MediFollow <em>AI</em></h2>
-            <p>Une médecine plus intelligente,<br />pour une meilleure santé.</p>
-            <div className="mf-hero-meta"><span className="mf-live-dot" /> Votre espace clinique · {today}</div>
+            <p>Ensemble pour votre santé.<br />L'intelligence au service du soin.</p>
+            <div className="mf-hero-meta"><span className="mf-live-dot" /> Votre espace clinique · {monthName}</div>
           </div>
           <div className="mf-hero-art" aria-hidden="true">
             <div className="mf-hero-orbit mf-hero-orbit-one" />
             <div className="mf-hero-orbit mf-hero-orbit-two" />
-            <svg viewBox="0 0 540 190" role="img">
-              <defs>
-                <linearGradient id="mfEcg" x1="0" x2="1">
-                  <stop offset="0" stopColor="#12c9e8" stopOpacity=".15" />
-                  <stop offset=".5" stopColor="#31f1df" />
-                  <stop offset="1" stopColor="#21a9ff" stopOpacity=".35" />
-                </linearGradient>
-              </defs>
-              <path d="M0 108 H90 L111 108 L128 88 L145 130 L164 24 L184 151 L204 108 H244 L260 96 L274 117 L290 108 H540" fill="none" stroke="url(#mfEcg)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M0 108 H540" stroke="#4bd8ed" strokeOpacity=".12" strokeWidth="1" />
-            </svg>
-            <div className="mf-stethoscope-glow"><span>✚</span></div>
+            <div className="mf-hero-ecg">⌁</div>
+            <StethoscopeArtwork />
           </div>
           <div className="mf-hero-badge">✦ &nbsp; CLINICAL AI WORKSPACE</div>
         </section>
 
-        <section className="mf-stats" aria-label="Statistiques du cabinet">
+        <section className="mf-stats" aria-label="Indicateurs du cabinet">
           <article className="mf-stat mf-stat-blue">
             <div className="mf-stat-top"><span className="mf-stat-icon">♙</span><span className="mf-stat-kicker">BASE PATIENTS</span></div>
-            <strong>{data.patients.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Patients enregistrés</span>
-            <div className="mf-stat-foot"><span>Dossiers disponibles</span><i>●</i></div>
+            <strong>{data.patients.length.toLocaleString('fr-FR')}</strong>
+            <span className="mf-stat-label">Patients inscrits</span>
+            <div className="mf-stat-foot"><span>Dossiers patients</span><i>●</i></div>
           </article>
           <article className="mf-stat mf-stat-teal">
-            <div className="mf-stat-top"><span className="mf-stat-icon">✚</span><span className="mf-stat-kicker">ACTIVITÉ CLINIQUE</span></div>
-            <strong>{data.consultations.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Consultations enregistrées</span>
-            <div className="mf-stat-foot"><span>{data.last30Days} sur les 30 derniers jours</span><i>●</i></div>
+            <div className="mf-stat-top"><span className="mf-stat-icon">✚</span><span className="mf-stat-kicker">ACTIVITÉ DU MOIS</span></div>
+            <strong>{currentMonth.toLocaleString('fr-FR')}</strong>
+            <span className="mf-stat-label">Consultations ce mois</span>
+            <div className="mf-stat-foot"><span>{monthName}</span><i>●</i></div>
           </article>
           <article className="mf-stat mf-stat-violet">
             <div className="mf-stat-top"><span className="mf-stat-icon">▤</span><span className="mf-stat-kicker">PRESCRIPTIONS</span></div>
-            <strong>{data.prescriptions.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Ordonnances enregistrées</span>
-            <div className="mf-stat-foot"><span>Historique des prescriptions</span><i>●</i></div>
+            <strong>{data.prescriptions.length.toLocaleString('fr-FR')}</strong>
+            <span className="mf-stat-label">Ordonnances émises</span>
+            <div className="mf-stat-foot"><span>Historique enregistré</span><i>●</i></div>
           </article>
           <article className="mf-stat mf-stat-amber">
-            <div className="mf-stat-top"><span className="mf-stat-icon">◷</span><span className="mf-stat-kicker">SUIVI RÉCENT</span></div>
-            <strong>{data.last30Days.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Consultations · 30 jours</span>
-            <div className="mf-stat-foot"><span>Activité calculée sur vos dossiers</span><i>●</i></div>
+            <div className="mf-stat-top"><span className="mf-stat-icon">◷</span><span className="mf-stat-kicker">SUIVI CLINIQUE</span></div>
+            <strong>{followUpCount.toLocaleString('fr-FR')}</strong>
+            <span className="mf-stat-label">Suivi des patients</span>
+            <div className="mf-stat-foot"><span>Dossiers actifs ou en suivi</span><i>●</i></div>
           </article>
         </section>
 
         <section className="mf-dashboard-grid">
           <article className="mf-panel mf-chart-panel">
-            <div className="mf-panel-heading">
-              <div><span className="mf-panel-overline">VUE D'ENSEMBLE</span><h3>Évolution de l'activité</h3></div>
-              <span className="mf-panel-chip">6 derniers mois</span>
-            </div>
-            <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Données réelles enregistrées</span></div>
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">ANALYSE DE L'ACTIVITÉ</span><h3>Graphique des consultations</h3></div><span className="mf-panel-chip">6 derniers mois</span></div>
+            <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Historique réel</span></div>
             <div className="mf-chart-wrap">
-              <svg viewBox="0 0 520 170" preserveAspectRatio="none" aria-label="Consultations mensuelles">
-                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#13c9ff" stopOpacity=".42" /><stop offset="1" stopColor="#13c9ff" stopOpacity="0" /></linearGradient></defs>
-                {[30, 70, 110, 150].map((y) => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline" />)}
-                <polygon points={`20,150 ${chartPoints.map((p) => `${p.x},${p.y}`).join(' ')} 480,150`} className="mf-chart-area" />
-                <polyline points={chartPoints.map((p) => `${p.x},${p.y}`).join(' ')} className="mf-chart-line" />
-                {chartPoints.map((p) => <circle key={p.label} cx={p.x} cy={p.y} r="4.5" className="mf-chart-point" />)}
+              <svg viewBox="0 0 520 150" preserveAspectRatio="none" aria-label="Graphique des consultations mensuelles">
+                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#12dfff" stopOpacity=".42"/><stop offset="1" stopColor="#12dfff" stopOpacity="0"/></linearGradient></defs>
+                {[28, 58, 88, 118].map(y => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline"/>)}
+                <polygon points={`20,130 ${chartPoints.map(p => `${p.x},${p.y}`).join(' ')} 488,130`} className="mf-chart-area"/>
+                <polyline points={chartPoints.map(p => `${p.x},${p.y}`).join(' ')} className="mf-chart-line"/>
+                {chartPoints.map(p => <circle key={p.label} cx={p.x} cy={p.y} r="5" className="mf-chart-point"/>)}
               </svg>
             </div>
-            <div className="mf-chart-labels">{chartPoints.map((point) => <span key={point.label}>{point.label}<b>{point.count}</b></span>)}</div>
+            <div className="mf-chart-labels">{chartPoints.map(point => <span key={point.label}>{point.label}<b>{point.count}</b></span>)}</div>
           </article>
 
-          <article className="mf-panel mf-recent-panel">
-            <div className="mf-panel-heading">
-              <div><span className="mf-panel-overline">DOSSIERS RÉCENTS</span><h3>Dernières consultations</h3></div>
-              <span className="mf-panel-count">{data.recentConsultations.length}</span>
-            </div>
-            {data.recentConsultations.length === 0 ? (
-              <div className="mf-empty-state"><span>◷</span><strong>Aucune activité pour le moment</strong><p>Vos consultations enregistrées apparaîtront ici.</p></div>
-            ) : (
-              <div className="mf-activity-list">
-                {data.recentConsultations.map((item, index) => (
-                  <div className="mf-activity-item" key={item.id}>
-                    <span className={`mf-activity-avatar mf-avatar-${index % 4}`}>{(item.patient || '?').trim().charAt(0).toUpperCase()}</span>
-                    <div className="mf-activity-copy"><strong>{item.patient}</strong><span>{item.motif || 'Motif non renseigné'}</span><small>{new Date(item.date).toLocaleDateString('fr-FR')}</small></div>
-                    <span className="mf-activity-arrow">↗</span>
-                  </div>
-                ))}
-              </div>
-            )}
+          <article className="mf-panel mf-appointments-panel">
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">AGENDA CLINIQUE</span><h3>Prochains rendez-vous</h3></div><span className="mf-panel-count">—</span></div>
+            <div className="mf-empty-state mf-appointment-empty"><span>◷</span><strong>Aucun rendez-vous planifié</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p></div>
           </article>
 
           <article className="mf-panel mf-quick-panel">
             <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
-            <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir le dossier clinique</small></div><b>→</b></button>
+            <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenCopilot}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
             <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
           </article>
 
           <article className="mf-copilot-card">
-            <div className="mf-copilot-orb"><span>✧</span></div>
-            <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
-            <h3>Votre Copilote IA</h3>
-            <p>Un assistant clinique à chaque étape de votre pratique.</p>
-            <ul><li>Analyser un dossier clinique</li><li>Explorer un diagnostic différentiel</li><li>Structurer une prise en charge</li></ul>
-            <button onClick={onOpenCopilot}>Discuter maintenant <span>→</span></button>
+            <div className="mf-copilot-copy">
+              <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
+              <h3>Votre Copilote IA</h3>
+              <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
+              <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
+              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
+            </div>
+            <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
+          </article>
+
+          <article className="mf-panel mf-indicators-panel">
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">DONNÉES CLINIQUES</span><h3>Indicateurs cliniques clés</h3></div><span className="mf-panel-chip">Dernière consultation</span></div>
+            <div className="mf-indicators-grid">
+              {indicators.map(item => (
+                <div className={`mf-indicator mf-indicator-${item.tone}`} key={item.label}>
+                  <span className="mf-indicator-icon">{item.icon}</span>
+                  <div><small>{item.label}</small><strong>{item.value}<em>{item.unit}</em></strong></div>
+                </div>
+              ))}
+            </div>
+            <p className="mf-indicator-note">Valeurs issues de la dernière consultation contenant des constantes renseignées. « — » signifie non renseigné.</p>
           </article>
         </section>
 
-        <footer className="mf-dashboard-footer">
-          <span>◈ &nbsp; Sécurité & confidentialité</span>
-          <i />
-          <strong>MediFollow AI</strong>
-          <span>Ensemble pour votre santé <b>♡</b></span>
-        </footer>
+        <section className="mf-panel mf-recent-panel">
+          <div className="mf-panel-heading"><div><span className="mf-panel-overline">HISTORIQUE CLINIQUE</span><h3>Consultations récentes</h3></div><span className="mf-panel-count">{recentConsultations.length}</span></div>
+          {recentConsultations.length === 0 ? (
+            <div className="mf-empty-state"><span>◷</span><strong>Aucune consultation enregistrée</strong><p>Vos consultations récentes apparaîtront ici.</p></div>
+          ) : (
+            <div className="mf-activity-list">
+              {recentConsultations.map((item, index) => (
+                <div className="mf-activity-item" key={item.id}>
+                  <span className={`mf-activity-avatar mf-avatar-${index % 4}`}>{(item.patient || '?').trim().charAt(0).toUpperCase()}</span>
+                  <div className="mf-activity-copy"><strong>{item.patient}</strong><span>{item.motif || 'Motif non renseigné'}</span><small>{new Date(item.date).toLocaleDateString('fr-FR')}</small></div>
+                  <span className="mf-activity-arrow">↗</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <footer className="mf-dashboard-footer"><span>◈ &nbsp; Sécurité & confidentialité</span><i/><strong>MediFollow AI</strong><span>Ensemble pour votre santé <b>♡</b></span></footer>
       </div>
     </section>
   );
