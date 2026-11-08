@@ -1,28 +1,9 @@
-import { useEffect, useState } from 'react';
-
-type Medication = {
-  id: number;
-  name: string;
-  dosage: string;
-  route: string;
-  frequency: string;
-  duration: string;
-  instructions: string;
-};
-
-type PrescriptionRecord = {
-  id: string;
-  patient: string;
-  date: string;
-  medications: Medication[];
-  advice: string;
-  savedAt: string;
-};
-
-const STORAGE_KEY = 'medifollow-prescriptions';
+import { useState } from 'react';
+import { useMedicalData } from '../hooks/useMedicalData';
+import type { Medication } from '../types/medical';
 
 const emptyMedication: Medication = {
-  id: 0,
+  id: '',
   name: '',
   dosage: '',
   route: 'Voie orale',
@@ -31,39 +12,16 @@ const emptyMedication: Medication = {
   instructions: '',
 };
 
-function loadPrescriptions(): PrescriptionRecord[] {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch (error) {
-    console.error('Erreur de lecture des ordonnances :', error);
-  }
-  return [];
-}
-
 export default function Prescriptions() {
-  const [patient, setPatient] = useState('');
+  const { patients, prescriptions, addPrescription, deletePrescription } = useMedicalData();
+  const [patientId, setPatientId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [medications, setMedications] = useState<Medication[]>([]);
   const [advice, setAdvice] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [savedMessage, setSavedMessage] = useState('');
-  const [prescriptions, setPrescriptions] =
-    useState<PrescriptionRecord[]>(loadPrescriptions);
-
   const [medication, setMedication] =
     useState<Medication>({ ...emptyMedication });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(prescriptions));
-    } catch (error) {
-      console.error('Erreur de sauvegarde des ordonnances :', error);
-    }
-  }, [prescriptions]);
 
   function updateMedication(field: keyof Medication, value: string) {
     setMedication((previous) => ({ ...previous, [field]: value }));
@@ -77,7 +35,7 @@ export default function Prescriptions() {
 
     setMedications((previous) => [
       ...previous,
-      { ...medication, id: Date.now() },
+      { ...medication, id: crypto.randomUUID() },
     ]);
 
     setMedication({ ...emptyMedication });
@@ -85,7 +43,7 @@ export default function Prescriptions() {
     setSavedMessage('');
   }
 
-  function removeMedication(id: number) {
+  function removeMedication(id: string) {
     setMedications((previous) =>
       previous.filter((item) => item.id !== id)
     );
@@ -94,8 +52,8 @@ export default function Prescriptions() {
   }
 
   function validatePrescription() {
-    if (!patient.trim()) {
-      alert('Veuillez saisir le nom du patient.');
+    if (!patientId) {
+      alert('Veuillez sélectionner un patient enregistré.');
       return false;
     }
 
@@ -116,24 +74,11 @@ export default function Prescriptions() {
   function savePrescription() {
     if (!validatePrescription()) return;
 
-    const record: PrescriptionRecord = {
-      id:
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}`,
-      patient: patient.trim(),
-      date,
-      medications: medications.map((item) => ({ ...item })),
-      advice,
-      savedAt: new Date().toISOString(),
-    };
-
-    setPrescriptions((previous) => [record, ...previous]);
     setSavedMessage('Ordonnance enregistrée avec succès sur cet appareil.');
   }
 
-  function openPrescription(item: PrescriptionRecord) {
-    setPatient(item.patient);
+  function openPrescription(item: (typeof prescriptions)[number]) {
+    setPatientId(item.patientId);
     setDate(item.date);
     setMedications(item.medications.map((med) => ({ ...med })));
     setAdvice(item.advice);
@@ -142,18 +87,13 @@ export default function Prescriptions() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function deletePrescription(id: string) {
-    if (!window.confirm('Supprimer définitivement cette ordonnance ?')) {
-      return;
-    }
-
-    setPrescriptions((previous) =>
-      previous.filter((item) => item.id !== id)
-    );
+  function confirmDeletePrescription(id: string) {
+    if (!window.confirm('Supprimer définitivement cette ordonnance ?')) return;
+    deletePrescription(id);
   }
 
   function resetForm() {
-    setPatient('');
+    setPatientId('');
     setDate(new Date().toISOString().slice(0, 10));
     setMedications([]);
     setAdvice('');
@@ -226,11 +166,13 @@ export default function Prescriptions() {
         <div className="prescription-grid">
           <div className="prescription-field">
             <label>Nom et prénom du patient</label>
-            <input
-              value={patient}
-              onChange={(e) => setPatient(e.target.value)}
-              placeholder="Nom du patient"
-            />
+            <select value={patientId} onChange={(e) => setPatientId(e.target.value)}>
+              <option value="">Choisir un patient enregistré</option>
+              {patients.map((item) => (
+                <option key={item.id} value={item.id}>{item.name} · {item.age} ans</option>
+              ))}
+            </select>
+            {patients.length === 0 && <p className="prescription-empty">Créez d'abord un dossier dans la rubrique Patients.</p>}
           </div>
           <div className="prescription-field">
             <label>Date de prescription</label>
@@ -363,7 +305,7 @@ export default function Prescriptions() {
           Prévisualiser l'ordonnance
         </button>
 
-        <button className="prescription-primary" onClick={savePrescription}>
+        <button className="prescription-primary" onClick={savePrescription} disabled={patients.length === 0}>
           Enregistrer l'ordonnance
         </button>
 
@@ -380,7 +322,7 @@ export default function Prescriptions() {
         <div className="prescription-preview">
           <span className="preview-label">APERÇU DE L'ORDONNANCE</span>
           <h3>ORDONNANCE MÉDICALE</h3>
-          <p><strong>Patient :</strong> {patient}</p>
+          <p><strong>Patient :</strong> {patients.find((item) => item.id === patientId)?.name || 'Patient non identifié'}</p>
           <p><strong>Date :</strong> {date}</p>
 
           <table>
@@ -430,7 +372,7 @@ export default function Prescriptions() {
           <div className="prescription-list">
             {prescriptions.map((item) => (
               <div className="history-card" key={item.id}>
-                <strong>{item.patient}</strong>
+                <strong>{patients.find((patient) => patient.id === item.patientId)?.name || 'Patient non identifié'}</strong>
                 <span>
                   Date de prescription : {item.date}
                 </span>
@@ -448,7 +390,7 @@ export default function Prescriptions() {
 
                   <button
                     className="prescription-remove"
-                    onClick={() => deletePrescription(item.id)}
+                    onClick={() => confirmDeletePrescription(item.id)}
                   >
                     Supprimer
                   </button>
