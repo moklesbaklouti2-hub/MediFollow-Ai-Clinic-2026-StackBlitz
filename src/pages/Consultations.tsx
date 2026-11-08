@@ -1,33 +1,6 @@
-import { useEffect, useState } from 'react';
-
-type Vitals = {
-  systolic: string;
-  diastolic: string;
-  heartRate: string;
-  spo2: string;
-  temperature: string;
-  respiratoryRate: string;
-  weight: string;
-  height: string;
-  glycemia: string;
-};
-
-type ConsultationRecord = {
-  id: string;
-  date: string;
-  patient: string;
-  motif: string;
-  symptoms: string;
-  history: string;
-  vitals: Vitals;
-  examination: string;
-  diagnosis: string;
-  plan: string;
-};
-
-const STORAGE_KEY = 'medifollow-consultations';
-const PATIENTS_KEY = 'medifollow-patients';
-const MANUAL_OPTION = '__manual__';
+import { useState } from 'react';
+import { useMedicalData } from '../hooks/useMedicalData';
+import type { Vitals } from '../types/medical';
 
 const emptyVitals: Vitals = {
   systolic: '',
@@ -41,127 +14,44 @@ const emptyVitals: Vitals = {
   glycemia: '',
 };
 
-function loadConsultations(): ConsultationRecord[] {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch (error) {
-    console.error('Erreur de lecture des consultations :', error);
-  }
-  return [];
-}
-
-function loadRegisteredPatients(): string[] {
-  try {
-    const saved = localStorage.getItem(PATIENTS_KEY);
-    if (!saved) return [];
-
-    const parsed = JSON.parse(saved);
-
-    if (!Array.isArray(parsed)) return [];
-
-    return Array.from(
-      new Set(
-        parsed
-          .map((item: any) => {
-            if (typeof item === 'string') return item.trim();
-            return typeof item?.name === 'string' ? item.name.trim() : '';
-          })
-          .filter((name: string) => name.length > 0)
-      )
-    ).sort((a, b) => a.localeCompare(b, 'fr'));
-  } catch (error) {
-    console.error('Erreur de lecture des patients :', error);
-    return [];
-  }
-}
-
 export default function Consultations() {
-  const [patient, setPatient] = useState('');
-  const [patientMode, setPatientMode] = useState<'select' | 'manual'>('select');
-  const [registeredPatients, setRegisteredPatients] = useState<string[]>(
-    loadRegisteredPatients
-  );
+  const { patients, consultations, addConsultation } = useMedicalData();
 
+  const [patientId, setPatientId] = useState('');
   const [motif, setMotif] = useState('');
   const [symptoms, setSymptoms] = useState('');
   const [history, setHistory] = useState('');
-  const [vitals, setVitals] = useState<Vitals>(emptyVitals);
+  const [vitals, setVitals] = useState<Vitals>({ ...emptyVitals });
   const [examination, setExamination] = useState('');
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
   const [saved, setSaved] = useState(false);
 
-  const [consultations, setConsultations] =
-    useState<ConsultationRecord[]>(loadConsultations);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(consultations));
-    } catch (error) {
-      console.error('Erreur de sauvegarde des consultations :', error);
-    }
-  }, [consultations]);
-
-  useEffect(() => {
-    function refreshPatients() {
-      setRegisteredPatients(loadRegisteredPatients());
-    }
-
-    window.addEventListener('focus', refreshPatients);
-    window.addEventListener('storage', refreshPatients);
-
-    return () => {
-      window.removeEventListener('focus', refreshPatients);
-      window.removeEventListener('storage', refreshPatients);
-    };
-  }, []);
-
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
-  }
-
-  function handlePatientSelection(value: string) {
-    if (value === MANUAL_OPTION) {
-      setPatientMode('manual');
-      setPatient('');
-    } else {
-      setPatientMode('select');
-      setPatient(value);
-    }
     setSaved(false);
   }
 
   function saveConsultation() {
-    if (!patient.trim() || !motif.trim()) {
-      alert('Veuillez renseigner le nom du patient et le motif.');
+    if (!patientId || !motif.trim()) {
+      alert('Veuillez sélectionner un patient enregistré et renseigner le motif.');
       return;
     }
 
-    const newConsultation: ConsultationRecord = {
-      id:
-        typeof crypto !== 'undefined' && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `${Date.now()}`,
+    addConsultation({
+      patientId,
       date: new Date().toISOString(),
-      patient: patient.trim(),
       motif: motif.trim(),
-      symptoms,
-      history,
+      symptoms: symptoms.trim(),
+      history: history.trim(),
       vitals: { ...vitals },
-      examination,
-      diagnosis,
-      plan,
-    };
+      examination: examination.trim(),
+      diagnosis: diagnosis.trim(),
+      plan: plan.trim(),
+    });
 
-    setConsultations((previous) => [newConsultation, ...previous]);
     setSaved(true);
-
-    setPatient('');
-    setPatientMode('select');
+    setPatientId('');
     setMotif('');
     setSymptoms('');
     setHistory('');
@@ -169,7 +59,6 @@ export default function Consultations() {
     setExamination('');
     setDiagnosis('');
     setPlan('');
-
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -189,6 +78,10 @@ export default function Consultations() {
     { key: 'height', label: 'Taille', unit: 'cm', placeholder: '175' },
     { key: 'glycemia', label: 'Glycémie', unit: 'g/L', placeholder: '1.00' },
   ];
+
+  const sortedConsultations = [...consultations].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   return (
     <section className="consultation-page">
@@ -402,63 +295,26 @@ export default function Consultations() {
 
       <div className="consultation-section">
         <h3>01 · Identification</h3>
-
         <div className="consultation-grid">
           <div className="consultation-field">
             <label>Patient *</label>
-
-            {patientMode === 'select' && registeredPatients.length > 0 ? (
-              <select
-                value={patient}
-                onChange={(e) => handlePatientSelection(e.target.value)}
-              >
-                <option value="">Choisir un patient enregistré</option>
-
-                {registeredPatients.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-
-                <option value={MANUAL_OPTION}>
-                  + Saisir un autre patient
+            <select
+              value={patientId}
+              onChange={(e) => {
+                setPatientId(e.target.value);
+                setSaved(false);
+              }}
+            >
+              <option value="">Choisir un patient enregistré</option>
+              {patients.map((patient) => (
+                <option key={patient.id} value={patient.id}>
+                  {patient.name} · {patient.age} ans
                 </option>
-              </select>
-            ) : (
-              <input
-                value={patient}
-                onChange={(e) => {
-                  setPatient(e.target.value);
-                  setSaved(false);
-                }}
-                placeholder="Nom et prénom du patient"
-              />
-            )}
-
-            {patientMode === 'manual' && (
-              <button
-                type="button"
-                onClick={() => {
-                  setPatient('');
-                  setPatientMode('select');
-                }}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  color: '#21866e',
-                  textAlign: 'left',
-                  padding: '4px 0',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                }}
-              >
-                ← Retour à la liste des patients
-              </button>
-            )}
-
-            {registeredPatients.length === 0 && patientMode === 'select' && (
+              ))}
+            </select>
+            {patients.length === 0 && (
               <p className="patient-hint">
-                Aucun patient enregistré. Tu peux saisir son nom manuellement.
+                Aucun patient enregistré. Créez d'abord un dossier dans la rubrique Patients.
               </p>
             )}
           </div>
@@ -479,34 +335,22 @@ export default function Consultations() {
 
       <div className="consultation-section">
         <h3>02 · Histoire de la maladie</h3>
-
         <div className="consultation-field">
           <label>Symptômes et histoire clinique</label>
-          <textarea
-            value={symptoms}
-            onChange={(e) => setSymptoms(e.target.value)}
-            placeholder="Début, durée, évolution, symptômes associés..."
-          />
+          <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="Début, durée, évolution, symptômes associés..." />
         </div>
-
         <div className="consultation-field">
           <label>Antécédents et traitements</label>
-          <textarea
-            value={history}
-            onChange={(e) => setHistory(e.target.value)}
-            placeholder="Antécédents, allergies, traitements en cours..."
-          />
+          <textarea value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." />
         </div>
       </div>
 
       <div className="consultation-section">
         <h3>03 · Constantes vitales</h3>
-
         <div className="vitals-grid">
           {vitalFields.map((field) => (
             <div className="vital-card" key={field.key}>
               <label>{field.label}</label>
-
               <div className="vital-input-row">
                 <input
                   type="text"
@@ -525,74 +369,54 @@ export default function Consultations() {
 
       <div className="consultation-section">
         <h3>04 · Examen physique</h3>
-
         <div className="consultation-field">
           <label>Examen clinique détaillé</label>
-          <textarea
-            value={examination}
-            onChange={(e) => setExamination(e.target.value)}
-            placeholder="Examen cardiovasculaire, respiratoire, abdominal, neurologique..."
-          />
+          <textarea value={examination} onChange={(e) => setExamination(e.target.value)} placeholder="Examen cardiovasculaire, respiratoire, abdominal, neurologique..." />
         </div>
       </div>
 
       <div className="consultation-section">
         <h3>05 · Évaluation et prise en charge</h3>
-
         <div className="consultation-field">
           <label>Hypothèses diagnostiques</label>
-          <textarea
-            value={diagnosis}
-            onChange={(e) => setDiagnosis(e.target.value)}
-            placeholder="Diagnostic principal et diagnostics différentiels..."
-          />
+          <textarea value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="Diagnostic principal et diagnostics différentiels..." />
         </div>
-
         <div className="consultation-field">
           <label>Conduite à tenir</label>
-          <textarea
-            value={plan}
-            onChange={(e) => setPlan(e.target.value)}
-            placeholder="Examens complémentaires, traitement, conseils, suivi..."
-          />
+          <textarea value={plan} onChange={(e) => setPlan(e.target.value)} placeholder="Examens complémentaires, traitement, conseils, suivi..." />
         </div>
       </div>
 
-      <button className="consultation-save" onClick={saveConsultation}>
+      <button className="consultation-save" onClick={saveConsultation} disabled={patients.length === 0}>
         Enregistrer la consultation
       </button>
 
       {saved && (
         <div className="consultation-success">
-          Consultation enregistrée avec succès sur cet appareil.
+          Consultation enregistrée et reliée au dossier du patient.
         </div>
       )}
 
       <div className="consultation-section">
         <h3>Historique des consultations ({consultations.length})</h3>
-
-        {consultations.length === 0 ? (
+        {sortedConsultations.length === 0 ? (
           <p>Aucune consultation enregistrée pour le moment.</p>
         ) : (
-          consultations.map((item) => (
-            <div className="saved-consultation" key={item.id}>
-              <strong>{item.patient}</strong>
-
-              <span>
-                {new Date(item.date).toLocaleString('fr-FR')}
-              </span>
-
-              <p>
-                <b>Motif :</b> {item.motif}
-              </p>
-
-              {item.diagnosis && (
-                <p>
-                  <b>Diagnostic :</b> {item.diagnosis}
-                </p>
-              )}
-            </div>
-          ))
+          sortedConsultations.map((item) => {
+            const linkedPatient = patients.find((patient) => patient.id === item.patientId);
+            const legacyPatientName = (item as typeof item & { patient?: string }).patient;
+            return (
+              <div className="saved-consultation" key={item.id}>
+                <strong>{linkedPatient?.name || legacyPatientName || 'Patient non identifié'}</strong>
+                <span>{new Date(item.date).toLocaleString('fr-FR')}</span>
+                <p><b>Motif :</b> {item.motif}</p>
+                {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
+                {!linkedPatient && (
+                  <p className="patient-hint">Ancienne consultation : dossier patient non relié.</p>
+                )}
+              </div>
+            );
+          })
         )}
       </div>
     </section>
