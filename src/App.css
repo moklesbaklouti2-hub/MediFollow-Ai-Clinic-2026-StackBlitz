@@ -6333,3 +6333,18 @@ textarea {
 :root[data-theme="dark"] .sidebar {
   background: #0b1d32 !important;
 }
+
+
+/* DASHBOARD HERO — refined anatomical artwork presentation */
+.mf-hero-art .mf-brain-art {
+  transform-origin: 50% 52%;
+  animation: mfAnatomicalFloat 7s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes mfAnatomicalFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -4px, 0) scale(1.012); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mf-hero-art .mf-brain-art { animation: none !important; }
+}
