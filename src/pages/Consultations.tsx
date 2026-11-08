@@ -260,7 +260,9 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
     symptoms,
     history,
     vitals,
-  }).filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`));
+  })
+    .filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`))
+    .sort((a, b) => (a.priority === 'high' ? -1 : 0) - (b.priority === 'high' ? -1 : 0));
 
   return (
     <section className="consultation-page">
