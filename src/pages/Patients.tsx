@@ -173,7 +173,7 @@ export default function Patients() {
   function renderTrendChart(
     label: string,
     unit: string,
-    key: 'weight' | 'systolic' | 'diastolic'
+    key: 'weight' | 'systolic' | 'diastolic' | 'glycemia' | 'heartRate' | 'spo2'
   ) {
     const points = [...patientConsultations]
       .reverse()
@@ -414,6 +414,10 @@ export default function Patients() {
             {renderTrendChart('Poids', 'kg', 'weight')}
             {renderTrendChart('Pression systolique', 'mmHg', 'systolic')}
             {renderTrendChart('Pression diastolique', 'mmHg', 'diastolic')}
+            {patientConsultations.some((consultation) => String(consultation.vitals.glycemia ?? '').trim() !== '') &&
+              renderTrendChart('Glycémie', 'g/L', 'glycemia')}
+            {renderTrendChart('Fréquence cardiaque', 'bpm', 'heartRate')}
+            {renderTrendChart('Saturation en oxygène (SpO₂)', '%', 'spo2')}
           </div>
 
           <h3 className="patient-section-title">Chronologie médicale ({medicalTimeline.length} événements)</h3>
