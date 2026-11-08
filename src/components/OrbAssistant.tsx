@@ -43,7 +43,6 @@ export default function OrbAssistant({ isThinking = false, onOpenCopilot }: OrbA
         aria-expanded={panelOpen}
         title="Assistant MediFollow AI"
       >
-        <span className="mf-orb-aura" />
         <span className="mf-orb-canvas"><OrbVisual isThinking={isThinking} /></span>
       </button>
       <span className="mf-orb-caption">{isThinking ? 'ANALYSE EN COURS' : 'MEDIFOLLOW AI'}</span>
