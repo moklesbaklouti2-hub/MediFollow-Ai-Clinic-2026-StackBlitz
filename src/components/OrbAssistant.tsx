@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type CSSProperties } from 'react';
 import type { Patient, Consultation } from '../types/medical';
 import OrbVisual from './OrbVisual';
 import './OrbAssistant.css';
@@ -126,7 +126,7 @@ export default function OrbAssistant({
     void sendMessage();
   }
 
-  const selectStyle: React.CSSProperties = {
+  const selectStyle: CSSProperties = {
     width: '100%',
     minHeight: 38,
     padding: '8px 10px',
