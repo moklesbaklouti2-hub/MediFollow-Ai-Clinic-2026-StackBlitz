@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
-import type { Vitals } from '../types/medical';
+import type { Vitals, PhysicalExamination } from '../types/medical';
+import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 
 const emptyVitals: Vitals = {
   systolic: '',
@@ -23,6 +24,7 @@ export default function Consultations() {
   const [history, setHistory] = useState('');
   const [vitals, setVitals] = useState<Vitals>({ ...emptyVitals });
   const [examination, setExamination] = useState('');
+  const [physicalExamination, setPhysicalExamination] = useState<PhysicalExamination>({});
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
   const [saved, setSaved] = useState(false);
@@ -41,6 +43,7 @@ export default function Consultations() {
     setHistory(item.history);
     setVitals({ ...emptyVitals, ...item.vitals });
     setExamination(item.examination);
+    setPhysicalExamination(item.physicalExamination ?? {});
     setDiagnosis(item.diagnosis);
     setPlan(item.plan);
     setSaved(false);
@@ -55,6 +58,7 @@ export default function Consultations() {
     setHistory('');
     setVitals({ ...emptyVitals });
     setExamination('');
+    setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
     setSaved(false);
@@ -73,6 +77,7 @@ export default function Consultations() {
       history: history.trim(),
       vitals: { ...vitals },
       examination: examination.trim(),
+      physicalExamination: { ...physicalExamination },
       diagnosis: diagnosis.trim(),
       plan: plan.trim(),
     };
@@ -95,6 +100,7 @@ export default function Consultations() {
     setHistory('');
     setVitals({ ...emptyVitals });
     setExamination('');
+    setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -410,6 +416,8 @@ export default function Consultations() {
         <div className="consultation-field">
           <label>Examen clinique détaillé</label>
           <textarea value={examination} onChange={(e) => setExamination(e.target.value)} placeholder="Examen cardiovasculaire, respiratoire, abdominal, neurologique..." />
+          <label>Examen clinique structuré par appareil</label>
+          <PhysicalExaminationEditor value={physicalExamination} onChange={(next) => setPhysicalExamination(next)} />
         </div>
       </div>
 
