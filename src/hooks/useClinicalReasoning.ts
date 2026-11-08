@@ -38,8 +38,17 @@ export function useClinicalReasoning(input: ReasoningInput) {
     patient: input.patient ? {
       age: input.patient.age,
       sex: input.patient.sex,
-      clinicalHistory: input.patient.clinicalHistory,
-      currentMedications: input.patient.currentMedications,
+      clinicalHistory: input.patient.clinicalHistory ? {
+        medical: input.patient.clinicalHistory.medical?.map(({ label, details, date, status }) => ({ label, details, date, status })),
+        surgical: input.patient.clinicalHistory.surgical?.map(({ label, details, date, status }) => ({ label, details, date, status })),
+        allergies: input.patient.clinicalHistory.allergies?.map(({ label, details, date, status }) => ({ label, details, date, status })),
+        family: input.patient.clinicalHistory.family?.map(({ label, details, date, status }) => ({ label, details, date, status })),
+        gynecoObstetric: input.patient.clinicalHistory.gynecoObstetric,
+        other: input.patient.clinicalHistory.other,
+      } : undefined,
+      currentMedications: input.patient.currentMedications?.map(({ name, dosage, route, frequency, startDate, endDate, indication, instructions }) => ({
+        name, dosage, route, frequency, startDate, endDate, indication, instructions,
+      })),
     } : undefined,
     consultation: {
       specialty: input.specialty,
