@@ -8,15 +8,7 @@
   width: 124px; height: 124px; padding: 0; border: 0; border-radius: 50%;
   background: transparent; isolation: isolate; overflow: visible;
   cursor: pointer; pointer-events: auto; -webkit-tap-highlight-color: transparent;
-  filter: drop-shadow(0 0 17px rgba(60,224,218,.32));
   animation: mfOrbFloat 5.2s ease-in-out infinite;
-  transition: filter .3s ease;
-}
-.mf-orb-launcher:hover { filter: drop-shadow(0 0 27px rgba(91,220,235,.65)); }
-.mf-orb-aura {
-  position: absolute; inset: 13px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(63,237,218,.3) 0%, rgba(129,80,220,.17) 42%, transparent 73%);
-  filter: blur(15px); animation: mfOrbAura 3.3s ease-in-out infinite;
 }
 .mf-orb-canvas { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
 .mf-orb-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
@@ -28,13 +20,6 @@
 .mf-orb-caption {
   margin-top: -7px; color: #83eee5; font-size: 8px; font-weight: 800;
   letter-spacing: 1.7px; text-shadow: 0 0 10px rgba(43,216,220,.72); pointer-events: none;
-}
-.mf-orb-assistant.is-thinking .mf-orb-aura {
-  animation-duration: 1s;
-  background: radial-gradient(circle, rgba(99,232,225,.4), rgba(153,91,255,.36) 48%, transparent 75%);
-}
-.mf-orb-assistant.is-thinking .mf-orb-launcher {
-  filter: drop-shadow(0 0 23px rgba(133,102,255,.62));
 }
 .mf-orb-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #45e5c0; box-shadow: 0 0 10px #45e5c0; }
 .mf-orb-status-dot.is-thinking { background: #b69aff; box-shadow: 0 0 12px #a77cff; animation: mfOrbAura .8s infinite; }
