@@ -426,7 +426,7 @@ export default function Patients() {
           ) : (
             medicalTimeline.map((entry) => (
               <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
-                {entry.type === 'consultation' && entry.consultation ? (
+                {entry.type === 'consultation' ? (
                   <>
                     <span className="patient-timeline-kind">Consultation</span>
                     <strong>{entry.consultation.motif || 'Consultation'}</strong>
@@ -437,7 +437,7 @@ export default function Patients() {
                     {entry.consultation.diagnosis && <p><b>Diagnostic :</b> {entry.consultation.diagnosis}</p>}
                     {entry.consultation.plan && <p><b>Conduite à tenir :</b> {entry.consultation.plan}</p>}
                   </>
-                ) : entry.prescription ? (
+                ) : (
                   <>
                     <span className="patient-timeline-kind">Ordonnance</span>
                     <strong>Ordonnance médicale</strong>
@@ -454,7 +454,7 @@ export default function Patients() {
                     )}
                     {entry.prescription.advice && <p><b>Conseils :</b> {entry.prescription.advice}</p>}
                   </>
-                ) : null}
+                )}
               </article>
             ))
           )}
