@@ -115,6 +115,10 @@ export default function Patients() {
       status: 'Nouveau',
     });
 
+    if (!newPatient) {
+      window.alert("Enregistrement impossible : le navigateur n'a pas confirmé la sauvegarde. Vos données saisies sont conservées dans le formulaire.");
+      return;
+    }
     setName('');
     setAge('');
     setPhone('');
@@ -143,13 +147,17 @@ export default function Patients() {
       alert('Veuillez saisir un âge valide.');
       return;
     }
-    updatePatient(selected.id, {
+    const saved = updatePatient(selected.id, {
       name: editName.trim(),
       age: numericAge,
       sex: editSex.trim() || 'Non renseigné',
       phone: editPhone.trim() || 'Non renseigné',
       status: editStatus.trim() || 'Actif',
     });
+    if (!saved) {
+      window.alert("Modification non confirmée : le navigateur n'a pas confirmé l'enregistrement. Réessayez après avoir libéré de l'espace ou téléchargé une sauvegarde.");
+      return;
+    }
     setShowEditForm(false);
   }
 
@@ -165,7 +173,7 @@ export default function Patients() {
     const deleted = deletePatient(selected.id);
     if (!deleted) {
       window.alert(
-        'Suppression refusée : ce patient possède un historique médical (consultations ou ordonnances). Aucune donnée n’a été supprimée.'
+        'Suppression impossible. Le patient possède peut-être un historique médical ou le navigateur a refusé l’enregistrement dans la corbeille. Aucune confirmation de suppression ne peut être donnée.'
       );
       return;
     }
@@ -181,7 +189,7 @@ export default function Patients() {
     const restored = restoreDeletedPatient(patientId);
     window.alert(restored
       ? 'Le dossier patient a été restauré.'
-      : 'La restauration a échoué. Vérifiez que le patient n’existe pas déjà dans la liste active.');
+      : 'La restauration a échoué : le navigateur n’a pas confirmé toutes les opérations. Vérifiez la liste active et la corbeille avant de réessayer.');
   }
 
   function displayDate(value: string) {
