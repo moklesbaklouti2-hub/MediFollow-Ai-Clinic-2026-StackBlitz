@@ -54,13 +54,13 @@ const coreFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 p = normalize(vLocal);
-    float speed = 0.12 + uThinking * 0.24;
+    float speed = 0.12 + uThinking * 0.06;
     vec3 drift = vec3(uTime * speed, -uTime * speed * 0.73, uTime * speed * 0.49);
     vec3 warp = vec3(fbm3(p * 2.8 + drift), fbm3(p * 2.8 + drift + 7.1), fbm3(p * 2.8 + drift + 13.7));
     vec3 q = p * 5.2 + (warp - 0.5) * 3.4;
     float cloud = fbm3(q + drift * 1.3);
     float detail = fbm3(q * 2.1 - drift * 0.9);
-    float flowA = dot(q, vec3(1.35, 2.1, -1.25)) * 3.6 + cloud * 8.0 - uTime * (0.72 + uThinking * 1.5);
+    float flowA = dot(q, vec3(1.35, 2.1, -1.25)) * 3.6 + cloud * 8.0 - uTime * (0.48 + uThinking * 0.12);
     float flowB = dot(q, vec3(-1.8, 0.75, 1.65)) * 3.1 - detail * 7.2 + uTime * 0.48;
     float flowC = dot(q, vec3(0.6, -1.9, 1.2)) * 5.0 + cloud * 5.0 + uTime * 0.34;
     float strandA = pow(max(0.0, 1.0 - abs(sin(flowA))), 13.0) * smoothstep(0.37, 0.69, detail);
@@ -128,7 +128,7 @@ const plasmaFragmentShader = `
   ${noiseFunctions}
   void main() {
     vec3 d = normalize(vLocal);
-    float t = uTime * (0.18 + uThinking * 0.32);
+    float t = uTime * (0.14 + uThinking * 0.04);
     vec3 flow = d * 6.0 + vec3(t, -t * 0.76, t * 0.56);
     vec3 warp = vec3(fbm3(flow + 2.0), fbm3(flow + 8.0), fbm3(flow + 14.0));
     vec3 q = flow + (warp - 0.5) * 4.0;
@@ -168,8 +168,8 @@ const ringFragmentShader = `
   uniform float uOpacity;
   uniform float uThinking;
   void main() {
-    float sweep = 0.5 + 0.5 * sin(vUv.x * 34.0 - uTime * (1.0 + uThinking * 2.0));
-    float pulse = 0.55 + 0.45 * sin(uTime * (1.2 + uThinking * 2.0) + vUv.x * 12.0);
+    float sweep = 0.5 + 0.5 * sin(vUv.x * 34.0 - uTime * (0.72 + uThinking * 0.12));
+    float pulse = 0.55 + 0.45 * sin(uTime * (0.85 + uThinking * 0.15) + vUv.x * 12.0);
     float edge = pow(max(0.0, sin(vUv.x * 3.14159)), 0.55);
     vec3 color = mix(uColorA, uColorB, sweep);
     gl_FragColor = vec4(color * (1.25 + sweep * 0.8), uOpacity * edge * (0.36 + 0.64 * pulse));
@@ -215,13 +215,13 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
   useFrame(({ clock }, delta) => {
     const t = clock.elapsedTime;
     const thinking = isThinking ? 1 : 0;
-    const speed = isThinking ? 1.7 : 1.0;
+    const speed = isThinking ? 0.58 : 1.0;
     [coreMaterial, plasmaMaterial, ...ringMaterials].forEach((material) => {
       material.uniforms.uTime.value = t;
       material.uniforms.uThinking.value = THREE.MathUtils.damp(material.uniforms.uThinking.value, thinking, 3.0, delta);
     });
     if (core.current) {
-      const breath = 1 + Math.sin(t * (isThinking ? 3.4 : 1.05)) * (isThinking ? 0.045 : 0.026);
+      const breath = 1 + Math.sin(t * (isThinking ? 1.25 : 1.05)) * (isThinking ? 0.028 : 0.026);
       core.current.scale.setScalar(breath);
       core.current.rotation.y = t * 0.11 * speed;
       core.current.rotation.x = Math.sin(t * 0.27) * 0.045;
@@ -229,19 +229,19 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
     if (plasmaShell.current) {
       plasmaShell.current.rotation.y = -t * 0.075 * speed;
       plasmaShell.current.rotation.x = Math.sin(t * 0.21) * 0.06;
-      plasmaShell.current.scale.setScalar(1 + Math.sin(t * (isThinking ? 2.8 : 0.9)) * 0.018);
+      plasmaShell.current.scale.setScalar(1 + Math.sin(t * (isThinking ? 1.1 : 0.9)) * 0.014);
     }
     if (ringA.current) {
-      ringA.current.rotation.set(0.76 + Math.sin(t * 0.43) * 0.08, 0.18, t * (isThinking ? 0.62 : 0.22));
+      ringA.current.rotation.set(0.76 + Math.sin(t * 0.43) * 0.08, 0.18, t * (isThinking ? 0.13 : 0.22));
       ringA.current.scale.setScalar(1 + Math.sin(t * 1.1) * 0.025);
     }
-    if (ringB.current) ringB.current.rotation.set(-0.86, t * (isThinking ? -0.48 : -0.17), 0.35 + Math.sin(t * 0.29) * 0.13);
+    if (ringB.current) ringB.current.rotation.set(-0.86, t * (isThinking ? -0.10 : -0.17), 0.35 + Math.sin(t * 0.29) * 0.13);
     if (ringC.current) {
-      ringC.current.rotation.set(t * (isThinking ? 0.36 : 0.12), 0.82 + Math.sin(t * 0.36) * 0.12, 0.18);
+      ringC.current.rotation.set(t * (isThinking ? 0.07 : 0.12), 0.82 + Math.sin(t * 0.36) * 0.12, 0.18);
       ringC.current.scale.setScalar(1 + Math.sin(t * 0.78 + 1.3) * 0.045);
     }
     if (particles.current) {
-      particles.current.rotation.y = t * (isThinking ? 0.32 : 0.12);
+      particles.current.rotation.y = t * (isThinking ? 0.08 : 0.12);
       particles.current.rotation.x = Math.sin(t * 0.25) * 0.12;
     }
   });
