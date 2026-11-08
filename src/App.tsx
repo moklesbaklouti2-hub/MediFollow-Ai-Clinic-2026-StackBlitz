@@ -307,6 +307,7 @@ function App() {
 
       <OrbAssistant
         isThinking={loading}
+        currentPage={active}
         onOpenCopilot={() => setActive('Copilote IA')}
       />
     </div>
