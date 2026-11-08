@@ -3,7 +3,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 
 export default function Patients() {
-  const { patients, consultations, prescriptions, addPatient } = useMedicalData();
+  const { patients, consultations, prescriptions, addPatient, updatePatient } = useMedicalData();
 
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -11,6 +11,12 @@ export default function Patients() {
   const [age, setAge] = useState('');
   const [phone, setPhone] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editAge, setEditAge] = useState('');
+  const [editSex, setEditSex] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editStatus, setEditStatus] = useState('');
 
   const selected = patients.find((patient) => patient.id === selectedId) ?? null;
 
@@ -63,6 +69,37 @@ export default function Patients() {
     setPhone('');
     setShowForm(false);
     setSelectedId(newPatient.id);
+  }
+
+  function beginEditPatient() {
+    if (!selected) return;
+    setEditName(selected.name);
+    setEditAge(String(selected.age));
+    setEditSex(selected.sex);
+    setEditPhone(selected.phone);
+    setEditStatus(selected.status);
+    setShowEditForm(true);
+  }
+
+  function savePatientChanges() {
+    if (!selected) return;
+    if (!editName.trim() || !editAge.trim()) {
+      alert('Veuillez renseigner le nom et l’âge du patient.');
+      return;
+    }
+    const numericAge = Number(editAge);
+    if (!Number.isFinite(numericAge) || numericAge < 0) {
+      alert('Veuillez saisir un âge valide.');
+      return;
+    }
+    updatePatient(selected.id, {
+      name: editName.trim(),
+      age: numericAge,
+      sex: editSex.trim() || 'Non renseigné',
+      phone: editPhone.trim() || 'Non renseigné',
+      status: editStatus.trim() || 'Actif',
+    });
+    setShowEditForm(false);
   }
 
   function displayDate(value: string) {
@@ -178,7 +215,10 @@ export default function Patients() {
         <div className="patient-detail">
           <div className="patient-detail-heading">
             <h3>Dossier médical · {selected.name}</h3>
-            <button className="patient-view" onClick={() => setSelectedId(null)}>Fermer</button>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <button className="patient-view" onClick={beginEditPatient}>Modifier le patient</button>
+              <button className="patient-view" onClick={() => setSelectedId(null)}>Fermer</button>
+            </div>
           </div>
 
           <h3 className="patient-section-title">Identité et informations</h3>
@@ -188,6 +228,22 @@ export default function Patients() {
             <div className="patient-summary-item"><span>Téléphone</span><strong>{selected.phone}</strong></div>
             <div className="patient-summary-item"><span>Statut</span><strong>{selected.status}</strong></div>
           </div>
+
+          {showEditForm && (
+            <div className="patient-form">
+              <h3>Modifier les informations du patient</h3>
+              <input placeholder="Nom et prénom" value={editName} onChange={(e) => setEditName(e.target.value)} />
+              <input placeholder="Âge" type="number" min="0" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
+              <input placeholder="Sexe" value={editSex} onChange={(e) => setEditSex(e.target.value)} />
+              <input placeholder="Téléphone" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
+              <input placeholder="Statut" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} />
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button className="patients-action" onClick={savePatientChanges}>Enregistrer les modifications</button>
+                <button className="patient-view" onClick={() => setShowEditForm(false)}>Annuler</button>
+              </div>
+              <p className="patient-empty-history">La modification des informations administratives ne supprime ni ne modifie les consultations et ordonnances.</p>
+            </div>
+          )}
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">
