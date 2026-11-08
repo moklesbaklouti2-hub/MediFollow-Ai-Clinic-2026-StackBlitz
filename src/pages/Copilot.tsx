@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { Consultation, Patient } from '../types/medical';
 import Orb3D from '../components/Orb3D';
@@ -17,12 +16,6 @@ type CopilotProps = {
   loading: boolean;
   onSend: (consultationId?: string) => void;
 };
-
-const suggestions = [
-  'Aide-moi à analyser un cas clinique.',
-  'Quelles sont les dernières recommandations médicales ?',
-  'Aide-moi à établir un diagnostic différentiel.',
-];
 
 export default function Copilot({
   messages,
@@ -313,4 +306,3 @@ export default function Copilot({
     </section>
   );
 }
-
