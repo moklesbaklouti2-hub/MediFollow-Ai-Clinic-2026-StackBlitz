@@ -6696,3 +6696,36 @@ textarea {
     animation: none !important;
   }
 }
+
+
+/* COPILOT — illustration cérébrale plus anatomique et animation très discrète */
+.premium-copilot .welcome-neural-visual {
+  filter: saturate(.92);
+}
+.premium-copilot .neural-network-svg {
+  filter: drop-shadow(0 5px 13px rgba(42, 211, 218, .12)) !important;
+}
+.premium-copilot .mf-brain-anatomy {
+  filter: drop-shadow(0 3px 9px rgba(30, 185, 190, .12));
+}
+.premium-copilot .mf-neuron-branches {
+  stroke-dasharray: 3 8 !important;
+  animation: mfNeuralFlow 36s linear infinite !important;
+  opacity: .48 !important;
+}
+.premium-copilot .mf-neuron-cell-bodies circle,
+.premium-copilot .mf-neural-synapses circle,
+.premium-copilot .mf-neural-medical-mark {
+  animation: none !important;
+}
+.premium-copilot .mf-neuron-cell-bodies circle {
+  opacity: .82;
+}
+.premium-copilot .mf-neural-synapses circle {
+  opacity: .78;
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-copilot .mf-neuron-branches {
+    animation: none !important;
+  }
+}
