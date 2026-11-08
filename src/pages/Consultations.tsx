@@ -15,7 +15,7 @@ const emptyVitals: Vitals = {
 };
 
 export default function Consultations() {
-  const { patients, consultations, addConsultation } = useMedicalData();
+  const { patients, consultations, addConsultation, updateConsultation } = useMedicalData();
 
   const [patientId, setPatientId] = useState('');
   const [motif, setMotif] = useState('');
@@ -26,9 +26,37 @@ export default function Consultations() {
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
   const [saved, setSaved] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
+    setSaved(false);
+  }
+
+  function startEditing(item: (typeof consultations)[number]) {
+    setEditingId(item.id);
+    setPatientId(item.patientId);
+    setMotif(item.motif);
+    setSymptoms(item.symptoms);
+    setHistory(item.history);
+    setVitals({ ...emptyVitals, ...item.vitals });
+    setExamination(item.examination);
+    setDiagnosis(item.diagnosis);
+    setPlan(item.plan);
+    setSaved(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function cancelEditing() {
+    setEditingId(null);
+    setPatientId('');
+    setMotif('');
+    setSymptoms('');
+    setHistory('');
+    setVitals({ ...emptyVitals });
+    setExamination('');
+    setDiagnosis('');
+    setPlan('');
     setSaved(false);
   }
 
@@ -38,9 +66,8 @@ export default function Consultations() {
       return;
     }
 
-    addConsultation({
+    const changes = {
       patientId,
-      date: new Date().toISOString(),
       motif: motif.trim(),
       symptoms: symptoms.trim(),
       history: history.trim(),
@@ -48,9 +75,19 @@ export default function Consultations() {
       examination: examination.trim(),
       diagnosis: diagnosis.trim(),
       plan: plan.trim(),
-    });
+    };
+
+    if (editingId) {
+      updateConsultation(editingId, changes);
+    } else {
+      addConsultation({
+        ...changes,
+        date: new Date().toISOString(),
+      });
+    }
 
     setSaved(true);
+    setEditingId(null);
     setPatientId('');
     setMotif('');
     setSymptoms('');
@@ -287,7 +324,7 @@ export default function Consultations() {
 
       <header className="consultation-header">
         <div>
-          <h2>Nouvelle consultation</h2>
+          <h2>{editingId ? 'Modifier la consultation' : 'Nouvelle consultation'}</h2>
           <p>Évaluation clinique structurée du patient.</p>
         </div>
         <span className="consultation-badge">Consultation médicale</span>
@@ -387,9 +424,16 @@ export default function Consultations() {
         </div>
       </div>
 
-      <button className="consultation-save" onClick={saveConsultation} disabled={patients.length === 0}>
-        Enregistrer la consultation
-      </button>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button className="consultation-save" onClick={saveConsultation} disabled={patients.length === 0}>
+          {editingId ? 'Enregistrer les modifications' : 'Enregistrer la consultation'}
+        </button>
+        {editingId && (
+          <button className="consultation-save" type="button" onClick={cancelEditing} style={{ background: 'transparent', border: '1px solid var(--border,#dce4e8)', color: 'inherit' }}>
+            Annuler la modification
+          </button>
+        )}
+      </div>
 
       {saved && (
         <div className="consultation-success">
@@ -411,6 +455,14 @@ export default function Consultations() {
                 <span>{new Date(item.date).toLocaleString('fr-FR')}</span>
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
+                <button
+                  type="button"
+                  className="consultation-save"
+                  onClick={() => startEditing(item)}
+                  style={{ justifySelf: 'start', padding: '9px 13px' }}
+                >
+                  Modifier cette consultation
+                </button>
                 {!linkedPatient && (
                   <p className="patient-hint">Ancienne consultation : dossier patient non relié.</p>
                 )}
