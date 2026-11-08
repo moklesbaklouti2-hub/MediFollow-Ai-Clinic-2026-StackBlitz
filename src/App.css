@@ -3137,4 +3137,77 @@ textarea {
   }
 }
 
+/* =========================================
+   MEDIFOLLOW — ANIMATION DU RÉSEAU NEURONAL
+========================================= */
 
+.neural-network-svg {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter:
+    drop-shadow(0 0 10px rgba(66, 213, 180, 0.35))
+    drop-shadow(0 0 25px rgba(66, 213, 180, 0.18));
+  animation: neuralFloat 5s ease-in-out infinite;
+}
+
+.neural-network-svg .neural-lines {
+  stroke-dasharray: 7 8;
+  animation: neuralSignal 12s linear infinite;
+}
+
+.neural-network-svg .neural-particles circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: neuralNodePulse 2.8s ease-in-out infinite;
+}
+
+.neural-network-svg .neural-particles circle:nth-child(3n) {
+  animation-delay: .7s;
+}
+
+.neural-network-svg .neural-particles circle:nth-child(3n + 1) {
+  animation-delay: 1.4s;
+}
+
+.neural-network-svg .neural-center-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: neuralCorePulse 3.5s ease-in-out infinite;
+}
+
+.neural-network-svg .neural-center-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: neuralRingSpin 18s linear infinite;
+  stroke-dasharray: 8 5;
+}
+
+@keyframes neuralSignal {
+  to { stroke-dashoffset: -180; }
+}
+
+@keyframes neuralNodePulse {
+  0%, 100% { opacity: .65; transform: scale(.85); }
+  50% { opacity: 1; transform: scale(1.45); }
+}
+
+@keyframes neuralCorePulse {
+  0%, 100% { opacity: .72; transform: scale(.94); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes neuralRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .neural-network-svg,
+  .neural-network-svg * {
+    animation: none !important;
+  }
+}
