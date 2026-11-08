@@ -7,6 +7,7 @@ import {
   saveConsultations,
   savePrescriptions,
   saveSettings as saveStoredSettings,
+  saveDeletedPatients,
 } from '../services/storage';
 
 type SettingsProps = {
@@ -71,6 +72,7 @@ export default function Settings({
         !Array.isArray(backupData.patients) ||
         !Array.isArray(backupData.consultations) ||
         !Array.isArray(backupData.prescriptions) ||
+        (backupData.deletedPatients !== undefined && !Array.isArray(backupData.deletedPatients)) ||
         !isRecord(backupData.settings)
       ) {
         setMessage('Fichier refusé : sauvegarde MediFollow AI invalide ou incompatible.');
@@ -89,12 +91,14 @@ export default function Settings({
         savePatients(backupData.patients) &&
         saveConsultations(backupData.consultations) &&
         savePrescriptions(backupData.prescriptions) &&
+        saveDeletedPatients(backupData.deletedPatients ?? []) &&
         saveStoredSettings(backupData.settings);
 
       if (!restored) {
         savePatients(previous.patients);
         saveConsultations(previous.consultations);
         savePrescriptions(previous.prescriptions);
+        saveDeletedPatients(previous.deletedPatients ?? []);
         saveStoredSettings(previous.settings);
         setMessage('Échec de la restauration. Les données précédentes ont été rétablies si le navigateur l’a permis.');
         return;
@@ -421,7 +425,7 @@ export default function Settings({
       <div className="settings-section">
         <h3>05 · Sauvegarde des données</h3>
         <p className="settings-description">
-          Exportez les patients, consultations, ordonnances et paramètres dans un fichier de sauvegarde JSON.
+          Exportez les patients actifs, la corbeille, les consultations, ordonnances et paramètres dans un fichier de sauvegarde JSON.
         </p>
         <div className="settings-backup-actions">
           <button className="settings-backup-button" onClick={exportBackup}>
