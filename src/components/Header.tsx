@@ -23,7 +23,7 @@ export default function Header({ title }: HeaderProps) {
           <span className="header-date-icon">◷</span>
           <div>
             <strong>Espace clinique</strong>
-            <small>Environnement sécurisé</small>
+            <small>Stockage local du navigateur</small>
           </div>
         </div>
 
