@@ -1,5 +1,5 @@
 
-import { useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { Consultation, Patient } from '../types/medical';
 import Orb3D from '../components/Orb3D';
 
@@ -39,6 +39,16 @@ export default function Copilot({
       )[0]
     : undefined;
   const [chosenConsultationId, setChosenConsultationId] = useState<string | null>(null);
+  const conversationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const conversation = conversationRef.current;
+    if (!conversation) return;
+    conversation.scrollTo({
+      top: conversation.scrollHeight,
+      behavior: loading ? 'smooth' : 'auto',
+    });
+  }, [messages, loading]);
   const selectedConsultationId = chosenConsultationId !== null
     ? chosenConsultationId
     : latestConsultation?.id ?? '';
@@ -76,39 +86,33 @@ export default function Copilot({
           </div>
         </div>
 
-        <div className="copilot-status">
-          <span></span>
+        <div className={`copilot-status${loading ? ' is-thinking' : ''}`}>
+          <span className="copilot-status-indicator"></span>
           {loading ? 'Analyse en cours...' : 'Assistant disponible'}
         </div>
       </div>
 
 
-      <div
-        style={{
-          padding: '12px 16px',
-          borderBottom: '1px solid var(--border, #e5ebef)',
-          display: 'grid',
-          gap: 7,
-        }}
-      >
-        <label htmlFor="copilot-consultation-context" style={{ fontSize: 13, fontWeight: 700 }}>
-          Contexte de consultation à transmettre au copilote
+      <section className="copilot-context-panel" aria-label="Contexte clinique">
+        <div className="copilot-context-heading">
+          <div className="copilot-context-title">
+            <span className="copilot-context-icon" aria-hidden="true">⌘</span>
+            <div>
+              <strong>Contexte clinique</strong>
+              <small>Choisissez les données enregistrées à associer à votre demande</small>
+            </div>
+          </div>
+          <span className="copilot-context-secure">Données enregistrées</span>
+        </div>
+        <label className="copilot-context-label" htmlFor="copilot-consultation-context">
+          Consultation de référence
         </label>
         <select
           id="copilot-consultation-context"
+          className="copilot-context-select"
           value={selectedConsultationId}
           onChange={(event) => setChosenConsultationId(event.target.value)}
           disabled={loading || consultations.length === 0}
-          style={{
-            width: '100%',
-            boxSizing: 'border-box',
-            padding: 11,
-            border: '1px solid var(--border, #dce4e8)',
-            borderRadius: 10,
-            background: 'var(--surface, #fff)',
-            color: 'inherit',
-            font: 'inherit',
-          }}
         >
           {consultations.length === 0 && (
             <option value="">Aucune consultation enregistrée</option>
@@ -129,14 +133,17 @@ export default function Copilot({
               );
             })}
         </select>
-        <p style={{ margin: 0, fontSize: 12, color: 'var(--color-text-secondary, #73838a)' }}>
-          {selectedConsultation
-            ? `Contexte sélectionné : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
-            : 'Sans consultation sélectionnée, le copilote répondra à une question générale.'}
-        </p>
-      </div>
+        <div className="copilot-context-summary" aria-live="polite">
+          <span className="context-summary-dot" />
+          <p>
+            {selectedConsultation
+              ? `Contexte actif : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
+              : 'Aucun dossier associé : le copilote répondra en mode question générale.'}
+          </p>
+        </div>
+      </section>
 
-      <div className="copilot-conversation">
+      <div className="copilot-conversation" ref={conversationRef}>
         {messages.length === 0 && (
           <div className="copilot-welcome">
             <div className="welcome-neural-visual">
@@ -218,15 +225,11 @@ export default function Copilot({
         )}
 
         {messages.length > 0 && (
-          <div className="copilot-messages">
+          <div className="copilot-messages" aria-live="polite">
             {messages.map((message, index) => (
               <div
                 key={`${message.role}-${index}`}
-                className={`copilot-message ${
-                  message.role === 'user'
-                    ? 'user-message'
-                    : 'assistant-message'
-                }`}
+                className={`premium-message ${message.role}`}
               >
                 <div className="message-avatar">
                   {message.role === 'user' ? 'MB' : '✧'}
@@ -238,14 +241,14 @@ export default function Copilot({
                   </div>
 
                   <div className="message-bubble">
-                    {message.content}
+                    <p>{message.content}</p>
                   </div>
                 </div>
               </div>
             ))}
 
             {loading && (
-              <div className="copilot-message assistant-message">
+              <div className="premium-message assistant">
                 <div className="message-avatar">✧</div>
 
                 <div className="message-content">
@@ -264,13 +267,13 @@ export default function Copilot({
         )}
       </div>
 
-      <div className="copilot-input-area">
-        <div className="copilot-input-wrapper">
+      <div className="premium-input-area">
+        <div className="premium-chat-input">
           <textarea
             value={question}
             onChange={(event) => onQuestionChange(event.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Posez votre question médicale..."
+            placeholder="Décrivez votre question clinique..."
             rows={2}
             disabled={loading}
           />
@@ -290,11 +293,11 @@ export default function Copilot({
           </button>
         </div>
 
-        <div className="copilot-input-footer">
+        <div className="input-footer">
           <span>↵ Envoyer</span>
           <span>⇧ + ↵ Nouvelle ligne</span>
 
-          <span className="copilot-disclaimer">
+          <span className="input-security">
             L'IA assiste le médecin. La décision clinique reste médicale.
           </span>
         </div>
