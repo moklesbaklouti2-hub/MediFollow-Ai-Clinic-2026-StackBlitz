@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import {
   getMedicalData,
@@ -52,7 +52,7 @@ export default function Settings({
     setMessage('Sauvegarde téléchargée. Conservez ce fichier dans un endroit sûr.');
   }
 
-  async function importBackup(event: React.ChangeEvent<HTMLInputElement>) {
+  async function importBackup(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) return;
