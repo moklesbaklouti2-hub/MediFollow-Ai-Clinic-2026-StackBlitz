@@ -4,7 +4,7 @@ import * as THREE from 'three';
 
 type OrbVisualProps = { isThinking: boolean };
 
-const noiseFunctions = \`
+const noiseFunctions = `
   float hash31(vec3 p) {
     p = fract(p * 0.1031);
     p += dot(p, p.yzx + 33.33);
@@ -30,9 +30,9 @@ const noiseFunctions = \`
     }
     return sum;
   }
-\`;
+`;
 
-const coreVertexShader = \`
+const coreVertexShader = `
   varying vec3 vLocal;
   varying vec3 vWorld;
   varying vec3 vNormal;
@@ -43,15 +43,15 @@ const coreVertexShader = \`
     vNormal = normalize(normalMatrix * normal);
     gl_Position = projectionMatrix * viewMatrix * world;
   }
-\`;
+`;
 
-const coreFragmentShader = \`
+const coreFragmentShader = `
   varying vec3 vLocal;
   varying vec3 vWorld;
   varying vec3 vNormal;
   uniform float uTime;
   uniform float uThinking;
-  \${noiseFunctions}
+  ${noiseFunctions}
   void main() {
     vec3 p = normalize(vLocal);
     float speed = 0.18 + uThinking * 0.28;
@@ -75,15 +75,15 @@ const coreFragmentShader = \`
     float pulse = 0.86 + 0.14 * sin(uTime * (1.2 + uThinking * 2.0) + cloud * 8.0);
     gl_FragColor = vec4(color * pulse * 1.75, 1.0);
   }
-\`;
+`;
 
-const plasmaVertexShader = \`
+const plasmaVertexShader = `
   varying vec3 vLocal;
   varying vec3 vWorld;
   varying vec3 vNormal;
   uniform float uTime;
   uniform float uThinking;
-  \${noiseFunctions}
+  ${noiseFunctions}
   void main() {
     vec3 direction = normalize(position);
     float n1 = fbm3(direction * 4.2 + vec3(0.0, uTime * 0.22, -uTime * 0.16));
@@ -98,15 +98,15 @@ const plasmaVertexShader = \`
     vNormal = normalize(normalMatrix * direction);
     gl_Position = projectionMatrix * viewMatrix * world;
   }
-\`;
+`;
 
-const plasmaFragmentShader = \`
+const plasmaFragmentShader = `
   varying vec3 vLocal;
   varying vec3 vWorld;
   varying vec3 vNormal;
   uniform float uTime;
   uniform float uThinking;
-  \${noiseFunctions}
+  ${noiseFunctions}
   void main() {
     vec3 d = normalize(vLocal);
     float t = uTime * (0.24 + uThinking * 0.38);
@@ -126,17 +126,17 @@ const plasmaFragmentShader = \`
     float alpha = clamp((flare * 0.55 + stream * 0.95) * (0.45 + edge * 0.8), 0.0, 0.92);
     gl_FragColor = vec4(color, alpha);
   }
-\`;
+`;
 
-const ringVertexShader = \`
+const ringVertexShader = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
-\`;
+`;
 
-const ringFragmentShader = \`
+const ringFragmentShader = `
   varying vec2 vUv;
   uniform float uTime;
   uniform vec3 uColorA;
@@ -150,7 +150,7 @@ const ringFragmentShader = \`
     vec3 color = mix(uColorA, uColorB, sweep);
     gl_FragColor = vec4(color * (1.25 + sweep * 0.8), uOpacity * edge * (0.36 + 0.64 * pulse));
   }
-\`;
+`;
 
 function LivingOrb({ isThinking }: OrbVisualProps) {
   const core = useRef<THREE.Mesh>(null);
