@@ -5826,3 +5826,23 @@ textarea {
     max-height: 165px !important;
   }
 }
+
+
+/* SPACING REFINEMENT — compact premium dashboard cards */
+.mf-dashboard { gap: 9px !important; }
+.mf-dashboard .mf-stats { gap: 8px !important; }
+.mf-dashboard-grid { gap: 8px !important; }
+.mf-dashboard .mf-panel,
+.mf-dashboard-grid .mf-panel { padding: 17px !important; }
+
+@media (max-width: 720px) {
+  .mf-dashboard { gap: 8px !important; }
+  .mf-dashboard .mf-stats,
+  .mf-dashboard-grid { gap: 7px !important; }
+  .mf-dashboard .mf-panel,
+  .mf-dashboard-grid .mf-panel { padding: 15px !important; }
+}
+@media (max-width: 420px) {
+  .mf-dashboard .mf-stats,
+  .mf-dashboard-grid { gap: 6px !important; }
+}
