@@ -5,6 +5,7 @@ type DashboardProps = {
   consultationCount: number;
   onStartConsultation: () => void;
   onOpenCopilot: () => void;
+  onOpenPatients: () => void;
 };
 
 type PatientRecord = {
@@ -124,7 +125,7 @@ function DoctorRobotArtwork() {
   );
 }
 
-export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot }: DashboardProps) {
+export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot, onOpenPatients }: DashboardProps) {
   const [data, setData] = useState<DashboardData>(() => loadDashboardData(patientCount, consultationCount));
 
   useEffect(() => {
@@ -247,7 +248,7 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           <article className="mf-panel mf-quick-panel">
             <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
             <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenCopilot}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
             <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
           </article>
 
