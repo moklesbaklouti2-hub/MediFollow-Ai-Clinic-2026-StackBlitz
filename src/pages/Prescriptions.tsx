@@ -13,13 +13,14 @@ const emptyMedication: Medication = {
 };
 
 export default function Prescriptions() {
-  const { patients, prescriptions, addPrescription, deletePrescription } = useMedicalData();
+  const { patients, prescriptions, addPrescription, updatePrescription, deletePrescription } = useMedicalData();
   const [patientId, setPatientId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [medications, setMedications] = useState<Medication[]>([]);
   const [advice, setAdvice] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [savedMessage, setSavedMessage] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [medication, setMedication] =
     useState<Medication>({ ...emptyMedication });
 
@@ -74,13 +75,20 @@ export default function Prescriptions() {
   function savePrescription() {
     if (!validatePrescription()) return;
 
-    addPrescription({
+    const prescriptionData = {
       patientId,
       date,
       medications: medications.map((item) => ({ ...item })),
       advice,
-    });
-    setSavedMessage('Ordonnance enregistrée et reliée au dossier du patient.');
+    };
+
+    if (editingId) {
+      updatePrescription(editingId, prescriptionData);
+      setSavedMessage('Modifications de l’ordonnance enregistrées.');
+    } else {
+      addPrescription(prescriptionData);
+      setSavedMessage('Ordonnance enregistrée et reliée au dossier du patient.');
+    }
   }
 
   function openPrescription(item: (typeof prescriptions)[number]) {
@@ -88,6 +96,7 @@ export default function Prescriptions() {
     setDate(item.date);
     setMedications(item.medications.map((med) => ({ ...med })));
     setAdvice(item.advice);
+    setEditingId(item.id);
     setShowPreview(true);
     setSavedMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -104,6 +113,7 @@ export default function Prescriptions() {
     setMedications([]);
     setAdvice('');
     setMedication({ ...emptyMedication });
+    setEditingId(null);
     setShowPreview(false);
     setSavedMessage('');
   }
@@ -169,6 +179,11 @@ export default function Prescriptions() {
 
       <div className="prescription-section">
         <h3>01 · Informations du patient</h3>
+        {editingId && (
+          <div className="prescription-success">
+            Modification d’une ordonnance existante — aucun nouvel enregistrement ne sera créé.
+          </div>
+        )}
         <div className="prescription-grid">
           <div className="prescription-field">
             <label>Nom et prénom du patient</label>
@@ -312,11 +327,17 @@ export default function Prescriptions() {
         </button>
 
         <button className="prescription-primary" onClick={savePrescription} disabled={patients.length === 0}>
-          Enregistrer l'ordonnance
+          {editingId ? 'Enregistrer les modifications' : "Enregistrer l'ordonnance"}
         </button>
 
+        {editingId && (
+          <button className="prescription-secondary" onClick={resetForm}>
+            Annuler la modification
+          </button>
+        )}
+
         <button className="prescription-secondary" onClick={resetForm}>
-          Réinitialiser
+          {editingId ? 'Nouvelle ordonnance' : 'Réinitialiser'}
         </button>
       </div>
 
@@ -391,7 +412,7 @@ export default function Prescriptions() {
                     className="history-open"
                     onClick={() => openPrescription(item)}
                   >
-                    Consulter
+                    Modifier
                   </button>
 
                   <button
