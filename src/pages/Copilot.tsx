@@ -158,21 +158,6 @@ export default function Copilot({
               </p>
             </div>
 
-            <div className="copilot-suggestions">
-              {suggestions.map((suggestion) => (
-                <button
-                  type="button"
-                  key={suggestion}
-                  className="suggestion-button"
-                  onClick={() => onQuestionChange(suggestion)}
-                  disabled={loading}
-                >
-                  <span className="suggestion-icon">✧</span>
-                  {suggestion}
-                  <span className="suggestion-arrow">→</span>
-                </button>
-              ))}
-            </div>
           </div>
         )}
 
