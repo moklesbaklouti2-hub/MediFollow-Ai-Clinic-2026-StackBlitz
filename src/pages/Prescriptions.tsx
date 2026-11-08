@@ -82,13 +82,18 @@ export default function Prescriptions() {
       advice,
     };
 
-    if (editingId) {
-      updatePrescription(editingId, prescriptionData);
-      setSavedMessage('Modifications de l’ordonnance enregistrées.');
-    } else {
-      addPrescription(prescriptionData);
-      setSavedMessage('Ordonnance enregistrée et reliée au dossier du patient.');
+    const saved = editingId
+      ? updatePrescription(editingId, prescriptionData)
+      : addPrescription(prescriptionData);
+
+    if (!saved) {
+      setSavedMessage('Échec de sauvegarde : le navigateur n’a pas confirmé l’enregistrement. Vérifiez le stockage puis réessayez.');
+      return;
     }
+
+    setSavedMessage(editingId
+      ? 'Modifications de l’ordonnance enregistrées.'
+      : 'Ordonnance enregistrée et reliée au dossier du patient.');
   }
 
   function openPrescription(item: (typeof prescriptions)[number]) {
