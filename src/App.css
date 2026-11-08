@@ -6067,3 +6067,241 @@ textarea {
     transform: none !important;
   }
 }
+
+
+/* ==========================================================
+   MEDIFOLLOW DESIGN SYSTEM — shared visual language
+   Applied consistently to every non-dashboard workspace.
+   Respects the existing light/dark theme preference.
+========================================================== */
+:root {
+  --mf-page-bg: #f3f7fc;
+  --mf-panel-bg: #ffffff;
+  --mf-panel-soft: #f7faff;
+  --mf-panel-border: #dce7f2;
+  --mf-heading: #102b4c;
+  --mf-body: #30465f;
+  --mf-muted: #71839a;
+  --mf-accent: #078fa8;
+  --mf-accent-soft: rgba(8, 177, 195, .10);
+  --mf-control-bg: #ffffff;
+  --mf-control-border: #cbd9e8;
+  --mf-elevation: 0 8px 24px rgba(18, 48, 79, .07);
+  --mf-elevation-hover: 0 13px 30px rgba(18, 48, 79, .12);
+}
+:root[data-theme='dark'] {
+  --mf-page-bg: #08182b;
+  --mf-panel-bg: #0d2340;
+  --mf-panel-soft: #102b4b;
+  --mf-panel-border: rgba(91, 159, 211, .27);
+  --mf-heading: #eff8ff;
+  --mf-body: #d2e2f1;
+  --mf-muted: #91abc4;
+  --mf-accent: #42dce5;
+  --mf-accent-soft: rgba(48, 218, 226, .11);
+  --mf-control-bg: #091d35;
+  --mf-control-border: rgba(105, 160, 202, .38);
+  --mf-elevation: 0 10px 28px rgba(0, 0, 0, .20);
+  --mf-elevation-hover: 0 15px 34px rgba(0, 0, 0, .28);
+}
+
+/* Unified page canvas and typography */
+#root .app .main > .patients-page,
+#root .app .main > .consultation-page,
+#root .app .main > .copilot,
+#root .app .main > .protocols-page,
+#root .app .main > .prescription-page,
+#root .app .main > .settings-page {
+  color: var(--mf-body);
+  animation: premiumFadeIn .28s ease both;
+}
+#root .app .main :is(
+  .patients-heading, .consultation-header, .protocols-header,
+  .prescription-header, .settings-header
+) {
+  color: var(--mf-heading);
+  margin-bottom: 18px;
+}
+#root .app .main :is(
+  .patients-heading h1, .consultation-header h1, .protocols-header h1,
+  .prescription-header h1, .settings-header h1
+) {
+  color: var(--mf-heading) !important;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -.55px;
+}
+
+/* One card language across Patients, Consultations, Copilot,
+   Protocols, Prescriptions and Settings */
+#root .app .main :is(
+  .patient-card, .patient-detail, .patient-trend-card,
+  .consultation-section, .saved-consultation,
+  .protocol-card, .protocol-detail,
+  .prescription-section, .prescription-preview, .history-card,
+  .settings-section, .copilot-conversation, .copilot-context-panel,
+  .copilot-side-card
+) {
+  color: var(--mf-body);
+  background: var(--mf-panel-bg) !important;
+  border: 1px solid var(--mf-panel-border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--mf-elevation) !important;
+}
+#root .app .main :is(
+  .patient-card, .protocol-card, .history-card, .saved-consultation
+) {
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+#root .app .main :is(
+  .patient-card, .protocol-card, .history-card, .saved-consultation
+):hover {
+  transform: translateY(-2px);
+  border-color: var(--mf-accent) !important;
+  box-shadow: var(--mf-elevation-hover) !important;
+}
+#root .app .main :is(
+  .patient-section-title, .consultation-section h2,
+  .prescription-section h2, .settings-section h2,
+  .copilot-context-title, .copilot-side-card-heading
+) {
+  color: var(--mf-heading) !important;
+  font-family: var(--font-heading);
+  font-weight: 750;
+}
+
+/* Consistent form fields and labels on every clinical page */
+#root .app .main :is(
+  .patients-page, .consultation-page, .copilot,
+  .protocols-page, .prescription-page, .settings-page
+) :is(input:not([type='checkbox']):not([type='radio']), textarea, select) {
+  color: var(--mf-heading) !important;
+  background: var(--mf-control-bg) !important;
+  border: 1px solid var(--mf-control-border) !important;
+  border-radius: 10px !important;
+  min-height: 42px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.025);
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+#root .app .main :is(
+  .patients-page, .consultation-page, .copilot,
+  .protocols-page, .prescription-page, .settings-page
+) :is(input, textarea, select)::placeholder {
+  color: var(--mf-muted) !important;
+  opacity: .82;
+}
+#root .app .main :is(
+  .patients-page, .consultation-page, .copilot,
+  .protocols-page, .prescription-page, .settings-page
+) :is(input, textarea, select):focus {
+  border-color: var(--mf-accent) !important;
+  box-shadow: 0 0 0 3px var(--mf-accent-soft) !important;
+  outline: none !important;
+}
+#root .app .main :is(
+  .patient-form, .consultation-field, .prescription-field,
+  .settings-field, .copilot-context-select
+) label {
+  color: var(--mf-muted);
+  font-weight: 650;
+  letter-spacing: .1px;
+}
+
+/* Buttons: consistent shape, hierarchy and touch targets */
+#root .app .main :is(
+  .patients-page, .consultation-page, .copilot,
+  .protocols-page, .prescription-page, .settings-page
+) button {
+  border-radius: 10px;
+  font-weight: 650;
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+#root .app .main :is(
+  .patients-action, .consultation-save, .protocol-open,
+  .prescription-primary, .settings-save, .copilot-send-button
+) {
+  min-height: 42px;
+  box-shadow: 0 5px 14px rgba(0, 150, 180, .13);
+}
+#root .app .main :is(
+  .patients-action, .consultation-save, .protocol-open,
+  .prescription-primary, .settings-save, .copilot-send-button
+):hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
+
+/* Subtle clinical information surfaces */
+#root .app .main :is(
+  .patient-summary-item, .patient-vital, .vital-card,
+  .patient-meta, .patient-timeline-entry, .patient-trend-note,
+  .consultation-badge, .patient-hint, .protocol-tag,
+  .prescription-warning, .settings-note, .copilot-side-note,
+  .copilot-context-summary
+) {
+  border-radius: 11px;
+}
+#root .app .main :is(
+  .patient-summary-item, .patient-vital, .vital-card,
+  .patient-timeline-entry, .copilot-context-summary
+) {
+  background: var(--mf-panel-soft);
+  border: 1px solid var(--mf-panel-border);
+}
+#root .app .main :is(
+  .patient-name, .patient-detail-heading, .protocol-card h3,
+  .history-card h3, .prescription-item strong
+) {
+  color: var(--mf-heading);
+}
+
+/* Copilot workspace: keep the chat calm and legible */
+#root .app .main .premium-copilot-header {
+  border-radius: 18px;
+}
+#root .app .main .copilot-message.assistant .message-bubble,
+#root .app .main .premium-message.assistant .message-bubble {
+  background: var(--mf-panel-soft);
+  border: 1px solid var(--mf-panel-border);
+  color: var(--mf-body);
+}
+#root .app .main .premium-chat-input {
+  background: var(--mf-control-bg);
+  border: 1px solid var(--mf-control-border);
+  border-radius: 14px;
+}
+
+/* Touch-first responsive spacing */
+@media (max-width: 720px) {
+  #root .app .main :is(
+    .patient-card, .patient-detail, .patient-trend-card,
+    .consultation-section, .saved-consultation,
+    .protocol-card, .protocol-detail,
+    .prescription-section, .prescription-preview, .history-card,
+    .settings-section, .copilot-conversation, .copilot-context-panel,
+    .copilot-side-card
+  ) {
+    border-radius: 13px !important;
+  }
+  #root .app .main :is(
+    .patients-heading, .consultation-header, .protocols-header,
+    .prescription-header, .settings-header
+  ) {
+    margin-bottom: 14px;
+  }
+  #root .app .main :is(
+    .patients-page, .consultation-page, .copilot,
+    .protocols-page, .prescription-page, .settings-page
+  ) :is(input:not([type='checkbox']):not([type='radio']), textarea, select) {
+    min-height: 44px;
+    font-size: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #root .app .main :is(.patient-card, .protocol-card, .history-card, .saved-consultation) {
+    transition: none !important;
+  }
+  #root .app .main :is(.patient-card, .protocol-card, .history-card, .saved-consultation):hover {
+    transform: none !important;
+  }
+}
