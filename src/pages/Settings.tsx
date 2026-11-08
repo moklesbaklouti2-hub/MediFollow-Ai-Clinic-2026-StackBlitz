@@ -147,7 +147,7 @@ export default function Settings({
   }
 
   function saveSettings() {
-    updateSettings({
+    const saved = updateSettings({
       doctorName: doctorName.trim(),
       specialty: specialty.trim(),
       cabinetName: cabinetName.trim(),
@@ -158,7 +158,12 @@ export default function Settings({
       confirmBeforePrescription,
       themePreference: themePreference as 'auto' | 'light' | 'dark',
     });
-    setMessage('Paramètres enregistrés sur cet appareil.');
+
+    setMessage(
+      saved
+        ? 'Paramètres enregistrés sur cet appareil.'
+        : "Échec de sauvegarde : le navigateur n’a pas confirmé l’enregistrement des paramètres. Vérifiez le stockage puis réessayez."
+    );
   }
 
   return (
@@ -283,6 +288,11 @@ export default function Settings({
           color:#21866e;
           font-size:13px;
           line-height:1.5;
+        }
+        .settings-message.error {
+          background:#fff1f1;
+          color:#9f3030;
+          border:1px solid #d97777;
         }
         .settings-backup-actions {
           display:flex;
@@ -472,7 +482,7 @@ export default function Settings({
         Enregistrer les paramètres
       </button>
 
-      {message && <div className="settings-message">{message}</div>}
+      {message && <div className={`settings-message ${message.startsWith('Échec') ? 'error' : ''}`} role="status">{message}</div>}
 
       <p className="settings-note">
         Les paramètres du profil, du cabinet et du copilote sont enregistrés dans le stockage local de ce navigateur.
