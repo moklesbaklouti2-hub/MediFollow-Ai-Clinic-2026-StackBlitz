@@ -203,6 +203,7 @@ function App() {
             consultationCount={getStoredCount('medifollow-consultations')}
             onStartConsultation={() => setActive('Consultations')}
             onOpenCopilot={() => setActive('Copilote IA')}
+            onOpenPatients={() => setActive('Patients')}
           />
         );
 
