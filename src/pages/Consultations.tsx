@@ -151,7 +151,7 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
   const [editingId, setEditingId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
   const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
-  const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(false);
+  const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(true);
 
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
@@ -461,6 +461,27 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
           font-size:13px;
         }
 
+        .smart-copilot-card {
+          display:grid; gap:9px; padding:12px 14px;
+          border:1px solid var(--border,#dce4e8); border-radius:13px;
+          background:var(--surface,#fff);
+        }
+        .smart-copilot-label {
+          display:flex; align-items:center; gap:11px; cursor:pointer; min-height:28px;
+        }
+        .smart-copilot-checkbox {
+          appearance:none; -webkit-appearance:none; flex:0 0 21px;
+          width:21px; height:21px; margin:0; border:2px solid #91a2ad;
+          border-radius:6px; background:var(--surface,#fff); display:grid;
+          place-content:center; cursor:pointer; transition:background .15s ease,border-color .15s ease;
+        }
+        .smart-copilot-checkbox:checked { background:#38c9aa; border-color:#38c9aa; }
+        .smart-copilot-checkbox:checked::after {
+          content:''; width:5px; height:10px; border:solid #103b35;
+          border-width:0 2px 2px 0; transform:rotate(45deg); margin-top:-2px;
+        }
+        .smart-copilot-checkbox:focus-visible { outline:3px solid rgba(56,201,170,.25); outline-offset:3px; }
+
         @media(max-width:700px) {
           .vitals-grid {
             grid-template-columns:repeat(2,minmax(0,1fr));
@@ -490,102 +511,70 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
         <span className="consultation-badge">Consultation médicale</span>
       </header>
 
-      <section
-        aria-label="Copilote clinique intelligent"
-        style={{
-          display: 'grid',
-          gap: 12,
-          padding: 16,
-          border: '1px solid var(--border,#dce4e8)',
-          borderRadius: 14,
-          background: 'var(--surface,#fff)',
-        }}
-      >
-        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer' }}>
+      <section aria-label="Copilote clinique intelligent" className="smart-copilot-card">
+        <label className="smart-copilot-label">
           <input
+            className="smart-copilot-checkbox"
             type="checkbox"
             checked={smartCopilotEnabled}
             onChange={(event) => setSmartCopilotEnabled(event.target.checked)}
-            style={{ marginTop: 3 }}
+            aria-label="Activer ou désactiver le copilote clinique intelligent"
           />
           <span>
-            <strong style={{ display: 'block', fontSize: 14 }}>Activer le raisonnement clinique intelligent</strong>
-            <span style={{ display: 'block', marginTop: 4, fontSize: 12, lineHeight: 1.5, color: 'var(--text-secondary,#81909c)' }}>
-              Après une pause de saisie, MediFollow analyse l’ensemble des informations disponibles et choisit la prochaine question utile. L’analyse se met à jour au fil de la consultation, avec une limitation de fréquence.
+            <strong style={{ display: 'block', fontSize: 13 }}>Copilote clinique intelligent</strong>
+            <span style={{ display: 'block', marginTop: 2, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
+              Analyse évolutive pendant la consultation
             </span>
           </span>
         </label>
-        <p style={{ margin: 0, fontSize: 10, lineHeight: 1.5, color: 'var(--text-secondary,#81909c)' }}>
-          En activant cette option, vous autorisez l’envoi à Groq du contexte clinique sans nom, téléphone ni identifiant direct. N’utilisez que des données fictives pendant le développement. L’IA propose une aide à la réflexion ; vous gardez la décision médicale.
+        <p style={{ margin: 0, fontSize: 10, lineHeight: 1.4, color: 'var(--text-secondary,#81909c)' }}>
+          Contexte clinique anonymisé envoyé à Groq. Données fictives pendant le développement.
         </p>
         {!selectedPatient && smartCopilotEnabled && (
-          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>Activation enregistrée pour cette consultation. Sélectionnez un patient dans la rubrique « 01 · Identification » pour que l’analyse puisse commencer.</p>
+          <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary,#81909c)' }}>En attente de la sélection du patient.</p>
         )}
         {smartCopilotEnabled && (
           <div style={{ display: 'grid', gap: 8, paddingTop: 8, borderTop: '1px solid var(--border,#e5ebef)' }}>
             <strong style={{ fontSize: 12 }}>
-              {clinicalReasoning.status === 'analyzing' ? 'MediFollow analyse le cas…' :
-               clinicalReasoning.status === 'error' ? 'Analyse momentanément indisponible' :
-               clinicalReasoning.analysis ? 'Analyse clinique évolutive' : 'En attente d’informations cliniques'}
+              {clinicalReasoning.status === 'analyzing' ? 'Analyse en cours…' :
+               clinicalReasoning.status === 'error' ? 'Analyse indisponible' :
+               clinicalReasoning.analysis ? 'Analyse clinique' : 'En attente de données'}
             </strong>
-            {clinicalReasoning.error && (
-              <p role="status" style={{ margin: 0, color: '#c07836', fontSize: 12 }}>{clinicalReasoning.error}</p>
-            )}
+            {clinicalReasoning.error && <p role="status" style={{ margin: 0, color: '#c07836', fontSize: 12 }}>{clinicalReasoning.error}</p>}
             {clinicalReasoning.analysis && (
               <div style={{ display: 'grid', gap: 9, fontSize: 12, lineHeight: 1.55 }}>
-                <div style={{
-                  padding: 11,
-                  borderRadius: 9,
-                  border: '1px solid var(--border,#e5ebef)',
-                  background: 'var(--background,rgba(127,127,127,.04))',
-                }}>
+                <div style={{ padding: 11, borderRadius: 9, border: '1px solid var(--border,#e5ebef)', background: 'var(--background,rgba(127,127,127,.04))' }}>
                   <strong>
                     {clinicalReasoning.analysis.priority === 'urgent' ? 'Priorité urgente — vérification immédiate' :
-                     clinicalReasoning.analysis.priority === 'attention' ? 'Point nécessitant une attention particulière' :
-                     'Lecture clinique'}
+                     clinicalReasoning.analysis.priority === 'attention' ? 'Attention particulière' : 'Lecture clinique'}
                   </strong>
                   <p style={{ margin: '5px 0 0' }}>{clinicalReasoning.analysis.situationSummary}</p>
-                  {clinicalReasoning.analysis.priorityReason && (
-                    <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.priorityReason}</p>
-                  )}
+                  {clinicalReasoning.analysis.priorityReason && <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.priorityReason}</p>}
                 </div>
                 {clinicalReasoning.analysis.nextQuestion && (
                   <div style={{ padding: 11, borderRadius: 9, borderLeft: '3px solid #38bfa6', background: 'var(--background,rgba(127,127,127,.04))' }}>
-                    <strong>Prochaine question utile</strong>
+                    <strong>Question suivante</strong>
                     <p style={{ margin: '5px 0' }}>{clinicalReasoning.analysis.nextQuestion}</p>
-                    {clinicalReasoning.analysis.whyThisQuestion && (
-                      <p style={{ margin: 0, color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.whyThisQuestion}</p>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => onAskCopilot?.(clinicalReasoning.analysis!.nextQuestion)}
-                      style={{ marginTop: 8, border: 0, borderRadius: 7, padding: '8px 11px', background: '#42d5b4', color: '#12332f', fontWeight: 700, fontSize: 11 }}
-                    >
+                    {clinicalReasoning.analysis.whyThisQuestion && <p style={{ margin: 0, color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.whyThisQuestion}</p>}
+                    <button type="button" onClick={() => onAskCopilot?.(clinicalReasoning.analysis!.nextQuestion)}
+                      style={{ marginTop: 8, border: 0, borderRadius: 7, padding: '8px 11px', background: '#42d5b4', color: '#12332f', fontWeight: 700, fontSize: 11 }}>
                       Continuer avec l’Orb
                     </button>
                   </div>
                 )}
                 {clinicalReasoning.analysis.pointsToVerify.length > 0 && (
-                  <div>
-                    <strong>Points à vérifier</strong>
-                    <ul style={{ margin: '5px 0 0', paddingLeft: 19 }}>
-                      {clinicalReasoning.analysis.pointsToVerify.map((point, index) => <li key={index}>{point}</li>)}
-                    </ul>
-                  </div>
+                  <div><strong>À vérifier</strong><ul style={{ margin: '5px 0 0', paddingLeft: 19 }}>
+                    {clinicalReasoning.analysis.pointsToVerify.map((point, index) => <li key={index}>{point}</li>)}
+                  </ul></div>
                 )}
                 {clinicalReasoning.analysis.hypotheses.length > 0 && (
-                  <div>
-                    <strong>Hypothèses à discuter — non confirmées</strong>
+                  <div><strong>Hypothèses — non confirmées</strong>
                     {clinicalReasoning.analysis.hypotheses.map((item, index) => (
-                      <p key={index} style={{ margin: '5px 0' }}>
-                        <b>{item.label}</b> · confiance {item.confidence}. {item.reason}
-                      </p>
+                      <p key={index} style={{ margin: '5px 0' }}><b>{item.label}</b> · confiance {item.confidence}. {item.reason}</p>
                     ))}
                   </div>
                 )}
-                <span style={{ color: 'var(--text-secondary,#81909c)', fontSize: 10 }}>
-                  Dernière analyse : {clinicalReasoning.updatedAt}. À vérifier par le médecin ; ce résultat n’est pas un diagnostic.
-                </span>
+                <span style={{ color: 'var(--text-secondary,#81909c)', fontSize: 10 }}>{clinicalReasoning.updatedAt} · Validation médicale requise.</span>
               </div>
             )}
           </div>
