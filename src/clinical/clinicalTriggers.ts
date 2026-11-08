@@ -70,6 +70,34 @@ export function detectClinicalSuggestions(input: {
   }
 
 
+  if (/\\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\\b/.test(text)) {
+    const historyText = normalize(input.symptoms);
+    const missingChestPainDetails: string[] = [];
+
+    if (!/\\b(depuis|debut|apparition|duree|minutes|heures|jours)\\b/.test(historyText)) {
+      missingChestPainDetails.push('Préciser le début et la durée de la douleur.');
+    }
+    if (!/\\b(irradi|bras|machoire|dos|epaule)\\b/.test(historyText)) {
+      missingChestPainDetails.push('Préciser si la douleur irradie (bras, mâchoire, dos ou épaule).');
+    }
+    if (!/\\b(dyspnee|essoufflement|sueurs|sueurs|nausees|vomissements|malaise|syncope)\\b/.test(historyText)) {
+      missingChestPainDetails.push('Rechercher et documenter les symptômes associés.');
+    }
+    if (!/\\b(effort|repos|respiration|inspiration|palpation)\\b/.test(historyText)) {
+      missingChestPainDetails.push('Préciser les facteurs déclenchants, aggravants ou soulageants.');
+    }
+
+    if (missingChestPainDetails.length > 0) {
+      suggestions.push({
+        id: 'missing-chest-pain-details',
+        priority: 'routine',
+        title: 'Compléter les caractéristiques de la douleur thoracique',
+        reason: 'Certains éléments clés de l’interrogatoire ne sont pas retrouvés dans le texte saisi. Vérifiez-les avec le patient et consignez les réponses.',
+        checks: missingChestPainDetails,
+      });
+    }
+  }
+
   if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
     suggestions.push({
       id: 'chest-pain',
