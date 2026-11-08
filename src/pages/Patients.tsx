@@ -3,7 +3,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 
 export default function Patients() {
-  const { patients, consultations, prescriptions, addPatient, updatePatient } = useMedicalData();
+  const { patients, consultations, prescriptions, addPatient, updatePatient, deletePatient } = useMedicalData();
 
   const [search, setSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -153,6 +153,28 @@ export default function Patients() {
     setShowEditForm(false);
   }
 
+  function handleDeletePatient() {
+    if (!selected) return;
+
+    const confirmed = window.confirm(
+      `Voulez-vous vraiment supprimer le dossier administratif de ${selected.name} ? Cette action est définitive. Les dossiers ayant des consultations ou des ordonnances ne peuvent pas être supprimés.`
+    );
+
+    if (!confirmed) return;
+
+    const deleted = deletePatient(selected.id);
+    if (!deleted) {
+      window.alert(
+        'Suppression refusée : ce patient possède un historique médical (consultations ou ordonnances). Aucune donnée n’a été supprimée.'
+      );
+      return;
+    }
+
+    setSelectedId(null);
+    setShowEditForm(false);
+    window.alert('Le dossier patient a été supprimé.');
+  }
+
   function displayDate(value: string) {
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? value : date.toLocaleString('fr-FR');
@@ -287,6 +309,7 @@ export default function Patients() {
         .patient-meta { color:#81909c; font-size:13px; }
         .patient-status { background:#e2f8f1; color:#21866e; border-radius:20px; padding:6px 11px; font-size:12px; font-weight:600; }
         .patient-view { border:1px solid #42d5b4; background:transparent; color:inherit; border-radius:9px; padding:8px 12px; cursor:pointer; }
+        .patient-delete { border:1px solid #d97777; background:transparent; color:#b54747; border-radius:9px; padding:8px 12px; cursor:pointer; font-weight:600; }
         .patient-form,.patient-detail { display:grid; gap:14px; padding:20px; background:var(--surface,#fff); border:1px solid var(--border,#e5ebef); border-radius:16px; }
         .patient-form input { width:100%; box-sizing:border-box; padding:12px; border:1px solid var(--border,#dce4e8); border-radius:10px; background:var(--surface,#fff); color:inherit; font:inherit; }
         .patient-detail h3 { margin:0; }
@@ -381,6 +404,7 @@ export default function Patients() {
             <h3>Dossier médical · {selected.name}</h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button className="patient-view" onClick={beginEditPatient}>Modifier le patient</button>
+              <button className="patient-delete" onClick={handleDeletePatient}>Supprimer le dossier</button>
               <button className="patient-view" onClick={() => setSelectedId(null)}>Fermer</button>
             </div>
           </div>
