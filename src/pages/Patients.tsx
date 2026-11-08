@@ -170,6 +170,83 @@ export default function Patients() {
     { key: 'glycemia', label: 'Glycémie', unit: 'g/L' },
   ];
 
+  function renderTrendChart(
+    label: string,
+    unit: string,
+    key: 'weight' | 'systolic' | 'diastolic'
+  ) {
+    const points = [...patientConsultations]
+      .reverse()
+      .map((consultation) => {
+        const raw = String(consultation.vitals[key] ?? '').trim().replace(',', '.');
+        const value = Number.parseFloat(raw);
+        return {
+          id: consultation.id,
+          date: consultation.date,
+          value,
+        };
+      })
+      .filter((point) => Number.isFinite(point.value));
+
+    if (points.length === 0) {
+      return (
+        <div className="patient-trend-card" key={key}>
+          <strong>{label}</strong>
+          <p className="patient-empty-history">Aucune mesure numérique enregistrée.</p>
+        </div>
+      );
+    }
+
+    const width = 560;
+    const height = 150;
+    const paddingX = 28;
+    const paddingY = 24;
+    const values = points.map((point) => point.value);
+    const minValue = Math.min(...values);
+    const maxValue = Math.max(...values);
+    const range = maxValue - minValue || Math.max(Math.abs(maxValue) * 0.1, 1);
+    const coordinates = points.map((point, index) => ({
+      ...point,
+      x: points.length === 1
+        ? width / 2
+        : paddingX + (index / (points.length - 1)) * (width - paddingX * 2),
+      y: height - paddingY - ((point.value - minValue) / range) * (height - paddingY * 2),
+    }));
+    const polyline = coordinates.map((point) => `${point.x},${point.y}`).join(' ');
+
+    return (
+      <div className="patient-trend-card" key={key}>
+        <strong>{label}</strong>
+        <div className="patient-trend-chart">
+          <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Évolution de ${label}`}>
+            <line x1={paddingX} y1={height - paddingY} x2={width - paddingX} y2={height - paddingY} stroke="var(--border,#dce4e8)" strokeWidth="1" />
+            {points.length > 1 && (
+              <polyline points={polyline} fill="none" stroke="#24a98e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            )}
+            {coordinates.map((point) => (
+              <g key={point.id}>
+                <circle cx={point.x} cy={point.y} r="5" fill="#24a98e" />
+                <text x={point.x} y={Math.max(13, point.y - 10)} textAnchor="middle" fontSize="12" fill="currentColor">
+                  {point.value} {unit}
+                </text>
+              </g>
+            ))}
+          </svg>
+        </div>
+        <div className="patient-trend-dates">
+          {coordinates.map((point) => (
+            <span key={point.id}>{new Date(point.date).toLocaleDateString('fr-FR')}</span>
+          ))}
+        </div>
+        <p className="patient-trend-note">
+          {points.length === 1
+            ? 'Une seule mesure disponible : évolution non calculable.'
+            : `${points.length} mesures enregistrées, de la plus ancienne à la plus récente.`}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <section className="patients-page">
       <style>{`
@@ -202,6 +279,13 @@ export default function Patients() {
         .patient-vital strong { font-size:18px; }
         .patient-consultation,.patient-prescription { padding:14px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:7px; }
         .patient-timeline-entry { padding:15px; border:1px solid var(--border,#e5ebef); border-left:4px solid #42d5b4; border-radius:12px; display:grid; gap:8px; }
+        .patient-trends-grid { display:grid; grid-template-columns:1fr; gap:12px; }
+        .patient-trend-card { padding:15px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:9px; min-width:0; }
+        .patient-trend-chart { width:100%; overflow:hidden; }
+        .patient-trend-chart svg { display:block; width:100%; height:auto; overflow:visible; }
+        .patient-trend-dates { display:flex; justify-content:space-between; gap:6px; color:#81909c; font-size:11px; }
+        .patient-trend-dates span { min-width:0; overflow-wrap:anywhere; }
+        .patient-trend-note { color:#81909c; font-size:12px; }
         .patient-timeline-entry > span { font-size:12px; color:#81909c; }
         .patient-timeline-kind { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#21866e; }
         .patient-consultation strong,.patient-prescription strong { font-size:14px; }
@@ -324,6 +408,13 @@ export default function Patients() {
               ))}
             </div>
           )}
+
+          <h3 className="patient-section-title">Évolution des constantes</h3>
+          <div className="patient-trends-grid">
+            {renderTrendChart('Poids', 'kg', 'weight')}
+            {renderTrendChart('Pression systolique', 'mmHg', 'systolic')}
+            {renderTrendChart('Pression diastolique', 'mmHg', 'diastolic')}
+          </div>
 
           <h3 className="patient-section-title">Chronologie médicale ({medicalTimeline.length} événements)</h3>
           {medicalTimeline.length === 0 ? (
