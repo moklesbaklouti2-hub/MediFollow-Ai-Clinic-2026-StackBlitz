@@ -74,7 +74,13 @@ export default function Prescriptions() {
   function savePrescription() {
     if (!validatePrescription()) return;
 
-    setSavedMessage('Ordonnance enregistrée avec succès sur cet appareil.');
+    addPrescription({
+      patientId,
+      date,
+      medications: medications.map((item) => ({ ...item })),
+      advice,
+    });
+    setSavedMessage('Ordonnance enregistrée et reliée au dossier du patient.');
   }
 
   function openPrescription(item: (typeof prescriptions)[number]) {
