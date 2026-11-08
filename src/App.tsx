@@ -99,6 +99,7 @@ function App() {
   // ---------- NAVIGATION ----------
 
   const [active, setActive] = useState('Tableau de bord');
+  const [orbPrompt, setOrbPrompt] = useState('');
 
   // ---------- COPILOTE IA ----------
 
@@ -217,7 +218,7 @@ function App() {
         return <Patients />;
 
       case 'Consultations':
-        return <Consultations />;
+        return <Consultations onAskCopilot={(prompt) => setOrbPrompt(prompt)} />;
 
       case 'Copilote IA':
         return (
@@ -310,6 +311,8 @@ function App() {
         currentPage={active}
         patients={patients}
         consultations={consultations}
+        clinicalPrompt={orbPrompt}
+        onClinicalPromptConsumed={() => setOrbPrompt('')}
         onOpenCopilot={() => setActive('Copilote IA')}
       />
     </div>
