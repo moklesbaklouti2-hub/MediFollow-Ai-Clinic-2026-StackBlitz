@@ -6652,3 +6652,47 @@ textarea {
     height: 76px !important;
   }
 }
+
+ 
+/* COPILOT ORB — animation plus posée, impulsions électrodynamiques discrètes */
+.premium-copilot .mf-clinical-orb-shell {
+  animation: mfOrbLevitate 9s ease-in-out infinite !important;
+}
+.premium-copilot .mf-clinical-orb {
+  animation: mfOrbBreathe 8s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 9px rgba(48, 224, 220, .25)) !important;
+}
+.premium-copilot .mf-clinical-orb .mf-orb-orbit {
+  animation-duration: 42s !important;
+}
+.premium-copilot .mf-clinical-orb .mf-orb-neural-lines {
+  animation-duration: 16s !important;
+  opacity: .78;
+}
+.premium-copilot .mf-clinical-orb .mf-orb-neural-nodes circle {
+  animation-duration: 5.8s !important;
+}
+.premium-copilot .mf-clinical-orb .mf-orb-electric-arcs {
+  opacity: .58;
+  animation: mfOrbElectricCalm 7s ease-in-out infinite;
+}
+@keyframes mfOrbElectricCalm {
+  0%, 100% { opacity: .38; }
+  50% { opacity: .68; }
+}
+@keyframes mfOrbLevitate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+@keyframes mfOrbBreathe {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(48, 224, 220, .22)); }
+  50% { filter: drop-shadow(0 0 13px rgba(48, 224, 220, .34)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .premium-copilot .mf-clinical-orb-shell,
+  .premium-copilot .mf-clinical-orb,
+  .premium-copilot .mf-clinical-orb *,
+  .premium-copilot .mf-clinical-orb-electric-arcs {
+    animation: none !important;
+  }
+}
