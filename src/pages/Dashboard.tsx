@@ -62,35 +62,39 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   };
 }
 
-function StethoscopeArtwork() {
+function BrainArtwork() {
   return (
-    <svg className="mf-stethoscope-art" viewBox="0 0 300 220" role="img" aria-label="Illustration lumineuse d'un stéthoscope médical">
+    <svg className="mf-brain-art" viewBox="0 0 340 250" role="img" aria-label="Illustration lumineuse d'un cerveau humain stylisé">
       <defs>
-        <linearGradient id="mfScopeMetal" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#f4ffff" />
-          <stop offset=".42" stopColor="#69eaff" />
-          <stop offset="1" stopColor="#168bff" />
+        <linearGradient id="mfBrainFill" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#e5ffff" /><stop offset=".32" stopColor="#62eaff" /><stop offset=".72" stopColor="#168fe8" /><stop offset="1" stopColor="#164d9c" />
         </linearGradient>
-        <radialGradient id="mfScopeGlow"><stop stopColor="#00dfff" stopOpacity=".38"/><stop offset="1" stopColor="#00dfff" stopOpacity="0"/></radialGradient>
-        <filter id="mfScopeShadow"><feGaussianBlur stdDeviation="5"/></filter>
+        <linearGradient id="mfBrainLine" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#ffffff" /><stop offset=".5" stopColor="#7cf5ff" /><stop offset="1" stopColor="#28b8ff" />
+        </linearGradient>
+        <radialGradient id="mfBrainAura"><stop stopColor="#00dfff" stopOpacity=".38" /><stop offset="1" stopColor="#00dfff" stopOpacity="0" /></radialGradient>
+        <filter id="mfBrainGlow"><feGaussianBlur stdDeviation="8" /></filter>
       </defs>
-      <ellipse cx="154" cy="117" rx="128" ry="105" fill="url(#mfScopeGlow)"/>
-      <ellipse cx="154" cy="117" rx="104" ry="88" fill="none" stroke="#42dfff" strokeOpacity=".16" strokeWidth="1.2"/>
-      <path d="M78 32v50c0 44 22 69 67 69s68-25 68-69V32" fill="none" stroke="#0076bd" strokeOpacity=".35" strokeWidth="19" strokeLinecap="round" filter="url(#mfScopeShadow)"/>
-      <path d="M78 30v51c0 44 22 69 67 69s68-25 68-69V30" fill="none" stroke="url(#mfScopeMetal)" strokeWidth="12" strokeLinecap="round"/>
-      <path d="M78 30v51c0 44 22 69 67 69s68-25 68-69V30" fill="none" stroke="#f4ffff" strokeOpacity=".72" strokeWidth="2.2" strokeLinecap="round"/>
-      <rect x="62" y="18" width="32" height="24" rx="9" fill="#0a3e68" stroke="#74eaff" strokeWidth="3"/>
-      <rect x="197" y="18" width="32" height="24" rx="9" fill="#0a3e68" stroke="#74eaff" strokeWidth="3"/>
-      <path d="M145 150v23c0 18 14 29 30 29s29-11 29-27" fill="none" stroke="url(#mfScopeMetal)" strokeWidth="10" strokeLinecap="round"/>
-      <circle cx="204" cy="174" r="24" fill="#0a3761" stroke="#5be8ff" strokeWidth="5"/>
-      <circle cx="204" cy="174" r="13" fill="#123e68" stroke="#d6fbff" strokeOpacity=".8" strokeWidth="2"/>
-      <circle cx="204" cy="174" r="5" fill="#00e6c3"/>
-      <path d="M145 145v16" stroke="#eaffff" strokeWidth="3" strokeLinecap="round"/>
-      <circle cx="145" cy="145" r="5" fill="#eaffff"/>
+      <ellipse cx="170" cy="126" rx="150" ry="112" fill="url(#mfBrainAura)" />
+      <ellipse cx="170" cy="224" rx="92" ry="9" fill="#00cfff" opacity=".2" filter="url(#mfBrainGlow)" />
+      <path d="M166 49c-9-18-34-22-49-8-19-7-39 6-39 27-20 5-27 28-15 44-13 16-6 39 12 47-2 21 17 36 36 31 10 17 34 17 47 3 4-5 7-12 8-20Z" fill="url(#mfBrainFill)" stroke="#9af5ff" strokeWidth="3.5" strokeLinejoin="round" />
+      <path d="M174 49c9-18 34-22 49-8 19-7 39 6 39 27 20 5 27 28 15 44 13 16 6 39-12 47 2 21-17 36-36 31-10 17-34 17-47 3-4-5-7-12-8-20Z" fill="url(#mfBrainFill)" stroke="#9af5ff" strokeWidth="3.5" strokeLinejoin="round" />
+      <path d="M170 43v151" stroke="#e5ffff" strokeOpacity=".9" strokeWidth="3" strokeLinecap="round" />
+      <g fill="none" stroke="url(#mfBrainLine)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M112 49c-9 10-5 23 7 28 11 4 17-3 18-12M84 83c15-4 25 5 23 18-2 10-13 15-24 11M79 139c15-12 29-5 31 8 2 12-7 19-18 20M126 177c-2-13 8-22 19-19 8 2 12 9 11 17M137 76c-10 9-9 23 2 29 9 5 20 0 21-10M112 118c9-9 23-7 28 4 4 9-1 19-10 22" />
+        <path d="M228 49c9 10 5 23-7 28-11 4-17-3-18-12M256 83c-15-4-25 5-23 18 2 10 13 15 24 11M261 139c-15-12-29-5-31 8-2 12 7 19 18 20M214 177c2-13-8-22-19-19-8 2-12 9-11 17M203 76c10 9 9 23-2 29-9 5-20 0-21-10M228 118c-9-9-23-7-28 4-4 9 1 19 10 22" />
+      </g>
+      <g fill="#eaffff" stroke="#25cfff" strokeWidth="2">
+        <circle cx="112" cy="49" r="4"/><circle cx="84" cy="83" r="4"/><circle cx="79" cy="139" r="4"/><circle cx="126" cy="177" r="4"/>
+        <circle cx="228" cy="49" r="4"/><circle cx="256" cy="83" r="4"/><circle cx="261" cy="139" r="4"/><circle cx="214" cy="177" r="4"/>
+      </g>
+      <g fill="none" stroke="#50eaff" strokeWidth="1.5" opacity=".7">
+        <path d="M54 54l14-9 10 5M273 48l13 8 9-4M47 177l15 5 7 12M276 181l13-7 8 4" />
+        <circle cx="48" cy="54" r="3"/><circle cx="296" cy="52" r="3"/><circle cx="70" cy="198" r="3"/><circle cx="298" cy="178" r="3"/>
+      </g>
     </svg>
   );
 }
-
 function DoctorRobotArtwork() {
   return (
     <svg className="mf-doctor-robot" viewBox="0 0 260 290" role="img" aria-label="Robot assistant médical en blouse blanche avec stéthoscope">
@@ -192,7 +196,7 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <div className="mf-hero-orbit mf-hero-orbit-one" />
             <div className="mf-hero-orbit mf-hero-orbit-two" />
             <div className="mf-hero-ecg">⌁</div>
-            <StethoscopeArtwork />
+            <BrainArtwork />
           </div>
           <div className="mf-hero-badge">✦ &nbsp; CLINICAL AI WORKSPACE</div>
         </section>
