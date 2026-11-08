@@ -16,6 +16,7 @@ import type {
     consultations: 'medifollow-consultations',
     prescriptions: 'medifollow-prescriptions',
     settings: 'medifollow-settings',
+    deletedPatients: 'medifollow-deleted-patients',
   };
   
   const UPDATE_EVENT = 'medifollow:data-updated';
@@ -132,6 +133,21 @@ import type {
   
   export function savePatients(patients: Patient[]): boolean {
     return writeData(STORAGE_KEYS.patients, patients);
+  }
+
+  export function getDeletedPatients(): import('../types/medical').DeletedPatient[] {
+    return readArray(STORAGE_KEYS.deletedPatients)
+      .filter((item) => typeof item.patient === 'object' && item.patient !== null)
+      .map((item) => ({
+        patient: item.patient as Patient,
+        deletedAt: String(item.deletedAt ?? now()),
+      }));
+  }
+
+  export function saveDeletedPatients(
+    deletedPatients: import('../types/medical').DeletedPatient[]
+  ): boolean {
+    return writeData(STORAGE_KEYS.deletedPatients, deletedPatients);
   }
   
   // ---------- SIGNES VITAUX PAR DÉFAUT ----------
@@ -270,6 +286,7 @@ import type {
       consultations: getConsultations(),
       prescriptions: getPrescriptions(),
       settings: getSettings(),
+      deletedPatients: getDeletedPatients(),
     };
   }
   
