@@ -1,13 +1,13 @@
-
 {
   "name": "medifollow-ai",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 0.0.0.0\"",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "dev:full": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 0.0.0.0\""
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
