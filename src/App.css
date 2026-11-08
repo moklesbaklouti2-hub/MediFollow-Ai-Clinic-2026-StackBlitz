@@ -6417,3 +6417,27 @@ textarea {
     border-radius: 12px !important;
   }
 }
+
+
+ /* MediFollow — compact theme-matched medical instrument illustration */
+.mf-hero-art .mf-stethoscope-photo {
+  display: block !important;
+  position: relative !important;
+  z-index: 3 !important;
+  width: min(100%, 158px) !important;
+  height: auto !important;
+  max-height: 132px !important;
+  object-fit: contain !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 7px 12px rgba(0, 0, 0, .24)) !important;
+  mix-blend-mode: normal !important;
+  animation: none !important;
+}
+@media (max-width: 720px) {
+  .mf-hero-art .mf-stethoscope-photo {
+    width: min(100%, 122px) !important;
+    max-height: 100px !important;
+  }
+}
