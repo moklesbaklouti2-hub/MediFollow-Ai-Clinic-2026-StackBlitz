@@ -77,13 +77,14 @@ export default function Consultations() {
       plan: plan.trim(),
     };
 
-    if (editingId) {
-      updateConsultation(editingId, changes);
-    } else {
-      addConsultation({
-        ...changes,
-        date: new Date().toISOString(),
-      });
+    const saved = editingId
+      ? updateConsultation(editingId, changes)
+      : addConsultation({ ...changes, date: new Date().toISOString() });
+
+    if (!saved) {
+      window.alert("Enregistrement impossible : le navigateur n'a pas confirmé la sauvegarde. La consultation n'a pas été déclarée comme enregistrée.");
+      setSaved(false);
+      return;
     }
 
     setSaved(true);
