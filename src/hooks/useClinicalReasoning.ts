@@ -33,6 +33,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
   const lastSnapshot = useRef('');
   const lastRequestAt = useRef(0);
   const inFlight = useRef(false);
+  const activeRequest = useRef<AbortController | null>(null);
 
   const previousPatientId = useRef(input.patient?.id ?? '');
 
@@ -40,6 +41,9 @@ export function useClinicalReasoning(input: ReasoningInput) {
     const nextPatientId = input.patient?.id ?? '';
     if (previousPatientId.current !== nextPatientId) {
       previousPatientId.current = nextPatientId;
+      activeRequest.current?.abort();
+      activeRequest.current = null;
+      inFlight.current = false;
       lastSnapshot.current = '';
       setAnalysis(null);
       setError('');
@@ -94,6 +98,8 @@ export function useClinicalReasoning(input: ReasoningInput) {
     const timer = window.setTimeout(async () => {
       if (inFlight.current || snapshot === lastSnapshot.current) return;
       inFlight.current = true;
+      const controller = new AbortController();
+      activeRequest.current = controller;
       lastSnapshot.current = snapshot;
       lastRequestAt.current = Date.now();
       setStatus('analyzing');
@@ -103,6 +109,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
         const response = await fetch('/api/clinical/analyze', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
           body: JSON.stringify({
             context: {
               ...safeContext,
@@ -123,10 +130,15 @@ export function useClinicalReasoning(input: ReasoningInput) {
         setUpdatedAt(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
         setStatus('ready');
       } catch (reason) {
-        setError(reason instanceof Error ? reason.message : 'Erreur du moteur clinique.');
-        setStatus('error');
+        if (!controller.signal.aborted) {
+          setError(reason instanceof Error ? reason.message : 'Erreur du moteur clinique.');
+          setStatus('error');
+        }
       } finally {
-        inFlight.current = false;
+        if (activeRequest.current === controller) {
+          activeRequest.current = null;
+          inFlight.current = false;
+        }
       }
     }, wait);
 
