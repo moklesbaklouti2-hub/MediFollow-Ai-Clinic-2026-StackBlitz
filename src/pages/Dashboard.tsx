@@ -64,13 +64,57 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
 
 function BrainArtwork() {
   return (
-    <img
+    <svg
       className="mf-brain-art mf-stethoscope-art mf-stethoscope-photo"
-      src="https://images.unsplash.com/photo-1655913197692-012897652d13?auto=format&fit=crop&fm=jpg&ixlib=rb-4.1.0&q=75&w=700"
-      alt="Photographie d'un stéthoscope médical noir avec pavillon chromé"
-      loading="eager"
-      decoding="async"
-    />
+      viewBox="0 0 260 210"
+      role="img"
+      aria-label="Illustration élégante d’un stéthoscope médical"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="mfSteel" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#f4fbff" />
+          <stop offset=".28" stopColor="#9eb9c9" />
+          <stop offset=".56" stopColor="#edf7fb" />
+          <stop offset="1" stopColor="#607f93" />
+        </linearGradient>
+        <linearGradient id="mfTube" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#8de9e5" />
+          <stop offset=".48" stopColor="#287d91" />
+          <stop offset="1" stopColor="#173c5c" />
+        </linearGradient>
+        <radialGradient id="mfChest" cx=".34" cy=".25" r=".8">
+          <stop offset="0" stopColor="#f8ffff" />
+          <stop offset=".38" stopColor="#a8c7d6" />
+          <stop offset=".72" stopColor="#607f91" />
+          <stop offset="1" stopColor="#d8edf5" />
+        </radialGradient>
+      </defs>
+      <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M69 39v48c0 34 21 56 55 56s55-22 55-56V39" stroke="#0a1d32" strokeWidth="15" opacity=".35"/>
+        <path d="M69 39v48c0 34 21 56 55 56s55-22 55-56V39" stroke="url(#mfTube)" strokeWidth="10"/>
+        <path d="M69 40v-9m110 9v-9" stroke="url(#mfSteel)" strokeWidth="9"/>
+        <path d="M64 29l-5-9m115 9 5-9" stroke="url(#mfSteel)" strokeWidth="7"/>
+        <path d="M124 143v13c0 13 9 22 22 22h8" stroke="url(#mfTube)" strokeWidth="9"/>
+        <path d="M154 178h13" stroke="url(#mfSteel)" strokeWidth="8"/>
+        <path d="M168 178c13 0 22-9 22-22v-5" stroke="url(#mfTube)" strokeWidth="9"/>
+        <path d="M190 151v-5" stroke="url(#mfSteel)" strokeWidth="8"/>
+      </g>
+      <g>
+        <circle cx="190" cy="125" r="31" fill="#071a2c" opacity=".32"/>
+        <circle cx="190" cy="121" r="27" fill="url(#mfSteel)" stroke="#d9f4fb" strokeWidth="1.5"/>
+        <circle cx="190" cy="121" r="21" fill="url(#mfChest)" stroke="#54758a" strokeWidth="2"/>
+        <circle cx="190" cy="121" r="14" fill="none" stroke="#f2fbff" strokeWidth="1.2" opacity=".85"/>
+        <circle cx="190" cy="121" r="7" fill="#8daebe" opacity=".7"/>
+        <path d="M176 108c5-7 13-10 21-7" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity=".8"/>
+      </g>
+      <g fill="url(#mfSteel)" stroke="#49677b" strokeWidth="1.4">
+        <rect x="59" y="20" width="20" height="13" rx="5" transform="rotate(-18 69 26)"/>
+        <rect x="169" y="20" width="20" height="13" rx="5" transform="rotate(18 179 26)"/>
+      </g>
+      <path d="M78 43v42c0 27 17 45 46 45" fill="none" stroke="#b8f4ed" strokeWidth="1.5" opacity=".65" strokeLinecap="round"/>
+      <path d="M201 111c3 3 5 7 5 11" fill="none" stroke="#fff" strokeWidth="2" opacity=".8" strokeLinecap="round"/>
+    </svg>
   );
 }
 function DoctorRobotArtwork() {
