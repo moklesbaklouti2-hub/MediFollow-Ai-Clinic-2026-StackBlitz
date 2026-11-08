@@ -62,18 +62,18 @@ const coreFragmentShader = `
     float detail = fbm3(q * 2.5 - drift * 1.2);
     float wave = sin((q.x * 1.7 + q.y * 2.3 - q.z * 1.4) * 4.2 + cloud * 9.0 - uTime * (1.15 + uThinking * 1.8));
     float filaments = pow(1.0 - abs(wave), 12.0) * smoothstep(0.34, 0.72, detail);
-    float currents = smoothstep(0.43, 0.72, cloud) * 0.85 + filaments * 0.9;
+    float currents = smoothstep(0.36, 0.68, cloud) * 1.05 + filaments * 1.15;
     vec3 cyan = vec3(0.015, 0.72, 0.68);
     vec3 violet = vec3(0.42, 0.055, 0.82);
     vec3 color = vec3(0.0015, 0.004, 0.014);
-    color += cyan * currents * (0.45 + smoothstep(0.38, 0.76, fbm3(q * 0.72 + drift)) * 0.75);
-    color += violet * smoothstep(0.43, 0.76, detail) * (0.28 + filaments * 0.8);
+    color += cyan * currents * (0.62 + smoothstep(0.34, 0.72, fbm3(q * 0.72 + drift)) * 0.95);
+    color += violet * smoothstep(0.38, 0.72, detail) * (0.42 + filaments * 1.0);
     color += cyan * filaments * 0.55;
     vec3 viewDir = normalize(cameraPosition - vWorld);
     float rim = pow(1.0 - max(dot(normalize(vNormal), viewDir), 0.0), 2.6);
-    color += mix(cyan, violet, 0.48) * rim * 0.75;
+    float faceLight = 0.48 + 0.52 * max(dot(normalize(vNormal), normalize(vec3(-0.42, 0.58, 0.82))), 0.0);\n    color *= faceLight;\n    color += mix(cyan, violet, 0.48) * rim * 1.05;
     float pulse = 0.86 + 0.14 * sin(uTime * (1.2 + uThinking * 2.0) + cloud * 8.0);
-    gl_FragColor = vec4(color * pulse * 1.75, 1.0);
+    gl_FragColor = vec4(color * pulse * 2.05, 1.0);
   }
 `;
 
@@ -90,8 +90,8 @@ const plasmaVertexShader = `
     float n2 = fbm3(direction * 8.0 - vec3(uTime * 0.19, 0.0, uTime * 0.13));
     float tongues = pow(max(0.0, n1 * 0.72 + n2 * 0.38 - 0.43), 1.35);
     float ripple = sin(direction.x * 8.0 + direction.y * 6.0 - uTime * 0.7) * sin(direction.z * 7.0 + uTime * 0.55);
-    float displacement = 0.012 + tongues * (0.10 + uThinking * 0.035) + ripple * 0.008;
-    vec3 p = direction * (0.795 + displacement);
+    float displacement = 0.045 + tongues * (0.16 + uThinking * 0.045) + ripple * 0.014;
+    vec3 p = direction * (0.80 + displacement);
     vLocal = direction;
     vec4 world = modelMatrix * vec4(p, 1.0);
     vWorld = world.xyz;
@@ -115,15 +115,15 @@ const plasmaFragmentShader = `
     vec3 q = flow + (warp - 0.5) * 4.8;
     float smoke = fbm3(q * 1.35);
     float ridges = 1.0 - abs(fbm3(q * 2.2) * 2.0 - 1.0);
-    float stream = pow(max(0.0, ridges - 0.60), 4.0) * smoothstep(0.42, 0.72, smoke);
-    float flare = smoothstep(0.62, 0.82, smoke) * (0.16 + stream);
+    float stream = pow(max(0.0, ridges - 0.48), 3.0) * smoothstep(0.34, 0.68, smoke);
+    float flare = smoothstep(0.48, 0.76, smoke) * (0.32 + stream);
     vec3 cyan = vec3(0.025, 0.82, 0.76);
     vec3 purple = vec3(0.58, 0.10, 0.95);
     vec3 color = mix(cyan, purple, smoothstep(0.34, 0.72, fbm3(q * 0.72 + 4.0)));
-    color *= 0.35 + flare * 1.5 + stream * 1.8;
+    color *= 0.52 + flare * 1.65 + stream * 2.0;
     vec3 viewDir = normalize(cameraPosition - vWorld);
     float edge = pow(1.0 - abs(dot(normalize(vNormal), viewDir)), 1.6);
-    float alpha = clamp((flare * 0.22 + stream * 0.72) * (0.25 + edge * 0.45), 0.0, 0.72);
+    float alpha = clamp((flare * 0.38 + stream * 0.88) * (0.42 + edge * 0.48), 0.0, 0.82);
     gl_FragColor = vec4(color, alpha);
   }
 `;
