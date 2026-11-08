@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import './App.css';
 
@@ -30,6 +29,30 @@ function getStoredCount(key: string): number {
 }
 
 function App() {
+  const [storageWarning, setStorageWarning] = useState('');
+
+  useEffect(() => {
+    const handleStorageError = (event: Event) => {
+      const detail = (event as CustomEvent<{ key?: string }>).detail;
+      const label: Record<string, string> = {
+        'medifollow-patients': 'patients',
+        'medifollow-consultations': 'consultations',
+        'medifollow-prescriptions': 'ordonnances',
+        'medifollow-settings': 'paramètres',
+        'medifollow-deleted-patients': 'corbeille',
+      };
+      const section = detail?.key ? label[detail.key] : undefined;
+      setStorageWarning(
+        section
+          ? `Échec de l'enregistrement des ${section}. Vos modifications ne sont peut-être pas sauvegardées. Libérez de l'espace ou téléchargez une sauvegarde, puis réessayez.`
+          : `Échec de l'enregistrement. Vos modifications ne sont peut-être pas sauvegardées. Téléchargez une sauvegarde et réessayez.`
+      );
+    };
+
+    window.addEventListener('medifollow:storage-error', handleStorageError);
+    return () => window.removeEventListener('medifollow:storage-error', handleStorageError);
+  }, []);
+
   // ---------- THÈME ----------
 
   const [themePreference, setThemePreference] = useState(() => {
@@ -202,6 +225,38 @@ function App() {
 
       <main className="main">
         <Header title={active} />
+        {storageWarning && (
+          <div
+            role="alert"
+            style={{
+              margin: '12px 0',
+              padding: '13px 15px',
+              border: '1px solid #d97777',
+              borderRadius: '10px',
+              background: '#fff1f1',
+              color: '#9f3030',
+              fontSize: '13px',
+              lineHeight: 1.5,
+            }}
+          >
+            <strong>Attention — stockage non confirmé</strong>
+            <p style={{ margin: '5px 0 10px' }}>{storageWarning}</p>
+            <button
+              type="button"
+              onClick={() => setStorageWarning('')}
+              style={{
+                border: '1px solid currentColor',
+                borderRadius: '7px',
+                padding: '6px 10px',
+                background: 'transparent',
+                color: 'inherit',
+                cursor: 'pointer',
+              }}
+            >
+              Fermer
+            </button>
+          </div>
+        )}
         {renderContent()}
       </main>
     </div>
@@ -209,4 +264,3 @@ function App() {
 }
 
 export default App;
-
