@@ -5786,3 +5786,6 @@ textarea {
   .mf-dashboard .mf-stats,.mf-dashboard-grid { gap: 10px !important; }
   .mf-hero-art .mf-brain-art { width: min(100%,245px) !important; max-height: 160px !important; }
 }
+
+/* Ensure the new brain SVG remains visible despite legacy illustration filters */
+.mf-hero-art > svg.mf-brain-art { display: block !important; }
