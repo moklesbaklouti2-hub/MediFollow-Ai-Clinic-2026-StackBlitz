@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useMedicalData } from '../hooks/useMedicalData';
 
 type SettingsProps = {
   themePreference: string;
@@ -10,21 +11,31 @@ export default function Settings({
   themePreference,
   onThemeChange,
 }: SettingsProps) {
-  const [doctorName, setDoctorName] = useState('Dr Mokhles Baklouti');
-  const [specialty, setSpecialty] = useState('Médecine de famille');
-  const [cabinetName, setCabinetName] = useState('Cabinet médical');
-  const [address, setAddress] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [copilotEnabled, setCopilotEnabled] = useState(true);
+  const { settings, updateSettings } = useMedicalData();
+  const [doctorName, setDoctorName] = useState(settings.doctorName);
+  const [specialty, setSpecialty] = useState(settings.specialty);
+  const [cabinetName, setCabinetName] = useState(settings.cabinetName);
+  const [address, setAddress] = useState(settings.address);
+  const [phone, setPhone] = useState(settings.phone);
+  const [email, setEmail] = useState(settings.email);
+  const [copilotEnabled, setCopilotEnabled] = useState(settings.copilotEnabled);
   const [confirmBeforePrescription, setConfirmBeforePrescription] =
-    useState(true);
+    useState(settings.confirmBeforePrescription);
   const [message, setMessage] = useState('');
 
   function saveSettings() {
-    setMessage(
-      'Paramètres mis à jour dans cette session. La sauvegarde permanente sera ajoutée ultérieurement.'
-    );
+    updateSettings({
+      doctorName: doctorName.trim(),
+      specialty: specialty.trim(),
+      cabinetName: cabinetName.trim(),
+      address: address.trim(),
+      phone: phone.trim(),
+      email: email.trim(),
+      copilotEnabled,
+      confirmBeforePrescription,
+      themePreference: themePreference as 'auto' | 'light' | 'dark',
+    });
+    setMessage('Paramètres enregistrés sur cet appareil.');
   }
 
   return (
@@ -303,9 +314,7 @@ export default function Settings({
       {message && <div className="settings-message">{message}</div>}
 
       <p className="settings-note">
-        Version de démonstration : les paramètres du profil et du cabinet
-        sont conservés uniquement dans l'état de la page. La sauvegarde
-        permanente sera développée dans une prochaine étape.
+        Les paramètres du profil, du cabinet et du copilote sont enregistrés dans le stockage local de ce navigateur.
       </p>
     </section>
   );
