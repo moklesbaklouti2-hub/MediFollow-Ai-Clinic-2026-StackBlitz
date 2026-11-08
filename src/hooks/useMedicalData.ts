@@ -47,8 +47,8 @@ export function useMedicalData() {
       updatedAt: timestamp,
     };
 
-    savePatients([...getMedicalData().patients, newPatient]);
-    return newPatient;
+    const saved = savePatients([...getMedicalData().patients, newPatient]);
+    return saved ? newPatient : null;
   }, []);
 
   const updatePatient = useCallback((
@@ -66,7 +66,7 @@ export function useMedicalData() {
         : patient
     );
 
-    savePatients(updated);
+    return savePatients(updated);
   }, []);
 
   const deletePatient = useCallback((id: string) => {
@@ -125,12 +125,12 @@ export function useMedicalData() {
       updatedAt: timestamp,
     };
 
-    saveConsultations([
+    const saved = saveConsultations([
       ...getMedicalData().consultations,
       newConsultation,
     ]);
 
-    return newConsultation;
+    return saved ? newConsultation : null;
   }, []);
 
   const updateConsultation = useCallback((
@@ -148,7 +148,7 @@ export function useMedicalData() {
         : item
     );
 
-    saveConsultations(updated);
+    return saveConsultations(updated);
   }, []);
 
   const deleteConsultation = useCallback((id: string) => {
@@ -156,7 +156,7 @@ export function useMedicalData() {
       (item) => item.id !== id
     );
 
-    saveConsultations(updated);
+    return saveConsultations(updated);
   }, []);
 
   // ORDONNANCES
@@ -170,12 +170,12 @@ export function useMedicalData() {
       savedAt: new Date().toISOString(),
     };
 
-    savePrescriptions([
+    const saved = savePrescriptions([
       ...getMedicalData().prescriptions,
       newPrescription,
     ]);
 
-    return newPrescription;
+    return saved ? newPrescription : null;
   }, []);
 
   const updatePrescription = useCallback((
@@ -192,7 +192,7 @@ export function useMedicalData() {
         : item
     );
 
-    savePrescriptions(updated);
+    return savePrescriptions(updated);
   }, []);
 
   const deletePrescription = useCallback((id: string) => {
@@ -200,7 +200,7 @@ export function useMedicalData() {
       (item) => item.id !== id
     );
 
-    savePrescriptions(updated);
+    return savePrescriptions(updated);
   }, []);
 
   // PARAMÈTRES
@@ -213,7 +213,7 @@ export function useMedicalData() {
       ...changes,
     };
 
-    saveSettings(updated);
+    return saveSettings(updated);
   }, []);
 
   return {
