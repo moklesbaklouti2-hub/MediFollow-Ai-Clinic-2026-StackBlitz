@@ -233,10 +233,6 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
       <mesh ref={plasmaShell} material={plasmaMaterial} renderOrder={2}>
         <sphereGeometry args={[0.78, 96, 96]} />
       </mesh>
-      <mesh scale={1.025}>
-        <sphereGeometry args={[0.78, 48, 48]} />
-        <meshBasicMaterial color="#48e8dc" transparent opacity={0.035} side={THREE.BackSide} blending={THREE.AdditiveBlending} depthWrite={false} />
-      </mesh>
       <group ref={ringA}>
         <mesh material={ringMaterials[0]}><torusGeometry args={[1.01, 0.022, 12, 180]} /></mesh>
         <mesh material={ringMaterials[0]} scale={0.985}><torusGeometry args={[1.01, 0.008, 8, 180]} /></mesh>
