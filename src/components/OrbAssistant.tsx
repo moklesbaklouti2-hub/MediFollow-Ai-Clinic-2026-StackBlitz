@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import type { Patient, Consultation } from '../types/medical';
 import OrbVisual from './OrbVisual';
 import './OrbAssistant.css';
 
@@ -6,6 +7,8 @@ type OrbAssistantProps = {
   isThinking?: boolean;
   currentPage: string;
   onOpenCopilot: () => void;
+  patients: Patient[];
+  consultations: Consultation[];
 };
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
@@ -20,14 +23,33 @@ const suggestionsByPage: Record<string, string[]> = {
   'Paramètres': ['Aide-moi à configurer MediFollow.', 'Quelles fonctions puis-je personnaliser ?'],
 };
 
-export default function OrbAssistant({ isThinking = false, currentPage, onOpenCopilot }: OrbAssistantProps) {
+export default function OrbAssistant({
+  isThinking = false,
+  currentPage,
+  onOpenCopilot,
+  patients,
+  consultations,
+}: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<OrbMessage[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState('');
+  const [selectedConsultationId, setSelectedConsultationId] = useState('');
+  const [shareClinicalContext, setShareClinicalContext] = useState(false);
   const conversationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const suggestions = suggestionsByPage[currentPage] || suggestionsByPage['Tableau de bord'];
+
+  const selectedPatient = patients.find((patient) => patient.id === selectedPatientId);
+  const patientConsultations = selectedPatient
+    ? consultations
+        .filter((item) => item.patientId === selectedPatient.id)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    : [];
+  const selectedConsultation = patientConsultations.find(
+    (item) => item.id === selectedConsultationId
+  );
 
   useEffect(() => {
     if (panelOpen) inputRef.current?.focus();
@@ -45,15 +67,41 @@ export default function OrbAssistant({ isThinking = false, currentPage, onOpenCo
     setMessages(previous => [...previous, { role: 'user', content: message }]);
     setInput('');
     setSending(true);
+
+    const context: Record<string, unknown> = {
+      currentPage,
+      assistantMode: 'assistant permanent de navigation et de réflexion clinique',
+      clinicalContextSharing: shareClinicalContext,
+    };
+
+    if (shareClinicalContext && selectedPatient) {
+      context.patient = {
+        age: selectedPatient.age,
+        sex: selectedPatient.sex,
+        clinicalHistory: selectedPatient.clinicalHistory,
+        currentMedications: selectedPatient.currentMedications,
+      };
+      if (selectedConsultation) {
+        context.consultation = {
+          date: selectedConsultation.date,
+          specialty: selectedConsultation.specialty,
+          motif: selectedConsultation.motif,
+          symptoms: selectedConsultation.symptoms,
+          history: selectedConsultation.history,
+          vitals: selectedConsultation.vitals,
+          physicalExamination: selectedConsultation.physicalExamination,
+          examination: selectedConsultation.examination,
+          diagnosis: selectedConsultation.diagnosis,
+          plan: selectedConsultation.plan,
+        };
+      }
+    }
+
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message,
-          context: { currentPage, assistantMode: 'assistant permanent de navigation et de réflexion clinique' },
-          history,
-        }),
+        body: JSON.stringify({ message, context, history }),
       });
       const contentType = response.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
@@ -78,6 +126,18 @@ export default function OrbAssistant({ isThinking = false, currentPage, onOpenCo
     void sendMessage();
   }
 
+  const selectStyle: React.CSSProperties = {
+    width: '100%',
+    minHeight: 38,
+    padding: '8px 10px',
+    border: '1px solid var(--border, #dce4e8)',
+    borderRadius: 9,
+    background: 'var(--surface, #fff)',
+    color: 'var(--text-primary, #20334b)',
+    font: 'inherit',
+    fontSize: 12,
+  };
+
   return (
     <div className={`mf-orb-assistant${isThinking || sending ? ' is-thinking' : ''}`}>
       {panelOpen && (
@@ -91,6 +151,58 @@ export default function OrbAssistant({ isThinking = false, currentPage, onOpenCo
           </div>
 
           <div className="mf-orb-context"><span>Vous êtes dans</span><strong>{currentPage}</strong><span>Je peux vous accompagner sur cette étape.</span></div>
+
+          <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border, #e5ebef)', display: 'grid', gap: 8 }}>
+            <strong style={{ fontSize: 12 }}>Contexte médical (facultatif)</strong>
+            <select
+              aria-label="Choisir un patient pour le contexte médical"
+              style={selectStyle}
+              value={selectedPatientId}
+              disabled={sending}
+              onChange={(event) => {
+                setSelectedPatientId(event.target.value);
+                setSelectedConsultationId('');
+                setShareClinicalContext(false);
+              }}
+            >
+              <option value="">Ne partager aucun dossier patient</option>
+              {patients.map((patient) => (
+                <option key={patient.id} value={patient.id}>{patient.name} · {patient.age} ans</option>
+              ))}
+            </select>
+            {selectedPatient && (
+              <select
+                aria-label="Choisir une consultation enregistrée"
+                style={selectStyle}
+                value={selectedConsultationId}
+                disabled={sending}
+                onChange={(event) => {
+                  setSelectedConsultationId(event.target.value);
+                  setShareClinicalContext(false);
+                }}
+              >
+                <option value="">Sans consultation associée</option>
+                {patientConsultations.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {new Date(item.date).toLocaleDateString('fr-FR')} · {item.motif || 'Sans motif'}
+                  </option>
+                ))}
+              </select>
+            )}
+            <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 11, lineHeight: 1.4, cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={shareClinicalContext && Boolean(selectedPatient)}
+                disabled={!selectedPatient || sending}
+                onChange={(event) => setShareClinicalContext(event.target.checked)}
+                style={{ marginTop: 2 }}
+              />
+              <span>J’autorise l’envoi du contexte clinique sélectionné avec mes prochains messages.</span>
+            </label>
+            <span style={{ color: 'var(--text-secondary, #81909c)', fontSize: 10 }}>
+              Le nom et le téléphone du patient ne sont pas transmis. Aucun dossier n’est envoyé sans votre autorisation.
+            </span>
+          </div>
 
           <div className="mf-orb-conversation" ref={conversationRef} aria-live="polite">
             {messages.length === 0 ? (
@@ -119,7 +231,7 @@ export default function OrbAssistant({ isThinking = false, currentPage, onOpenCo
             <span>Entrée pour envoyer · Maj + Entrée pour une ligne</span>
             <button type="button" onClick={() => { setPanelOpen(false); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
           </div>
-          <p className="mf-orb-privacy">Les données d’un patient ne sont pas jointes automatiquement. Ajoutez uniquement le contexte nécessaire.</p>
+          <p className="mf-orb-privacy">Les données d’un patient ne sont jointes que si vous les sélectionnez et cochez l’autorisation.</p>
         </section>
       )}
 
