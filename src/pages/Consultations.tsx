@@ -216,6 +216,7 @@ export default function Consultations() {
     setSaved(true);
     setEditingId(null);
     setPatientId('');
+    setSpecialty('');
     setMotif('');
     setSymptoms('');
     setHistory('');
