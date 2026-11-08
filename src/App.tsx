@@ -60,7 +60,7 @@ function App() {
   // ---------- THÈME ----------
 
   const [themePreference, setThemePreference] = useState(() => {
-    return localStorage.getItem('medifollow-theme') || 'auto';
+    return localStorage.getItem('medifollow-theme') || 'dark';
   });
 
   useEffect(() => {
@@ -202,6 +202,7 @@ function App() {
             patientCount={getStoredCount('medifollow-patients')}
             consultationCount={getStoredCount('medifollow-consultations')}
             onStartConsultation={() => setActive('Consultations')}
+            onOpenCopilot={() => setActive('Copilote IA')}
           />
         );
 
