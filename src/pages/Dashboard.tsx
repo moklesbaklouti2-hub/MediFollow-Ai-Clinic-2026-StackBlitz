@@ -64,92 +64,103 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
 
 function BrainArtwork() {
   return (
-    <svg className="mf-brain-art mf-brain-neon" viewBox="0 0 420 300" role="img" aria-label="Cerveau anatomique tridimensionnel détaillé, illuminé en turquoise néon">
+    <svg className="mf-brain-art mf-brain-neon" viewBox="0 0 520 340" role="img" aria-label="Illustration anatomique tridimensionnelle du cerveau humain, relief cortical détaillé et lumière turquoise">
       <defs>
-        <radialGradient id="mfBrainCore" cx="48%" cy="38%" r="68%">
-          <stop offset="0" stopColor="#d8ffff" />
-          <stop offset=".22" stopColor="#72fff2" />
-          <stop offset=".55" stopColor="#16d9d2" />
-          <stop offset=".82" stopColor="#087d9f" />
-          <stop offset="1" stopColor="#062d55" />
+        <radialGradient id="mfBrainVolume" cx="38%" cy="28%" r="78%">
+          <stop offset="0" stopColor="#eaffff"/>
+          <stop offset=".16" stopColor="#a2fff8"/>
+          <stop offset=".38" stopColor="#42e8e1"/>
+          <stop offset=".68" stopColor="#119bb9"/>
+          <stop offset=".9" stopColor="#07517e"/>
+          <stop offset="1" stopColor="#032b50"/>
         </radialGradient>
-        <linearGradient id="mfBrainLeft" x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#c5fff9"/><stop offset=".3" stopColor="#36f4e5"/><stop offset=".72" stopColor="#079cb9"/><stop offset="1" stopColor="#073d70"/>
+        <linearGradient id="mfBrainRim" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#e4ffff"/><stop offset=".35" stopColor="#6afff1"/>
+          <stop offset=".72" stopColor="#0ba9c4"/><stop offset="1" stopColor="#06345f"/>
         </linearGradient>
-        <linearGradient id="mfBrainRight" x1="1" y1="0" x2="0" y2="1">
-          <stop stopColor="#e1ffff"/><stop offset=".28" stopColor="#58fff0"/><stop offset=".68" stopColor="#08aebe"/><stop offset="1" stopColor="#06436d"/>
-        </linearGradient>
-        <filter id="mfBrainGlow" x="-45%" y="-45%" width="190%" height="190%">
-          <feGaussianBlur stdDeviation="8" result="blur"/>
-          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.95 0 0 0 0 0.88 0 0 0 .9 0" result="cyan"/>
-          <feMerge><feMergeNode in="cyan"/><feMergeNode in="SourceGraphic"/></feMerge>
+        <radialGradient id="mfBrainCerebellum" cx="35%" cy="25%" r="85%">
+          <stop stopColor="#aafff6"/><stop offset=".42" stopColor="#24c8d1"/>
+          <stop offset="1" stopColor="#06416c"/>
+        </radialGradient>
+        <filter id="mfBrainBloom" x="-45%" y="-45%" width="190%" height="190%">
+          <feGaussianBlur stdDeviation="11" result="blur"/>
+          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.86 0 0 0 0 0.88 0 0 0 .82 0" result="glow"/>
+          <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
         </filter>
-        <filter id="mfBrainSoft"><feGaussianBlur stdDeviation="15"/></filter>
-        <clipPath id="mfBrainClip">
-          <path d="M207 54 C190 31 161 25 139 37 C122 24 96 35 88 54 C61 53 48 76 54 97 C32 111 38 140 52 153 C39 177 52 201 72 207 C73 232 97 246 119 236 C135 255 162 249 177 232 C191 239 202 226 207 211 Z"/>
-          <path d="M213 54 C230 31 259 25 281 37 C298 24 324 35 332 54 C359 53 372 76 366 97 C388 111 382 140 368 153 C381 177 368 201 348 207 C347 232 323 246 301 236 C285 255 258 249 243 232 C229 239 218 226 213 211 Z"/>
+        <filter id="mfBrainShadow"><feGaussianBlur stdDeviation="17"/></filter>
+        <clipPath id="mfBrainSideClip">
+          <path d="M104 189 C83 168 88 136 111 119 C107 91 133 68 163 73 C181 44 219 38 249 52 C277 27 319 39 334 66 C369 56 399 79 401 108 C434 122 445 157 427 182 C443 210 425 239 397 245 C383 274 348 281 321 267 C294 291 258 280 244 261 C216 276 182 262 177 238 C143 248 112 224 104 189 Z"/>
         </clipPath>
       </defs>
-      <ellipse cx="210" cy="157" rx="166" ry="119" fill="#00e9e0" opacity=".13" filter="url(#mfBrainSoft)"/>
-      <g filter="url(#mfBrainGlow)">
-        <path d="M207 54 C190 31 161 25 139 37 C122 24 96 35 88 54 C61 53 48 76 54 97 C32 111 38 140 52 153 C39 177 52 201 72 207 C73 232 97 246 119 236 C135 255 162 249 177 232 C191 239 202 226 207 211 Z" fill="url(#mfBrainLeft)" stroke="#bafffa" strokeWidth="3.2"/>
-        <path d="M213 54 C230 31 259 25 281 37 C298 24 324 35 332 54 C359 53 372 76 366 97 C388 111 382 140 368 153 C381 177 368 201 348 207 C347 232 323 246 301 236 C285 255 258 249 243 232 C229 239 218 226 213 211 Z" fill="url(#mfBrainRight)" stroke="#bafffa" strokeWidth="3.2"/>
-        <path d="M210 49 C204 82 216 105 209 133 C204 161 217 187 210 220" fill="none" stroke="#d9fffb" strokeWidth="4" strokeLinecap="round" opacity=".92"/>
-        <g clipPath="url(#mfBrainClip)" fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <g stroke="#d5fffb" strokeWidth="4.2" opacity=".86">
-            <path d="M65 91 C80 67 105 68 111 88 C117 107 91 113 80 100 C67 85 79 59 103 52"/>
-            <path d="M105 43 C127 54 137 70 126 88 C115 105 91 97 94 78"/>
-            <path d="M145 36 C163 49 169 68 153 83 C137 98 121 82 129 65"/>
-            <path d="M176 49 C193 65 188 84 172 92 C154 101 145 119 161 130"/>
-            <path d="M54 125 C75 111 99 120 99 139 C99 158 74 166 61 151"/>
-            <path d="M102 111 C119 98 143 108 140 129 C137 149 114 155 101 140"/>
-            <path d="M151 101 C170 91 188 104 182 123 C176 142 153 146 143 132"/>
-            <path d="M55 172 C77 153 105 164 101 187 C97 208 72 211 62 193"/>
-            <path d="M108 158 C126 143 151 151 151 174 C151 195 126 205 111 190"/>
-            <path d="M158 151 C179 139 194 154 185 173 C178 190 157 192 148 178"/>
-            <path d="M83 215 C103 197 128 204 130 223"/>
-            <path d="M137 211 C153 190 177 196 183 217"/>
+
+      <ellipse cx="264" cy="190" rx="190" ry="125" fill="#00e8e1" opacity=".16" filter="url(#mfBrainShadow)"/>
+      <ellipse cx="265" cy="300" rx="142" ry="13" fill="#00d9ed" opacity=".15" filter="url(#mfBrainShadow)"/>
+
+      <g filter="url(#mfBrainBloom)">
+        <path d="M104 189 C83 168 88 136 111 119 C107 91 133 68 163 73 C181 44 219 38 249 52 C277 27 319 39 334 66 C369 56 399 79 401 108 C434 122 445 157 427 182 C443 210 425 239 397 245 C383 274 348 281 321 267 C294 291 258 280 244 261 C216 276 182 262 177 238 C143 248 112 224 104 189 Z"
+          fill="url(#mfBrainVolume)" stroke="#c9fffb" strokeWidth="3.4"/>
+        <path d="M155 91 C177 57 221 57 246 76 C270 48 311 51 326 82 C355 73 385 91 385 119 C414 135 418 164 399 185 C411 211 391 235 365 235 C349 261 317 260 297 243 C273 265 245 249 235 229 C209 245 180 225 183 202 C151 203 136 177 151 155 C131 133 137 108 155 91 Z"
+          fill="none" stroke="#e2fffc" strokeWidth="2.1" opacity=".42"/>
+
+        <g clipPath="url(#mfBrainSideClip)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <g stroke="#e4fffc" strokeWidth="5.2" opacity=".76">
+            <path d="M101 126 C123 94 158 93 169 119 C180 145 148 163 130 145 C111 126 128 94 151 82"/>
+            <path d="M158 76 C183 86 196 108 181 129 C166 151 143 138 148 116"/>
+            <path d="M205 49 C231 66 235 91 214 108 C192 126 174 106 186 84"/>
+            <path d="M257 48 C281 64 286 91 266 107 C244 125 225 107 237 85"/>
+            <path d="M306 54 C328 73 326 98 304 111 C283 124 269 105 282 85"/>
+            <path d="M354 72 C373 92 366 116 345 125 C323 135 311 115 325 97"/>
+            <path d="M402 113 C423 139 409 163 385 166 C361 169 355 145 373 132"/>
+            <path d="M112 169 C138 147 169 157 168 184 C167 211 134 220 117 198"/>
+            <path d="M164 145 C189 127 215 141 210 168 C205 194 176 202 159 183"/>
+            <path d="M218 126 C242 108 270 122 263 150 C256 177 226 184 211 165"/>
+            <path d="M276 122 C301 104 329 119 321 146 C313 172 285 181 270 161"/>
+            <path d="M333 137 C357 120 382 135 375 160 C368 185 342 190 327 173"/>
+            <path d="M127 218 C151 195 181 203 184 228 C187 250 161 265 142 248"/>
+            <path d="M190 202 C214 183 241 194 238 219 C235 244 209 253 191 235"/>
+            <path d="M250 190 C275 171 302 185 296 211 C290 237 263 243 247 225"/>
+            <path d="M309 194 C332 176 360 189 354 215 C348 239 322 247 305 228"/>
+            <path d="M370 194 C391 180 412 193 406 215 C400 235 380 240 367 225"/>
           </g>
-          <g stroke="#035b83" strokeWidth="5" opacity=".58">
-            <path d="M70 83 C89 91 101 81 105 65"/>
-            <path d="M118 49 C111 69 126 80 141 78"/>
-            <path d="M159 45 C148 62 160 75 176 78"/>
-            <path d="M57 142 C77 130 91 139 91 154"/>
-            <path d="M116 119 C129 131 126 144 112 151"/>
-            <path d="M165 111 C176 122 168 137 155 140"/>
-            <path d="M70 185 C85 177 94 185 91 199"/>
-            <path d="M119 169 C137 177 133 194 119 200"/>
-            <path d="M163 164 C174 173 169 185 157 189"/>
-            <path d="M355 83 C336 91 324 81 320 65"/>
-            <path d="M302 49 C309 69 294 80 279 78"/>
-            <path d="M261 45 C272 62 260 75 244 78"/>
-            <path d="M363 142 C343 130 329 139 329 154"/>
-            <path d="M304 119 C291 131 294 144 308 151"/>
-            <path d="M255 111 C244 122 252 137 265 140"/>
-            <path d="M350 185 C335 177 326 185 329 199"/>
-            <path d="M301 169 C283 177 287 194 301 200"/>
-            <path d="M257 164 C246 173 251 185 263 189"/>
+          <g stroke="#034c77" strokeWidth="7" opacity=".47">
+            <path d="M112 111 C132 125 147 116 151 97"/>
+            <path d="M175 72 C164 96 181 111 201 108"/>
+            <path d="M224 58 C211 81 226 96 246 96"/>
+            <path d="M280 58 C267 81 282 98 301 96"/>
+            <path d="M335 75 C321 94 335 111 354 109"/>
+            <path d="M397 127 C377 119 363 135 369 153"/>
+            <path d="M116 183 C139 169 153 181 150 202"/>
+            <path d="M174 159 C194 171 189 191 170 198"/>
+            <path d="M232 139 C251 151 247 172 229 180"/>
+            <path d="M290 137 C309 150 304 171 286 179"/>
+            <path d="M347 151 C365 164 358 184 341 190"/>
+            <path d="M151 235 C168 220 182 229 179 247"/>
+            <path d="M211 218 C230 230 224 248 206 255"/>
+            <path d="M270 207 C288 219 283 238 265 245"/>
+            <path d="M329 210 C346 222 341 241 324 249"/>
           </g>
-          <g stroke="#e4fffc" strokeWidth="3.6" opacity=".82">
-            <path d="M355 91 C340 67 315 68 309 88 C303 107 329 113 340 100 C353 85 341 59 317 52"/>
-            <path d="M315 43 C293 54 283 70 294 88 C305 105 329 97 326 78"/>
-            <path d="M275 36 C257 49 251 68 267 83 C283 98 299 82 291 65"/>
-            <path d="M366 125 C345 111 321 120 321 139 C321 158 346 166 359 151"/>
-            <path d="M318 111 C301 98 277 108 280 129 C283 149 306 155 319 140"/>
-            <path d="M268 101 C249 91 231 104 237 123 C243 142 266 146 276 132"/>
-            <path d="M365 172 C343 153 315 164 319 187 C323 208 348 211 358 193"/>
-            <path d="M312 158 C294 143 269 151 269 174 C269 195 294 205 309 190"/>
-            <path d="M262 151 C241 139 226 154 235 173 C242 190 263 192 272 178"/>
-            <path d="M337 215 C317 197 292 204 290 223"/>
-            <path d="M283 211 C267 190 243 196 237 217"/>
+          <g stroke="#f0ffff" strokeWidth="2.4" opacity=".7">
+            <path d="M126 101q15-17 31-8M192 64q20-10 34 5M253 62q18-10 31 4M318 72q17-5 27 10"/>
+            <path d="M108 151q13-14 27-9M183 132q14-12 26-3M244 112q15-11 27 0M303 119q15-11 28 0M363 128q14-6 21 7"/>
+            <path d="M139 207q15-12 29-2M202 190q16-12 28-1M262 179q15-11 28 0M321 181q15-10 27 2"/>
           </g>
         </g>
+
+        <path d="M365 224 C390 215 417 226 419 247 C421 270 394 288 367 278 C344 270 341 244 365 224 Z"
+          fill="url(#mfBrainCerebellum)" stroke="#9dfff5" strokeWidth="2.6"/>
+        <g fill="none" stroke="#cafff8" strokeWidth="3" opacity=".76" strokeLinecap="round">
+          <path d="M355 239q27-17 52 0M350 249q34-17 62 2M352 261q28-13 54 5M365 273q19-8 34 1"/>
+          <path d="M369 232q-8 17 1 35M384 229q-7 23 5 46M399 237q-5 18 5 31"/>
+        </g>
+        <path d="M340 259 C336 280 330 291 338 310 C347 294 351 281 347 261Z" fill="url(#mfBrainRim)" stroke="#9bfff6" strokeWidth="2.2"/>
+        <path d="M344 277q-10 10-6 24" fill="none" stroke="#e0fffc" strokeWidth="2" opacity=".8"/>
       </g>
-      <path d="M210 222 C204 241 201 251 210 264 C219 251 216 241 210 222Z" fill="#18d6dc" stroke="#a9fff8" strokeWidth="2"/>
-      <path d="M194 262 Q210 273 226 262" fill="none" stroke="#43fff0" strokeWidth="3" strokeLinecap="round" opacity=".8"/>
-      <g fill="#bffff9">
-        <circle cx="50" cy="109" r="3"/><circle cx="369" cy="108" r="3"/><circle cx="92" cy="247" r="2.5"/><circle cx="328" cy="247" r="2.5"/>
+
+      <g fill="#cffffa">
+        <circle cx="92" cy="132" r="2.8"/><circle cx="430" cy="155" r="2.4"/>
+        <circle cx="122" cy="254" r="2.2"/><circle cx="318" cy="39" r="2.1"/>
       </g>
+      <path d="M74 286 C159 309 345 309 447 274" fill="none" stroke="#20dce8" strokeWidth="1.2" opacity=".22"/>
     </svg>
   );
 }
