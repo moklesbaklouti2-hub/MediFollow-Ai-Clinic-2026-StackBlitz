@@ -96,61 +96,65 @@ export default function Copilot({
                 className="neural-network-svg mf-medical-neural-network"
                 viewBox="0 0 420 270"
                 role="img"
-                aria-label="Réseau neuronal médical inspiré de l’anatomie cérébrale et des connexions synaptiques"
+                aria-label="Illustration anatomique du cerveau avec un réseau de connexions neuronales"
               >
                 <defs>
-                  <radialGradient id="mfNeuralCore">
-                    <stop offset="0" stopColor="#bffff5" stopOpacity=".85" />
-                    <stop offset=".48" stopColor="#31d9d5" stopOpacity=".34" />
+                  <radialGradient id="mfNeuralCore" cx="50%" cy="45%" r="60%">
+                    <stop offset="0" stopColor="#d8fff8" stopOpacity=".42" />
+                    <stop offset=".62" stopColor="#42c9d0" stopOpacity=".15" />
                     <stop offset="1" stopColor="#1686bd" stopOpacity="0" />
                   </radialGradient>
-                  <linearGradient id="mfNeuralStroke" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#a9fff2" />
-                    <stop offset=".55" stopColor="#45d9df" />
-                    <stop offset="1" stopColor="#398fd0" />
+                  <linearGradient id="mfBrainSurface" x1="0" y1="0" x2="0.9" y2="1">
+                    <stop offset="0" stopColor="#d9fff8" />
+                    <stop offset=".42" stopColor="#72dcd9" />
+                    <stop offset="1" stopColor="#278db8" />
                   </linearGradient>
-                  <filter id="mfNeuralGlow" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                  <linearGradient id="mfBrainFold" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stopColor="#effffb" stopOpacity=".92" />
+                    <stop offset="1" stopColor="#1688ad" stopOpacity=".72" />
+                  </linearGradient>
+                  <filter id="mfBrainSoftGlow" x="-35%" y="-35%" width="170%" height="170%">
+                    <feGaussianBlur stdDeviation="5" />
                   </filter>
                 </defs>
-
-                <ellipse cx="210" cy="132" rx="168" ry="112" fill="url(#mfNeuralCore)" opacity=".5" />
-                <g className="mf-neuron-branches" fill="none" stroke="url(#mfNeuralStroke)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M207 54C185 30 151 34 139 58C110 49 86 70 91 96C65 113 72 148 96 159C91 187 119 205 143 190C159 216 190 204 199 184" />
-                  <path d="M213 54C235 30 269 34 281 58C310 49 334 70 329 96C355 113 348 148 324 159C329 187 301 205 277 190C261 216 230 204 221 184" />
-                  <path d="M210 47v155M210 73c-24-17-44-13-58 3M210 73c24-17 44-13 58 3M210 104c-30-12-55-3-69 19M210 104c30-12 55-3 69 19M210 137c-24 5-43 20-53 42M210 137c24 5 43 20 53 42" />
-                  <path d="M152 76l-24-19-20 5M152 76l-5-27-16-12M141 123l-32-4-18 17M141 123l-17 26-25 3M157 179l-22 18-20-2M157 179l-3 26-13 13" />
-                  <path d="M268 76l24-19 20 5M268 76l5-27 16-12M279 123l32-4 18 17M279 123l17 26 25 3M263 179l22 18 20-2M263 179l3 26 13 13" />
-                  <path d="M177 93l-18-13M243 93l18-13M171 151l-20 8M249 151l20 8" strokeDasharray="3 6" opacity=".65" />
+                <ellipse cx="210" cy="137" rx="157" ry="104" fill="url(#mfNeuralCore)" />
+                <ellipse cx="210" cy="137" rx="112" ry="77" fill="#53d6d4" opacity=".10" filter="url(#mfBrainSoftGlow)" />
+                <g className="mf-brain-anatomy">
+                  <path d="M205 66C193 43 165 38 147 53C126 45 104 58 101 79C78 86 72 109 84 127C69 148 81 174 104 180C109 204 135 214 154 201C170 220 195 210 205 193Z" fill="url(#mfBrainSurface)" fillOpacity=".83" stroke="#bafff4" strokeWidth="2.2" />
+                  <path d="M215 66C227 43 255 38 273 53C294 45 316 58 319 79C342 86 348 109 336 127C351 148 339 174 316 180C311 204 285 214 266 201C250 220 225 210 215 193Z" fill="url(#mfBrainSurface)" fillOpacity=".83" stroke="#bafff4" strokeWidth="2.2" />
+                  <path d="M210 57C205 84 215 102 210 127C205 153 215 176 210 204" fill="none" stroke="#e3fffa" strokeWidth="2.4" opacity=".9" />
+                  <g fill="none" stroke="url(#mfBrainFold)" strokeWidth="3" strokeLinecap="round" opacity=".9">
+                    <path d="M108 91C126 72 145 76 151 93C157 108 139 115 126 107C112 99 99 111 105 126" />
+                    <path d="M91 139C108 124 128 129 132 145C136 161 119 169 105 160" />
+                    <path d="M137 58C153 63 162 77 158 91M164 52C178 64 180 79 170 91" />
+                    <path d="M119 181C136 169 153 175 157 190M169 121C185 110 195 119 195 133C195 146 182 151 171 145" />
+                    <path d="M312 91C294 72 275 76 269 93C263 108 281 115 294 107C308 99 321 111 315 126" />
+                    <path d="M329 139C312 124 292 129 288 145C284 161 301 169 315 160" />
+                    <path d="M283 58C267 63 258 77 262 91M256 52C242 64 240 79 250 91" />
+                    <path d="M301 181C284 169 267 175 263 190M249 121C235 110 225 119 225 133C225 146 238 151 249 145" />
+                  </g>
                 </g>
-
-                <g className="mf-neuron-cell-bodies" fill="#bafff5" stroke="#1d8cae" strokeWidth="1.5" filter="url(#mfNeuralGlow)">
-                  <circle cx="128" cy="57" r="5" /><circle cx="108" cy="62" r="4" />
-                  <circle cx="147" cy="49" r="4" /><circle cx="109" cy="136" r="5" />
-                  <circle cx="124" cy="149" r="4" /><circle cx="135" cy="197" r="4" />
-                  <circle cx="292" cy="57" r="5" /><circle cx="312" cy="62" r="4" />
-                  <circle cx="273" cy="49" r="4" /><circle cx="311" cy="136" r="5" />
-                  <circle cx="296" cy="149" r="4" /><circle cx="285" cy="197" r="4" />
-                  <circle cx="159" cy="80" r="4" /><circle cx="261" cy="80" r="4" />
-                  <circle cx="141" cy="123" r="4.5" /><circle cx="279" cy="123" r="4.5" />
-                  <circle cx="157" cy="179" r="4" /><circle cx="263" cy="179" r="4" />
+                <g className="mf-neuron-branches" fill="none" stroke="#b8fff2" strokeWidth="1.35" strokeLinecap="round" opacity=".72">
+                  <path d="M118 105L88 88L70 91M118 105L96 126L75 132M143 83L130 60L112 48M143 83L165 69L178 48M128 151L103 171L88 192M128 151L145 174L143 198" />
+                  <path d="M302 105L332 88L350 91M302 105L324 126L345 132M277 83L290 60L308 48M277 83L255 69L242 48M292 151L317 171L332 192M292 151L275 174L277 198" />
+                  <path d="M178 103L193 115L210 111L227 115L242 103M164 153L184 164L210 157L236 164L256 153" opacity=".65" />
                 </g>
-
-                <g className="mf-neural-synapses" fill="#e2fffb">
-                  <circle cx="210" cy="47" r="4" /><circle cx="210" cy="73" r="3.5" />
-                  <circle cx="210" cy="104" r="4" /><circle cx="210" cy="137" r="4" />
-                  <circle cx="210" cy="184" r="4" />
-                  <circle cx="91" cy="96" r="3" /><circle cx="329" cy="96" r="3" />
-                  <circle cx="96" cy="159" r="3" /><circle cx="324" cy="159" r="3" />
+                <g className="mf-neuron-cell-bodies" fill="#e5fffa" stroke="#36aeb9" strokeWidth="1.2">
+                  <circle cx="88" cy="88" r="3.6"/><circle cx="70" cy="91" r="2.8"/><circle cx="96" cy="126" r="3.2"/>
+                  <circle cx="130" cy="60" r="3"/><circle cx="178" cy="48" r="3.2"/><circle cx="103" cy="171" r="3.1"/>
+                  <circle cx="145" cy="174" r="3.4"/><circle cx="332" cy="88" r="3.6"/><circle cx="350" cy="91" r="2.8"/>
+                  <circle cx="324" cy="126" r="3.2"/><circle cx="290" cy="60" r="3"/><circle cx="242" cy="48" r="3.2"/>
+                  <circle cx="317" cy="171" r="3.1"/><circle cx="275" cy="174" r="3.4"/>
                 </g>
-
-                <g className="mf-neural-medical-mark" transform="translate(210 132)">
-                  <circle r="25" fill="#082a49" fillOpacity=".88" stroke="#9bfff2" strokeOpacity=".8" strokeWidth="1.5" />
-                  <circle r="19" fill="none" stroke="#55e2df" strokeOpacity=".35" />
-                  <path d="M-3-12h6v9h9v6H3v9h-6V3h-9v-6h9z" fill="#d7fffa" />
+                <g className="mf-neural-synapses" fill="#f0fffc" opacity=".9">
+                  <circle cx="210" cy="111" r="3.2"/><circle cx="210" cy="157" r="3.2"/>
+                  <circle cx="193" cy="115" r="2.5"/><circle cx="227" cy="115" r="2.5"/>
                 </g>
-              </svg>
+                <g className="mf-neural-medical-mark" transform="translate(210 137)">
+                  <circle r="15" fill="#103d5c" fillOpacity=".88" stroke="#c5fff5" strokeOpacity=".8" strokeWidth="1.2" />
+                  <path d="M-2.2-8h4.4v5.8H8v4.4H2.2V8h-4.4V2.2H-8v-4.4h5.8z" fill="#e4fffa" />
+                </g>
+              </svg>        </svg>
             </div>
 
             <div className="welcome-text">
