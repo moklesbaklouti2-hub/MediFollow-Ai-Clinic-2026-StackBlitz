@@ -146,6 +146,36 @@ function BrainArtwork() {
           </g>
         </g>
 
+        {/* Fine cortical sulci and specular ridges for a more dimensional anatomical finish */}
+        <g clipPath="url(#mfBrainSideClip)" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <g stroke="#042f58" strokeWidth="3.2" opacity=".56">
+            <path d="M119 118 C137 99 158 103 164 122 C171 145 148 158 132 147"/>
+            <path d="M174 86 C194 72 214 82 216 101 C218 119 202 131 187 126"/>
+            <path d="M230 70 C250 58 270 69 270 89 C270 108 253 120 238 112"/>
+            <path d="M286 72 C305 61 324 73 322 92 C320 110 304 119 290 110"/>
+            <path d="M344 91 C363 83 379 97 373 115 C367 132 351 137 339 125"/>
+            <path d="M391 145 C405 132 420 144 414 161 C408 177 393 181 382 170"/>
+            <path d="M121 179 C139 163 158 171 157 190 C156 207 140 216 126 207"/>
+            <path d="M181 157 C199 145 217 156 214 175 C211 194 194 203 179 193"/>
+            <path d="M239 143 C258 130 278 142 274 162 C270 181 252 189 237 179"/>
+            <path d="M298 145 C317 132 337 145 332 164 C327 183 310 191 295 180"/>
+            <path d="M354 164 C371 152 388 164 383 182 C378 199 361 205 348 194"/>
+            <path d="M147 225 C164 210 181 218 181 237 M207 211 C225 198 243 210 239 229"/>
+            <path d="M267 201 C285 188 303 201 298 220 M326 211 C344 198 362 211 356 229"/>
+          </g>
+          <g stroke="#efffff" strokeWidth="1.65" opacity=".88">
+            <path d="M111 135q13-21 29-18M169 98q15-17 30-8M225 83q17-15 31-4M282 87q17-14 30-3"/>
+            <path d="M342 105q15-11 25 0M390 151q12-9 19 1M119 188q15-15 28-5"/>
+            <path d="M179 169q15-13 28-3M238 154q17-14 30-3M296 157q16-13 29-2"/>
+            <path d="M354 176q13-12 24-2M151 232q13-11 24-3M211 219q14-11 24-2"/>
+            <path d="M270 209q14-11 24-1M328 220q14-11 24-1"/>
+          </g>
+          <g stroke="#8afff2" strokeWidth="1.1" opacity=".48">
+            <path d="M135 111q8-9 17-5M195 80q9-8 19-3M250 69q9-7 18-2M309 77q9-6 17 1"/>
+            <path d="M161 181q9-8 17-3M220 163q9-8 18-2M279 158q9-8 18-2M338 169q9-8 17-2"/>
+          </g>
+        </g>
+
         <path d="M365 224 C390 215 417 226 419 247 C421 270 394 288 367 278 C344 270 341 244 365 224 Z"
           fill="url(#mfBrainCerebellum)" stroke="#9dfff5" strokeWidth="2.6"/>
         <g fill="none" stroke="#cafff8" strokeWidth="3" opacity=".76" strokeLinecap="round">
