@@ -74,7 +74,7 @@ const coreFragmentShader = `
     vec3 turquoise = vec3(0.006, 0.34, 0.43);
     vec3 violet = vec3(0.66, 0.19, 1.0);
     vec3 basePlasma = mix(turquoise, violet, smoothstep(0.28, 0.72, detail));
-    float plasmaCoverage = clamp(0.70 + cyanField * 0.16 + violetField * 0.14, 0.0, 0.98);
+    float plasmaCoverage = clamp(0.42 + cyanField * 0.10 + violetField * 0.10, 0.0, 0.72);
     vec3 color = mix(deepBlack, basePlasma, plasmaCoverage);
     color += cyan * cyanField * 0.38;
     color += violet * violetField * 0.34;
@@ -90,11 +90,11 @@ const coreFragmentShader = `
     vec3 H = normalize(L + V);
     float specular = pow(max(dot(N, H), 0.0), 48.0);
     float rim = smoothstep(0.20, 0.92, fresnel);
-    color *= 0.56 + diffuse * 0.68;
+    color *= 0.48 + diffuse * 0.58;
     color += mix(cyan, violet, 0.38) * rim * 0.34;
     color += vec3(0.10, 0.025, 0.16) * specular * 0.30;
     float pulse = 0.96 + 0.04 * sin(uTime * (0.9 + uThinking * 1.5) + cloud * 6.0);
-    gl_FragColor = vec4(color * pulse * 1.72, 1.0);
+    gl_FragColor = vec4(color * pulse * 1.52, 1.0);
   }
 `;const plasmaVertexShader = `
   varying vec3 vLocal;
@@ -152,37 +152,9 @@ const plasmaFragmentShader = `
     float brightness = 0.68 + filament * 1.28 + sparks * 0.48;
     gl_FragColor = vec4(color * brightness, alpha);
   }
-`;const ringVertexShader = `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const ringFragmentShader = `
-  varying vec2 vUv;
-  uniform float uTime;
-  uniform vec3 uColorA;
-  uniform vec3 uColorB;
-  uniform float uOpacity;
-  uniform float uThinking;
-  void main() {
-    float sweep = 0.5 + 0.5 * sin(vUv.x * 34.0 - uTime * (0.72 - uThinking * 0.34));
-    float pulse = 0.55 + 0.45 * sin(uTime * (0.85 - uThinking * 0.40) + vUv.x * 12.0);
-    float edge = pow(max(0.0, sin(vUv.x * 3.14159)), 0.55);
-    vec3 color = mix(uColorA, uColorB, sweep);
-    gl_FragColor = vec4(color * (1.25 + sweep * 0.8), uOpacity * edge * (0.36 + 0.64 * pulse));
-  }
-`;
-
-function LivingOrb({ isThinking }: OrbVisualProps) {
+`;function LivingOrb({ isThinking }: OrbVisualProps) {
   const core = useRef<THREE.Mesh>(null);
   const plasmaShell = useRef<THREE.Mesh>(null);
-  const ringA = useRef<THREE.Group>(null);
-  const ringB = useRef<THREE.Group>(null);
-  const ringC = useRef<THREE.Group>(null);
-  const particles = useRef<THREE.Group>(null);
 
   const coreMaterial = useMemo(() => new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 0 }, uThinking: { value: 0 } },
@@ -197,26 +169,11 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
     side: THREE.FrontSide, toneMapped: false,
   }), []);
 
-  const ringMaterials = useMemo(() => [
-    new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#35f3dc') }, uColorB: { value: new THREE.Color('#67f5df') }, uOpacity: { value: 0.92 }, uThinking: { value: 0 } },
-      vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
-    }),
-    new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#a36bff') }, uColorB: { value: new THREE.Color('#c49aff') }, uOpacity: { value: 0.88 }, uThinking: { value: 0 } },
-      vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
-    }),
-    new THREE.ShaderMaterial({
-      uniforms: { uTime: { value: 0 }, uColorA: { value: new THREE.Color('#42bfff') }, uColorB: { value: new THREE.Color('#65d9ef') }, uOpacity: { value: 0.56 }, uThinking: { value: 0 } },
-      vertexShader: ringVertexShader, fragmentShader: ringFragmentShader, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false,
-    }),
-  ], []);
-
   useFrame(({ clock }, delta) => {
     const t = clock.elapsedTime;
     const thinking = isThinking ? 1 : 0;
     const speed = isThinking ? 0.12 : 1.0;
-    [coreMaterial, plasmaMaterial, ...ringMaterials].forEach((material) => {
+    [coreMaterial, plasmaMaterial].forEach((material) => {
       material.uniforms.uTime.value = t;
       material.uniforms.uThinking.value = THREE.MathUtils.damp(material.uniforms.uThinking.value, thinking, 3.0, delta);
     });
@@ -231,19 +188,6 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
       plasmaShell.current.rotation.x = Math.sin(t * 0.21) * 0.06;
       plasmaShell.current.scale.setScalar(1 + Math.sin(t * (isThinking ? 0.68 : 0.9)) * 0.018);
     }
-    if (ringA.current) {
-      ringA.current.rotation.set(0.76 + Math.sin(t * 0.43) * 0.08, 0.18, t * (isThinking ? 0.035 : 0.22));
-      ringA.current.scale.setScalar(1 + Math.sin(t * 1.1) * 0.025);
-    }
-    if (ringB.current) ringB.current.rotation.set(-0.86, t * (isThinking ? -0.025 : -0.17), 0.35 + Math.sin(t * 0.29) * 0.13);
-    if (ringC.current) {
-      ringC.current.rotation.set(t * (isThinking ? 0.018 : 0.12), 0.82 + Math.sin(t * 0.36) * 0.12, 0.18);
-      ringC.current.scale.setScalar(1 + Math.sin(t * 0.78 + 1.3) * 0.045);
-    }
-    if (particles.current) {
-      particles.current.rotation.y = t * (isThinking ? 0.025 : 0.12);
-      particles.current.rotation.x = Math.sin(t * 0.25) * 0.12;
-    }
   });
 
   return (
@@ -257,29 +201,6 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
       <mesh ref={plasmaShell} material={plasmaMaterial} renderOrder={2}>
         <sphereGeometry args={[0.78, 96, 96]} />
       </mesh>
-      <group ref={ringA}>
-        <mesh material={ringMaterials[0]}><torusGeometry args={[1.01, 0.022, 12, 180]} /></mesh>
-        <mesh material={ringMaterials[0]} scale={0.985}><torusGeometry args={[1.01, 0.008, 8, 180]} /></mesh>
-      </group>
-      <group ref={ringB}>
-        <mesh material={ringMaterials[1]}><torusGeometry args={[1.13, 0.018, 12, 180]} /></mesh>
-      </group>
-      <group ref={ringC}>
-        <mesh material={ringMaterials[2]}><torusGeometry args={[0.91, 0.012, 10, 180]} /></mesh>
-      </group>
-      <group ref={particles}>
-        {Array.from({ length: 18 }, (_, i) => {
-          const angle = (i / 18) * Math.PI * 2;
-          const radius = 1.18 + (i % 4) * 0.075;
-          const y = Math.sin(angle * 2.3) * 0.68;
-          return (
-            <mesh key={i} position={[Math.cos(angle) * radius, y, Math.sin(angle) * radius * 0.62]}>
-              <sphereGeometry args={[i % 4 === 0 ? 0.022 : 0.012, 10, 10]} />
-              <meshBasicMaterial color={i === 0 || i === 9 || i === 15 ? '#e8f5f2' : i % 2 === 0 ? '#278f91' : '#7650ad'} toneMapped={false} />
-            </mesh>
-          );
-        })}
-      </group>
     </>
   );
 }
