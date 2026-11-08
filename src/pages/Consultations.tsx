@@ -133,7 +133,7 @@ const emptyVitals: Vitals = {
   glycemia: '',
 };
 
-export default function Consultations() {
+export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt: string) => void }) {
   const { patients, consultations, addConsultation, updateConsultation } = useMedicalData();
 
   const [patientId, setPatientId] = useState('');
@@ -149,6 +149,7 @@ export default function Consultations() {
   const [saved, setSaved] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
+  const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
 
   function updateVital(key: keyof Vitals, value: string) {
     setVitals((previous) => ({ ...previous, [key]: value }));
@@ -259,7 +260,7 @@ export default function Consultations() {
     symptoms,
     history,
     vitals,
-  }).filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`));
+  }).filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`));
 
   return (
     <section className="consultation-page">
@@ -507,6 +508,20 @@ export default function Consultations() {
                 <strong style={{ fontSize: 13 }}>
                   {suggestion.priority === 'high' ? 'Priorité clinique · ' : ''}{suggestion.title}
                 </strong>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const key = `${patientId}:${suggestion.id}`;
+                    setSnoozedSuggestions((previous) => [...previous, key]);
+                    window.setTimeout(() => {
+                      setSnoozedSuggestions((previous) => previous.filter((item) => item !== key));
+                    }, 10 * 60 * 1000);
+                  }}
+                  style={{ border: '1px solid var(--border,#dce4e8)', borderRadius: 7, padding: '5px 9px', background: 'transparent', color: 'inherit', fontSize: 11 }}
+                >
+                  Reporter 10 min
+                </button>
                 <button
                   type="button"
                   onClick={() => setDismissedSuggestions((previous) => [...previous, `${patientId}:${suggestion.id}`])}
@@ -519,6 +534,27 @@ export default function Consultations() {
               <ul style={{ margin: '6px 0 0', paddingLeft: 19, fontSize: 12, lineHeight: 1.65 }}>
                 {suggestion.checks.map((check) => <li key={check}>{check}</li>)}
               </ul>
+
+              <button
+                type="button"
+                onClick={() => onAskCopilot?.(
+                  `Aide-moi à approfondir cette situation clinique : ${suggestion.title}. Contexte détecté : ${suggestion.reason} Points à vérifier : ${suggestion.checks.join(' ; ')}. Pose-moi une seule question ciblée à la fois. N'invente aucune donnée et indique les sources fiables si tu formules une recommandation.`
+                )}
+                style={{
+                  justifySelf: 'start',
+                  marginTop: 10,
+                  border: 0,
+                  borderRadius: 8,
+                  padding: '9px 12px',
+                  background: '#42d5b4',
+                  color: '#12332f',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                }}
+              >
+                Approfondir avec l’Orb
+              </button>
             </article>
           ))}
         </section>
