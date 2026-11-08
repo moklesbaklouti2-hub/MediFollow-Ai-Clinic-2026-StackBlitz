@@ -10,14 +10,14 @@ const sections = [
       { label: 'Tableau de bord', icon: 'dashboard' },
       { label: 'Patients', icon: 'patients' },
       { label: 'Consultations', icon: 'consultations' },
+      { label: 'Protocoles médicaux', icon: 'protocols' },
+      { label: 'Ordonnances', icon: 'prescriptions' },
     ],
   },
   {
     title: 'INTELLIGENCE CLINIQUE',
     items: [
       { label: 'Copilote IA', icon: 'copilot' },
-      { label: 'Protocoles médicaux', icon: 'protocols' },
-      { label: 'Ordonnances', icon: 'prescriptions' },
     ],
   },
 ];
