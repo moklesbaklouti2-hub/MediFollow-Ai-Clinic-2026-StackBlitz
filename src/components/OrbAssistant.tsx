@@ -9,6 +9,8 @@ type OrbAssistantProps = {
   onOpenCopilot: () => void;
   patients: Patient[];
   consultations: Consultation[];
+  clinicalPrompt?: string;
+  onClinicalPromptConsumed?: () => void;
 };
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
@@ -29,6 +31,8 @@ export default function OrbAssistant({
   onOpenCopilot,
   patients,
   consultations,
+  clinicalPrompt,
+  onClinicalPromptConsumed,
 }: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -37,6 +41,13 @@ export default function OrbAssistant({
   const [selectedPatientId, setSelectedPatientId] = useState('');
   const [selectedConsultationId, setSelectedConsultationId] = useState('');
   const [shareClinicalContext, setShareClinicalContext] = useState(false);
+
+  useEffect(() => {
+    if (!clinicalPrompt) return;
+    setPanelOpen(true);
+    setInput(clinicalPrompt);
+    onClinicalPromptConsumed?.();
+  }, [clinicalPrompt, onClinicalPromptConsumed]);
   const conversationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const suggestions = suggestionsByPage[currentPage] || suggestionsByPage['Tableau de bord'];
