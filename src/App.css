@@ -5412,3 +5412,80 @@ textarea {
   .mf-copilot-copy { width: 62%; }
   .mf-robot-stage { width: 42%; }
 }
+
+
+/* FINAL ALIGNMENT — main workspace starts exactly after the fixed sidebar */
+@media (min-width: 651px) {
+  .app { display: block !important; position: relative; }
+  .sidebar { position: fixed !important; left: 0 !important; top: 0 !important; width: 255px !important; min-width: 255px !important; }
+  .main {
+    display: block !important;
+    box-sizing: border-box !important;
+    position: relative;
+    margin: 0 0 0 255px !important;
+    width: calc(100% - 255px) !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    padding: 16px clamp(14px, 1.8vw, 26px) 34px !important;
+  }
+}
+@media (max-width: 900px) and (min-width: 651px) {
+  .sidebar { width: 210px !important; min-width: 210px !important; }
+  .main {
+    margin-left: 210px !important;
+    width: calc(100% - 210px) !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+}
+@media (max-width: 650px) {
+  .app { display: block !important; }
+  .sidebar { position: relative !important; width: 100% !important; min-width: 0 !important; }
+  .main { display: block !important; width: 100% !important; margin: 0 !important; }
+}
+
+/* Restore the two medical illustrations as visible, properly sized artwork */
+.mf-hero-art {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: none;
+}
+.mf-hero-art .mf-stethoscope-art {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 3 !important;
+  width: min(100%, 350px) !important;
+  height: auto !important;
+  max-height: 215px !important;
+  overflow: visible !important;
+}
+.mf-robot-stage {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  overflow: visible !important;
+}
+.mf-robot-stage .mf-doctor-robot {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 2 !important;
+  width: min(100%, 225px) !important;
+  height: auto !important;
+  max-height: 255px !important;
+  overflow: visible !important;
+}
+.mf-copilot-card { isolation: isolate; }
+@media (max-width: 720px) {
+  .mf-hero-art { width: 46% !important; right: 0 !important; }
+  .mf-hero-art .mf-stethoscope-art { width: min(100%, 230px) !important; max-height: 155px !important; }
+  .mf-robot-stage .mf-doctor-robot { width: min(100%, 190px) !important; max-height: 225px !important; }
+}
