@@ -4970,3 +4970,79 @@ textarea {
   :root[data-theme="dark"] .mf-quick-action,
   :root[data-theme="dark"] .premium-nav-item { transition: none; }
 }
+
+
+/* Sidebar signature panel — reference slogan and trust cue */
+.sidebar-motto-card {
+  position: relative;
+  overflow: hidden;
+  margin: auto 10px 14px;
+  min-height: 132px;
+  padding: 14px 12px;
+  border: 1px solid rgba(49, 184, 239, .3);
+  border-radius: 17px;
+  background:
+    radial-gradient(ellipse at 50% 12%, rgba(0, 208, 255, .22), transparent 54%),
+    linear-gradient(145deg, rgba(11, 61, 105, .72), rgba(5, 22, 48, .92));
+  box-shadow: 0 10px 28px rgba(0,0,0,.22), 0 0 22px rgba(0, 168, 229, .10), inset 0 1px rgba(255,255,255,.07);
+  text-align: center;
+}
+.sidebar-motto-art {
+  position: relative;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #bafaff;
+  text-shadow: 0 0 16px rgba(0, 220, 255, .72);
+}
+.sidebar-motto-art::before,
+.sidebar-motto-art::after {
+  content: "";
+  position: absolute;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(89, 222, 255, .17);
+  border-radius: 50%;
+}
+.sidebar-motto-art::after { width: 54px; height: 54px; border-color: rgba(0, 230, 195, .22); }
+.motto-cross { position: relative; z-index: 1; font-size: 27px; color: #4deaff; }
+.motto-pulse { position: absolute; right: 22%; bottom: 0; color: #00e6c3; font-size: 31px; }
+.sidebar-motto-card p {
+  position: relative;
+  z-index: 1;
+  margin: 3px 0 9px;
+  color: #e9faff;
+  font-family: Georgia, serif;
+  font-size: 17px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1.15;
+  text-shadow: 0 2px 12px rgba(0,0,0,.35);
+}
+.sidebar-motto-line {
+  display: block;
+  width: 54px;
+  height: 2px;
+  margin: 0 auto;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #00e6c3, transparent);
+  box-shadow: 0 0 10px rgba(0,230,195,.6);
+}
+.sidebar-security-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 13px 12px;
+  color: #9fc1dc;
+}
+.sidebar-security-note > span { color: #42dff0; font-size: 21px; text-shadow: 0 0 10px rgba(0,220,255,.35); }
+.sidebar-security-note strong { display: block; color: #cfe5f6; font-size: 10px; }
+.sidebar-security-note small { display: block; margin-top: 3px; color: #7899b8; font-size: 8px; line-height: 1.35; }
+:root[data-theme="dark"] .sidebar-motto-card {
+  border-color: rgba(0, 206, 255, .38);
+  box-shadow: 0 10px 30px rgba(0,0,0,.28), 0 0 24px rgba(0, 177, 235, .13), inset 0 1px rgba(255,255,255,.08);
+}
+@media (max-width: 650px) {
+  .sidebar-motto-card, .sidebar-security-note { display: none; }
+}
