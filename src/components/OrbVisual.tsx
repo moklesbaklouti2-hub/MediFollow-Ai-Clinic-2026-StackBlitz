@@ -70,8 +70,8 @@ const coreFragmentShader = `
     float violetField = smoothstep(0.25, 0.64, detail) * (0.62 + 0.38 * sin(q.y * 1.8 + uTime * 0.18));
     float energy = strandA * 0.82 + strandB * 0.68 + strandC * 0.48;
     vec3 deepBlack = vec3(0.004, 0.009, 0.025);
-    vec3 cyan = vec3(0.025, 0.88, 0.82);
-    vec3 turquoise = vec3(0.012, 0.58, 0.66);
+    vec3 cyan = vec3(0.008, 0.48, 0.48);
+    vec3 turquoise = vec3(0.006, 0.34, 0.43);
     vec3 violet = vec3(0.66, 0.19, 1.0);
     vec3 basePlasma = mix(turquoise, violet, smoothstep(0.28, 0.72, detail));
     float plasmaCoverage = clamp(0.70 + cyanField * 0.16 + violetField * 0.14, 0.0, 0.98);
@@ -94,7 +94,7 @@ const coreFragmentShader = `
     color += mix(cyan, violet, 0.38) * rim * 0.34;
     color += vec3(0.10, 0.025, 0.16) * specular * 0.30;
     float pulse = 0.96 + 0.04 * sin(uTime * (0.9 + uThinking * 1.5) + cloud * 6.0);
-    gl_FragColor = vec4(color * pulse * 2.05, 1.0);
+    gl_FragColor = vec4(color * pulse * 1.72, 1.0);
   }
 `;const plasmaVertexShader = `
   varying vec3 vLocal;
@@ -141,15 +141,15 @@ const plasmaFragmentShader = `
     float filament = clamp(ridgesA * 0.82 + ridgesB * 0.72, 0.0, 1.0);
     float sparks = pow(max(0.0, 1.0 - abs(fbm3(q * 3.2 + 4.0) * 2.0 - 1.0)), 19.0);
     sparks *= smoothstep(0.48, 0.76, cloud) * smoothstep(0.32, 0.66, detail);
-    vec3 cyan = vec3(0.025, 0.92, 0.83);
-    vec3 violet = vec3(0.72, 0.24, 1.0);
+    vec3 cyan = vec3(0.008, 0.52, 0.51);
+    vec3 violet = vec3(0.52, 0.14, 0.82);
     float colorMix = smoothstep(0.38, 0.70, fbm3(q * 0.68 + 4.0));
     vec3 color = mix(cyan, violet, colorMix);
-    color += vec3(0.22, 0.045, 0.34) * sparks * 0.42;
+    color += vec3(0.12, 0.025, 0.20) * sparks * 0.30;
     float facing = max(dot(normalize(vNormal), normalize(cameraPosition - vWorld)), 0.0);
     float rim = pow(1.0 - facing, 1.55);
     float alpha = clamp(filament * 0.76 + sparks * 0.22 + rim * filament * 0.12, 0.0, 0.78);
-    float brightness = 0.86 + filament * 1.65 + sparks * 0.75;
+    float brightness = 0.68 + filament * 1.28 + sparks * 0.48;
     gl_FragColor = vec4(color * brightness, alpha);
   }
 `;const ringVertexShader = `
@@ -275,7 +275,7 @@ function LivingOrb({ isThinking }: OrbVisualProps) {
           return (
             <mesh key={i} position={[Math.cos(angle) * radius, y, Math.sin(angle) * radius * 0.62]}>
               <sphereGeometry args={[i % 4 === 0 ? 0.022 : 0.012, 10, 10]} />
-              <meshBasicMaterial color={i % 2 === 0 ? '#a5fff1' : '#c5a2ff'} toneMapped={false} />
+              <meshBasicMaterial color={i === 0 || i === 9 || i === 15 ? '#e8f5f2' : i % 2 === 0 ? '#278f91' : '#7650ad'} toneMapped={false} />
             </mesh>
           );
         })}
