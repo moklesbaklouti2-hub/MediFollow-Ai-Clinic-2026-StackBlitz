@@ -1,8 +1,9 @@
 import { completeWithGroq, isGroqConfigured } from './providers/groq.ts';
 import { completeWithCloudflare, isCloudflareConfigured } from './providers/cloudflare.ts';
+import { completeWithOpenRouter, isOpenRouterConfigured } from './providers/openrouter.ts';
 
 export type AiTask = 'commands' | 'clinical' | 'chat';
-export type AiProviderId = 'groq' | 'cloudflare';
+export type AiProviderId = 'groq' | 'cloudflare' | 'openrouter';
 
 type ProviderAdapter = {
   id: AiProviderId;
@@ -23,13 +24,18 @@ const providers: ProviderRegistry = {
     isConfigured: isCloudflareConfigured,
     complete: completeWithCloudflare,
   },
+  openrouter: {
+    id: 'openrouter',
+    isConfigured: isOpenRouterConfigured,
+    complete: completeWithOpenRouter,
+  },
 };
 
-/** Groq reste prioritaire ; Cloudflare est le premier secours configuré. */
+/** Ordre de priorité : Groq, puis Cloudflare, puis OpenRouter. */
 const providerOrder: Record<AiTask, AiProviderId[]> = {
-  commands: ['groq', 'cloudflare'],
-  clinical: ['groq', 'cloudflare'],
-  chat: ['groq', 'cloudflare'],
+  commands: ['groq', 'cloudflare', 'openrouter'],
+  clinical: ['groq', 'cloudflare', 'openrouter'],
+  chat: ['groq', 'cloudflare', 'openrouter'],
 };
 
 export function isAiProviderConfigured(): boolean {
@@ -49,10 +55,7 @@ function isTemporaryProviderFailure(error: unknown): boolean {
     (status === 408 || status === 425 || status === 429 || status >= 500);
 }
 
-/**
- * Exécuteur injectable : permet de tester le basculement sans consommer de quota
- * ni provoquer volontairement une panne réelle chez un fournisseur.
- */
+/** Exécuteur injectable pour tester les basculements sans provoquer de panne réelle. */
 export async function createCompletionWithProviders(
   request: any,
   task: AiTask = 'chat',
@@ -71,9 +74,7 @@ export async function createCompletionWithProviders(
       return await provider.complete(request);
     } catch (error) {
       lastError = error;
-      if (!isTemporaryProviderFailure(error)) {
-        throw error;
-      }
+      if (!isTemporaryProviderFailure(error)) throw error;
       console.warn(
         `Fournisseur IA ${providerId} temporairement indisponible pour la tâche ${task}; tentative du fournisseur suivant.`,
       );
