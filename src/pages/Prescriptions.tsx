@@ -127,7 +127,7 @@ export default function Prescriptions() {
       return;
     }
 
-    const linkedMedications = savedPrescription.medications.filter((item) => item.inventoryItemId);
+    const linkedMedications = medications.filter((item) => item.inventoryItemId);
     if (linkedMedications.length === 0) {
       setSavedMessage('Associez au moins un médicament à un article de stock avant la délivrance.');
       return;
@@ -137,9 +137,21 @@ export default function Prescriptions() {
       return;
     }
 
+    // Sauvegarder les quantités réelles saisies avant toute déduction.
+    const latestPrescriptionSaved = updatePrescription(savedPrescription.id, {
+      patientId,
+      date,
+      medications: medications.map((item) => ({ ...item })),
+      advice,
+    });
+    if (!latestPrescriptionSaved) {
+      setSavedMessage('Impossible de sauvegarder les quantités réellement délivrées. Aucun stock n’a été déduit.');
+      return;
+    }
+
     const result = dispenseInventoryItems({
       prescriptionId: savedPrescription.id,
-      patientId: savedPrescription.patientId,
+      patientId,
       items: linkedMedications.map((item) => ({
         inventoryItemId: item.inventoryItemId!,
         quantity: item.dispensedQuantity!,
