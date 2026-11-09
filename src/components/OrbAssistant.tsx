@@ -19,6 +19,22 @@ type OrbAssistantProps = {
 };
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
+type SpeechAlternativeLike = { transcript: string };
+type SpeechResultLike = { isFinal: boolean; [index: number]: SpeechAlternativeLike };
+type SpeechEventLike = { resultIndex: number; results: ArrayLike<SpeechResultLike> };
+type SpeechErrorLike = { error: string };
+type SpeechRecognitionLike = {
+  lang: string;
+  continuous: boolean;
+  interimResults: boolean;
+  onresult: ((event: SpeechEventLike) => void) | null;
+  onerror: ((event: SpeechErrorLike) => void) | null;
+  onend: (() => void) | null;
+  start: () => void;
+  stop: () => void;
+  abort: () => void;
+};
+type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
 const suggestionsByPage: Record<string, string[]> = {
   'Tableau de bord': ['Aide-moi à organiser ma journée.', 'Quels points dois-je surveiller dans mon activité ?'],
@@ -43,6 +59,10 @@ export default function OrbAssistant({
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<OrbMessage[]>([]);
   const [insightDismissed, setInsightDismissed] = useState(false);
+const [isListening, setIsListening] = useState(false);
+  const [interimTranscript, setInterimTranscript] = useState('');
+  const [speechMessage, setSpeechMessage] = useState('');
+  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
 
   useEffect(() => {
     if (clinicalInsight?.updatedAt) setInsightDismissed(false);
@@ -54,6 +74,77 @@ export default function OrbAssistant({
     setInput(clinicalPrompt);
     onClinicalPromptConsumed?.();
   }, [clinicalPrompt, onClinicalPromptConsumed]);
+
+  useEffect(() => {
+    return () => {
+      recognitionRef.current?.abort();
+      recognitionRef.current = null;
+    };
+  }, []);
+
+  function toggleVoiceInput() {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      return;
+    }
+
+    const speechWindow = window as unknown as {
+      SpeechRecognition?: SpeechRecognitionConstructor;
+      webkitSpeechRecognition?: SpeechRecognitionConstructor;
+    };
+    const Recognition = speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+
+    if (!Recognition) {
+      setSpeechMessage('La dictée vocale n’est pas prise en charge par ce navigateur. Vous pouvez continuer à écrire.');
+      return;
+    }
+
+    try {
+      const recognition = new Recognition();
+      recognition.lang = 'fr-FR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.onresult = (event) => {
+        let finalText = '';
+        let interimText = '';
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          const result = event.results[index];
+          const transcript = result[0]?.transcript || '';
+          if (result.isFinal) finalText += transcript;
+          else interimText += transcript;
+        }
+        if (finalText.trim()) {
+          setInput(previous => `${previous.trimEnd()}${previous.trim() ? ' ' : ''}${finalText.trim()}`);
+        }
+        setInterimTranscript(interimText);
+      };
+      recognition.onerror = (event) => {
+        const messages: Record<string, string> = {
+          'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
+          'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
+          'no-speech': 'Aucune parole détectée. Réessayez.',
+          'audio-capture': 'Aucun microphone accessible n’a été détecté.',
+          network: 'La reconnaissance vocale nécessite une connexion réseau.',
+        };
+        setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
+        setIsListening(false);
+        setInterimTranscript('');
+      };
+      recognition.onend = () => {
+        setIsListening(false);
+        setInterimTranscript('');
+        recognitionRef.current = null;
+      };
+      recognitionRef.current = recognition;
+      setSpeechMessage('');
+      setIsListening(true);
+      recognition.start();
+    } catch {
+      setIsListening(false);
+      setSpeechMessage('Impossible de démarrer le microphone. Vérifiez les autorisations du navigateur.');
+    }
+  }
+
   const conversationRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const suggestions = suggestionsByPage[currentPage] || suggestionsByPage['Tableau de bord'];
@@ -199,9 +290,23 @@ export default function OrbAssistant({
           </div>
 
           <form className="mf-orb-chat-form" onSubmit={handleSubmit}>
-            <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Écrivez à votre assistant…" rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />
+            <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Écrivez ou dictez à votre assistant…" rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />
+            <button
+              type="button"
+              className={`mf-orb-mic-button${isListening ? ' is-listening' : ''}`}
+              onClick={toggleVoiceInput}
+              disabled={sending}
+              aria-label={isListening ? 'Arrêter la dictée vocale' : 'Dicter un message'}
+              title={isListening ? 'Arrêter la dictée' : 'Dicter un message'}
+            >{isListening ? '■' : '🎙'}</button>
             <button type="submit" disabled={!input.trim() || sending} aria-label="Envoyer">↑</button>
           </form>
+          {(isListening || interimTranscript || speechMessage) && (
+            <div className={`mf-orb-speech-status${speechMessage ? ' has-error' : ''}`} aria-live="polite">
+              {speechMessage || (isListening ? 'Écoute en cours… Parlez clairement en français.' : interimTranscript)}
+              {interimTranscript && isListening ? ` ${interimTranscript}` : ''}
+            </div>
+          )}
           <div className="mf-orb-panel-footer">
             <span>Entrée pour envoyer · Maj + Entrée pour une ligne</span>
             <button type="button" onClick={() => { setPanelOpen(false); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
