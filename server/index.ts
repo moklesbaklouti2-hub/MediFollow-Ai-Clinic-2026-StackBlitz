@@ -667,7 +667,17 @@ app.post('/api/chat', async (req, res) => {
       const urgentAdvice = /\b(urgence|urgent|appelez les secours|evaluation immediate|hospitalisation immediate)\b/i.test(
         normalizeClinicalText(reply)
       );
-      if (prioritized && !urgentAdvice && (issues.length > 0 || explicitInterviewRequest)) {
+      // La demande initiale d'interrogatoire reste active dans les tours suivants :
+      // une simple réponse (« Oui, j'avale ma salive normalement ») doit aussi
+      // avancer vers le prochain signe de gravité non documenté.
+      const ongoingInterviewRequest = history.some(item =>
+        item.role === 'user' &&
+        /\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\b/.test(
+          normalizeClinicalText(item.content)
+        )
+      );
+      if (prioritized && !urgentAdvice &&
+          (issues.length > 0 || explicitInterviewRequest || ongoingInterviewRequest)) {
         reply = prioritized;
       }
     }
