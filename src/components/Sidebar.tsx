@@ -12,6 +12,7 @@ const sections = [
       { label: 'Consultations', icon: 'consultations' },
       { label: 'Protocoles médicaux', icon: 'protocols' },
       { label: 'Ordonnances', icon: 'prescriptions' },
+      { label: 'Inventaire', icon: 'inventory' },
     ],
   },
   {
@@ -44,6 +45,8 @@ function NavIcon({ name }: { name: string }) {
       return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><path d="M6 3.5h8l4 4V20a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1Z" /><path d="M14 3.8V8h4M8.5 12h7M8.5 15.5h7M8.5 18.5h4" /></svg>;
     case 'prescriptions':
       return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><path d="M7 3.5h10a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z" /><path d="M9 8h6M12 5v6M8.5 15h7M8.5 18h4" /></svg>;
+    case 'inventory':
+      return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><path d="M4 7.5h16v13H4z" /><path d="M8 7.5V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2.5M4 12h16M9 12v2h6v-2" /></svg>;
     case 'settings':
       return <svg viewBox="0 0 24 24" aria-hidden="true" {...common}><circle cx="12" cy="12" r="3" /><path d="m19.4 15 .1.1 1.1 1.8-1.7 2.9-2.1-.5a7.8 7.8 0 0 1-1.6.9l-.8 2h-3.3l-.8-2a7.8 7.8 0 0 1-1.6-.9l-2.1.5-1.7-2.9L6 15a7.6 7.6 0 0 1 0-1.9l-1.2-1.5 1.7-2.9 2.1.5a7.8 7.8 0 0 1 1.6-.9l.8-2h3.3l.8 2a7.8 7.8 0 0 1 1.6.9l2.1-.5 1.7 2.9-1.2 1.5a7.6 7.6 0 0 1 .1 1.9Z" /></svg>;
     default:
