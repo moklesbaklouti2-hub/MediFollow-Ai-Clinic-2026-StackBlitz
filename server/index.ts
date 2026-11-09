@@ -539,7 +539,7 @@ function clinicalInterviewState(facts: string) {
   const swallowPain = /\b(odynophag\w*|douleur.*(deglut|aval)|mal.*aval)\b/.test(facts);
   const breathing = /\b(difficulte respiratoire|dyspne\w*|essoufflement|etouffement|respiration normale)\b/.test(facts);
   const saliva = /\b(salive|bav\w*|secretions)\b/.test(facts);
-  const trismus = /\b(trismus|ouvrir.*bouche|ouverture buccale)\b/.test(facts);
+  const trismus = /\b(trismus|ouvr(?:ir|e|es|ons|ez|ent|ait|ais|aient|ant|ert|erte|erts|ertes)\b[^.!?]{0,100}\bbouche|ouverture (?:de la bouche|buccale)|bouche[^.!?]{0,80}\b(?:ouvre|ouvrir|ouverture))\b/.test(facts);
   const voice = /\b(voix etouffee|voix modifiee|voix changee)\b/.test(facts);
   const unilateral = /\b(unilateral\w*|un seul cote|cote droit|cote gauche|asymetri\w*)\b/.test(facts);
   return { soreThroat, fever, swallowPain, breathing, saliva, trismus, voice, unilateral };
