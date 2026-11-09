@@ -282,7 +282,7 @@ const [isListening, setIsListening] = useState(false);
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) throw new Error('Réponse inattendue du moteur de commandes.');
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Erreur du moteur de commandes.');
+        if (!response.ok) throw new Error([data.error || 'Erreur du moteur de commandes.', data.detail].filter(Boolean).join(' — '));
 
         const safeActions: VoiceCommandAction[] = [];
         if (Array.isArray(data.actions)) {
