@@ -13,6 +13,17 @@ const emptyMedication: Medication = {
   instructions: '',
 };
 
+function isExpired(expiryDate?: string): boolean {
+  if (!expiryDate) return false;
+  const currentDate = new Date();
+  const today = [
+    currentDate.getFullYear(),
+    String(currentDate.getMonth() + 1).padStart(2, '0'),
+    String(currentDate.getDate()).padStart(2, '0'),
+  ].join('-');
+  return expiryDate < today;
+}
+
 export default function Prescriptions() {
   const { patients, prescriptions, addPrescription, updatePrescription, deletePrescription } = useMedicalData();
   const [patientId, setPatientId] = useState('');
@@ -364,7 +375,7 @@ export default function Prescriptions() {
             <option value="">Aucun lien avec le stock</option>
             {dispensableInventoryItems.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} · Stock : {item.quantity} {item.unit}
+                {item.name} · Stock : {item.quantity} {item.unit}{isExpired(item.expiryDate) ? ' · PÉRIMÉ — délivrance bloquée' : ''}
               </option>
             ))}
           </select>
@@ -407,6 +418,11 @@ export default function Prescriptions() {
                           placeholder="À saisir au moment de la délivrance"
                         />
                         <p className="prescription-empty">Article lié : {stockItem?.name || 'Article introuvable'} · Stock actuel : {stockItem ? `${stockItem.quantity} ${stockItem.unit}` : 'indisponible'}</p>
+                        {stockItem && isExpired(stockItem.expiryDate) && (
+                          <p role="alert" style={{ color: '#c43d3d', fontWeight: 700, fontSize: 12 }}>
+                            DÉLIVRANCE INTERDITE : cet article est périmé depuis le {new Date(stockItem.expiryDate! + 'T00:00:00').toLocaleDateString('fr-FR')}. Associez un lot valide avant de poursuivre.
+                          </p>
+                        )}
                       </div>
                     );
                   })()}
