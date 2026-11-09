@@ -11,7 +11,8 @@
     "test:ai-providers": "tsx server/ai/test-providers.ts",
     "test:ai-resilience": "tsx server/ai/test-resilience.ts",
     "test:clinical-regression": "tsx server/ai/test-clinical-regression.ts",
-    "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression"
+    "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression",
+    "test:clinical-live": "tsx server/ai/test-clinical-live.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
