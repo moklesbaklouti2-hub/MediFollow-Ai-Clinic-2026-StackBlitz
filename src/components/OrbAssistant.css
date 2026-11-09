@@ -79,31 +79,3 @@
   font-size:10px;font-weight:700;cursor:pointer
 }
 .mf-orb-live-analysis button:hover{background:rgba(91,218,204,.2)}
-
-/* Agrandissement de la bulle d'analyse pour une lecture confortable */
-.mf-orb-insight-bubble{
-  width:min(390px,calc(100vw - 28px));
-  max-height:min(55dvh,440px);
-  padding:17px 18px;
-}
-.mf-orb-insight-top{font-size:15px;gap:10px;margin-bottom:11px}
-.mf-orb-insight-bubble p{font-size:14px;line-height:1.7;margin:10px 0}
-.mf-orb-priority{font-size:11px;padding:5px 10px}
-.mf-orb-insight-question{gap:6px;margin:12px 0;padding:12px}
-.mf-orb-insight-question small{font-size:10px}
-.mf-orb-insight-question strong{font-size:14px;line-height:1.6}
-.mf-orb-insight-bubble>button{padding:10px 13px;font-size:12px}
-@media(max-width:650px){
-  .mf-orb-insight-bubble{
-    right:0;
-    bottom:108px;
-    width:calc(100vw - 24px);
-    max-height:min(52dvh,460px);
-    padding:16px;
-  }
-  .mf-orb-insight-top{font-size:15px}
-  .mf-orb-insight-bubble p{font-size:14px;line-height:1.7}
-  .mf-orb-insight-question strong{font-size:14px}
-  .mf-orb-insight-bubble>button{font-size:13px;padding:11px 14px}
-}
-
