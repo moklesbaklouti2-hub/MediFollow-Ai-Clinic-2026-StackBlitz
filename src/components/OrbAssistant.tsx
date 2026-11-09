@@ -125,6 +125,8 @@ const [isListening, setIsListening] = useState(false);
         speechFinalSegmentsRef.current.clear();
 
         recognition.onresult = (event) => {
+          // Ignore late events emitted by a recognition session that has already ended.
+          if (recognitionRef.current !== recognition) return;
           let interimText = '';
           for (let index = event.resultIndex; index < event.results.length; index += 1) {
             const result = event.results[index];
@@ -166,6 +168,8 @@ const [isListening, setIsListening] = useState(false);
         };
 
         recognition.onerror = (event) => {
+          // An old session must never change the state of the current session.
+          if (recognitionRef.current !== recognition) return;
           const messages: Record<string, string> = {
             'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
             'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
