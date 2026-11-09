@@ -50,6 +50,11 @@ export default function OrbAssistant({
   const [selectedPatientId, setSelectedPatientId] = useState('');
   const [selectedConsultationId, setSelectedConsultationId] = useState('');
   const [shareClinicalContext, setShareClinicalContext] = useState(false);
+  const [insightDismissed, setInsightDismissed] = useState(false);
+
+  useEffect(() => {
+    if (clinicalInsight?.updatedAt) setInsightDismissed(false);
+  }, [clinicalInsight?.updatedAt]);
 
   useEffect(() => {
     if (!clinicalPrompt) return;
@@ -160,11 +165,14 @@ export default function OrbAssistant({
 
   return (
     <div className={`mf-orb-assistant${isThinking || sending ? ' is-thinking' : ''}`}>
-      {clinicalInsight?.enabled && clinicalInsight.status !== 'idle' && !panelOpen && (
+      {clinicalInsight?.enabled && clinicalInsight.status !== 'idle' && !panelOpen && !insightDismissed && (
         <aside className={`mf-orb-insight-bubble ${clinicalInsight.analysis?.priority === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de l’Orb">
           <div className="mf-orb-insight-top">
-            <span className={`mf-orb-status-dot${clinicalInsight.status === 'analyzing' ? ' is-thinking' : ''}`} />
-            <strong>{clinicalInsight.status === 'analyzing' ? 'MediFollow analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
+            <div className="mf-orb-insight-heading">
+              <span className={`mf-orb-status-dot${clinicalInsight.status === 'analyzing' ? ' is-thinking' : ''}`} />
+              <strong>{clinicalInsight.status === 'analyzing' ? 'MediFollow analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
+            </div>
+            <button type="button" className="mf-orb-insight-close" onClick={() => setInsightDismissed(true)} aria-label="Fermer la réflexion clinique" title="Fermer">×</button>
           </div>
           {clinicalInsight.status === 'ready' && clinicalInsight.analysis ? (
             <>
