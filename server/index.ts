@@ -748,10 +748,19 @@ app.post('/api/chat', async (req, res) => {
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
+    // Codes exploitables pour le diagnostic sans exposer les clés ni les données.
+    const code = statusCode === 429 ? 'AI_RATE_LIMIT'
+      : statusCode === 401 || statusCode === 403 ? 'AI_PROVIDER_AUTH'
+      : statusCode === 400 || statusCode === 422 ? 'AI_PROVIDER_REQUEST'
+      : statusCode === 502 || statusCode === 503 || statusCode === 504 ? 'AI_PROVIDER_UNAVAILABLE'
+      : 'AI_INTERNAL_ERROR';
     return res.status(statusCode >= 400 && statusCode < 600 ? statusCode : 500).json({
-      error: statusCode === 429
-        ? 'Quota du fournisseur IA atteint. Réessayez plus tard.'
+      error: code === 'AI_RATE_LIMIT' ? 'Quota IA atteint : réessayez plus tard.'
+        : code === 'AI_PROVIDER_AUTH' ? 'Accès au fournisseur IA refusé : vérifier les secrets Codespaces.'
+        : code === 'AI_PROVIDER_REQUEST' ? 'Le fournisseur IA a refusé la requête ou le modèle.'
+        : code === 'AI_PROVIDER_UNAVAILABLE' ? 'Les fournisseurs IA sont momentanément indisponibles.'
         : 'Erreur interne du moteur IA.',
+      code,
     });
   }
 });
