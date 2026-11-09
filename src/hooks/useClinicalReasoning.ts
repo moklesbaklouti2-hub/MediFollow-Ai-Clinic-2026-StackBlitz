@@ -99,7 +99,9 @@ export function useClinicalReasoning(input: ReasoningInput) {
   useEffect(() => {
     if (!input.enabled || !hasUsefulContent || snapshot === lastSnapshot.current || status === 'analyzing') return;
 
-    const wait = Math.max(1600, 4500 - (Date.now() - lastRequestAt.current));
+    // Limite les appels répétés pendant la saisie : au moins 10 secondes entre deux analyses.
+    // La première analyse démarre après 2,5 secondes de stabilité des données.
+    const wait = Math.max(2500, 10000 - (Date.now() - lastRequestAt.current));
     const timer = window.setTimeout(async () => {
       if (inFlight.current || snapshot === lastSnapshot.current) return;
       inFlight.current = true;
@@ -118,16 +120,15 @@ export function useClinicalReasoning(input: ReasoningInput) {
           body: JSON.stringify({
             context: {
               ...safeContext,
+              // Historique compact : conserve les éléments nécessaires à l'évolution du raisonnement.
               previousAnalysis: analysis ? {
-                situationSummary: analysis.situationSummary,
-                evolutionNote: analysis.evolutionNote,
+                situationSummary: analysis.situationSummary.slice(0, 500),
                 priority: analysis.priority,
-                priorityReason: analysis.priorityReason,
-                nextQuestionPreviouslyAsked: analysis.nextQuestion,
-                previousQuestionOptions: analysis.nextQuestionOptions,
-                whyThisQuestion: analysis.whyThisQuestion,
-                pointsToVerify: analysis.pointsToVerify,
-                hypotheses: analysis.hypotheses,
+                nextQuestionPreviouslyAsked: analysis.nextQuestion.slice(0, 250),
+                hypotheses: analysis.hypotheses.map(({ label, percentage }) => ({
+                  label: label.slice(0, 100),
+                  percentage,
+                })),
               } : undefined,
             },
           }),
