@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './mobile-navigation.css';
 
@@ -14,6 +14,7 @@ import Prescriptions from './pages/Prescriptions';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
 import OrbAssistant from './components/OrbAssistant';
+import type { ClinicalReasoningAnalysis } from './hooks/useClinicalReasoning';
 
 // ============================================
 // MEDIFOLLOW AI — APPLICATION PRINCIPALE
@@ -100,6 +101,16 @@ function App() {
 
   const [active, setActive] = useState('Tableau de bord');
   const [orbPrompt, setOrbPrompt] = useState('');
+  const [clinicalInsight, setClinicalInsight] = useState<{
+    enabled: boolean;
+    status: 'idle' | 'analyzing' | 'ready' | 'error';
+    analysis: ClinicalReasoningAnalysis | null;
+    error: string;
+    updatedAt: string;
+  }>({ enabled: true, status: 'idle', analysis: null, error: '', updatedAt: '' });
+  const handleClinicalReasoningChange = useCallback((insight: typeof clinicalInsight) => {
+    setClinicalInsight(insight);
+  }, []);
 
   // ---------- COPILOTE IA ----------
 
@@ -218,7 +229,7 @@ function App() {
         return <Patients />;
 
       case 'Consultations':
-        return <Consultations onAskCopilot={(prompt) => setOrbPrompt(prompt)} />;
+        return <Consultations onAskCopilot={(prompt) => setOrbPrompt(prompt)} onClinicalReasoningChange={handleClinicalReasoningChange} />;
 
       case 'Copilote IA':
         return (
@@ -312,6 +323,7 @@ function App() {
         patients={patients}
         consultations={consultations}
         clinicalPrompt={orbPrompt}
+        clinicalInsight={clinicalInsight}
         onClinicalPromptConsumed={() => setOrbPrompt('')}
         onOpenCopilot={() => setActive('Copilote IA')}
       />
