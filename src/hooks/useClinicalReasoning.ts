@@ -7,6 +7,7 @@ export type ClinicalReasoningAnalysis = {
   priority: 'routine' | 'attention' | 'urgent';
   priorityReason: string;
   nextQuestion: string;
+  nextQuestionOptions: string[];
   whyThisQuestion: string;
   pointsToVerify: string[];
   hypotheses: { label: string; reason: string; confidence: 'faible' | 'modérée'; percentage: number }[];
@@ -20,6 +21,7 @@ type ReasoningInput = {
   motif: string;
   symptoms: string;
   history: string;
+  targetedInterview: string;
   vitals: Vitals;
   physicalExamination: PhysicalExamination;
   examination: string;
@@ -75,13 +77,14 @@ export function useClinicalReasoning(input: ReasoningInput) {
       motif: input.motif,
       symptoms: input.symptoms,
       history: input.history,
+      targetedInterview: input.targetedInterview,
       vitals: input.vitals,
       physicalExamination: input.physicalExamination,
       additionalExaminationNotes: input.examination,
       physicianHypotheses: input.diagnosis,
       managementAlreadyConsidered: input.plan,
     },
-  }), [input.patient, input.specialty, input.motif, input.symptoms, input.history, input.vitals, input.physicalExamination, input.examination, input.diagnosis, input.plan]);
+  }), [input.patient, input.specialty, input.motif, input.symptoms, input.history, input.targetedInterview, input.vitals, input.physicalExamination, input.examination, input.diagnosis, input.plan]);
 
   const snapshot = useMemo(() => JSON.stringify(safeContext), [safeContext]);
   const hasUsefulContent = Boolean(
@@ -121,6 +124,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
                 priority: analysis.priority,
                 priorityReason: analysis.priorityReason,
                 nextQuestionPreviouslyAsked: analysis.nextQuestion,
+                previousQuestionOptions: analysis.nextQuestionOptions,
                 whyThisQuestion: analysis.whyThisQuestion,
                 pointsToVerify: analysis.pointsToVerify,
                 hypotheses: analysis.hypotheses,
