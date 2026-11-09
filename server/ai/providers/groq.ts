@@ -17,7 +17,7 @@ function getGroqClient(): Groq {
   }
 
   if (!groqClient || configuredKey !== apiKey) {
-    groqClient = new Groq({ apiKey });
+    groqClient = new Groq({ apiKey, timeout: 12000, maxRetries: 0 });
     configuredKey = apiKey;
   }
 
