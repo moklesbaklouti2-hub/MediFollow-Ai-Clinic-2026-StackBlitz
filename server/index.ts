@@ -91,14 +91,18 @@ app.post('/api/clinical/analyze', async (req, res) => {
               pointsToVerify: { type: 'array', items: { type: 'string' } },
               recommendedActions: { type: 'array', items: { type: 'string' } },
               hypotheses: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  label: { type: 'string' },
-                  reason: { type: 'string' },
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'string' },
+                    reason: { type: 'string' },
+                  },
+                  required: ['label', 'reason'],
+                  additionalProperties: false,
                 },
-                required: ['label', 'reason'],
+              },
+            required: ['label', 'reason'],
                 additionalProperties: false,
               },
             },
