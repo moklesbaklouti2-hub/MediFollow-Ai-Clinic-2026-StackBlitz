@@ -188,21 +188,30 @@ const [isListening, setIsListening] = useState(false);
 
         recognition.onend = () => {
           if (recognitionRef.current !== recognition) return;
+
+          // Invalidate this session immediately. Android may emit onend more
+          // than once; only the first event may finalize text or schedule a restart.
+          recognitionRef.current = null;
+
           if (shouldContinueListeningRef.current) {
             const previousBase = speechBaseInputRef.current.trimEnd();
             const previousText = speechCurrentTextRef.current.trim();
             speechBaseInputRef.current = `${previousBase}${previousBase && previousText ? ' ' : ''}${previousText}`;
             speechCurrentTextRef.current = '';
+            speechFinalSegmentsRef.current.clear();
             setInterimTranscript('');
+
+            if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
             speechRestartTimerRef.current = setTimeout(() => {
-              if (!shouldContinueListeningRef.current) return;
+              speechRestartTimerRef.current = null;
+              if (!shouldContinueListeningRef.current || recognitionRef.current) return;
               startSession();
             }, 350);
             return;
           }
+
           setIsListening(false);
           setInterimTranscript('');
-          recognitionRef.current = null;
         };
 
         recognitionRef.current = recognition;
