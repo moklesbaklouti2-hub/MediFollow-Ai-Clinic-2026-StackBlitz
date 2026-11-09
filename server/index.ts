@@ -140,13 +140,14 @@ function removeDocumentedQuestionParts(question: string, documentedText: string)
       return part;
     });
 
-  return kept
+  const result = kept
     .join(', ')
     .replace(/\s+,/g, ',')
     .replace(/,\s*,/g, ', ')
     .replace(/\s{2,}/g, ' ')
     .replace(/^[,;\s]+|[,;\s]+$/g, '')
     .trim();
+  return result ? result + (question.trim().endsWith('?') ? '?' : '') : '';
 }
 
 app.post('/api/clinical/analyze', async (req, res) => {
