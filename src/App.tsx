@@ -329,6 +329,7 @@ function App() {
         clinicalInsight={active === 'Consultations' ? clinicalInsight : undefined}
         onClinicalPromptConsumed={() => setOrbPrompt('')}
         onOpenCopilot={() => setActive('Copilote IA')}
+        onNavigate={setActive}
       />
     </div>
   );
