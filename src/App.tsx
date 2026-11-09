@@ -116,6 +116,7 @@ function App() {
       setPendingConsultationActions((previous) => [...previous, ...consultationActions]);
     }
   }, []);
+  const clearPendingConsultationActions = useCallback(() => setPendingConsultationActions([]), []);
   const [orbPrompt, setOrbPrompt] = useState('');
   const [clinicalInsight, setClinicalInsight] = useState<{
     enabled: boolean;
@@ -250,7 +251,7 @@ function App() {
             onAskCopilot={(prompt) => setOrbPrompt(prompt)}
             onClinicalReasoningChange={handleClinicalReasoningChange}
             commandActions={pendingConsultationActions}
-            onCommandActionsConsumed={() => setPendingConsultationActions([])}
+            onCommandActionsConsumed={clearPendingConsultationActions}
           />
         );
 
