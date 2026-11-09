@@ -96,7 +96,7 @@ function isClinicalTopicAlreadyDocumented(item: string, documentedText: string):
 // Si une question regroupe plusieurs demandes séparées par une virgule ou un
 // point-virgule, conserve les parties utiles et retire uniquement les répétitions.
 function removeDocumentedQuestionParts(question: string, documentedText: string): string {
-  const parts = question.split(/([,;])/);
+  const parts = question.split(/([,;]|\b(?:et|ou)\b)/i);
   if (parts.length === 1) {
     return isClinicalTopicAlreadyDocumented(question, documentedText) ? '' : question;
   }
@@ -104,7 +104,7 @@ function removeDocumentedQuestionParts(question: string, documentedText: string)
   const kept: string[] = [];
   let current = '';
   for (const part of parts) {
-    if (part === ',' || part === ';') {
+    if (/^(?:,|;|et|ou)$/i.test(part.trim())) {
       if (current.trim() && !isClinicalTopicAlreadyDocumented(current, documentedText)) {
         kept.push(current.trim());
       }
