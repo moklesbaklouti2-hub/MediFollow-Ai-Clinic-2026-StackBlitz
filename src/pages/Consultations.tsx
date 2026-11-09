@@ -519,6 +519,17 @@ export default function Consultations({
           border-width:0 2px 2px 0; transform:rotate(45deg); margin-top:-2px;
         }
         .smart-copilot-checkbox:focus-visible { outline:3px solid rgba(56,201,170,.25); outline-offset:3px; }
+        .differential-floating-panel {
+          position:fixed; top:112px; right:18px; z-index:1300;
+          width:min(390px,calc(100vw - 28px)); max-height:calc(100dvh - 145px);
+          overflow-y:auto; box-shadow:0 16px 45px rgba(0,0,0,.28);
+        }
+        @media(max-width:650px) {
+          .differential-floating-panel {
+            top:88px; right:10px; width:calc(100vw - 20px);
+            max-height:calc(100dvh - 185px);
+          }
+        }
 
         @media(max-width:700px) {
           .vitals-grid {
@@ -736,7 +747,8 @@ export default function Consultations({
                 {differentialPopupOpen && (
                   <section
                     aria-label="Diagnostics différentiels"
-                    style={{ marginTop: 10, width: '100%', boxSizing: 'border-box', padding: 14, borderRadius: 12, border: '1px solid var(--border,#526675)', background: 'var(--surface,#172b3a)', color: 'var(--text-primary,#f2f7fa)', display: 'grid', gap: 12 }}
+                    className="differential-floating-panel"
+                    style={{ boxSizing: 'border-box', padding: 14, borderRadius: 12, border: '1px solid var(--border,#526675)', background: 'var(--surface,#172b3a)', color: 'var(--text-primary,#f2f7fa)', display: 'grid', gap: 12 }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
                       <div>
