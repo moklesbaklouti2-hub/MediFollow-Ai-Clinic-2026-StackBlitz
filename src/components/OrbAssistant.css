@@ -43,6 +43,10 @@
 .mf-orb-chat-form .mf-orb-mic-button:disabled{opacity:.4;cursor:not-allowed}
 .mf-orb-speech-status{flex-shrink:0;padding:0 13px 8px;color:#8cebd9;font-size:9px;line-height:1.4}
 .mf-orb-speech-status.has-error{color:#ffb2b8}
+.mf-orb-speech-corrections{display:flex;flex-direction:column;gap:6px;margin:0 12px 9px;padding:9px 10px;border:1px solid rgba(255,190,100,.35);border-radius:9px;background:rgba(255,190,100,.07);color:var(--text-primary,#e8eef5);font-size:10px;line-height:1.4}
+.mf-orb-speech-corrections strong{color:#f2c987;font-size:10px;font-weight:600}
+.mf-orb-speech-corrections button{align-self:flex-start;max-width:100%;padding:6px 9px;border:1px solid rgba(108,226,220,.35);border-radius:7px;background:rgba(91,218,204,.09);color:#a5f1e5;font-size:10px;text-align:left;white-space:normal;cursor:pointer}
+.mf-orb-speech-corrections button:active{background:rgba(91,218,204,.2)}
 @keyframes mfMicPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,91,105,0)}50%{box-shadow:0 0 0 4px rgba(239,91,105,.13)}}
 .mf-orb-panel-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;color:#91a2bc;font-size:8px}
 .mf-orb-panel-footer button{border:0;background:transparent;color:#8be9dc;font-size:9px;cursor:pointer}
