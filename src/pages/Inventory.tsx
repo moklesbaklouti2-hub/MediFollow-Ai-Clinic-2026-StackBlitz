@@ -8,6 +8,7 @@ const emptyForm = {
   unit: 'unité',
   quantity: '0',
   minimumQuantity: '0',
+  unitCost: '',
   batchNumber: '',
   expiryDate: '',
   location: '',
@@ -50,6 +51,7 @@ export default function Inventory() {
       unit: item.unit,
       quantity: String(item.quantity),
       minimumQuantity: String(item.minimumQuantity),
+      unitCost: item.unitCost === undefined ? '' : String(item.unitCost),
       batchNumber: item.batchNumber || '',
       expiryDate: item.expiryDate || '',
       location: item.location || '',
@@ -64,6 +66,11 @@ export default function Inventory() {
     if (!editingId) return;
     const quantity = Number(form.quantity);
     const minimumQuantity = Number(form.minimumQuantity);
+    const unitCost = form.unitCost.trim() === '' ? undefined : Number(form.unitCost);
+    if (unitCost !== undefined && (!Number.isFinite(unitCost) || unitCost < 0)) {
+      setMessage('Le coût unitaire doit être un montant positif ou nul.');
+      return;
+    }
     if (!form.name.trim() || !form.unit.trim() || !Number.isFinite(quantity) || quantity < 0 ||
         !Number.isFinite(minimumQuantity) || minimumQuantity < 0) {
       setMessage('Vérifiez le nom, l’unité et les quantités saisies.');
@@ -83,6 +90,7 @@ export default function Inventory() {
       unit: form.unit.trim(),
       quantity,
       minimumQuantity,
+      unitCost,
       batchNumber: form.batchNumber.trim() || undefined,
       expiryDate: form.expiryDate || undefined,
       location: form.location.trim() || undefined,
@@ -127,6 +135,11 @@ export default function Inventory() {
     event.preventDefault();
     const quantity = Number(form.quantity);
     const minimumQuantity = Number(form.minimumQuantity);
+    const unitCost = form.unitCost.trim() === '' ? undefined : Number(form.unitCost);
+    if (unitCost !== undefined && (!Number.isFinite(unitCost) || unitCost < 0)) {
+      setMessage('Le coût unitaire doit être un montant positif ou nul.');
+      return;
+    }
     if (!form.name.trim() || !form.unit.trim() || !Number.isFinite(quantity) || quantity < 0 ||
         !Number.isFinite(minimumQuantity) || minimumQuantity < 0) {
       setMessage('Vérifiez le nom, l’unité et les quantités saisies.');
@@ -140,6 +153,7 @@ export default function Inventory() {
       unit: form.unit.trim(),
       quantity,
       minimumQuantity,
+      unitCost,
       batchNumber: form.batchNumber.trim() || undefined,
       expiryDate: form.expiryDate || undefined,
       location: form.location.trim() || undefined,
@@ -334,6 +348,7 @@ export default function Inventory() {
             <div className="inventory-field"><label>Unité</label><input required value={form.unit} onChange={e => setForm({ ...form, unit: e.target.value })} placeholder="boîte, pièce, flacon..." /></div>
             <div className="inventory-field"><label>Quantité initiale</label><input type="number" min="0" step="any" value={form.quantity} onChange={e => setForm({ ...form, quantity: e.target.value })} /></div>
             <div className="inventory-field"><label>Seuil d’alerte</label><input type="number" min="0" step="any" value={form.minimumQuantity} onChange={e => setForm({ ...form, minimumQuantity: e.target.value })} /></div>
+            <div className="inventory-field"><label>Coût d’achat unitaire (DT) · facultatif</label><input type="number" min="0" step="0.001" value={form.unitCost} onChange={e => setForm({ ...form, unitCost: e.target.value })} placeholder="Ex. 12,500" /></div>
             <div className="inventory-field"><label>Numéro de lot</label><input value={form.batchNumber} onChange={e => setForm({ ...form, batchNumber: e.target.value })} /></div>
             <div className="inventory-field"><label>Date de péremption</label><input type="date" value={form.expiryDate} onChange={e => setForm({ ...form, expiryDate: e.target.value })} /></div>
             <div className="inventory-field"><label>Emplacement</label><input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Armoire, réserve..." /></div>
@@ -357,7 +372,7 @@ export default function Inventory() {
               <div style={{ minWidth: 0 }}>
                 <strong>{item.name}</strong>
                 <p>{categoryLabel(item.category)} · {item.quantity} {item.unit} · Seuil : {item.minimumQuantity} {item.unit}</p>
-                <p>{item.batchNumber ? `Lot : ${item.batchNumber} · ` : ''}{item.expiryDate ? `Péremption : ${new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR')}` : 'Péremption non renseignée'}{item.location ? ` · ${item.location}` : ''}</p>
+                <p>{item.unitCost !== undefined ? `Coût unitaire : ${item.unitCost.toFixed(3)} DT · ` : ''}{item.batchNumber ? `Lot : ${item.batchNumber} · ` : ''}{item.expiryDate ? `Péremption : ${new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR')}` : 'Péremption non renseignée'}{item.location ? ` · ${item.location}` : ''}</p>
                 {isLow && <span className="inventory-alert inventory-alert-low">Stock bas · réapprovisionnement</span>}
                 {daysLeft !== null && daysLeft < 0 && <span className="inventory-alert inventory-alert-expired">PÉRIMÉ depuis {Math.abs(daysLeft)} j · ne pas délivrer</span>}
                 {daysLeft !== null && daysLeft >= 0 && daysLeft <= 90 && <span className="inventory-alert inventory-alert-soon">Péremption dans {daysLeft} j</span>}
