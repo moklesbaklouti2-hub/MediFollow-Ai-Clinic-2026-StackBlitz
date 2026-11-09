@@ -56,6 +56,38 @@ function normalizeSpeechCandidate(value: string): string {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
 }
 
+// Corrections proposées uniquement pour les erreurs réellement observées pendant les tests.
+// Elles restent soumises à la confirmation du médecin : aucune substitution automatique.
+const observedMedicalSpeechCorrections: Record<string, string> = {
+  exuda: 'exsudat',
+  disney: 'dyspnée',
+  athenopathie: 'adénopathie',
+};
+
+type MedicalSpeechCorrection = { original: string; replacement: string };
+
+function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
+  const found = new Map<string, MedicalSpeechCorrection>();
+  for (const original of value.match(/[\\p{L}]+/gu) || []) {
+    const replacement = observedMedicalSpeechCorrections[normalizeSpeechCandidate(original)];
+    if (replacement && normalizeSpeechCandidate(original) !== normalizeSpeechCandidate(replacement)) {
+      const key = normalizeSpeechCandidate(original);
+      if (!found.has(key)) found.set(key, { original, replacement });
+    }
+  }
+  return Array.from(found.values());
+}
+
+function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
+  const target = normalizeSpeechCandidate(correction.original);
+  return value.replace(/[\\p{L}]+/gu, word => {
+    if (normalizeSpeechCandidate(word) !== target) return word;
+    return word[0] === word[0].toLocaleUpperCase('fr')
+      ? correction.replacement.charAt(0).toLocaleUpperCase('fr') + correction.replacement.slice(1)
+      : correction.replacement;
+  });
+}
+
 function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
   const candidates = Array.from({ length: result.length }, (_, index) =>
     (result[index]?.transcript || '').trim()
@@ -109,6 +141,7 @@ export default function OrbAssistant({
 const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechMessage, setSpeechMessage] = useState('');
+  const [speechCorrections, setSpeechCorrections] = useState<MedicalSpeechCorrection[]>([]);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const commandListeningEnabledRef = useRef(false);
   const speechBaseInputRef = useRef('');
@@ -165,6 +198,7 @@ const [isListening, setIsListening] = useState(false);
       speechBaseInputRef.current = mode === 'command' ? '' : input;
       speechCurrentTextRef.current = '';
       speechFinalSegmentsRef.current.clear();
+      setSpeechCorrections([]);
 
       recognition.lang = 'fr-FR';
       recognition.maxAlternatives = 5;
@@ -197,6 +231,7 @@ const [isListening, setIsListening] = useState(false);
         );
         const dictatedText = uniqueFinalParts.join(' ').trim();
         speechCurrentTextRef.current = dictatedText;
+        setSpeechCorrections(findMedicalSpeechCorrections(dictatedText));
 
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
@@ -224,6 +259,7 @@ const [isListening, setIsListening] = useState(false);
         const base = speechBaseInputRef.current.trimEnd();
         const dictatedText = speechCurrentTextRef.current.trim();
         const finalInput = `${base}${base && dictatedText ? ' ' : ''}${dictatedText}`;
+        setSpeechCorrections(findMedicalSpeechCorrections(dictatedText));
 
         speechBaseInputRef.current = finalInput;
         speechCurrentTextRef.current = '';
@@ -520,6 +556,23 @@ const [isListening, setIsListening] = useState(false);
             <div className={`mf-orb-speech-status${speechMessage ? ' has-error' : ''}`} aria-live="polite">
               {speechMessage || (isListening ? (mode === 'command' ? 'Écoute active : dictez vos commandes. Dites « stop écoute » pour arrêter.' : 'Écoute en cours… Parlez clairement en français.') : (mode === 'command' ? 'Appuyez sur le microphone pour démarrer les commandes vocales.' : interimTranscript))}
               {mode !== 'command' && interimTranscript && isListening ? ` ${interimTranscript}` : ''}
+            </div>
+          )}
+          {mode !== 'command' && speechCorrections.length > 0 && (
+            <div className="mf-orb-speech-corrections" aria-live="polite">
+              <strong>Vérification de termes médicaux — confirmez avant correction :</strong>
+              {speechCorrections.map(correction => (
+                <button
+                  type="button"
+                  key={normalizeSpeechCandidate(correction.original)}
+                  onClick={() => {
+                    setInput(current => applyMedicalSpeechCorrection(current, correction));
+                    setSpeechCorrections(current => current.filter(item => normalizeSpeechCandidate(item.original) !== normalizeSpeechCandidate(correction.original)));
+                  }}
+                >
+                  « {correction.original} » → « {correction.replacement} » · Corriger
+                </button>
+              ))}
             </div>
           )}
           <div className="mf-orb-panel-footer">
