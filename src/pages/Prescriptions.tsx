@@ -38,7 +38,17 @@ export default function Prescriptions() {
   const [inventory, setInventory] = useState<InventoryData>(() => getInventoryData());
 
   useEffect(() => subscribeToMedicalData(() => setInventory(getInventoryData())), []);
-  const dispensableInventoryItems = inventory.items.filter((item) => item.category !== 'equipment');
+  // Présenter d'abord les lots encore valides, par date de péremption croissante (FEFO).
+  const dispensableInventoryItems = inventory.items
+    .filter((item) => item.category !== 'equipment')
+    .sort((a, b) => {
+      const aExpired = isExpired(a.expiryDate);
+      const bExpired = isExpired(b.expiryDate);
+      if (aExpired !== bExpired) return aExpired ? 1 : -1;
+      if (!a.expiryDate) return 1;
+      if (!b.expiryDate) return -1;
+      return a.expiryDate.localeCompare(b.expiryDate);
+    });
 
   function updateMedication(field: 'name' | 'dosage' | 'route' | 'frequency' | 'duration' | 'instructions' | 'inventoryItemId', value: string) {
     setMedication((previous) => ({ ...previous, [field]: value }));
@@ -375,7 +385,7 @@ export default function Prescriptions() {
             <option value="">Aucun lien avec le stock</option>
             {dispensableInventoryItems.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name} · Stock : {item.quantity} {item.unit}{isExpired(item.expiryDate) ? ' · PÉRIMÉ — délivrance bloquée' : ''}
+                {item.name} · Lot : {item.batchNumber || 'non renseigné'} · Péremption : {item.expiryDate ? new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR') : 'non renseignée'} · Stock : {item.quantity} {item.unit}{isExpired(item.expiryDate) ? ' · PÉRIMÉ — délivrance bloquée' : ''}
               </option>
             ))}
           </select>
