@@ -163,7 +163,7 @@ export default function Inventory() {
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {[['all', 'Tous'], ['supply', 'Consommables'], ['equipment', 'Équipements'], ['treatment', 'Traitements']].map(([value, label]) =>
-            <button key={value} type="button" className="inventory-secondary" onClick={() => setFilter(value)} className={`inventory-secondary ${filter === value ? 'inventory-filter-active' : ''}`}>{label}</button>
+            <button key={value} type="button" className={`inventory-secondary ${filter === value ? 'inventory-filter-active' : ''}`} onClick={() => setFilter(value)}>{label}</button>
           )}
         </div>
 
