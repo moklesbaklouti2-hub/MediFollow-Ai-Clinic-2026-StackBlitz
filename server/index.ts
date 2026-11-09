@@ -73,7 +73,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         },
       ],
       temperature: 0.1,
-      max_completion_tokens: 1800,
+      max_completion_tokens: 1200,
       response_format: { type: 'json_object' },
     });
 
@@ -140,8 +140,18 @@ app.post('/api/clinical/analyze', async (req, res) => {
     });
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
+    const statusCode = isPlainObject(error) && typeof error.status === 'number'
+      ? error.status
+      : 500;
     console.error('Erreur analyse clinique détaillée:', error);
-    return res.status(500).json({
+
+    if (statusCode === 429) {
+      return res.status(429).json({
+        error: 'Quota Groq temporairement atteint. Le raisonnement clinique reprendra lorsque le quota sera renouvelé. Aucune donnée de consultation n’a été supprimée.',
+      });
+    }
+
+    return res.status(statusCode >= 400 && statusCode < 600 ? statusCode : 500).json({
       error: `Erreur du moteur clinique : ${detail.slice(0, 500)}`,
     });
   }
