@@ -16,6 +16,7 @@ import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
 import OrbAssistant from './components/OrbAssistant';
 import type { ClinicalReasoningAnalysis } from './hooks/useClinicalReasoning';
+import type { VoiceCommandAction } from './types/medical';
 
 // ============================================
 // MEDIFOLLOW AI — APPLICATION PRINCIPALE
@@ -102,6 +103,19 @@ function App() {
   // ---------- NAVIGATION ----------
 
   const [active, setActive] = useState('Tableau de bord');
+  const [pendingConsultationActions, setPendingConsultationActions] = useState<VoiceCommandAction[]>([]);
+  const handleVoiceCommandActions = useCallback((actions: VoiceCommandAction[]) => {
+    const navigationActions = actions.filter(
+      (action): action is Extract<VoiceCommandAction, { type: 'navigate' }> => action.type === 'navigate'
+    );
+    navigationActions.forEach((action) => setActive(action.page));
+
+    const consultationActions = actions.filter((action) => action.type !== 'navigate');
+    if (consultationActions.length > 0) {
+      setActive('Consultations');
+      setPendingConsultationActions((previous) => [...previous, ...consultationActions]);
+    }
+  }, []);
   const [orbPrompt, setOrbPrompt] = useState('');
   const [clinicalInsight, setClinicalInsight] = useState<{
     enabled: boolean;
@@ -231,7 +245,14 @@ function App() {
         return <Patients />;
 
       case 'Consultations':
-        return <Consultations onAskCopilot={(prompt) => setOrbPrompt(prompt)} onClinicalReasoningChange={handleClinicalReasoningChange} />;
+        return (
+          <Consultations
+            onAskCopilot={(prompt) => setOrbPrompt(prompt)}
+            onClinicalReasoningChange={handleClinicalReasoningChange}
+            commandActions={pendingConsultationActions}
+            onCommandActionsConsumed={() => setPendingConsultationActions([])}
+          />
+        );
 
       case 'Copilote IA':
         return (
@@ -283,6 +304,7 @@ function App() {
       <Sidebar
         active={active}
         onNavigate={setActive}
+        onCommandActions={handleVoiceCommandActions}
       />
 
       <main className="main">
