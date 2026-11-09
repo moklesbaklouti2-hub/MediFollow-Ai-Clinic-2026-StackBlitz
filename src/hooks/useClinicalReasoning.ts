@@ -121,10 +121,19 @@ export function useClinicalReasoning(input: ReasoningInput) {
             },
           }),
         });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Analyse clinique indisponible.');
-        if (!data.analysis || typeof data.analysis.situationSummary !== 'string') {
-          throw new Error('Réponse du moteur clinique invalide.');
+        const responseText = await response.text();
+        if (!responseText.trim()) {
+          throw new Error(`Le serveur a retourné une réponse vide (HTTP ${response.status}). Vérifiez que le moteur IA est démarré.`);
+        }
+        let data: any;
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          throw new Error(`Réponse serveur illisible (HTTP ${response.status}). Le moteur IA n'a pas fourni un JSON valide.`);
+        }
+        if (!response.ok) throw new Error(data?.error || `Analyse clinique indisponible (HTTP ${response.status}).`);
+        if (!data?.analysis || typeof data.analysis.situationSummary !== 'string') {
+          throw new Error('Réponse du moteur clinique incomplète. Réessayez après quelques secondes.');
         }
         setAnalysis(data.analysis as ClinicalReasoningAnalysis);
         setUpdatedAt(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
