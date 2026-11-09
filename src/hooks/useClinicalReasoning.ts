@@ -3,6 +3,7 @@ import type { Patient, Vitals, PhysicalExamination } from '../types/medical';
 
 export type ClinicalReasoningAnalysis = {
   situationSummary: string;
+  evolutionNote: string;
   priority: 'routine' | 'attention' | 'urgent';
   priorityReason: string;
   nextQuestion: string;
@@ -115,7 +116,12 @@ export function useClinicalReasoning(input: ReasoningInput) {
               ...safeContext,
               previousAnalysis: analysis ? {
                 situationSummary: analysis.situationSummary,
+                evolutionNote: analysis.evolutionNote,
+                priority: analysis.priority,
+                priorityReason: analysis.priorityReason,
                 nextQuestionPreviouslyAsked: analysis.nextQuestion,
+                whyThisQuestion: analysis.whyThisQuestion,
+                pointsToVerify: analysis.pointsToVerify,
                 hypotheses: analysis.hypotheses,
               } : undefined,
             },
