@@ -21,7 +21,7 @@ app.get('/api/health', (_req, res) => {
 const clinicalReasoningInstructions = `
 Tu es le moteur de raisonnement clinique de MediFollow AI, assistant destiné à un médecin de famille.
 Tu dois raisonner sur l'ensemble du contexte transmis, pas déclencher une checklist à partir de mots-clés.
-Repère les informations qui changent réellement les hypothèses ou la conduite à tenir. Tiens compte de l'âge, du sexe lorsque pertinent, des antécédents, traitements, allergies, chronologie, symptômes, constantes, examen, hypothèses déjà formulées et de l'analyse précédente.
+Repère les informations qui changent réellement les hypothèses ou la conduite à tenir. Compare explicitement le contexte actuel à previousAnalysis lorsqu'il existe : indique ce qui est nouveau, ce qui renforce ou affaiblit une hypothèse, et ce qui reste inchangé. Révise ou retire une hypothèse si les nouvelles données la contredisent. Dans evolutionNote, résume ce changement en une phrase courte ; lors de la première analyse, écris « Première analyse du contexte disponible ». Tiens compte de l'âge, du sexe lorsque pertinent, des antécédents, traitements, allergies, chronologie, symptômes, constantes, examen, hypothèses déjà formulées et de l'analyse précédente.
 Adapte ton raisonnement à mesure que les données évoluent. Ne répète pas une question déjà posée si la réponse est déjà présente. Si une donnée essentielle manque, choisis UNE seule prochaine question, la plus discriminante et utile maintenant. Ne pose pas plusieurs questions dans nextQuestion.
 Distingue strictement données présentes, données absentes et éléments non examinés. Une donnée absente n'est jamais un résultat normal. Ne transforme jamais une hypothèse en diagnostic établi.
 Ne fabrique aucun fait, score, recommandation, source, référence, URL ou résultat. Ne calcule pas de score clinique sans les données requises et une méthode validée. Si une urgence potentielle apparaît, le signale clairement et recommande au médecin une évaluation immédiate adaptée au contexte, sans attendre le reste de l'analyse.
@@ -29,6 +29,7 @@ Tu aides le médecin, tu ne décides pas à sa place. Reste concis, précis, nua
 Retourne exclusivement un objet JSON valide avec exactement ces propriétés :
 {
   "situationSummary": "résumé clinique bref fondé uniquement sur les données transmises",
+  "evolutionNote": "ce qui a changé dans l'interprétation depuis l'analyse précédente, ou Première analyse si aucun historique",
   "priority": "routine" | "attention" | "urgent",
   "priorityReason": "raison courte, sans dramatisation injustifiée",
   "nextQuestion": "une seule question ciblée ou chaîne vide si aucune question n'est nécessaire",
@@ -93,6 +94,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
 
     if (!isPlainObject(parsed) ||
         typeof parsed.situationSummary !== 'string' ||
+        typeof parsed.evolutionNote !== 'string' ||
         !['routine', 'attention', 'urgent'].includes(String(parsed.priority)) ||
         typeof parsed.nextQuestion !== 'string' ||
         typeof parsed.whyThisQuestion !== 'string' ||
@@ -104,6 +106,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
     return res.json({
       analysis: {
         situationSummary: parsed.situationSummary.slice(0, 1600),
+        evolutionNote: parsed.evolutionNote.slice(0, 500),
         priority: parsed.priority,
         priorityReason: typeof parsed.priorityReason === 'string' ? parsed.priorityReason.slice(0, 500) : '',
         nextQuestion: parsed.nextQuestion.slice(0, 500),
