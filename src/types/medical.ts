@@ -146,6 +146,7 @@ export type Consultation = {
   motif: string;
   symptoms: string;
   history: string;
+  targetedInterview?: string;
   vitals: Vitals;
   examination: string;
   diagnosis: string;
