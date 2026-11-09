@@ -124,17 +124,27 @@ const [isListening, setIsListening] = useState(false);
         const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
           .sort(([a], [b]) => a - b)
           .map(([, value]) => value);
-        // Some mobile speech services repeat a word at a segment boundary.
-        // Collapse only immediately duplicated words; preserve normal phrasing.
-        const words = finalParts.join(' ').split(/\s+/).filter(Boolean);
-        const cleanedWords: string[] = [];
-        for (const word of words) {
-          const previous = cleanedWords[cleanedWords.length - 1];
-          const normalize = (value: string) => value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?]+|[.,;:!?]+$/g, '');
-          if (previous && normalize(previous) === normalize(word)) continue;
-          cleanedWords.push(word);
+
+        // Speech services may return overlapping phrases in adjacent results.
+        // Merge each segment by removing the longest suffix/prefix word overlap.
+        const normalizeWord = (value: string) =>
+          value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?¿¡]+|[.,;:!?¿¡]+$/g, '');
+        const mergedWords: string[] = [];
+        for (const part of finalParts) {
+          const partWords = part.split(/\s+/).filter(Boolean);
+          let overlap = 0;
+          const maxOverlap = Math.min(mergedWords.length, partWords.length, 12);
+          for (let size = maxOverlap; size > 0; size -= 1) {
+            const left = mergedWords.slice(-size).map(normalizeWord);
+            const right = partWords.slice(0, size).map(normalizeWord);
+            if (left.every((word, index) => word === right[index])) {
+              overlap = size;
+              break;
+            }
+          }
+          mergedWords.push(...partWords.slice(overlap));
         }
-        const dictatedText = cleanedWords.join(' ').trim();
+        const dictatedText = mergedWords.join(' ').trim();
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
         setInterimTranscript(interimText.trim());
