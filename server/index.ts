@@ -162,9 +162,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
       return res.status(413).json({ error: 'Le contexte clinique est trop volumineux.' });
     }
 
-    // Entretien ORL : réponse stable sans appel supplémentaire au fournisseur IA.
-    // Ne s'applique qu'à une demande explicite ou à sa continuation, et jamais
-    // lorsqu'un signe de danger positif est signalé (laisser l'IA orienter).
+    // Une demande explicite d'interrogatoire reste active sur les tours suivants.
     const interviewRequested = [message, ...history.filter(item => item.role === 'user').map(item => item.content)]
       .some(value => /\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\b/.test(normalizeClinicalText(value)));
     if (clinicalInterview && interviewRequested) {
@@ -547,8 +545,6 @@ function clinicalInterviewState(facts: string) {
   const soreThroat = /\b(odynophag\w*|pharyngalg\w*|mal de gorge|douleur a la gorge)\b/.test(facts);
   const fever = /\b(fievre|temperature|39 c|39 degre)\b/.test(facts);
   const swallowPain = /\b(odynophag\w*|douleur.{0,40}(deglut|aval)|mal.{0,30}aval)\b/.test(facts);
-  // Une donnée est documentée uniquement si son énoncé comporte une réponse
-  // clinique explicite. La simple mention du mot dans une question ne suffit pas.
   const breathing = /\b(aucune|pas de|sans|absence de) (difficulte respiratoire|dyspne\w*|essoufflement|etouffement)\b|\b(respiration normale|respire normalement|difficulte a respirer|ne peut pas respirer)\b/.test(facts);
   const saliva = /\b(aval\w*|deglut\w*) (?:.{0,35} )?salive\b|\bsalive (?:normalement|sans difficulte|impossible|difficile|coule|n est pas avalee)\b|\b(bave|bavage|hypersialorrhee)\b/.test(facts);
   const trismus = /\btrismus\b|\b(ouvre|ouvrir|ouverture|ouvrirait|ouvrant|n ouvre|ne peut pas ouvrir|difficulte a ouvrir)\b.{0,65}\bbouche\b|\bbouche\b.{0,50}\b(ouvre|ouvrir|ouverture)\b/.test(facts);
@@ -557,8 +553,6 @@ function clinicalInterviewState(facts: string) {
   return { soreThroat, fever, swallowPain, breathing, saliva, trismus, voice, unilateral };
 }
 
-// Les questions de l'assistant ne constituent pas des faits cliniques.
-// On ne force jamais une réponse si le patient signale un danger actuel.
 function reportedSoreThroatDanger(facts: string): boolean {
   return /\b(impossible d avaler (?:la )?salive|ne peux pas avaler (?:ma |la )?salive|n arrive pas a avaler (?:ma |la )?salive|bave en permanence|difficulte respiratoire importante|ne peux pas respirer|etouffe|stridor)\b/.test(facts);
 }
