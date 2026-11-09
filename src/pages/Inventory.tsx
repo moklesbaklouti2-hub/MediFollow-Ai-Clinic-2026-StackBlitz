@@ -217,6 +217,31 @@ export default function Inventory() {
     treatment: 'Traitement',
   })[category];
 
+  // Regrouper visuellement les lots du même produit sans fusionner leurs stocks.
+  const groupedLots = Array.from(data.items.reduce((groups, item) => {
+    const key = `${item.name.trim().toLocaleLowerCase('fr') }|${item.category}|${item.unit.trim().toLocaleLowerCase('fr')}`;
+    const group = groups.get(key) ?? {
+      key,
+      name: item.name,
+      category: item.category,
+      unit: item.unit,
+      lots: [] as InventoryItem[],
+    };
+    group.lots.push(item);
+    groups.set(key, group);
+    return groups;
+  }, new Map<string, { key: string; name: string; category: InventoryCategory; unit: string; lots: InventoryItem[] }>()).values())
+    .map(group => ({
+      ...group,
+      totalQuantity: group.lots.reduce((sum, lot) => sum + lot.quantity, 0),
+      sortedLots: [...group.lots].sort((a, b) => {
+        if (!a.expiryDate) return 1;
+        if (!b.expiryDate) return -1;
+        return a.expiryDate.localeCompare(b.expiryDate);
+      }),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+
   return (
     <section className="inventory-page" style={{ display: 'grid', gap: 20, color: 'var(--text-primary,#20334b)' }}>
       <style>{`
@@ -259,6 +284,42 @@ export default function Inventory() {
         <div className="inventory-panel"><span className="inventory-stat-label">Articles périmés</span><strong style={{ fontSize: 27, color: expiredCount ? '#d94b4b' : 'inherit' }}>{expiredCount}</strong></div>
         <div className="inventory-panel"><span className="inventory-stat-label">Péremption dans les 90 jours</span><strong style={{ fontSize: 27, color: expiringCount ? '#bd7c13' : 'inherit' }}>{expiringCount}</strong></div>
       </div>
+
+      <section className="inventory-panel">
+        <div>
+          <h3 style={{ margin: '0 0 5px' }}>Vue regroupée par produit</h3>
+          <p className="inventory-muted" style={{ margin: 0 }}>Les quantités sont additionnées pour la vue d’ensemble, mais chaque lot reste indépendant pour la péremption et la délivrance.</p>
+        </div>
+        {groupedLots.length === 0 ? <p className="inventory-empty">Aucun produit enregistré.</p> : (
+          <div className="inventory-list">
+            {groupedLots.map(group => (
+              <article className="inventory-item" key={group.key}>
+                <div style={{ minWidth: 0, width: '100%' }}>
+                  <strong>{group.name}</strong>
+                  <p>{categoryLabel(group.category)} · {group.lots.length} lot(s) · Stock total : {group.totalQuantity} {group.unit}</p>
+                  <details style={{ marginTop: 8 }}>
+                    <summary style={{ cursor: 'pointer', color: 'var(--color-text-secondary)', fontSize: 13 }}>Détail des lots</summary>
+                    <div style={{ display: 'grid', gap: 6, marginTop: 8 }}>
+                      {group.sortedLots.map((lot, index) => {
+                        const days = expiryDays(lot.expiryDate);
+                        return (
+                          <div key={lot.id} style={{ borderTop: '1px solid var(--color-border)', paddingTop: 7, fontSize: 12 }}>
+                            <strong style={{ fontSize: 12 }}>Lot {lot.batchNumber || 'sans numéro'}</strong>
+                            <span style={{ color: 'var(--color-text-secondary)' }}> · {lot.quantity} {lot.unit} · Péremption : {lot.expiryDate ? new Date(lot.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR') : 'non renseignée'}</span>
+                            {days !== null && days < 0 && <span className="inventory-alert inventory-alert-expired">PÉRIMÉ</span>}
+                            {days !== null && days >= 0 && days <= 90 && <span className="inventory-alert inventory-alert-soon">Expire dans {days} j</span>}
+                            {index === 0 && lot.expiryDate && days !== null && days >= 0 && <span className="inventory-alert inventory-alert-low">Péremption la plus proche</span>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </details>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="inventory-panel">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
@@ -324,7 +385,7 @@ export default function Inventory() {
         )}
       </section>
       {message && <p role="status" style={{ margin: 0, fontSize: 13 }}>{message}</p>}
-      <p className="inventory-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>Les alertes de péremption sont calculées à partir de la date renseignée : périmé si la date est passée, bientôt périmé si elle arrive dans les 90 jours. En présence de lots différents, créez un article distinct par lot pour assurer le suivi. Les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
+      <p className="inventory-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>Les alertes de péremption sont calculées à partir de la date renseignée : périmé si la date est passée, bientôt périmé si elle arrive dans les 90 jours. En présence de lots différents, enregistrez un article distinct par lot ; la vue regroupée additionne les quantités sans mélanger les dates de péremption. Les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
     </section>
   );
 }
