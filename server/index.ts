@@ -101,7 +101,6 @@ app.post('/api/clinical/analyze', async (req, res) => {
         typeof parsed.nextQuestion !== 'string' ||
         typeof parsed.whyThisQuestion !== 'string' ||
         !Array.isArray(parsed.pointsToVerify) ||
-        !Array.isArray(parsed.recommendedActions) ||
         !Array.isArray(parsed.hypotheses)) {
       return res.status(502).json({ error: 'L’analyse reçue ne respecte pas le format clinique attendu.' });
     }
@@ -115,7 +114,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         nextQuestion: parsed.nextQuestion.slice(0, 500),
         whyThisQuestion: parsed.whyThisQuestion.slice(0, 500),
         pointsToVerify: parsed.pointsToVerify.filter((item): item is string => typeof item === 'string').slice(0, 3),
-        recommendedActions: parsed.recommendedActions.filter((item): item is string => typeof item === 'string').slice(0, 3),
+        recommendedActions: (Array.isArray(parsed.recommendedActions) ? parsed.recommendedActions : []).filter((item): item is string => typeof item === 'string').slice(0, 3),
         hypotheses: (() => {
           const items = parsed.hypotheses
             .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string')
