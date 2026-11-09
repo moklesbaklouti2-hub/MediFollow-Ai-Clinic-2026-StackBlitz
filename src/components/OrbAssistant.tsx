@@ -99,7 +99,7 @@ function frenchPhoneticKey(value: string): string {
     .replace(/ch/g, 'sh')
     .replace(/tion/g, 'sion')
     .replace(/h/g, '')
-    .replace(/(.)\\1+/g, '$1')
+    .replace(/(.)\1+/g, '$1')
     .replace(/(e|es|s|x)$/g, '');
 }
 
