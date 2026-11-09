@@ -396,7 +396,14 @@ Retourne exclusivement le JSON conforme au schéma.`,
     });
   } catch (error) {
     console.error('Erreur interprétation commande vocale:', error);
-    return res.status(500).json({ error: 'Impossible d’interpréter cette commande pour le moment.' });
+    const detail = error instanceof Error ? error.message : String(error);
+    const status = isPlainObject(error) && typeof error.status === 'number'
+      ? error.status
+      : 500;
+    return res.status(status >= 400 && status < 600 ? status : 500).json({
+      error: 'Impossible d’interpréter cette commande pour le moment.',
+      detail: detail.slice(0, 300),
+    });
   }
 });
 
