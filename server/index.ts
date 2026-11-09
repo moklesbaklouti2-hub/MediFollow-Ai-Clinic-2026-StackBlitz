@@ -162,14 +162,6 @@ app.post('/api/clinical/analyze', async (req, res) => {
       return res.status(413).json({ error: 'Le contexte clinique est trop volumineux.' });
     }
 
-    // Une demande explicite d'interrogatoire reste active sur les tours suivants.
-    const interviewRequested = [message, ...history.filter(item => item.role === 'user').map(item => item.content)]
-      .some(value => /\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\b/.test(normalizeClinicalText(value)));
-    if (clinicalInterview && interviewRequested) {
-      const facts = documentedInterviewFacts(history, message, contextText);
-      const nextQuestion = prioritizedSoreThroatQuestion(facts);
-      if (nextQuestion) return res.json({ reply: nextQuestion });
-    }
     const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
