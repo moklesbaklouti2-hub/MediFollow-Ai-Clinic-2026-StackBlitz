@@ -69,12 +69,19 @@ app.post('/api/clinical/analyze', async (req, res) => {
         },
       ],
       temperature: 0.1,
+      max_completion_tokens: 1800,
       response_format: { type: 'json_object' },
     });
 
-    const raw = completion.choices[0]?.message?.content;
-    if (!raw) {
-      return res.status(502).json({ error: 'Le moteur IA n’a pas retourné d’analyse.' });
+    const choice = completion.choices[0];
+    const raw = choice?.message?.content;
+    if (typeof raw !== 'string' || !raw.trim()) {
+      console.error('Réponse clinique vide du modèle Groq. finish_reason:', choice?.finish_reason);
+      return res.status(502).json({
+        error: choice?.finish_reason === 'length'
+          ? 'La réponse du modèle a été interrompue avant sa fin. Réessayez.'
+          : 'Le modèle IA a retourné une réponse vide. Réessayez dans quelques secondes.',
+      });
     }
 
     let parsed: unknown;
