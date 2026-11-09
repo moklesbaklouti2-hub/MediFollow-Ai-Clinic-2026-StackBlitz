@@ -552,12 +552,12 @@ export default function Consultations({
             aria-modal="true"
             aria-labelledby="differential-title"
             onClick={(event) => event.stopPropagation()}
-            style={{ width: 'min(520px, calc(100vw - 24px))', maxHeight: 'min(78dvh, 720px)', overflowY: 'auto', padding: 18, borderRadius: 16, border: '1px solid var(--border,#dce4e8)', background: 'var(--surface,#fff)', color: 'var(--text-primary,#20334b)', boxShadow: '0 20px 70px rgba(0,0,0,.35)' }}
+            style={{ width: 'min(520px, calc(100vw - 24px))', maxHeight: 'min(78dvh, 720px)', overflowY: 'auto', padding: 18, borderRadius: 16, border: '1px solid var(--color-border,#dce4e8)', background: 'var(--color-surface,#fff)', color: 'var(--color-text,#243641)', boxShadow: '0 20px 70px rgba(0,0,0,.35)' }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
               <div>
-                <h3 id="differential-title" style={{ margin: 0, fontSize: 18 }}>Diagnostics différentiels</h3>
-                <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 12 }}>Motif : {motif}</p>
+                <h3 id="differential-title" style={{ margin: 0, fontSize: 18, color: 'var(--color-text,#243641)' }}>Diagnostics différentiels</h3>
+                <p style={{ margin: '5px 0 0', color: 'var(--color-text-secondary,#73838a)', fontSize: 12 }}>Motif : {motif}</p>
               </div>
               <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer" style={{ border: 0, background: 'transparent', color: 'inherit', fontSize: 25, lineHeight: 1, cursor: 'pointer' }}>×</button>
             </div>
@@ -573,13 +573,13 @@ export default function Consultations({
                   {clinicalReasoning.analysis.hypotheses.map((item, index) => (
                     <article key={item.label} style={{ display: 'grid', gap: 5 }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                        <strong style={{ fontSize: 13 }}>{index + 1}. {item.label}</strong>
+                        <strong style={{ fontSize: 13, color: 'var(--color-text,#243641)' }}>{index + 1}. {item.label}</strong>
                         <strong style={{ fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>{item.percentage}%</strong>
                       </div>
                       <div style={{ height: 8, borderRadius: 10, background: 'var(--border,#e5ebef)', overflow: 'hidden' }}>
                         <div style={{ height: '100%', width: `${item.percentage}%`, borderRadius: 10, background: '#38bfa6', transition: 'width .25s ease' }} />
                       </div>
-                      <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--text-secondary,#81909c)' }}>{item.reason}</p>
+                      <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--color-text-secondary,#73838a)' }}>{item.reason}</p>
                     </article>
                   ))}
                   {clinicalReasoning.analysis.recommendedActions.length > 0 && (
@@ -792,7 +792,7 @@ export default function Consultations({
               <button
                 type="button"
                 onClick={() => setDifferentialPopupOpen(true)}
-                style={{ justifySelf: 'start', border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '7px 10px', background: 'transparent', color: 'var(--text-primary,#20334b)', fontSize: 11, fontWeight: 700 }}
+                style={{ justifySelf: 'start', border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '7px 10px', background: 'var(--color-surface-secondary,#edf2f3)', color: 'var(--color-text,#243641)', borderColor: 'var(--color-border,#e2e9eb)', fontSize: 11, fontWeight: 700 }}
               >
                 Voir les diagnostics différentiels
               </button>
