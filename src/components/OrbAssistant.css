@@ -61,7 +61,7 @@
   transform:rotate(45deg);background:#211e3d;border-right:1px solid rgba(104,224,211,.35);
   border-bottom:1px solid rgba(104,224,211,.35);
 }
-.mf-orb-insight-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.mf-orb-insight-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;font-size:12px}\n.mf-orb-insight-heading{display:flex;align-items:center;gap:8px;min-width:0}\n.mf-orb-insight-close{flex:0 0 auto;width:25px;height:25px;border:1px solid rgba(210,235,240,.24);border-radius:7px;background:rgba(255,255,255,.07);color:#e9f8fb;font-size:18px;line-height:1;cursor:pointer}\n.mf-orb-insight-close:hover{background:rgba(255,255,255,.16)}
 .mf-orb-insight-bubble p{margin:8px 0;color:#d4e5ed;font-size:12px;line-height:1.55;overflow-wrap:anywhere}
 .mf-orb-priority{display:inline-block;padding:4px 8px;border-radius:20px;background:rgba(73,211,184,.13);color:#8cebd9;font-size:9px;font-weight:800}
 .mf-orb-priority.priority-attention{background:rgba(242,184,91,.15);color:#ffd18a}
