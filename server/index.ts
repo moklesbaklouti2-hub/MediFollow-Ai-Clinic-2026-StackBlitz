@@ -171,7 +171,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
       if (retryAfterSeconds === null) {
         const reset = readHeader('x-ratelimit-reset-tokens');
         if (reset) {
-          const parts = [...reset.matchAll(/(\d+(?:\\.\d+)?)(ms|s|m|h)/gi)];
+          const parts = [...reset.matchAll(/(\d+(?:\.\d+)?)(ms|s|m|h)/gi)];
           const multipliers: Record<string, number> = { ms: 0.001, s: 1, m: 60, h: 3600 };
           const total = parts.reduce((sum, part) => sum + Number(part[1]) * multipliers[part[2].toLowerCase()], 0);
           if (total > 0) retryAfterSeconds = Math.ceil(total);
