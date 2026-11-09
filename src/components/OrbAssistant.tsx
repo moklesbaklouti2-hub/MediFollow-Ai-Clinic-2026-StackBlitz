@@ -65,6 +65,9 @@ const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const speechBaseInputRef = useRef('');
   const speechFinalSegmentsRef = useRef<Map<number, string>>(new Map());
+  const speechCurrentTextRef = useRef('');
+  const shouldContinueListeningRef = useRef(false);
+  const speechRestartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (clinicalInsight?.updatedAt) setInsightDismissed(false);
@@ -79,6 +82,8 @@ const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     return () => {
+      shouldContinueListeningRef.current = false;
+      if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
       recognitionRef.current?.abort();
       recognitionRef.current = null;
     };
@@ -86,6 +91,8 @@ const [isListening, setIsListening] = useState(false);
 
   function toggleVoiceInput() {
     if (isListening) {
+      shouldContinueListeningRef.current = false;
+      if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
       recognitionRef.current?.stop();
       return;
     }
@@ -108,6 +115,8 @@ const [isListening, setIsListening] = useState(false);
       recognition.interimResults = true;
       speechBaseInputRef.current = input;
       speechFinalSegmentsRef.current.clear();
+      speechCurrentTextRef.current = '';
+      shouldContinueListeningRef.current = true;
       recognition.onresult = (event) => {
         let interimText = '';
         // Update only the segments changed by this event. Final segments are
@@ -145,6 +154,7 @@ const [isListening, setIsListening] = useState(false);
           mergedWords.push(...partWords.slice(overlap));
         }
         const dictatedText = mergedWords.join(' ').trim();
+        speechCurrentTextRef.current = dictatedText;
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
         setInterimTranscript(interimText.trim());
@@ -158,10 +168,34 @@ const [isListening, setIsListening] = useState(false);
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
         setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
-        setIsListening(false);
-        setInterimTranscript('');
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          shouldContinueListeningRef.current = false;
+          setIsListening(false);
+          setInterimTranscript('');
+        }
       };
       recognition.onend = () => {
+        if (shouldContinueListeningRef.current) {
+          // Mobile Chrome may end recognition after a short silence even with
+          // continuous=true. Keep dictation active and transparently restart it.
+          const previousBase = speechBaseInputRef.current.trimEnd();
+          const previousText = speechCurrentTextRef.current.trim();
+          speechBaseInputRef.current = `${previousBase}${previousBase && previousText ? ' ' : ''}${previousText}`;
+          speechCurrentTextRef.current = '';
+          speechFinalSegmentsRef.current.clear();
+          speechRestartTimerRef.current = setTimeout(() => {
+            if (!shouldContinueListeningRef.current) return;
+            try {
+              recognition.start();
+            } catch {
+              shouldContinueListeningRef.current = false;
+              setIsListening(false);
+              setSpeechMessage('La dictée s’est interrompue. Appuyez sur le microphone pour reprendre.');
+              recognitionRef.current = null;
+            }
+          }, 300);
+          return;
+        }
         setIsListening(false);
         setInterimTranscript('');
         recognitionRef.current = null;
