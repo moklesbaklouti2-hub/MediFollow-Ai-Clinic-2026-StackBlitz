@@ -115,7 +115,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
           },
         },
       },
-    });
+    }, 'clinical');
 
     const choice = completion.choices[0];
     const raw = choice?.message?.content;
@@ -262,7 +262,7 @@ app.post('/api/commands/interpret', async (req, res) => {
       'respiratoryRate', 'weight', 'height', 'glycemia',
     ] as const;
 
-    const completion = await groq.chat.completions.create({
+    const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
         {
@@ -329,7 +329,7 @@ Retourne exclusivement le JSON conforme au schéma.`,
           },
         },
       },
-    });
+    }, 'commands');
 
     const raw = completion.choices[0]?.message?.content;
     if (typeof raw !== 'string' || !raw.trim()) {
@@ -412,7 +412,7 @@ app.post('/api/chat', async (req, res) => {
       }
     }
 
-    const completion = await groq.chat.completions.create({
+    const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
         {
@@ -433,7 +433,7 @@ app.post('/api/chat', async (req, res) => {
         },
       ],
       temperature: 0.2,
-    });
+    }, 'chat');
 
     const reply = completion.choices[0]?.message?.content ?? 'Aucune réponse générée.';
     return res.json({ reply });
