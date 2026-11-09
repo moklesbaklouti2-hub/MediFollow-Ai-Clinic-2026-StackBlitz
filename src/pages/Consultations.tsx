@@ -156,6 +156,7 @@ export default function Consultations({
   const [motif, setMotif] = useState('');
   const [symptoms, setSymptoms] = useState('');
   const [history, setHistory] = useState('');
+  const [targetedInterview, setTargetedInterview] = useState('');
   const [vitals, setVitals] = useState<Vitals>({ ...emptyVitals });
   const [examination, setExamination] = useState('');
   const [physicalExamination, setPhysicalExamination] = useState<PhysicalExamination>({});
@@ -185,6 +186,12 @@ export default function Consultations({
     setSaved(false);
   }
 
+  function recordCopilotAnswer(question: string, answer: string) {
+    const entry = `• ${question.trim()}\n  Réponse : ${answer.trim()}`;
+    setTargetedInterview((previous) => previous.trim() ? `${previous.trim()}\n\n${entry}` : entry);
+    setSaved(false);
+  }
+
   function startEditing(item: (typeof consultations)[number]) {
     setEditingId(item.id);
     setPatientId(item.patientId);
@@ -192,6 +199,7 @@ export default function Consultations({
     setMotif(item.motif);
     setSymptoms(item.symptoms);
     setHistory(item.history);
+    setTargetedInterview(item.targetedInterview ?? '');
     setVitals({ ...emptyVitals, ...item.vitals });
     setExamination(item.examination);
     setPhysicalExamination(item.physicalExamination ?? {});
@@ -208,6 +216,7 @@ export default function Consultations({
     setMotif('');
     setSymptoms('');
     setHistory('');
+    setTargetedInterview('');
     setVitals({ ...emptyVitals });
     setExamination('');
     setPhysicalExamination({});
@@ -228,6 +237,7 @@ export default function Consultations({
       motif: motif.trim(),
       symptoms: symptoms.trim(),
       history: history.trim(),
+      targetedInterview: targetedInterview.trim(),
       vitals: { ...vitals },
       examination: examination.trim(),
       physicalExamination: { ...physicalExamination },
@@ -300,6 +310,7 @@ export default function Consultations({
     motif,
     symptoms,
     history,
+    targetedInterview,
     vitals,
     physicalExamination,
     examination,
@@ -789,6 +800,22 @@ export default function Consultations({
                     ) : (
                       <p style={{ margin: 0, fontSize: 12 }}>Complétez les premières données cliniques pour afficher les hypothèses pertinentes.</p>
                     )}
+                    {clinicalReasoning.analysis?.nextQuestion && (
+                      <div style={{ display: 'grid', gap: 9, border: '1px solid var(--border,#526675)', borderRadius: 10, padding: 11, background: 'var(--background,rgba(127,127,127,.06))' }}>
+                        <strong style={{ fontSize: 12 }}>Question ciblée du copilote</strong>
+                        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>{clinicalReasoning.analysis.nextQuestion}</p>
+                        {clinicalReasoning.analysis.whyThisQuestion && <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary,#bdcbd5)' }}>{clinicalReasoning.analysis.whyThisQuestion}</p>}
+                        {clinicalReasoning.analysis.nextQuestionOptions?.length ? (
+                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(125px,1fr))', gap: 7 }}>
+                            {clinicalReasoning.analysis.nextQuestionOptions.map((option) => (
+                              <button key={option} type="button" onClick={() => recordCopilotAnswer(clinicalReasoning.analysis!.nextQuestion, option)} style={{ border: '1px solid var(--border,#526675)', borderRadius: 9, padding: '9px 10px', background: 'var(--surface,#263b49)', color: 'var(--text-primary,#f2f7fa)', fontSize: 11, fontWeight: 600, textAlign: 'left', cursor: 'pointer' }}>{option}</button>
+                            ))}
+                          </div>
+                        ) : (
+                          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#bdcbd5)' }}>Réponse libre : saisissez-la dans la rubrique « Interrogatoire ciblé » ci-dessous.</p>
+                        )}
+                      </div>
+                    )}
                     <p style={{ margin: 0, paddingTop: 8, borderTop: '1px solid var(--border,#526675)', fontSize: 10, lineHeight: 1.45, color: 'var(--text-secondary,#bdcbd5)' }}>
                       Pourcentages indicatifs générés par l’IA : ils ne constituent ni des probabilités validées ni un score clinique.
                     </p>
@@ -810,6 +837,11 @@ export default function Consultations({
         <div className="consultation-field">
           <label>Antécédents et traitements</label>
           <textarea value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." />
+        </div>
+        <div className="consultation-field">
+          <label>Interrogatoire ciblé · réponses au copilote</label>
+          <textarea value={targetedInterview} onChange={(e) => { setTargetedInterview(e.target.value); setSaved(false); }} placeholder="Les réponses sélectionnées dans le panneau du copilote s’ajouteront ici. Vous pouvez aussi compléter ou corriger librement." />
+          <p style={{ margin: '4px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 11 }}>Chaque choix est ajouté ici, puis pris en compte dans la prochaine analyse clinique.</p>
         </div>
       </div>
 
