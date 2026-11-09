@@ -66,6 +66,7 @@ const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechMessage, setSpeechMessage] = useState('');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const commandListeningEnabledRef = useRef(false);
   const speechBaseInputRef = useRef('');
   const speechFinalSegmentsRef = useRef<Map<number, string>>(new Map());
   const speechCurrentTextRef = useRef('');
@@ -86,6 +87,7 @@ const [isListening, setIsListening] = useState(false);
   useEffect(() => {
     return () => {
       shouldContinueListeningRef.current = false;
+      commandListeningEnabledRef.current = false;
       if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
       recognitionRef.current?.abort();
       recognitionRef.current = null;
@@ -94,9 +96,11 @@ const [isListening, setIsListening] = useState(false);
 
   function toggleVoiceInput() {
     if (isListening) {
+      commandListeningEnabledRef.current = false;
       recognitionRef.current?.stop();
       return;
     }
+    if (mode === 'command') commandListeningEnabledRef.current = true;
 
     const speechWindow = window as unknown as {
       SpeechRecognition?: SpeechRecognitionConstructor;
@@ -114,7 +118,7 @@ const [isListening, setIsListening] = useState(false);
       // continue. Une session correspond donc à une seule prise de parole.
       const recognition = new Recognition();
       let sessionEnded = false;
-      speechBaseInputRef.current = input;
+      speechBaseInputRef.current = mode === 'command' ? '' : input;
       speechCurrentTextRef.current = '';
       speechFinalSegmentsRef.current.clear();
 
@@ -180,9 +184,24 @@ const [isListening, setIsListening] = useState(false);
         speechCurrentTextRef.current = '';
         speechFinalSegmentsRef.current.clear();
         recognitionRef.current = null;
-        setInput(finalInput);
+        setInput(mode === 'command' ? '' : finalInput);
         setInterimTranscript('');
         setIsListening(false);
+        if (mode === 'command' && commandListeningEnabledRef.current) {
+          if (dictatedText) {
+            void sendMessage(dictatedText).finally(() => {
+              if (commandListeningEnabledRef.current) {
+                window.setTimeout(() => {
+                  if (commandListeningEnabledRef.current && !recognitionRef.current) toggleVoiceInput();
+                }, 350);
+              }
+            });
+          } else {
+            window.setTimeout(() => {
+              if (commandListeningEnabledRef.current && !recognitionRef.current) toggleVoiceInput();
+            }, 350);
+          }
+        }
       };
 
       setSpeechMessage('');
@@ -215,7 +234,7 @@ const [isListening, setIsListening] = useState(false);
     const message = value.trim();
     if (!message || sending) return;
     const history = messages.slice(-12);
-    setMessages(previous => [...previous, { role: 'user', content: message }]);
+    if (mode !== 'command') setMessages(previous => [...previous, { role: 'user', content: message }]);
     setInput('');
     setSending(true);
 
@@ -226,6 +245,27 @@ const [isListening, setIsListening] = useState(false);
 
     try {
       if (mode === 'command') {
+        const normalized = message.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\\s+/g, ' ').trim();
+        const quickRoutes: Array<{ page: string; patterns: RegExp[] }> = [
+          { page: 'Tableau de bord', patterns: [/\\b(tableau de bord|accueil|page d accueil)\\b/] },
+          { page: 'Patients', patterns: [/\\b(patient|patients|dossier patient|liste des patients)\\b/] },
+          { page: 'Consultations', patterns: [/\\b(consultation|consultations)\\b/] },
+          { page: 'Copilote IA', patterns: [/\\b(copilote|assistant ia)\\b/] },
+          { page: 'Protocoles médicaux', patterns: [/\\b(protocole|protocoles|protocoles medicaux)\\b/] },
+          { page: 'Ordonnances', patterns: [/\\b(ordonnance|ordonnances|prescription|prescriptions)\\b/] },
+          { page: 'Inventaire', patterns: [/\\b(inventaire|stock|stocks)\\b/] },
+          { page: 'Paramètres', patterns: [/\\b(parametre|parametres|reglages)\\b/] },
+        ];
+        const quickMatch = quickRoutes.find(route =>
+          route.patterns.some(pattern => pattern.test(normalized)) &&
+          /\\b(ouvre|ouvrir|affiche|afficher|va|aller|retourne|accede|acceder|montre|montre moi)\\b/.test(normalized)
+        );
+        if (quickMatch) {
+          onNavigate(quickMatch.page);
+          setMessages(previous => [...previous, { role: 'assistant', content: quickMatch.page + ' ouvert.' }]);
+          return;
+        }
+
         const response = await fetch('/api/commands/interpret', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -385,25 +425,25 @@ const [isListening, setIsListening] = useState(false);
           </div>
           {mode === 'command' && (
             <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
-              Dictez une instruction puis envoyez-la. Pour cette première étape, la navigation est activée ; les modifications de dossiers, ordonnances et stocks restent désactivées.
+              Parlez naturellement : chaque commande est exécutée automatiquement après votre phrase. L’écoute reprend ensuite. Dites « stop écoute » ou appuyez sur le microphone pour arrêter. Pour cette première étape, seule la navigation est activée.
             </p>
           )}
           <form className="mf-orb-chat-form" onSubmit={handleSubmit}>
-            <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mode === 'command' ? 'Ex. : ouvre les consultations' : 'Écrivez ou dictez à votre assistant…'} rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />
+            {mode !== 'command' && <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mode === 'command' ? 'Ex. : ouvre les consultations' : 'Écrivez ou dictez à votre assistant…'} rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />}
             <button
               type="button"
               className={`mf-orb-mic-button${isListening ? ' is-listening' : ''}`}
               onClick={toggleVoiceInput}
               disabled={sending}
-              aria-label={isListening ? 'Arrêter la dictée vocale' : 'Dicter un message'}
-              title={isListening ? 'Arrêter la dictée' : 'Dicter un message'}
+              aria-label={isListening ? 'Arrêter les commandes vocales' : (mode === 'command' ? 'Démarrer les commandes vocales' : 'Dicter un message')}
+              title={isListening ? 'Arrêter l’écoute' : (mode === 'command' ? 'Démarrer les commandes vocales' : 'Dicter un message')}
             >{isListening ? '■' : '🎙'}</button>
-            <button type="submit" disabled={!input.trim() || sending} aria-label={mode === 'command' ? 'Exécuter la commande' : 'Envoyer'}>{mode === 'command' ? '▶' : '↑'}</button>
+            {mode !== 'command' && <button type="submit" disabled={!input.trim() || sending} aria-label="Envoyer">↑</button>}
           </form>
           {(isListening || interimTranscript || speechMessage) && (
             <div className={`mf-orb-speech-status${speechMessage ? ' has-error' : ''}`} aria-live="polite">
-              {speechMessage || (isListening ? 'Écoute en cours… Parlez clairement en français.' : interimTranscript)}
-              {interimTranscript && isListening ? ` ${interimTranscript}` : ''}
+              {speechMessage || (isListening ? (mode === 'command' ? 'Écoute active : dictez vos commandes. Dites « stop écoute » pour arrêter.' : 'Écoute en cours… Parlez clairement en français.') : (mode === 'command' ? 'Appuyez sur le microphone pour démarrer les commandes vocales.' : interimTranscript))}
+              {mode !== 'command' && interimTranscript && isListening ? ` ${interimTranscript}` : ''}
             </div>
           )}
           <div className="mf-orb-panel-footer">
