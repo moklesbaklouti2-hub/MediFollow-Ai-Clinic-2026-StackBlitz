@@ -323,7 +323,7 @@ const [isListening, setIsListening] = useState(false);
         if (data.message) resultParts.push(String(data.message));
         if (executedPages.length) resultParts.push('Navigation demandée : ' + [...new Set(executedPages)].join(' → ') + '.');
         if (Array.isArray(data.unsupportedInstructions) && data.unsupportedInstructions.length) {
-          resultParts.push('Actions non encore connectées : ' + data.unsupportedInstructions.join(' ; ') + '. Aucune donnée clinique ou de stock n’a été modifiée.');
+          resultParts.push('Actions non encore connectées : ' + data.unsupportedInstructions.join(' ; ') + '. Les actions non encore prises en charge n’ont pas été effectuées.');
         }
         setMessages(previous => [...previous, {
           role: 'assistant',
@@ -459,7 +459,7 @@ const [isListening, setIsListening] = useState(false);
           </div>
           {mode === 'command' && (
             <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
-              Parlez naturellement : chaque commande est exécutée automatiquement après votre phrase. L’écoute reprend ensuite. Dites « stop écoute » ou appuyez sur le microphone pour arrêter. Pour cette première étape, seule la navigation est activée.
+              Parlez naturellement : chaque commande est exécutée automatiquement après votre phrase. L’écoute reprend ensuite. Dites « stop écoute » ou appuyez sur le microphone pour arrêter. Vous pouvez naviguer et remplir les champs de consultation. L’enregistrement et les prescriptions restent à confirmer séparément.
             </p>
           )}
           <form className="mf-orb-chat-form" onSubmit={handleSubmit}>
