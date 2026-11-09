@@ -144,7 +144,7 @@ const [isListening, setIsListening] = useState(false);
             value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?¿¡]+|[.,;:!?¿¡]+$/g, '');
           const mergedWords: string[] = [];
           for (const part of finalParts) {
-            const partWords = part.split(/\\s+/).filter(Boolean);
+            const partWords = part.split(/\s+/).filter(Boolean);
             let overlap = 0;
             const maxOverlap = Math.min(mergedWords.length, partWords.length, 12);
             for (let size = maxOverlap; size > 0; size -= 1) {
