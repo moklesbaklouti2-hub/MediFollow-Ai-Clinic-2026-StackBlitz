@@ -501,6 +501,7 @@ const [isListening, setIsListening] = useState(false);
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, context, history }),
+        signal: AbortSignal.timeout(45000),
       });
       const contentType = response.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
@@ -513,7 +514,9 @@ const [isListening, setIsListening] = useState(false);
     } catch (error) {
       setMessages(previous => [...previous, {
         role: 'assistant',
-        content: error instanceof Error ? 'Je rencontre un problème : ' + error.message : 'Impossible de contacter le moteur IA.',
+        content: error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError')
+          ? 'Le moteur IA met trop de temps à répondre (45 s). Réessayez ; les autres fonctions restent disponibles.'
+          : error instanceof Error ? 'Je rencontre un problème : ' + error.message : 'Impossible de contacter le moteur IA.',
       }]);
     } finally {
       setSending(false);
