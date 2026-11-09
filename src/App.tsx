@@ -46,6 +46,7 @@ function App() {
         'medifollow-prescriptions': 'ordonnances',
         'medifollow-settings': 'paramètres',
         'medifollow-deleted-patients': 'corbeille',
+        'medifollow-inventory': 'inventaire',
       };
       const section = detail?.key ? label[detail.key] : undefined;
       setStorageWarning(
