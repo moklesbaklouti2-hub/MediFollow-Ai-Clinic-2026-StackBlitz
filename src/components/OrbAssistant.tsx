@@ -63,13 +63,53 @@ const observedMedicalSpeechCorrections: Record<string, string> = {
 
 type MedicalSpeechCorrection = { original: string; replacement: string };
 
+function levenshteinDistance(a: string, b: string): number {
+  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= a.length; i += 1) {
+    let diagonal = previous[0];
+    previous[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const above = previous[j];
+      previous[j] = Math.min(
+        previous[j] + 1,
+        previous[j - 1] + 1,
+        diagonal + (a[i - 1] === b[j - 1] ? 0 : 1),
+      );
+      diagonal = above;
+    }
+  }
+  return previous[b.length];
+}
+
+function findClosestMedicalTerm(word: string): string | null {
+  const normalizedWord = normalizeSpeechCandidate(word);
+  if (normalizedWord.length < 6) return null;
+
+  let bestTerm = '';
+  let bestDistance = Number.POSITIVE_INFINITY;
+  for (const term of medicalSpeechTerms) {
+    // Les expressions composées sont évaluées plus tard avec le contexte.
+    if (term.includes(' ')) continue;
+    const normalizedTerm = normalizeSpeechCandidate(term);
+    if (normalizedTerm.length < 6 || normalizedTerm === normalizedWord) continue;
+    const distance = levenshteinDistance(normalizedWord, normalizedTerm);
+    const allowedDistance = normalizedWord.length >= 10 ? 2 : 1;
+    if (distance <= allowedDistance && distance < bestDistance) {
+      bestDistance = distance;
+      bestTerm = term;
+    }
+  }
+  return bestTerm || null;
+}
+
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
-  for (const original of value.match(/[\\p{L}]+/gu) || []) {
-    const replacement = observedMedicalSpeechCorrections[normalizeSpeechCandidate(original)];
-    if (replacement && normalizeSpeechCandidate(original) !== normalizeSpeechCandidate(replacement)) {
-      const key = normalizeSpeechCandidate(original);
-      if (!found.has(key)) found.set(key, { original, replacement });
+  for (const original of value.match(/[\p{L}]+/gu) || []) {
+    const normalized = normalizeSpeechCandidate(original);
+    const explicitReplacement = observedMedicalSpeechCorrections[normalized];
+    const replacement = explicitReplacement || findClosestMedicalTerm(original);
+    if (replacement && normalized !== normalizeSpeechCandidate(replacement)) {
+      if (!found.has(normalized)) found.set(normalized, { original, replacement });
     }
   }
   return Array.from(found.values());
@@ -77,7 +117,7 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
 
 function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
   const target = normalizeSpeechCandidate(correction.original);
-  return value.replace(/[\\p{L}]+/gu, word => {
+  return value.replace(/[\p{L}]+/gu, word => {
     if (normalizeSpeechCandidate(word) !== target) return word;
     return word[0] === word[0].toLocaleUpperCase('fr')
       ? correction.replacement.charAt(0).toLocaleUpperCase('fr') + correction.replacement.slice(1)
