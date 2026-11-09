@@ -188,7 +188,7 @@ const [isListening, setIsListening] = useState(false);
         setInterimTranscript('');
         setIsListening(false);
         if (mode === 'command' && commandListeningEnabledRef.current) {
-          const normalizedVoiceCommand = dictatedText.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim();
+          const normalizedVoiceCommand = dictatedText.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
           if (/^(stop|arrete|arret|stop ecoute|arrete ecoute|arret ecoute)$/.test(normalizedVoiceCommand)) {
             commandListeningEnabledRef.current = false;
             setSpeechMessage('Écoute vocale arrêtée.');
@@ -249,21 +249,21 @@ const [isListening, setIsListening] = useState(false);
 
     try {
       if (mode === 'command') {
-        const normalized = message.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\\s+/g, ' ').trim();
+        const normalized = message.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
         const quickRoutes: Array<{ page: string; patterns: RegExp[] }> = [
-          { page: 'Tableau de bord', patterns: [/\\b(tableau de bord|accueil|page d accueil)\\b/] },
-          { page: 'Patients', patterns: [/\\b(patient|patients|dossier patient|liste des patients)\\b/] },
-          { page: 'Consultations', patterns: [/\\b(consultation|consultations)\\b/] },
-          { page: 'Copilote IA', patterns: [/\\b(copilote|assistant ia)\\b/] },
-          { page: 'Protocoles médicaux', patterns: [/\\b(protocole|protocoles|protocoles medicaux)\\b/] },
-          { page: 'Ordonnances', patterns: [/\\b(ordonnance|ordonnances|prescription|prescriptions)\\b/] },
-          { page: 'Inventaire', patterns: [/\\b(inventaire|stock|stocks)\\b/] },
-          { page: 'Paramètres', patterns: [/\\b(parametre|parametres|reglages)\\b/] },
+          { page: 'Tableau de bord', patterns: [/\b(tableau de bord|accueil|page d accueil)\b/] },
+          { page: 'Patients', patterns: [/\b(patient|patients|dossier patient|liste des patients)\b/] },
+          { page: 'Consultations', patterns: [/\b(consultation|consultations)\b/] },
+          { page: 'Copilote IA', patterns: [/\b(copilote|assistant ia)\b/] },
+          { page: 'Protocoles médicaux', patterns: [/\b(protocole|protocoles|protocoles medicaux)\b/] },
+          { page: 'Ordonnances', patterns: [/\b(ordonnance|ordonnances|prescription|prescriptions)\b/] },
+          { page: 'Inventaire', patterns: [/\b(inventaire|stock|stocks)\b/] },
+          { page: 'Paramètres', patterns: [/\b(parametre|parametres|reglages)\b/] },
         ];
         const quickMatch = quickRoutes.find(route =>
           route.patterns.some(pattern => pattern.test(normalized)) &&
-          /\\b(ouvre|ouvrir|affiche|afficher|va|aller|retourne|accede|acceder|montre|montre moi)\\b/.test(normalized) &&
-          !/\\b(choisis|choisir|selectionne|selectionner|ecris|ecrire|remplis|remplir|ajoute|ajouter|enregistre|enregistrer|cree|creer|modifie|modifier|prescris|prescrire)\\b/.test(normalized)
+          /\b(ouvre|ouvrir|affiche|afficher|va|aller|retourne|accede|acceder|montre|montre moi)\b/.test(normalized) &&
+          !/\b(choisis|choisir|selectionne|selectionner|ecris|ecrire|remplis|remplir|ajoute|ajouter|enregistre|enregistrer|cree|creer|modifie|modifier|prescris|prescrire)\b/.test(normalized)
         );
         if (quickMatch) {
           onNavigate(quickMatch.page);
