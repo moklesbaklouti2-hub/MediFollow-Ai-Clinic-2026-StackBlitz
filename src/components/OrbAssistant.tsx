@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent, type CSSProperties } from 'react';
 import type { Patient, Consultation } from '../types/medical';
 import OrbVisual from './OrbVisual';
+import type { ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import './OrbAssistant.css';
 
 type OrbAssistantProps = {
@@ -11,6 +12,13 @@ type OrbAssistantProps = {
   consultations: Consultation[];
   clinicalPrompt?: string;
   onClinicalPromptConsumed?: () => void;
+  clinicalInsight?: {
+    enabled: boolean;
+    status: 'idle' | 'analyzing' | 'ready' | 'error';
+    analysis: ClinicalReasoningAnalysis | null;
+    error: string;
+    updatedAt: string;
+  };
 };
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
@@ -33,6 +41,7 @@ export default function OrbAssistant({
   consultations,
   clinicalPrompt,
   onClinicalPromptConsumed,
+  clinicalInsight,
 }: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -151,6 +160,40 @@ export default function OrbAssistant({
 
   return (
     <div className={`mf-orb-assistant${isThinking || sending ? ' is-thinking' : ''}`}>
+      {clinicalInsight?.enabled && clinicalInsight.status !== 'idle' && !panelOpen && (
+        <aside className={`mf-orb-insight-bubble ${clinicalInsight.status === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de l’Orb">
+          <div className="mf-orb-insight-top">
+            <span className={`mf-orb-status-dot${clinicalInsight.status === 'analyzing' ? ' is-thinking' : ''}`} />
+            <strong>{clinicalInsight.status === 'analyzing' ? 'MediFollow analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
+          </div>
+          {clinicalInsight.status === 'ready' && clinicalInsight.analysis ? (
+            <>
+              <span className={`mf-orb-priority priority-${clinicalInsight.analysis.priority}`}>
+                {clinicalInsight.analysis.priority === 'urgent' ? 'Priorité urgente' : clinicalInsight.analysis.priority === 'attention' ? 'Attention' : 'Analyse'}
+              </span>
+              <p>{clinicalInsight.analysis.situationSummary}</p>
+              {clinicalInsight.analysis.nextQuestion && (
+                <div className="mf-orb-insight-question">
+                  <small>QUESTION SUIVANTE</small>
+                  <strong>{clinicalInsight.analysis.nextQuestion}</strong>
+                </div>
+              )}
+              <button type="button" onClick={() => {
+                const prompt = clinicalInsight.analysis?.nextQuestion
+                  ? `Poursuivons le raisonnement clinique de cette consultation. Résumé de l'analyse : ${clinicalInsight.analysis.situationSummary} Question à approfondir : ${clinicalInsight.analysis.nextQuestion}`
+                  : `Aide-moi à approfondir cette analyse clinique : ${clinicalInsight.analysis?.situationSummary || ''}`;
+                setInput(prompt);
+                setPanelOpen(true);
+              }}>Approfondir avec l’Orb ↗</button>
+            </>
+          ) : clinicalInsight.status === 'error' ? (
+            <p>{clinicalInsight.error || 'Le moteur IA n’a pas pu terminer l’analyse.'}</p>
+          ) : (
+            <p>Je prends en compte les nouvelles informations de la consultation.</p>
+          )}
+        </aside>
+      )}
+
       {panelOpen && (
         <section className="mf-orb-panel" aria-label="Discussion avec MediFollow AI">
           <div className="mf-orb-panel-header">
