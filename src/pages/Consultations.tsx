@@ -743,7 +743,7 @@ export default function Consultations({
                         <strong style={{ fontSize: 14 }}>Diagnostics différentiels</strong>
                         <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--text-secondary,#bdcbd5)' }}>Motif : {motif}</p>
                       </div>
-                      <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer les diagnostics différentiels" style={{ flex: '0 0 auto', border: '1px solid var(--color-border,#526675)', borderRadius: 8, padding: '5px 9px', background: 'transparent', color: 'inherit', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>×</button>
+                      <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer les diagnostics différentiels" style={{ flex: '0 0 auto', border: '1px solid var(--border,#526675)', borderRadius: 8, padding: '5px 9px', background: 'transparent', color: 'inherit', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>×</button>
                     </div>
                     {!selectedPatient ? (
                       <p style={{ margin: 0, fontSize: 12 }}>Sélectionnez un patient pour lancer l’analyse clinique.</p>
@@ -762,7 +762,7 @@ export default function Consultations({
                             <div style={{ height: 7, borderRadius: 10, background: 'var(--border,#526675)', overflow: 'hidden' }}>
                               <div style={{ height: '100%', width: `${item.percentage}%`, borderRadius: 10, background: '#38bfa6', transition: 'width .25s ease' }} />
                             </div>
-                            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--color-text-secondary,#bdcbd5)' }}>{item.reason}</p>
+                            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--text-secondary,#bdcbd5)' }}>{item.reason}</p>
                           </article>
                         ))}
                         {clinicalReasoning.analysis.recommendedActions.length > 0 && (
@@ -777,10 +777,10 @@ export default function Consultations({
                     ) : (
                       <p style={{ margin: 0, fontSize: 12 }}>Complétez les premières données cliniques pour afficher les hypothèses pertinentes.</p>
                     )}
-                    <p style={{ margin: 0, paddingTop: 8, borderTop: '1px solid var(--color-border,#526675)', fontSize: 10, lineHeight: 1.45, color: 'var(--color-text-secondary,#bdcbd5)' }}>
+                    <p style={{ margin: 0, paddingTop: 8, borderTop: '1px solid var(--border,#526675)', fontSize: 10, lineHeight: 1.45, color: 'var(--text-secondary,#bdcbd5)' }}>
                       Pourcentages indicatifs générés par l’IA : ils ne constituent ni des probabilités validées ni un score clinique.
                     </p>
-                    {clinicalReasoning.analysis?.evolutionNote && <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-secondary,#bdcbd5)' }}>Évolution : {clinicalReasoning.analysis.evolutionNote}</p>}
+                    {clinicalReasoning.analysis?.evolutionNote && <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#bdcbd5)' }}>Évolution : {clinicalReasoning.analysis.evolutionNote}</p>}
                   </section>
                 )}
               </>
