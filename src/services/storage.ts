@@ -465,6 +465,11 @@ export function returnDispensedStock(input: {
   if (item.category === 'equipment') {
     return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
   }
+  const returnDate = new Date();
+  const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
+  if (item.expiryDate && item.expiryDate < today) {
+    return { success: false, error: 'Retour bloqué : le lot d’origine est désormais périmé. Isolez-le et ne le réintégrez pas au stock disponible.' };
+  }
 
   const timestamp = now();
   item.quantity += input.quantity;
@@ -508,6 +513,11 @@ export function cancelDispensedPrescriptionStock(input: {
     if (remaining === 0) continue;
     const item = data.items.find((entry) => entry.id === movement.itemId);
     if (!item) return { success: false, error: `Lot d’origine introuvable : ${movement.itemName}.` };
+    const returnDate = new Date();
+    const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
+    if (item.expiryDate && item.expiryDate < today) {
+      return { success: false, error: `Annulation bloquée pour le lot périmé « ${item.name} ». Isolez-le : il ne peut pas être réintégré au stock disponible.` };
+    }
     allocations.push({ movement, item, quantity: remaining });
   }
 
