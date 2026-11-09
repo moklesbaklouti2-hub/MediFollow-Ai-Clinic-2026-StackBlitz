@@ -77,6 +77,20 @@ export type ConsultationClinicalContext = {
 
 // ---------- SIGNES VITAUX ----------
 
+export type VoiceCommandAction =
+  | { type: 'navigate'; page: string }
+  | { type: 'select_patient'; patientName: string }
+  | {
+      type: 'set_consultation_field';
+      field: 'specialty' | 'motif' | 'symptoms' | 'history' | 'targetedInterview' | 'examination' | 'diagnosis' | 'plan';
+      value: string;
+    }
+  | {
+      type: 'set_vital';
+      field: keyof Vitals;
+      value: string;
+    };
+
 export type Vitals = {
   systolic: string;
   diastolic: string;
