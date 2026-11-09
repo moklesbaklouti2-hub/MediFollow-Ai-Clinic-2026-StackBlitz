@@ -7,6 +7,7 @@ type OrbAssistantProps = {
   isThinking?: boolean;
   currentPage: string;
   onOpenCopilot: () => void;
+  onNavigate: (page: string) => void;
   clinicalPrompt?: string;
   onClinicalPromptConsumed?: () => void;
   clinicalInsight?: {
@@ -50,12 +51,14 @@ export default function OrbAssistant({
   isThinking = false,
   currentPage,
   onOpenCopilot,
+  onNavigate,
   clinicalPrompt,
   onClinicalPromptConsumed,
   clinicalInsight,
 }: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
   const [input, setInput] = useState('');
+  const [mode, setMode] = useState<'chat' | 'command'>('chat');
   const [sending, setSending] = useState(false);
   const [messages, setMessages] = useState<OrbMessage[]>([]);
   const [insightDismissed, setInsightDismissed] = useState(false);
@@ -222,6 +225,39 @@ const [isListening, setIsListening] = useState(false);
     };
 
     try {
+      if (mode === 'command') {
+        const response = await fetch('/api/commands/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ instruction: message, currentPage }),
+        });
+        const contentType = response.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) throw new Error('Réponse inattendue du moteur de commandes.');
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Erreur du moteur de commandes.');
+
+        const executedPages: string[] = [];
+        if (Array.isArray(data.actions)) {
+          for (const action of data.actions) {
+            if (action?.type === 'navigate' && typeof action.page === 'string') {
+              onNavigate(action.page);
+              executedPages.push(action.page);
+            }
+          }
+        }
+        const resultParts: string[] = [];
+        if (data.message) resultParts.push(String(data.message));
+        if (executedPages.length) resultParts.push('Navigation effectuée : ' + [...new Set(executedPages)].join(' → ') + '.');
+        if (Array.isArray(data.unsupportedInstructions) && data.unsupportedInstructions.length) {
+          resultParts.push('Actions non encore connectées : ' + data.unsupportedInstructions.join(' ; ') + '. Aucune donnée clinique ou de stock n’a été modifiée.');
+        }
+        setMessages(previous => [...previous, {
+          role: 'assistant',
+          content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action de navigation sûre. Pouvez-vous préciser la page à ouvrir ?',
+        }]);
+        return;
+      }
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -339,8 +375,21 @@ const [isListening, setIsListening] = useState(false);
             {sending && <div className="mf-orb-typing">MediFollow réfléchit…</div>}
           </div>
 
+          <div className="mf-orb-mode-switch" role="group" aria-label="Mode de l’assistant" style={{ display: 'flex', gap: 8, padding: '10px 14px 0' }}>
+            <button type="button" onClick={() => setMode('chat')} aria-pressed={mode === 'chat'} style={{ flex: 1, border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 10px', background: mode === 'chat' ? 'var(--accent,#38d9bd)' : 'transparent', color: mode === 'chat' ? '#10243e' : 'inherit', fontWeight: 600 }}>
+              Discussion / Dictée
+            </button>
+            <button type="button" onClick={() => setMode('command')} aria-pressed={mode === 'command'} style={{ flex: 1, border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 10px', background: mode === 'command' ? 'var(--accent,#38d9bd)' : 'transparent', color: mode === 'command' ? '#10243e' : 'inherit', fontWeight: 600 }}>
+              Commandes vocales
+            </button>
+          </div>
+          {mode === 'command' && (
+            <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
+              Dictez une instruction puis envoyez-la. Pour cette première étape, la navigation est activée ; les modifications de dossiers, ordonnances et stocks restent désactivées.
+            </p>
+          )}
           <form className="mf-orb-chat-form" onSubmit={handleSubmit}>
-            <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Écrivez ou dictez à votre assistant…" rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />
+            <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mode === 'command' ? 'Ex. : ouvre les consultations' : 'Écrivez ou dictez à votre assistant…'} rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />
             <button
               type="button"
               className={`mf-orb-mic-button${isListening ? ' is-listening' : ''}`}
@@ -349,7 +398,7 @@ const [isListening, setIsListening] = useState(false);
               aria-label={isListening ? 'Arrêter la dictée vocale' : 'Dicter un message'}
               title={isListening ? 'Arrêter la dictée' : 'Dicter un message'}
             >{isListening ? '■' : '🎙'}</button>
-            <button type="submit" disabled={!input.trim() || sending} aria-label="Envoyer">↑</button>
+            <button type="submit" disabled={!input.trim() || sending} aria-label={mode === 'command' ? 'Exécuter la commande' : 'Envoyer'}>{mode === 'command' ? '▶' : '↑'}</button>
           </form>
           {(isListening || interimTranscript || speechMessage) && (
             <div className={`mf-orb-speech-status${speechMessage ? ' has-error' : ''}`} aria-live="polite">
