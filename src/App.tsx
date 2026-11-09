@@ -305,7 +305,6 @@ function App() {
       <Sidebar
         active={active}
         onNavigate={setActive}
-        onCommandActions={handleVoiceCommandActions}
       />
 
       <main className="main">
@@ -353,6 +352,7 @@ function App() {
         onClinicalPromptConsumed={() => setOrbPrompt('')}
         onOpenCopilot={() => setActive('Copilote IA')}
         onNavigate={setActive}
+        onCommandActions={handleVoiceCommandActions}
       />
     </div>
   );
