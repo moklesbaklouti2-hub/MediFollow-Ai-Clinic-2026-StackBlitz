@@ -102,6 +102,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
                   additionalProperties: false,
                 },
               },
+            },
             required: [
               'situationSummary',
               'evolutionNote',
