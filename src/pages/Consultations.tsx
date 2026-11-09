@@ -260,7 +260,7 @@ export default function Consultations({
         ];
         if (allowedVitals.includes(action.field)) {
           const numericValue = action.value.trim().replace(',', '.');
-          if (!/^-?\\d+(\\.\\d+)?$/.test(numericValue)) {
+          if (!/^-?\d+(\.\d+)?$/.test(numericValue)) {
             feedback.push(`Valeur « ${action.value} » invalide pour ${action.field}. Une valeur numérique est attendue.`);
           } else {
             setVitals((previous) => ({ ...previous, [action.field]: numericValue }));
