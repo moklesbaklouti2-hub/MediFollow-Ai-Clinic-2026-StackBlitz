@@ -222,7 +222,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
 
     const consultationData = isPlainObject(context.consultation) ? context.consultation : {};
     const documentedCorpus = normalizeClinicalText(
-      collectClinicalText({ patient: context.patient, consultation: consultationData }).join(' ')
+      collectClinicalText(consultationData).join(' ')
     );
     const candidateQuestion = parsed.nextQuestion.trim().slice(0, 300);
     const nextQuestion = candidateQuestion
@@ -236,7 +236,8 @@ app.post('/api/clinical/analyze', async (req, res) => {
       : [];
     const pointsToVerify = parsed.pointsToVerify
       .filter((item): item is string => typeof item === 'string')
-      .filter((item) => !isClinicalTopicAlreadyDocumented(item, documentedCorpus))
+      .map((item) => removeDocumentedQuestionParts(item, documentedCorpus))
+      .filter((item) => item.length > 0)
       .slice(0, 3)
       .map((item) => item.slice(0, 180));
 
