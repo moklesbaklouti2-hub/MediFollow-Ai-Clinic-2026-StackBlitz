@@ -81,6 +81,28 @@ function levenshteinDistance(a: string, b: string): number {
   return previous[b.length];
 }
 
+// Clé phonétique française simplifiée : rapproche certaines graphies
+// produites par la dictée sans prétendre remplacer un moteur médical spécialisé.
+function frenchPhoneticKey(value: string): string {
+  return normalizeSpeechCandidate(value)
+    .replace(/œ/g, 'oe')
+    .replace(/eaux?/g, 'o')
+    .replace(/ph/g, 'f')
+    .replace(/au/g, 'o')
+    .replace(/ou/g, 'u')
+    .replace(/oy/g, 'oi')
+    .replace(/y/g, 'i')
+    .replace(/qu/g, 'k')
+    .replace(/c(?=[eiy])/g, 's')
+    .replace(/c(?=[aou])/g, 'k')
+    .replace(/g(?=[eiy])/g, 'j')
+    .replace(/ch/g, 'sh')
+    .replace(/tion/g, 'sion')
+    .replace(/h/g, '')
+    .replace(/(.)\\1+/g, '$1')
+    .replace(/(e|es|s|x)$/g, '');
+}
+
 function findClosestMedicalTerm(word: string): string | null {
   const normalizedWord = normalizeSpeechCandidate(word);
   if (normalizedWord.length < 6) return null;
@@ -93,9 +115,18 @@ function findClosestMedicalTerm(word: string): string | null {
     const normalizedTerm = normalizeSpeechCandidate(term);
     if (normalizedTerm.length < 6 || normalizedTerm === normalizedWord) continue;
     const distance = levenshteinDistance(normalizedWord, normalizedTerm);
+    const phoneticDistance = levenshteinDistance(
+      frenchPhoneticKey(word),
+      frenchPhoneticKey(term),
+    );
     const allowedDistance = normalizedWord.length >= 10 ? 2 : 1;
-    if (distance <= allowedDistance && distance < bestDistance) {
-      bestDistance = distance;
+    const phoneticLimit = normalizedWord.length >= 10 ? 2 : 1;
+    // Une proximité phonétique peut rattraper une graphie très déformée,
+    // mais la suggestion reste soumise à validation par le médecin.
+    const isClose = distance <= allowedDistance || phoneticDistance <= phoneticLimit;
+    const combinedScore = Math.min(distance, phoneticDistance + 0.25);
+    if (isClose && combinedScore < bestDistance) {
+      bestDistance = combinedScore;
       bestTerm = term;
     }
   }
