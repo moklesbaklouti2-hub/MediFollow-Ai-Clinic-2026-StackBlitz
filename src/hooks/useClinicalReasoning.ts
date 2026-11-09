@@ -9,7 +9,8 @@ export type ClinicalReasoningAnalysis = {
   nextQuestion: string;
   whyThisQuestion: string;
   pointsToVerify: string[];
-  hypotheses: { label: string; reason: string; confidence: 'faible' | 'modérée' }[];
+  hypotheses: { label: string; reason: string; confidence: 'faible' | 'modérée'; percentage: number }[];
+  recommendedActions: string[];
 };
 
 type ReasoningInput = {
@@ -95,7 +96,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
   useEffect(() => {
     if (!input.enabled || !hasUsefulContent || snapshot === lastSnapshot.current || status === 'analyzing') return;
 
-    const wait = Math.max(2200, 10000 - (Date.now() - lastRequestAt.current));
+    const wait = Math.max(1600, 4500 - (Date.now() - lastRequestAt.current));
     const timer = window.setTimeout(async () => {
       if (inFlight.current || snapshot === lastSnapshot.current) return;
       inFlight.current = true;
