@@ -92,7 +92,6 @@ const [isListening, setIsListening] = useState(false);
   function toggleVoiceInput() {
     if (isListening) {
       shouldContinueListeningRef.current = false;
-      if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
       recognitionRef.current?.stop();
       return;
     }
@@ -109,127 +108,85 @@ const [isListening, setIsListening] = useState(false);
     }
 
     try {
+      // One user action = one recognition session. Never auto-restart:
+      // Android Chrome can replay late results when sessions are chained.
+      const recognition = new Recognition();
+      let sessionEnded = false;
       speechBaseInputRef.current = input;
       speechCurrentTextRef.current = '';
-      shouldContinueListeningRef.current = true;
+      speechFinalSegmentsRef.current.clear();
+      shouldContinueListeningRef.current = false;
 
-      const startSession = () => {
-        if (!shouldContinueListeningRef.current) return;
+      recognition.lang = 'fr-FR';
+      recognition.continuous = true;
+      recognition.interimResults = true;
 
-        // A fresh recognition instance prevents Android Chrome from replaying
-        // results belonging to the previous recognition session.
-        const recognition = new Recognition();
-        recognition.lang = 'fr-FR';
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        speechFinalSegmentsRef.current.clear();
+      recognition.onresult = (event) => {
+        if (sessionEnded || recognitionRef.current !== recognition) return;
 
-        recognition.onresult = (event) => {
-          // Ignore late events emitted by a recognition session that has already ended.
-          if (recognitionRef.current !== recognition) return;
-          let interimText = '';
-          for (let index = event.resultIndex; index < event.results.length; index += 1) {
-            const result = event.results[index];
-            const transcript = (result[0]?.transcript || '').trim();
-            if (result.isFinal) {
-              if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
-            } else {
-              interimText += `${transcript} `;
-            }
+        let interimText = '';
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+          const result = event.results[index];
+          const transcript = (result[0]?.transcript || '').trim();
+          if (result.isFinal) {
+            if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
+          } else {
+            interimText += `${transcript} `;
           }
+        }
 
-          const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
-            .sort(([a], [b]) => a - b)
-            .map(([, value]) => value);
+        const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
+          .sort(([a], [b]) => a - b)
+          .map(([, value]) => value);
+        const dictatedText = finalParts.join(' ').trim();
+        speechCurrentTextRef.current = dictatedText;
 
-          const normalizeWord = (value: string) =>
-            value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?¿¡]+|[.,;:!?¿¡]+$/g, '');
-          const mergedWords: string[] = [];
-          for (const part of finalParts) {
-            const partWords = part.split(/\s+/).filter(Boolean);
-            let overlap = 0;
-            const maxOverlap = Math.min(mergedWords.length, partWords.length, 12);
-            for (let size = maxOverlap; size > 0; size -= 1) {
-              const left = mergedWords.slice(-size).map(normalizeWord);
-              const right = partWords.slice(0, size).map(normalizeWord);
-              if (left.every((word, index) => word === right[index])) {
-                overlap = size;
-                break;
-              }
-            }
-            mergedWords.push(...partWords.slice(overlap));
-          }
+        const base = speechBaseInputRef.current.trimEnd();
+        setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
+        setInterimTranscript(interimText.trim());
+      };
 
-          const dictatedText = mergedWords.join(' ').trim();
-          speechCurrentTextRef.current = dictatedText;
-          const base = speechBaseInputRef.current.trimEnd();
-          setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
-          setInterimTranscript(interimText.trim());
+      recognition.onerror = (event) => {
+        if (sessionEnded || recognitionRef.current !== recognition) return;
+        const messages: Record<string, string> = {
+          'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
+          'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
+          'no-speech': 'Aucune parole détectée. Vous pouvez relancer la dictée.',
+          'audio-capture': 'Aucun microphone accessible n’a été détecté.',
+          network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
-
-        recognition.onerror = (event) => {
-          // An old session must never change the state of the current session.
-          if (recognitionRef.current !== recognition) return;
-          const messages: Record<string, string> = {
-            'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
-            'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
-            'no-speech': 'Aucune parole détectée. L’écoute reprend automatiquement.',
-            'audio-capture': 'Aucun microphone accessible n’a été détecté.',
-            network: 'La reconnaissance vocale nécessite une connexion réseau.',
-          };
-          if (event.error !== 'no-speech' && event.error !== 'aborted') {
-            shouldContinueListeningRef.current = false;
-            setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
-            setIsListening(false);
-            setInterimTranscript('');
-            recognitionRef.current = null;
-          }
-        };
-
-        recognition.onend = () => {
-          if (recognitionRef.current !== recognition) return;
-
-          // Invalidate this session immediately. Android may emit onend more
-          // than once; only the first event may finalize text or schedule a restart.
-          recognitionRef.current = null;
-
-          if (shouldContinueListeningRef.current) {
-            const previousBase = speechBaseInputRef.current.trimEnd();
-            const previousText = speechCurrentTextRef.current.trim();
-            speechBaseInputRef.current = `${previousBase}${previousBase && previousText ? ' ' : ''}${previousText}`;
-            speechCurrentTextRef.current = '';
-            speechFinalSegmentsRef.current.clear();
-            setInterimTranscript('');
-
-            if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
-            speechRestartTimerRef.current = setTimeout(() => {
-              speechRestartTimerRef.current = null;
-              if (!shouldContinueListeningRef.current || recognitionRef.current) return;
-              startSession();
-            }, 350);
-            return;
-          }
-
-          setIsListening(false);
-          setInterimTranscript('');
-        };
-
-        recognitionRef.current = recognition;
-        try {
-          recognition.start();
-        } catch {
-          shouldContinueListeningRef.current = false;
-          setIsListening(false);
-          setSpeechMessage('Impossible de reprendre la dictée. Appuyez sur le microphone pour réessayer.');
-          recognitionRef.current = null;
+        if (event.error !== 'aborted') {
+          setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
         }
       };
 
+      recognition.onend = () => {
+        if (sessionEnded || recognitionRef.current !== recognition) return;
+        sessionEnded = true;
+
+        const base = speechBaseInputRef.current.trimEnd();
+        const dictatedText = speechCurrentTextRef.current.trim();
+        const finalInput = `${base}${base && dictatedText ? ' ' : ''}${dictatedText}`;
+
+        speechBaseInputRef.current = finalInput;
+        speechCurrentTextRef.current = '';
+        speechFinalSegmentsRef.current.clear();
+        recognitionRef.current = null;
+        setInput(finalInput);
+        setInterimTranscript('');
+        setIsListening(false);
+      };
+
       setSpeechMessage('');
+      setInterimTranscript('');
       setIsListening(true);
-      startSession();
+      recognitionRef.current = recognition;
+      recognition.start();
     } catch {
+      shouldContinueListeningRef.current = false;
+      recognitionRef.current = null;
       setIsListening(false);
+      setInterimTranscript('');
       setSpeechMessage('Impossible de démarrer le microphone. Vérifiez les autorisations du navigateur.');
     }
   }
