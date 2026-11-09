@@ -678,8 +678,8 @@ app.post('/api/chat', async (req, res) => {
     }, 'chat');
 
     let reply = completion.choices[0]?.message?.content ?? 'Aucune réponse générée.';
-    // Une seule régénération corrective : ne pas boucler ni consommer le quota indéfiniment.
-    // Si la régénération échoue, garder la réponse initiale et signaler la limite.
+    // Pas de second appel IA systématique : économise le quota et évite
+    // qu'une réponse courte reste bloquée par une deuxième génération.
     if (clinicalInterview && reply.includes('?')) {
       const facts = documentedInterviewFacts(history, message, contextText);
       const issues = interviewQuestionIssues(reply, facts, history);
