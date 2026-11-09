@@ -126,7 +126,7 @@ const [isListening, setIsListening] = useState(false);
           .map(([, value]) => value);
         // Some mobile speech services repeat a word at a segment boundary.
         // Collapse only immediately duplicated words; preserve normal phrasing.
-        const words = finalParts.join(' ').split(/\\s+/).filter(Boolean);
+        const words = finalParts.join(' ').split(/\s+/).filter(Boolean);
         const cleanedWords: string[] = [];
         for (const word of words) {
           const previous = cleanedWords[cleanedWords.length - 1];
