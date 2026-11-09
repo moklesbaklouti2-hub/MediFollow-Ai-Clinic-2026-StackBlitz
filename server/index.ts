@@ -59,8 +59,10 @@ function collectClinicalText(value: unknown, output: string[] = []): string[] {
     value.forEach((item) => collectClinicalText(item, output));
   } else if (isPlainObject(value)) {
     for (const [key, nested] of Object.entries(value)) {
-      output.push(key);
+      const previousLength = output.length;
       collectClinicalText(nested, output);
+      // Le nom d'un champ vide ne constitue pas une donnée clinique documentée.
+      if (output.length > previousLength) output.push(key);
     }
   }
   return output;
@@ -68,7 +70,7 @@ function collectClinicalText(value: unknown, output: string[] = []): string[] {
 
 function normalizeClinicalText(value: string): string {
   return value.normalize('NFD')
-    .replace(/[\\u0300-\\u036f]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
@@ -81,11 +83,11 @@ function isClinicalTopicAlreadyDocumented(item: string, documentedText: string):
   if (!topic || !documentedText) return false;
 
   const rules: Array<{ question: RegExp; evidence: RegExp }> = [
-    { question: /\\b(ganglion|adenopath|aire cervicale)\\w*/, evidence: /\\b(ganglion|adenopath)\\w*/ },
-    { question: /\\b(gorge|oropharyn|pharyn|amygdal|tonsill)\\w*/, evidence: /\\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\\w*/ },
-    { question: /\\b(toux|tuss)\\w*/, evidence: /\\b(toux|tuss)\\w*/ },
-    { question: /\\b(dysphag|difficulte deglut|avaler.*liquide|liquide.*avaler)\\w*/, evidence: /\\b(dysphag|liquide|deglut)\\w*/ },
-    { question: /\\b(fievre|temperature)\\w*/, evidence: /\\b(fievre|temperature)\\w*/ },
+    { question: /\b(ganglion|adenopath|aire cervicale)\w*/, evidence: /\b(ganglion|adenopath)\w*/ },
+    { question: /\b(gorge|oropharyn|pharyn|amygdal|tonsill)\w*/, evidence: /\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\w*/ },
+    { question: /\b(toux|tuss)\w*/, evidence: /\b(toux|tuss)\w*/ },
+    { question: /\b(dysphag|difficulte.*deglut|difficulte.*avaler|avaler.*liquide|liquide.*avaler)\w*/, evidence: /\b(dysphag|liquide|deglut|avaler)\w*/ },
+    { question: /\b(fievre|temperature)\w*/, evidence: /\b(fievre|temperature)\w*/ },
   ];
 
   return rules.some(({ question, evidence }) => question.test(topic) && evidence.test(documentedText));
