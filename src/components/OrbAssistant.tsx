@@ -57,6 +57,8 @@ const observedMedicalSpeechCorrections: Record<string, string> = {
   exuda: 'exsudat',
   exodat: 'exsudat',
   disney: 'dyspnée',
+  audiophagie: 'odynophagie',
+  audinophagie: 'odynophagie',
   inaudipnee: 'dyspnée',
   athenopathie: 'adénopathie',
 };
@@ -105,7 +107,7 @@ function frenchPhoneticKey(value: string): string {
 
 function findClosestMedicalTerm(word: string): string | null {
   const normalizedWord = normalizeSpeechCandidate(word);
-  if (normalizedWord.length < 6) return null;
+  if (normalizedWord.length < 5) return null;
 
   let bestTerm = '';
   let bestDistance = Number.POSITIVE_INFINITY;
@@ -113,14 +115,14 @@ function findClosestMedicalTerm(word: string): string | null {
     // Les expressions composées sont évaluées plus tard avec le contexte.
     if (term.includes(' ')) continue;
     const normalizedTerm = normalizeSpeechCandidate(term);
-    if (normalizedTerm.length < 6 || normalizedTerm === normalizedWord) continue;
+    if (normalizedTerm.length < 5 || normalizedTerm === normalizedWord) continue;
     const distance = levenshteinDistance(normalizedWord, normalizedTerm);
     const phoneticDistance = levenshteinDistance(
       frenchPhoneticKey(word),
       frenchPhoneticKey(term),
     );
-    const allowedDistance = normalizedWord.length >= 10 ? 2 : 1;
-    const phoneticLimit = normalizedWord.length >= 10 ? 2 : 1;
+    const allowedDistance = normalizedWord.length >= 10 ? 3 : normalizedWord.length >= 7 ? 2 : 1;
+    const phoneticLimit = normalizedWord.length >= 10 ? 3 : normalizedWord.length >= 7 ? 2 : 1;
     // Une proximité phonétique peut rattraper une graphie très déformée,
     // mais la suggestion reste soumise à validation par le médecin.
     const isClose = distance <= allowedDistance || phoneticDistance <= phoneticLimit;
