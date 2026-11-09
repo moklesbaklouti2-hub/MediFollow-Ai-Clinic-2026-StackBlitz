@@ -356,6 +356,19 @@ export function dispenseInventoryItems(input: {
     if (item.category === 'equipment') {
       return { success: false, error: 'Un équipement durable ne peut pas être déduit comme un médicament délivré.' };
     }
+    // Blocage de sécurité : un article dont la date de péremption est dépassée
+    // ne peut jamais être délivré, même si une ancienne ordonnance y est liée.
+    if (item.expiryDate) {
+      const currentDate = new Date();
+      const today = [
+        currentDate.getFullYear(),
+        String(currentDate.getMonth() + 1).padStart(2, '0'),
+        String(currentDate.getDate()).padStart(2, '0'),
+      ].join('-');
+      if (item.expiryDate < today) {
+        return { success: false, error: `Délivrance bloquée : « ${item.name} » est périmé depuis le ${item.expiryDate}. Retirez cet article de la délivrance et vérifiez le lot.` };
+      }
+    }
     if (item.quantity < quantity) {
       return { success: false, error: `Stock insuffisant pour « ${item.name} » (disponible : ${item.quantity} ${item.unit}).` };
     }
