@@ -10,7 +10,9 @@ type ProviderAdapter = {
   complete: (request: any) => Promise<any>;
 };
 
-const providers: Record<AiProviderId, ProviderAdapter> = {
+type ProviderRegistry = Record<AiProviderId, ProviderAdapter>;
+
+const providers: ProviderRegistry = {
   groq: {
     id: 'groq',
     isConfigured: isGroqConfigured,
@@ -48,17 +50,20 @@ function isTemporaryProviderFailure(error: unknown): boolean {
 }
 
 /**
- * Routeur central avec basculement uniquement sur les erreurs temporaires
- * (limite de quota, indisponibilité serveur ou délai dépassé).
- * Les erreurs de configuration et de requête ne déclenchent pas de basculement.
+ * Exécuteur injectable : permet de tester le basculement sans consommer de quota
+ * ni provoquer volontairement une panne réelle chez un fournisseur.
  */
-export async function createAiCompletion(request: any, task: AiTask = 'chat'): Promise<any> {
+export async function createCompletionWithProviders(
+  request: any,
+  task: AiTask = 'chat',
+  providerRegistry: ProviderRegistry = providers,
+): Promise<any> {
   const order = providerOrder[task];
   let lastError: unknown = null;
   let attemptedProvider = false;
 
   for (const providerId of order) {
-    const provider = providers[providerId];
+    const provider = providerRegistry[providerId];
     if (!provider.isConfigured()) continue;
 
     attemptedProvider = true;
@@ -82,7 +87,11 @@ export async function createAiCompletion(request: any, task: AiTask = 'chat'): P
       ? 'Tous les fournisseurs IA configurés sont temporairement indisponibles.'
       : 'Aucun fournisseur IA configuré pour cette fonction.',
   ) as Error & { status: number; provider: string };
-  error.status = attemptedProvider ? 503 : 503;
+  error.status = 503;
   error.provider = 'router';
   throw error;
+}
+
+export function createAiCompletion(request: any, task: AiTask = 'chat'): Promise<any> {
+  return createCompletionWithProviders(request, task);
 }
