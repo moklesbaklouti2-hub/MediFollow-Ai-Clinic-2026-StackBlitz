@@ -1,6 +1,8 @@
 /* MediFollow AI — assistant flottant conversationnel */
 .mf-orb-assistant{position:fixed;right:22px;bottom:18px;z-index:1200;display:flex;flex-direction:column;align-items:center;pointer-events:none}
 .mf-orb-launcher{position:relative;display:grid;place-items:center;width:112px;height:112px;padding:0;border:0;border-radius:50%;background:transparent;isolation:isolate;overflow:visible;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.mf-orb-launcher.is-thinking .mf-orb-canvas{transform-origin:center;animation:mfOrbBreathing 2.4s ease-in-out infinite;filter:drop-shadow(0 0 10px rgba(91,226,211,.48))}
+@keyframes mfOrbBreathing{0%,100%{transform:scale(.96);filter:drop-shadow(0 0 7px rgba(91,226,211,.28))}50%{transform:scale(1.055);filter:drop-shadow(0 0 19px rgba(91,226,211,.72))}}
 .mf-orb-canvas{position:absolute;inset:0;z-index:2;pointer-events:none}
 .mf-orb-canvas canvas{display:block;width:100%!important;height:100%!important}
 .mf-orb-fallback{position:absolute;inset:28px;border-radius:50%;background:radial-gradient(circle at 32% 28%,#174b50,#126b70 27%,#123b50 55%,#49316f 79%,#080d20);box-shadow:0 0 16px rgba(36,151,151,.35),0 0 28px rgba(105,75,155,.2)}
@@ -41,7 +43,7 @@
 .mf-orb-privacy{flex-shrink:0;margin:0;padding:0 12px 10px;color:#8192aa;font-size:8px;line-height:1.4}
 @keyframes mfPanelAppear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:650px){.mf-orb-assistant{right:5px;bottom:72px}.mf-orb-launcher{width:88px;height:88px}.mf-orb-panel{right:0;bottom:102px;width:min(360px,calc(100vw - 16px));height:min(560px,calc(100dvh - 125px))}.mf-orb-caption{font-size:7px}}
-@media(prefers-reduced-motion:reduce){.mf-orb-panel{animation:none}}
+@media(prefers-reduced-motion:reduce){.mf-orb-panel,.mf-orb-launcher.is-thinking .mf-orb-canvas{animation:none}}
 
 
 /* Bulle d'analyse clinique reliée à l'Orb */
