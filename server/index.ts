@@ -180,6 +180,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
       if (retryAfterSeconds === null) {
         const minutes = detail.match(/(?:in|after)\s+(\d+)\s+minutes?/i);
         if (minutes) retryAfterSeconds = Number(minutes[1]) * 60;
+        else if (/in five minutes?/i.test(detail)) retryAfterSeconds = 300;
       }
       return res.status(429).json({
         error: 'Quota Groq temporairement atteint. Attendez le renouvellement, puis modifiez une donnée clinique pour relancer l’analyse. Aucune donnée de consultation n’a été supprimée.',
