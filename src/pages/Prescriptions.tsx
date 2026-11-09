@@ -29,7 +29,7 @@ export default function Prescriptions() {
   useEffect(() => subscribeToMedicalData(() => setInventory(getInventoryData())), []);
   const dispensableInventoryItems = inventory.items.filter((item) => item.category !== 'equipment');
 
-  function updateMedication(field: keyof Medication, value: string) {
+  function updateMedication(field: 'name' | 'dosage' | 'route' | 'frequency' | 'duration' | 'instructions' | 'inventoryItemId', value: string) {
     setMedication((previous) => ({ ...previous, [field]: value }));
   }
 
