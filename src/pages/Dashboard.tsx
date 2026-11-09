@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getInventoryData } from '../services/storage';
+import type { InventoryData } from '../types/medical';
 
 type DashboardProps = {
   patientCount: number;
@@ -196,9 +198,13 @@ function DoctorRobotArtwork() {
 
 export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot, onOpenPatients }: DashboardProps) {
   const [data, setData] = useState<DashboardData>(() => loadDashboardData(patientCount, consultationCount));
+  const [inventory, setInventory] = useState<InventoryData>(() => getInventoryData());
 
   useEffect(() => {
-    const refresh = () => setData(loadDashboardData(patientCount, consultationCount));
+    const refresh = () => {
+      setData(loadDashboardData(patientCount, consultationCount));
+      setInventory(getInventoryData());
+    };
     refresh();
     window.addEventListener('storage', refresh);
     window.addEventListener('focus', refresh);
@@ -211,6 +217,18 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
   }, [patientCount, consultationCount]);
 
   const now = new Date();
+  const todayKey = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
+  const inventoryLow = inventory.items.filter(item => item.quantity <= item.minimumQuantity);
+  const inventoryExpired = inventory.items.filter(item => Boolean(item.expiryDate && item.expiryDate < todayKey));
+  const inventoryExpiring = inventory.items.filter(item => {
+    if (!item.expiryDate || item.expiryDate < todayKey) return false;
+    const days = Math.ceil((Date.UTC(Number(item.expiryDate.slice(0, 4)), Number(item.expiryDate.slice(5, 7)) - 1, Number(item.expiryDate.slice(8, 10))) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+    return days <= 90;
+  });
+  const inventoryValuedItems = inventory.items.filter(item => typeof item.unitCost === 'number' && Number.isFinite(item.unitCost) && item.unitCost >= 0);
+  const inventoryEstimatedValue = inventoryValuedItems.reduce((sum, item) => sum + item.quantity * (item.unitCost || 0), 0);
+  const inventoryValueIncomplete = inventoryValuedItems.length < inventory.items.length;
+  const recentStockMovements = inventory.movements.slice(0, 5);
   const currentMonth = data.consultations.filter(item => {
     if (!item.date) return false;
     const date = new Date(item.date);
@@ -291,6 +309,64 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <span className="mf-stat-label">Suivi des patients</span>
             <div className="mf-stat-foot"><span>Dossiers actifs ou en suivi</span><i>●</i></div>
           </article>
+        </section>
+
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 20, display: 'grid', gap: 16 }}>
+          <div className="mf-panel-heading">
+            <div><span className="mf-panel-overline">GESTION DU CABINET</span><h3>État de l’inventaire</h3></div>
+            <span className="mf-panel-chip">{inventory.items.length} article(s)</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(145px,1fr))', gap: 10 }}>
+            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Valeur estimée du stock</small>
+              <strong style={{ display: 'block', fontSize: 22, marginTop: 6 }}>{inventoryEstimatedValue.toLocaleString('fr-TN', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} DT</strong>
+              <small style={{ color: 'var(--color-text-secondary)' }}>{inventoryValueIncomplete ? 'Estimation partielle : coûts manquants' : 'Calculée à partir des coûts unitaires saisis'}</small>
+            </div>
+            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Stocks bas</small>
+              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryLow.length ? '#c45c36' : 'inherit' }}>{inventoryLow.length}</strong>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Article(s) au seuil ou en dessous</small>
+            </div>
+            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Articles périmés</small>
+              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpired.length ? '#d94b4b' : 'inherit' }}>{inventoryExpired.length}</strong>
+              <small style={{ color: 'var(--color-text-secondary)' }}>À isoler du stock disponible</small>
+            </div>
+            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Péremption ≤ 90 jours</small>
+              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpiring.length ? '#bd7c13' : 'inherit' }}>{inventoryExpiring.length}</strong>
+              <small style={{ color: 'var(--color-text-secondary)' }}>Lots à surveiller</small>
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 16 }}>
+            <div>
+              <strong style={{ fontSize: 14 }}>Alertes prioritaires</strong>
+              {inventoryLow.length + inventoryExpired.length + inventoryExpiring.length === 0
+                ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucune alerte de stock actuellement.</p>
+                : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
+                    {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: '#d94b4b' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: '#c45c36' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: '#bd7c13' }))].slice(0, 6).map((alert, index) => (
+                      <div key={alert.item.id + alert.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
+                        <span>{alert.item.name} · {alert.item.batchNumber ? 'Lot ' + alert.item.batchNumber : 'Lot sans numéro'}</span>
+                        <strong style={{ color: alert.color, whiteSpace: 'nowrap' }}>{alert.label}</strong>
+                      </div>
+                    ))}
+                  </div>}
+            </div>
+            <div>
+              <strong style={{ fontSize: 14 }}>Derniers mouvements</strong>
+              {recentStockMovements.length === 0
+                ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucun mouvement enregistré.</p>
+                : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
+                    {recentStockMovements.map(movement => (
+                      <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
+                        <span>{movement.itemName}<small style={{ display: 'block', color: 'var(--color-text-secondary)' }}>{movement.reason || movement.type} · {new Date(movement.date).toLocaleDateString('fr-FR')}</small></span>
+                        <strong style={{ whiteSpace: 'nowrap', color: movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '#d97757' : '#159b7b' }}>{movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '−' : '+'}{Math.abs(movement.quantity)}</strong>
+                      </div>
+                    ))}
+                  </div>}
+            </div>
+          </div>
+          <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11 }}>La valeur est indicative et ne comprend que les articles dont le coût d’achat unitaire est renseigné. Les alertes sont calculées lot par lot.</p>
         </section>
 
         <section className="mf-dashboard-grid">
