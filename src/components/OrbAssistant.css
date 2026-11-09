@@ -38,6 +38,12 @@
 .mf-orb-chat-form textarea:focus{border-color:#62dccc}
 .mf-orb-chat-form button{width:39px;height:39px;flex-shrink:0;border:0;border-radius:10px;background:linear-gradient(120deg,#72e8d3,#a58af5);color:#102d3c;font-size:22px;font-weight:800;cursor:pointer}
 .mf-orb-chat-form button:disabled{opacity:.4;cursor:not-allowed}
+.mf-orb-chat-form .mf-orb-mic-button{width:39px;height:39px;flex-shrink:0;display:grid;place-items:center;border:1px solid rgba(108,226,220,.3);border-radius:10px;background:rgba(91,218,204,.1);color:#a5f1e5;font-size:17px;cursor:pointer}
+.mf-orb-chat-form .mf-orb-mic-button.is-listening{border-color:rgba(255,115,125,.65);background:rgba(239,91,105,.2);color:#ffb2b8;animation:mfMicPulse 1.4s ease-in-out infinite}
+.mf-orb-chat-form .mf-orb-mic-button:disabled{opacity:.4;cursor:not-allowed}
+.mf-orb-speech-status{flex-shrink:0;padding:0 13px 8px;color:#8cebd9;font-size:9px;line-height:1.4}
+.mf-orb-speech-status.has-error{color:#ffb2b8}
+@keyframes mfMicPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,91,105,0)}50%{box-shadow:0 0 0 4px rgba(239,91,105,.13)}}
 .mf-orb-panel-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;color:#91a2bc;font-size:8px}
 .mf-orb-panel-footer button{border:0;background:transparent;color:#8be9dc;font-size:9px;cursor:pointer}
 .mf-orb-privacy{flex-shrink:0;margin:0;padding:0 12px 10px;color:#8192aa;font-size:8px;line-height:1.4}
