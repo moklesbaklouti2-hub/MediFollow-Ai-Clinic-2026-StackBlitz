@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import OrbVisual from './OrbVisual';
 import type { ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import type { VoiceCommandAction } from '../types/medical';
+import { MEDICAL_DICTIONARY } from '../data/medicalDictionary';
 import './OrbAssistant.css';
 
 type OrbAssistantProps = {
@@ -42,27 +43,9 @@ type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
 
 // Vocabulaire médical utilisé pour départager les alternatives proposées
 // par le moteur vocal du navigateur. Il ne remplace pas une validation humaine.
-const medicalSpeechTerms = [
-  'exsudat', 'odynophagie', 'dysphagie', 'amygdalite', 'pharyngite',
-  'angine', 'adénopathie', 'dyspnée', 'tachycardie', 'bradycardie',
-  'auscultation', 'crépitants', 'sibilants', 'ronchi', 'stridor',
-  'hémoptysie', 'épistaxis', 'otorrhée', 'otalgie', 'vertige',
-  'streptocoque', 'amoxicilline', 'paracétamol', 'ibuprofène',
-  'antécédents', 'anamnèse', 'palpation', 'percussion', 'conjonctivite',
-  'hypoxémie', 'saturation', 'glycémie', 'hémoglobine', 'leucocytes',
-  'érythème', 'œdème', 'purpura', 'pétéchies', 'ecchymose', 'cyanose',
-  'pâleur', 'ictère', 'déshydratation', 'polypnée', 'orthopnée',
-  'apnée', 'bradypnée', 'hyperthermie', 'hypothermie', 'frissons',
-  'odynodysphagie', 'dysphonie', 'dysarthrie', 'aphasie', 'paresthésie',
-  'hémiparésie', 'convulsions', 'céphalées', 'raideur méningée',
-  'hépatomégalie', 'splénomégalie', 'œdèmes des membres inférieurs',
-  'souffle cardiaque', 'galop', 'murmure vésiculaire', 'matité',
-  'tympanisme', 'reflux hépato-jugulaire', 'pouls périphériques',
-  'temps de recoloration cutanée', 'conscience', 'orientation',
-  'abdomen', 'défense', 'contracture', 'météorisme', 'diarrhée',
-  'constipation', 'hématurie', 'dysurie', 'pollakiurie', 'protéinurie',
-  'leucocyturie', 'grossesse', 'allaitement', 'posologie', 'contre-indication',
-];
+// Le vocabulaire de reconnaissance provient du référentiel médical structuré.
+// Les synonymes sont également pris en compte pour départager les alternatives vocales.
+const medicalSpeechTerms = MEDICAL_DICTIONARY.flatMap(entry => [entry.term, ...(entry.synonyms || [])]);
 
 function normalizeSpeechCandidate(value: string): string {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
