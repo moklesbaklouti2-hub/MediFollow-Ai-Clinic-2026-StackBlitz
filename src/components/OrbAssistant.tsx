@@ -223,6 +223,12 @@ export default function OrbAssistant({
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<'chat' | 'command'>('chat');
   const [sending, setSending] = useState(false);
+  // Désactivée au démarrage pour protéger la confidentialité.
+  const [voiceRepliesEnabled, setVoiceRepliesEnabled] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const voiceRepliesRef = useRef(false);
+  const speakingRef = useRef(false);
+  const speechGenerationRef = useRef(0);
   const [messages, setMessages] = useState<OrbMessage[]>([]);
   const [insightDismissed, setInsightDismissed] = useState(false);
 const [isListening, setIsListening] = useState(false);
@@ -236,6 +242,57 @@ const [isListening, setIsListening] = useState(false);
   const speechCurrentTextRef = useRef('');
   const shouldContinueListeningRef = useRef(false);
   const speechRestartTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function stopSpeaking() {
+    speechGenerationRef.current += 1;
+    speakingRef.current = false;
+    setIsSpeaking(false);
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  }
+
+  function speakReply(reply: string) {
+    if (!voiceRepliesRef.current || !('speechSynthesis' in window) || !reply.trim()) return;
+    stopSpeaking();
+    const generation = speechGenerationRef.current;
+    const utterance = new SpeechSynthesisUtterance(reply.slice(0, 800));
+    utterance.lang = 'fr-FR';
+    utterance.rate = 0.98;
+    const frenchVoice = window.speechSynthesis.getVoices().find(voice => voice.lang.toLowerCase().startsWith('fr'));
+    if (frenchVoice) utterance.voice = frenchVoice;
+    utterance.onstart = () => {
+      if (generation !== speechGenerationRef.current) return;
+      speakingRef.current = true;
+      setIsSpeaking(true);
+    };
+    const finish = () => {
+      if (generation !== speechGenerationRef.current) return;
+      speakingRef.current = false;
+      setIsSpeaking(false);
+      if (commandListeningEnabledRef.current && !recognitionRef.current) {
+        window.setTimeout(() => {
+          if (commandListeningEnabledRef.current && !speakingRef.current && !recognitionRef.current) toggleVoiceInput();
+        }, 500);
+      }
+    };
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function toggleVoiceReplies() {
+    if (voiceRepliesRef.current) {
+      voiceRepliesRef.current = false;
+      setVoiceRepliesEnabled(false);
+      stopSpeaking();
+      return;
+    }
+    if (!('speechSynthesis' in window)) {
+      setSpeechMessage('La synthèse vocale est indisponible ; les réponses restent écrites.');
+      return;
+    }
+    voiceRepliesRef.current = true;
+    setVoiceRepliesEnabled(true);
+  }
 
   useEffect(() => {
     if (clinicalInsight?.updatedAt) setInsightDismissed(false);
@@ -255,10 +312,13 @@ const [isListening, setIsListening] = useState(false);
       if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
       recognitionRef.current?.abort();
       recognitionRef.current = null;
+      speechGenerationRef.current += 1;
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     };
   }, []);
 
   function toggleVoiceInput() {
+    if (speakingRef.current) stopSpeaking();
     if (isListening) {
       commandListeningEnabledRef.current = false;
       recognitionRef.current?.stop();
@@ -362,9 +422,9 @@ const [isListening, setIsListening] = useState(false);
             setSpeechMessage('Écoute vocale arrêtée.');
           } else if (dictatedText) {
             void sendMessage(dictatedText).finally(() => {
-              if (commandListeningEnabledRef.current) {
+              if (commandListeningEnabledRef.current && !voiceRepliesRef.current && !speakingRef.current) {
                 window.setTimeout(() => {
-                  if (commandListeningEnabledRef.current && !recognitionRef.current) toggleVoiceInput();
+                  if (commandListeningEnabledRef.current && !speakingRef.current && !recognitionRef.current) toggleVoiceInput();
                 }, 350);
               }
             });
@@ -436,6 +496,7 @@ const [isListening, setIsListening] = useState(false);
         if (quickMatch) {
           onNavigate(quickMatch.page);
           setMessages(previous => [...previous, { role: 'assistant', content: quickMatch.page + ' ouvert.' }]);
+          speakReply(quickMatch.page + ' ouvert.');
           return;
         }
 
@@ -494,6 +555,7 @@ const [isListening, setIsListening] = useState(false);
           role: 'assistant',
           content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action sûre à effectuer. Pouvez-vous reformuler la commande ?',
         }]);
+        speakReply(safeActions.length ? 'Commande traitée. Vérifiez les modifications affichées.' : 'Je n’ai identifié aucune action sûre. Pouvez-vous reformuler ?');
         return;
       }
 
@@ -511,6 +573,7 @@ const [isListening, setIsListening] = useState(false);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Erreur du moteur IA.');
       setMessages(previous => [...previous, { role: 'assistant', content: data.reply || 'Je n’ai pas reçu de réponse.' }]);
+      speakReply(data.reply || 'Je n’ai pas reçu de réponse.');
     } catch (error) {
       setMessages(previous => [...previous, {
         role: 'assistant',
@@ -624,6 +687,13 @@ const [isListening, setIsListening] = useState(false);
             <button type="button" onClick={() => setMode('command')} aria-pressed={mode === 'command'} style={{ flex: 1, border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 10px', background: mode === 'command' ? 'var(--accent,#38d9bd)' : 'transparent', color: mode === 'command' ? '#10243e' : 'inherit', fontWeight: 600 }}>
               Commandes vocales
             </button>
+          </div>
+          <div role="group" aria-label="Réponses vocales" style={{ display: 'flex', gap: 8, padding: '8px 14px 0', alignItems: 'center' }}>
+            <button type="button" onClick={toggleVoiceReplies} aria-pressed={voiceRepliesEnabled} style={{ borderRadius: 8, padding: '7px 10px', border: '1px solid var(--border,#dce4e8)', background: voiceRepliesEnabled ? 'var(--accent,#38d9bd)' : 'transparent', color: voiceRepliesEnabled ? '#10243e' : 'inherit' }}>
+              {voiceRepliesEnabled ? '🔊 Voix activée' : '🔇 Activer la voix'}
+            </button>
+            {isSpeaking && <button type="button" onClick={stopSpeaking} aria-label="Interrompre la réponse parlée">■ Stop parole</button>}
+            <small aria-live="polite">{isSpeaking ? 'MediFollow parle…' : isListening ? 'MediFollow écoute…' : sending ? 'MediFollow réfléchit…' : 'Lecture vocale désactivée par défaut'}</small>
           </div>
           {mode === 'command' && (
             <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
