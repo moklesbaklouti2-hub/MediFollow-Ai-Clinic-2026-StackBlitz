@@ -56,7 +56,7 @@ export async function completeWithOpenRouter(request: any): Promise<any> {
         'X-OpenRouter-Title': 'MediFollow AI',
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(45000),
+      signal: AbortSignal.timeout(12000),
     });
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : 'Erreur réseau OpenRouter.';
