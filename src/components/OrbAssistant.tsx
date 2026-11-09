@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import OrbVisual from './OrbVisual';
 import type { ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
+import type { VoiceCommandAction } from '../types/medical';
 import './OrbAssistant.css';
 
 type OrbAssistantProps = {
@@ -8,6 +9,7 @@ type OrbAssistantProps = {
   currentPage: string;
   onOpenCopilot: () => void;
   onNavigate: (page: string) => void;
+  onCommandActions: (actions: VoiceCommandAction[]) => void;
   clinicalPrompt?: string;
   onClinicalPromptConsumed?: () => void;
   clinicalInsight?: {
@@ -52,6 +54,7 @@ export default function OrbAssistant({
   currentPage,
   onOpenCopilot,
   onNavigate,
+  onCommandActions,
   clinicalPrompt,
   onClinicalPromptConsumed,
   clinicalInsight,
@@ -281,18 +284,44 @@ const [isListening, setIsListening] = useState(false);
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Erreur du moteur de commandes.');
 
-        const executedPages: string[] = [];
+        const safeActions: VoiceCommandAction[] = [];
         if (Array.isArray(data.actions)) {
           for (const action of data.actions) {
-            if (action?.type === 'navigate' && typeof action.page === 'string') {
-              onNavigate(action.page);
-              executedPages.push(action.page);
+            if (!action || typeof action !== 'object') continue;
+            if (action.type === 'navigate' && typeof action.page === 'string') {
+              safeActions.push({ type: 'navigate', page: action.page });
+            } else if (action.type === 'select_patient' && typeof action.patientName === 'string') {
+              safeActions.push({ type: 'select_patient', patientName: action.patientName });
+            } else if (
+              action.type === 'set_consultation_field' &&
+              typeof action.field === 'string' &&
+              typeof action.value === 'string'
+            ) {
+              safeActions.push({
+                type: 'set_consultation_field',
+                field: action.field as Extract<VoiceCommandAction, { type: 'set_consultation_field' }>['field'],
+                value: action.value,
+              });
+            } else if (
+              action.type === 'set_vital' &&
+              typeof action.field === 'string' &&
+              typeof action.value === 'string'
+            ) {
+              safeActions.push({
+                type: 'set_vital',
+                field: action.field as Extract<VoiceCommandAction, { type: 'set_vital' }>['field'],
+                value: action.value,
+              });
             }
           }
         }
+        if (safeActions.length) onCommandActions(safeActions);
+        const executedPages = safeActions
+          .filter((action): action is Extract<VoiceCommandAction, { type: 'navigate' }> => action.type === 'navigate')
+          .map(action => action.page);
         const resultParts: string[] = [];
         if (data.message) resultParts.push(String(data.message));
-        if (executedPages.length) resultParts.push('Navigation effectuée : ' + [...new Set(executedPages)].join(' → ') + '.');
+        if (executedPages.length) resultParts.push('Navigation demandée : ' + [...new Set(executedPages)].join(' → ') + '.');
         if (Array.isArray(data.unsupportedInstructions) && data.unsupportedInstructions.length) {
           resultParts.push('Actions non encore connectées : ' + data.unsupportedInstructions.join(' ; ') + '. Aucune donnée clinique ou de stock n’a été modifiée.');
         }
