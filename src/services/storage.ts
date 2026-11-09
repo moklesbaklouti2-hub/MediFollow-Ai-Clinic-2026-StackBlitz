@@ -436,12 +436,10 @@ export function dispenseInventoryItems(input: {
     : { success: false, error: 'Échec d’enregistrement : le stock n’a pas été confirmé.' };
 }
 
-/** Enregistre un retour réel et réintègre les quantités retournées au stock. */
+/** Enregistre un retour partiel lié à un mouvement précis de délivrance. */
 export function returnDispensedStock(input: {
-  itemId: string;
+  dispenseMovementId: string;
   quantity: number;
-  prescriptionId?: string;
-  patientId?: string;
   reason?: string;
 }): { success: boolean; error?: string } {
   if (!Number.isFinite(input.quantity) || input.quantity <= 0) {
@@ -449,8 +447,21 @@ export function returnDispensedStock(input: {
   }
 
   const data = getInventoryData();
-  const item = data.items.find((entry) => entry.id === input.itemId);
-  if (!item) return { success: false, error: 'Article introuvable.' };
+  const original = data.movements.find((movement) =>
+    movement.id === input.dispenseMovementId && movement.type === 'dispense'
+  );
+  if (!original) return { success: false, error: 'Mouvement de délivrance introuvable.' };
+
+  const alreadyReturned = data.movements
+    .filter((movement) => movement.type === 'return' && movement.reversesMovementId === original.id)
+    .reduce((sum, movement) => sum + movement.quantity, 0);
+  const remaining = Math.max(0, original.quantity - alreadyReturned);
+  if (input.quantity > remaining) {
+    return { success: false, error: `Retour supérieur au reliquat : ${remaining} unité(s) peuvent encore être réintégrées pour ce lot.` };
+  }
+
+  const item = data.items.find((entry) => entry.id === original.itemId);
+  if (!item) return { success: false, error: 'Lot d’origine introuvable dans l’inventaire.' };
   if (item.category === 'equipment') {
     return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
   }
@@ -465,14 +476,64 @@ export function returnDispensedStock(input: {
     type: 'return',
     quantity: input.quantity,
     date: timestamp,
-    reason: input.reason || 'Retour de produit non utilisé et réintégrable',
-    prescriptionId: input.prescriptionId,
-    patientId: input.patientId,
+    reason: input.reason || 'Retour partiel contrôlé — lot d’origine',
+    prescriptionId: original.prescriptionId,
+    patientId: original.patientId,
+    reversesMovementId: original.id,
   });
 
   return saveInventoryData(data)
     ? { success: true }
     : { success: false, error: 'Échec d’enregistrement du retour.' };
+}
+
+/** Annule une délivrance en réintégrant le reliquat de chaque lot d’origine. */
+export function cancelDispensedPrescriptionStock(input: {
+  prescriptionId: string;
+}): { success: boolean; error?: string; alreadyReturned?: boolean } {
+  const data = getInventoryData();
+  const originalMovements = data.movements.filter((movement) =>
+    movement.type === 'dispense' && movement.prescriptionId === input.prescriptionId
+  );
+  if (originalMovements.length === 0) {
+    return { success: false, error: 'Aucun mouvement de délivrance trouvé pour cette ordonnance.' };
+  }
+
+  const allocations: Array<{ movement: StockMovement; item: InventoryItem; quantity: number }> = [];
+  for (const movement of originalMovements) {
+    const returned = data.movements
+      .filter((entry) => entry.type === 'return' && entry.reversesMovementId === movement.id)
+      .reduce((sum, entry) => sum + entry.quantity, 0);
+    const remaining = Math.max(0, movement.quantity - returned);
+    if (remaining === 0) continue;
+    const item = data.items.find((entry) => entry.id === movement.itemId);
+    if (!item) return { success: false, error: `Lot d’origine introuvable : ${movement.itemName}.` };
+    allocations.push({ movement, item, quantity: remaining });
+  }
+
+  if (allocations.length === 0) return { success: true, alreadyReturned: true };
+
+  const timestamp = now();
+  for (const allocation of allocations) {
+    allocation.item.quantity += allocation.quantity;
+    allocation.item.updatedAt = timestamp;
+    data.movements.unshift({
+      id: createId(),
+      itemId: allocation.item.id,
+      itemName: allocation.item.name,
+      type: 'return',
+      quantity: allocation.quantity,
+      date: timestamp,
+      reason: 'Annulation de délivrance — retour intégral du reliquat au lot d’origine',
+      prescriptionId: input.prescriptionId,
+      patientId: allocation.movement.patientId,
+      reversesMovementId: allocation.movement.id,
+    });
+  }
+
+  return saveInventoryData(data)
+    ? { success: true }
+    : { success: false, error: 'Échec d’enregistrement de la réintégration des lots.' };
 }
 
 // ---------- PARAMÈTRES ----------
