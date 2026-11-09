@@ -344,7 +344,7 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
               {inventoryLow.length + inventoryExpired.length + inventoryExpiring.length === 0
                 ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucune alerte de stock actuellement.</p>
                 : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
-                    {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: '#d94b4b' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: '#c45c36' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: '#bd7c13' }))].slice(0, 6).map((alert, index) => (
+                    {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: '#d94b4b' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: '#c45c36' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: '#bd7c13' }))].slice(0, 6).map(alert => (
                       <div key={alert.item.id + alert.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
                         <span>{alert.item.name} · {alert.item.batchNumber ? 'Lot ' + alert.item.batchNumber : 'Lot sans numéro'}</span>
                         <strong style={{ color: alert.color, whiteSpace: 'nowrap' }}>{alert.label}</strong>
