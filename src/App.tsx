@@ -323,7 +323,7 @@ function App() {
         patients={patients}
         consultations={consultations}
         clinicalPrompt={orbPrompt}
-        clinicalInsight={clinicalInsight}
+        clinicalInsight={active === 'Consultations' ? clinicalInsight : undefined}
         onClinicalPromptConsumed={() => setOrbPrompt('')}
         onOpenCopilot={() => setActive('Copilote IA')}
       />
