@@ -14,7 +14,7 @@ async function testCloudflareAdapter(): Promise<void> {
     messages: [
       {
         role: 'user',
-        content: 'Réponds uniquement avec le JSON demandé.',
+        content: 'Réponds uniquement avec ce JSON exact : {"status":"ok"}.',
       },
     ],
     temperature: 0,
