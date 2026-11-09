@@ -48,12 +48,14 @@
 .mf-orb-insight-bubble{
   position:absolute;right:5px;bottom:132px;width:310px;max-width:calc(100vw - 28px);
   max-height:min(42dvh,330px);overflow-y:auto;box-sizing:border-box;
+  scrollbar-width:none;-ms-overflow-style:none;
   padding:13px 14px;border:1px solid rgba(104,224,211,.42);border-radius:16px 16px 5px 16px;
   color:#e9f8fb;background:linear-gradient(145deg,rgba(9,34,49,.98),rgba(35,29,65,.98));
   box-shadow:0 12px 38px rgba(0,12,28,.42),0 0 22px rgba(75,215,204,.12);
   backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);pointer-events:auto;
   animation:mfPanelAppear .2s ease-out;
 }
+.mf-orb-insight-bubble::-webkit-scrollbar{display:none;width:0;height:0}
 .mf-orb-insight-bubble:after{
   content:'';position:absolute;right:31px;bottom:-7px;width:13px;height:13px;
   transform:rotate(45deg);background:#211e3d;border-right:1px solid rgba(104,224,211,.35);
