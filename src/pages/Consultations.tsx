@@ -181,9 +181,9 @@ export default function Consultations({
     const normalize = (value: string) =>
       value.toLocaleLowerCase('fr')
         .normalize('NFD')
-        .replace(/[\\u0300-\\u036f]/g, '')
+        .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9 ]/g, ' ')
-        .replace(/\\s+/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
     const feedback: string[] = [];
@@ -192,6 +192,10 @@ export default function Consultations({
     for (const action of commandActions) {
       if (action.type === 'select_patient') {
         const requested = normalize(action.patientName);
+        if (!requested) {
+          feedback.push('Le nom du patient n’a pas été reconnu. Aucun patient n’a été sélectionné.');
+          continue;
+        }
         const exact = patients.filter((patient) => normalize(patient.name) === requested);
         const candidates = exact.length > 0
           ? exact
@@ -255,9 +259,14 @@ export default function Consultations({
           'respiratoryRate', 'weight', 'height', 'glycemia',
         ];
         if (allowedVitals.includes(action.field)) {
-          setVitals((previous) => ({ ...previous, [action.field]: action.value }));
-          setSaved(false);
-          applied += 1;
+          const numericValue = action.value.trim().replace(',', '.');
+          if (!/^-?\\d+(\\.\\d+)?$/.test(numericValue)) {
+            feedback.push(`Valeur « ${action.value} » invalide pour ${action.field}. Une valeur numérique est attendue.`);
+          } else {
+            setVitals((previous) => ({ ...previous, [action.field]: numericValue }));
+            setSaved(false);
+            applied += 1;
+          }
         } else {
           feedback.push(`Constante « ${action.field} » non reconnue.`);
         }
