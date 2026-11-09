@@ -531,6 +531,33 @@ function documentedInterviewFacts(history: Array<{ role: string; content: string
   return normalizeClinicalText([...history.filter(item => item.role === 'user').map(item => item.content), message, contextText].join(' '));
 }
 
+// Mémoire de faits explicites, limitée aux notions réellement documentées.
+// Ne pas confondre « avale normalement » avec la capacité à gérer la salive.
+function clinicalInterviewState(facts: string) {
+  const soreThroat = /\b(odynophag\w*|pharyngalg\w*|mal de gorge|douleur a la gorge)\b/.test(facts);
+  const fever = /\b(fievre|temperature|39 c|39 degre)\b/.test(facts);
+  const swallowPain = /\b(odynophag\w*|douleur.*(deglut|aval)|mal.*aval)\b/.test(facts);
+  const breathing = /\b(difficulte respiratoire|dyspne\w*|essoufflement|etouffement|respiration normale)\b/.test(facts);
+  const saliva = /\b(salive|bav\w*|secretions)\b/.test(facts);
+  const trismus = /\b(trismus|ouvrir.*bouche|ouverture buccale)\b/.test(facts);
+  const voice = /\b(voix etouffee|voix modifiee|voix changee)\b/.test(facts);
+  const unilateral = /\b(unilateral\w*|un seul cote|cote droit|cote gauche|asymetri\w*)\b/.test(facts);
+  return { soreThroat, fever, swallowPain, breathing, saliva, trismus, voice, unilateral };
+}
+
+// Filet de sécurité ciblé pour le scénario ORL documenté : question unique,
+// sans inférer de résultat et sans reposer la question sur l'odynophagie.
+function prioritizedSoreThroatQuestion(facts: string): string | null {
+  const s = clinicalInterviewState(facts);
+  if (!s.soreThroat || !s.fever) return null;
+  if (!s.breathing) return 'Avez-vous actuellement des difficultés à respirer ?';
+  if (!s.saliva) return 'Parvenez-vous à avaler votre salive normalement ?';
+  if (!s.trismus) return 'Avez-vous des difficultés à ouvrir complètement la bouche ?';
+  if (!s.voice) return 'Votre voix est-elle devenue étouffée ou inhabituelle ?';
+  if (!s.unilateral) return 'La douleur est-elle nettement plus importante d’un seul côté ?';
+  return null;
+}
+
 function interviewQuestionIssues(reply: string, facts: string, history: Array<{ role: string; content: string }>): string[] {
   const issues: string[] = [];
   const question = reply.split(/[.!\n]/).find(part => part.includes('?'))?.trim() ?? '';
@@ -548,6 +575,13 @@ function interviewQuestionIssues(reply: string, facts: string, history: Array<{ 
     .flatMap(item => item.content.split(/[.!\n]/).filter(part => part.includes('?')))
     .map(normalizeClinicalText);
   if (earlierQuestions.includes(normalized)) issues.push('question identique déjà posée');
+  const state = clinicalInterviewState(facts);
+  if (state.swallowPain && /\b(douleur|gorge|odynophag)\b/.test(normalized) &&
+      /\b(aval\w*|deglut\w*|liquide\w*|solide\w*)\b/.test(normalized) &&
+      !/\b(salive|bav\w*|secretions)\b/.test(normalized)) issues.push('odynophagie déjà documentée');
+  if (state.soreThroat && state.fever && prioritizedSoreThroatQuestion(facts) &&
+      /\b(epice\w*|acide\w*|aliment\w*)\b/.test(normalized)) issues.push('question secondaire avant signes de gravité');
+
   return issues;
 }
 
@@ -616,6 +650,14 @@ app.post('/api/chat', async (req, res) => {
           console.warn('Contrôle de qualité de l’interrogatoire indisponible:', error);
         }
       }
+    }
+    if (clinicalInterview && reply.includes('?')) {
+      const facts = documentedInterviewFacts(history, message, contextText);
+      const issues = interviewQuestionIssues(reply, facts, history);
+      const prioritized = prioritizedSoreThroatQuestion(facts);
+      // Remplacement déterministe uniquement dans le scénario ORL reconnu :
+      // pas de remplacement si le modèle a donné un conseil urgent sans question.
+      if (issues.length && prioritized) reply = prioritized;
     }
     return res.json({ reply });
   } catch (error) {
