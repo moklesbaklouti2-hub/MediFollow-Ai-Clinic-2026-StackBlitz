@@ -93,6 +93,32 @@ function isClinicalTopicAlreadyDocumented(item: string, documentedText: string):
   return rules.some(({ question, evidence }) => question.test(topic) && evidence.test(documentedText));
 }
 
+// Si une question regroupe plusieurs demandes séparées par une virgule ou un
+// point-virgule, conserve les parties utiles et retire uniquement les répétitions.
+function removeDocumentedQuestionParts(question: string, documentedText: string): string {
+  const parts = question.split(/([,;])/);
+  if (parts.length === 1) {
+    return isClinicalTopicAlreadyDocumented(question, documentedText) ? '' : question;
+  }
+
+  const kept: string[] = [];
+  let current = '';
+  for (const part of parts) {
+    if (part === ',' || part === ';') {
+      if (current.trim() && !isClinicalTopicAlreadyDocumented(current, documentedText)) {
+        kept.push(current.trim());
+      }
+      current = '';
+    } else {
+      current += part;
+    }
+  }
+  if (current.trim() && !isClinicalTopicAlreadyDocumented(current, documentedText)) {
+    kept.push(current.trim());
+  }
+  return kept.join(', ');
+}
+
 app.post('/api/clinical/analyze', async (req, res) => {
   try {
     const context = req.body?.context;
@@ -199,10 +225,9 @@ app.post('/api/clinical/analyze', async (req, res) => {
       collectClinicalText({ patient: context.patient, consultation: consultationData }).join(' ')
     );
     const candidateQuestion = parsed.nextQuestion.trim().slice(0, 300);
-    const questionIsRedundant = candidateQuestion
-      ? isClinicalTopicAlreadyDocumented(candidateQuestion, documentedCorpus)
-      : false;
-    const nextQuestion = questionIsRedundant ? '' : candidateQuestion;
+    const nextQuestion = candidateQuestion
+      ? removeDocumentedQuestionParts(candidateQuestion, documentedCorpus).slice(0, 300)
+      : '';
     const nextQuestionOptions = nextQuestion
       ? (Array.isArray(parsed.nextQuestionOptions) ? parsed.nextQuestionOptions : [])
           .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
