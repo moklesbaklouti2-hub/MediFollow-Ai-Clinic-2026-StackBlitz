@@ -4,6 +4,9 @@ import type {
   Prescription,
   DoctorSettings,
   MedicalData,
+  InventoryData,
+  InventoryItem,
+  StockMovement,
 } from '../types/medical';
 
 // ============================================
@@ -16,6 +19,7 @@ const STORAGE_KEYS = {
   prescriptions: 'medifollow-prescriptions',
   settings: 'medifollow-settings',
   deletedPatients: 'medifollow-deleted-patients',
+  inventory: 'medifollow-inventory',
 };
 
 const UPDATE_EVENT = 'medifollow:data-updated';
@@ -268,6 +272,143 @@ export function savePrescriptions(
   prescriptions: Prescription[]
 ): boolean {
   return writeData(STORAGE_KEYS.prescriptions, prescriptions);
+}
+
+/* ---------- INVENTAIRE ET TRAÇABILITÉ DU STOCK ---------- */
+
+const EMPTY_INVENTORY: InventoryData = { items: [], movements: [] };
+
+export function getInventoryData(): InventoryData {
+  if (!isBrowser()) return EMPTY_INVENTORY;
+
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.inventory);
+    if (!raw) return EMPTY_INVENTORY;
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+      return EMPTY_INVENTORY;
+    }
+
+    const data = parsed as Partial<InventoryData>;
+    const items = Array.isArray(data.items) ? data.items : [];
+    const movements = Array.isArray(data.movements) ? data.movements : [];
+
+    return {
+      items: items.filter((item): item is InventoryItem =>
+        Boolean(item && typeof item.id === 'string')
+      ),
+      movements: movements.filter((movement): movement is StockMovement =>
+        Boolean(movement && typeof movement.id === 'string')
+      ),
+    };
+  } catch {
+    console.error('MediFollow : inventaire illisible.');
+    return EMPTY_INVENTORY;
+  }
+}
+
+/** Enregistre ensemble les articles et leur journal de mouvements. */
+export function saveInventoryData(data: InventoryData): boolean {
+  return writeData(STORAGE_KEYS.inventory, data);
+}
+
+/**
+ * Déduit le stock uniquement lors d'une délivrance effective.
+ * Toutes les lignes sont vérifiées avant la moindre modification.
+ */
+export function dispenseInventoryItems(input: {
+  prescriptionId: string;
+  patientId: string;
+  items: Array<{ inventoryItemId: string; quantity: number }>;
+}): { success: boolean; error?: string } {
+  const data = getInventoryData();
+  const requested = input.items.filter(
+    (line) => line.inventoryItemId && Number.isFinite(line.quantity) && line.quantity > 0
+  );
+
+  if (requested.length === 0) {
+    return { success: false, error: 'Aucun article de stock valide à délivrer.' };
+  }
+
+  const totals = new Map<string, number>();
+  for (const line of requested) {
+    totals.set(
+      line.inventoryItemId,
+      (totals.get(line.inventoryItemId) ?? 0) + line.quantity
+    );
+  }
+
+  for (const [itemId, quantity] of totals) {
+    const item = data.items.find((entry) => entry.id === itemId);
+    if (!item) return { success: false, error: 'Un article lié à cette ordonnance est introuvable.' };
+    if (item.category === 'equipment') {
+      return { success: false, error: 'Un équipement durable ne peut pas être déduit comme un médicament délivré.' };
+    }
+    if (item.quantity < quantity) {
+      return { success: false, error: `Stock insuffisant pour « ${item.name} » (disponible : ${item.quantity} ${item.unit}).` };
+    }
+  }
+
+  const timestamp = now();
+  for (const [itemId, quantity] of totals) {
+    const item = data.items.find((entry) => entry.id === itemId)!;
+    item.quantity -= quantity;
+    item.updatedAt = timestamp;
+    data.movements.unshift({
+      id: createId(),
+      itemId,
+      itemName: item.name,
+      type: 'dispense',
+      quantity,
+      date: timestamp,
+      reason: 'Délivrance au patient',
+      prescriptionId: input.prescriptionId,
+      patientId: input.patientId,
+    });
+  }
+
+  return saveInventoryData(data)
+    ? { success: true }
+    : { success: false, error: 'Échec d’enregistrement : le stock n’a pas été confirmé.' };
+}
+
+/** Enregistre un retour réel et réintègre les quantités retournées au stock. */
+export function returnDispensedStock(input: {
+  itemId: string;
+  quantity: number;
+  prescriptionId?: string;
+  patientId?: string;
+  reason?: string;
+}): { success: boolean; error?: string } {
+  if (!Number.isFinite(input.quantity) || input.quantity <= 0) {
+    return { success: false, error: 'Quantité de retour invalide.' };
+  }
+
+  const data = getInventoryData();
+  const item = data.items.find((entry) => entry.id === input.itemId);
+  if (!item) return { success: false, error: 'Article introuvable.' };
+  if (item.category === 'equipment') {
+    return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
+  }
+
+  const timestamp = now();
+  item.quantity += input.quantity;
+  item.updatedAt = timestamp;
+  data.movements.unshift({
+    id: createId(),
+    itemId: item.id,
+    itemName: item.name,
+    type: 'return',
+    quantity: input.quantity,
+    date: timestamp,
+    reason: input.reason || 'Retour de produit non utilisé et réintégrable',
+    prescriptionId: input.prescriptionId,
+    patientId: input.patientId,
+  });
+
+  return saveInventoryData(data)
+    ? { success: true }
+    : { success: false, error: 'Échec d’enregistrement du retour.' };
 }
 
 // ---------- PARAMÈTRES ----------
