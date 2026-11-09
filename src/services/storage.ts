@@ -313,7 +313,9 @@ export function saveInventoryData(data: InventoryData): boolean {
 }
 
 /**
- * Déduit le stock uniquement lors d'une délivrance effective.
+ * Déduit le stock lors d'une délivrance effective.
+ * Répartition FEFO automatique entre les lots du même produit :
+ * les lots valides les plus proches de leur péremption sont utilisés d'abord.
  * Toutes les lignes sont vérifiées avant la moindre modification.
  */
 export function dispenseInventoryItems(input: {
@@ -323,70 +325,102 @@ export function dispenseInventoryItems(input: {
 }): { success: boolean; error?: string; alreadyDispensed?: boolean } {
   const data = getInventoryData();
 
-  // Idempotence : empêcher une seconde déduction pour la même ordonnance.
-  // Le journal des mouvements reste la référence, même si l'interface est rechargée.
+  // Empêcher toute seconde déduction pour une ordonnance déjà délivrée.
   const existingDispense = data.movements.some(
     (movement) =>
       movement.type === 'dispense' &&
       movement.prescriptionId === input.prescriptionId
   );
-  if (existingDispense) {
-    return { success: true, alreadyDispensed: true };
-  }
+  if (existingDispense) return { success: true, alreadyDispensed: true };
 
   const requested = input.items.filter(
     (line) => line.inventoryItemId && Number.isFinite(line.quantity) && line.quantity > 0
   );
-
   if (requested.length === 0) {
     return { success: false, error: 'Aucun article de stock valide à délivrer.' };
   }
 
-  const totals = new Map<string, number>();
-  for (const line of requested) {
-    totals.set(
-      line.inventoryItemId,
-      (totals.get(line.inventoryItemId) ?? 0) + line.quantity
-    );
-  }
+  const currentDate = new Date();
+  const today = [
+    currentDate.getFullYear(),
+    String(currentDate.getMonth() + 1).padStart(2, '0'),
+    String(currentDate.getDate()).padStart(2, '0'),
+  ].join('-');
 
-  for (const [itemId, quantity] of totals) {
-    const item = data.items.find((entry) => entry.id === itemId);
-    if (!item) return { success: false, error: 'Un article lié à cette ordonnance est introuvable.' };
-    if (item.category === 'equipment') {
+  const productRequests = new Map<string, {
+    name: string;
+    category: InventoryItem['category'];
+    quantity: number;
+  }>();
+
+  for (const line of requested) {
+    const selected = data.items.find((entry) => entry.id === line.inventoryItemId);
+    if (!selected) {
+      return { success: false, error: 'Un article lié à cette ordonnance est introuvable.' };
+    }
+    if (selected.category === 'equipment') {
       return { success: false, error: 'Un équipement durable ne peut pas être déduit comme un médicament délivré.' };
     }
-    // Blocage de sécurité : un article dont la date de péremption est dépassée
-    // ne peut jamais être délivré, même si une ancienne ordonnance y est liée.
-    if (item.expiryDate) {
-      const currentDate = new Date();
-      const today = [
-        currentDate.getFullYear(),
-        String(currentDate.getMonth() + 1).padStart(2, '0'),
-        String(currentDate.getDate()).padStart(2, '0'),
-      ].join('-');
-      if (item.expiryDate < today) {
-        return { success: false, error: `Délivrance bloquée : « ${item.name} » est périmé depuis le ${item.expiryDate}. Retirez cet article de la délivrance et vérifiez le lot.` };
-      }
+
+    const key = selected.category + '::' + selected.name.trim().toLocaleLowerCase('fr');
+    const previous = productRequests.get(key);
+    productRequests.set(key, {
+      name: selected.name,
+      category: selected.category,
+      quantity: (previous?.quantity ?? 0) + line.quantity,
+    });
+  }
+
+  // Calculer toutes les allocations avant de modifier le moindre stock.
+  const plannedMovements: Array<{ item: InventoryItem; quantity: number }> = [];
+
+  for (const request of productRequests.values()) {
+    const matchingLots = data.items
+      .filter((item) =>
+        item.category === request.category &&
+        item.name.trim().toLocaleLowerCase('fr') === request.name.trim().toLocaleLowerCase('fr') &&
+        item.quantity > 0 &&
+        (!item.expiryDate || item.expiryDate >= today)
+      )
+      .sort((a, b) => {
+        if (!a.expiryDate && b.expiryDate) return 1;
+        if (a.expiryDate && !b.expiryDate) return -1;
+        const expiryOrder = (a.expiryDate || '').localeCompare(b.expiryDate || '');
+        if (expiryOrder !== 0) return expiryOrder;
+        return (a.batchNumber || '').localeCompare(b.batchNumber || '');
+      });
+
+    const available = matchingLots.reduce((sum, lot) => sum + lot.quantity, 0);
+    if (available < request.quantity) {
+      return {
+        success: false,
+        error: `Stock valide insuffisant pour « ${request.name} » : ${available} disponible(s), ${request.quantity} demandé(s). Les lots périmés sont exclus.`,
+      };
     }
-    if (item.quantity < quantity) {
-      return { success: false, error: `Stock insuffisant pour « ${item.name} » (disponible : ${item.quantity} ${item.unit}).` };
+
+    let remaining = request.quantity;
+    for (const lot of matchingLots) {
+      if (remaining <= 0) break;
+      const allocated = Math.min(lot.quantity, remaining);
+      if (allocated > 0) {
+        plannedMovements.push({ item: lot, quantity: allocated });
+        remaining -= allocated;
+      }
     }
   }
 
   const timestamp = now();
-  for (const [itemId, quantity] of totals) {
-    const item = data.items.find((entry) => entry.id === itemId)!;
-    item.quantity -= quantity;
-    item.updatedAt = timestamp;
+  for (const allocation of plannedMovements) {
+    allocation.item.quantity -= allocation.quantity;
+    allocation.item.updatedAt = timestamp;
     data.movements.unshift({
       id: createId(),
-      itemId,
-      itemName: item.name,
+      itemId: allocation.item.id,
+      itemName: allocation.item.name,
       type: 'dispense',
-      quantity,
+      quantity: allocation.quantity,
       date: timestamp,
-      reason: 'Délivrance au patient',
+      reason: `Délivrance au patient — lot ${allocation.item.batchNumber || 'sans numéro'}`,
       prescriptionId: input.prescriptionId,
       patientId: input.patientId,
     });
