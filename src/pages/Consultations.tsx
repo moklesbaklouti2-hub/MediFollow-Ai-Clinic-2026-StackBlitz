@@ -904,31 +904,52 @@ export default function Consultations({
                           <span>Délai écoulé ou non communiqué. Modifiez une donnée clinique pour relancer l’analyse.</span>
                         ) : null}
                       </div>
-                    ) : clinicalReasoning.analysis?.hypotheses?.length ? (
-                      <div style={{ display: 'grid', gap: 13 }}>
-                        {clinicalReasoning.analysis.hypotheses.map((item, index) => (
-                          <article key={item.label} style={{ display: 'grid', gap: 5 }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                              <strong style={{ fontSize: 13, color: 'var(--text-primary,#f2f7fa)' }}>{index + 1}. {item.label}</strong>
-                              <strong style={{ fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>{item.percentage}%</strong>
-                            </div>
-                            <div style={{ height: 7, borderRadius: 10, background: 'var(--border,#526675)', overflow: 'hidden' }}>
-                              <div style={{ height: '100%', width: `${item.percentage}%`, borderRadius: 10, background: '#38bfa6', transition: 'width .25s ease' }} />
-                            </div>
-                            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--text-secondary,#bdcbd5)' }}>{item.reason}</p>
-                          </article>
-                        ))}
+                    ) : clinicalReasoning.analysis ? (
+                      <div style={{ display: 'grid', gap: 10 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                          <strong style={{ fontSize: 12 }}>Synthèse clinique</strong>
+                          <span style={{
+                            fontSize: 10, fontWeight: 700, padding: '4px 8px', borderRadius: 20,
+                            background: clinicalReasoning.analysis.priority === 'urgent' ? '#fde8e8' : clinicalReasoning.analysis.priority === 'attention' ? '#fff1d6' : '#dff7ee',
+                            color: clinicalReasoning.analysis.priority === 'urgent' ? '#a32626' : clinicalReasoning.analysis.priority === 'attention' ? '#8a5a00' : '#176b50',
+                          }}>
+                            {clinicalReasoning.analysis.priority === 'urgent' ? 'URGENT' : clinicalReasoning.analysis.priority === 'attention' ? 'ATTENTION' : 'ROUTINE'}
+                          </span>
+                        </div>
+                        <p style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>{clinicalReasoning.analysis.situationSummary}</p>
+                        {clinicalReasoning.analysis.priorityReason && (
+                          <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#bdcbd5)' }}>{clinicalReasoning.analysis.priorityReason}</p>
+                        )}
+                        {clinicalReasoning.analysis.hypotheses.length > 0 && (
+                          <div style={{ display: 'grid', gap: 8 }}>
+                            <strong style={{ fontSize: 12 }}>Hypothèses principales</strong>
+                            {clinicalReasoning.analysis.hypotheses.slice(0, 3).map((item, index) => (
+                              <div key={item.label} style={{ display: 'grid', gap: 2 }}>
+                                <strong style={{ fontSize: 12 }}>{index + 1}. {item.label}</strong>
+                                <p style={{ margin: 0, fontSize: 11, lineHeight: 1.4, color: 'var(--text-secondary,#bdcbd5)' }}>{item.reason}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {clinicalReasoning.analysis.pointsToVerify.length > 0 && (
+                          <div>
+                            <strong style={{ fontSize: 12 }}>À vérifier</strong>
+                            <ul style={{ margin: '4px 0 0', paddingLeft: 18, fontSize: 11, lineHeight: 1.45 }}>
+                              {clinicalReasoning.analysis.pointsToVerify.slice(0, 3).map((item, index) => <li key={index}>{item}</li>)}
+                            </ul>
+                          </div>
+                        )}
                         {clinicalReasoning.analysis.recommendedActions.length > 0 && (
-                          <div style={{ borderTop: '1px solid var(--border,#526675)', paddingTop: 10 }}>
-                            <strong style={{ fontSize: 12 }}>Actions utiles maintenant</strong>
-                            <ul style={{ margin: '6px 0 0', paddingLeft: 19, fontSize: 12, lineHeight: 1.55 }}>
-                              {clinicalReasoning.analysis.recommendedActions.map((action, index) => <li key={index}>{action}</li>)}
+                          <div>
+                            <strong style={{ fontSize: 12 }}>Actions prioritaires</strong>
+                            <ul style={{ margin: '4px 0 0', paddingLeft: 18, fontSize: 11, lineHeight: 1.45 }}>
+                              {clinicalReasoning.analysis.recommendedActions.slice(0, 3).map((action, index) => <li key={index}>{action}</li>)}
                             </ul>
                           </div>
                         )}
                       </div>
                     ) : (
-                      <p style={{ margin: 0, fontSize: 12 }}>Complétez les premières données cliniques pour afficher les hypothèses pertinentes.</p>
+                      <p style={{ margin: 0, fontSize: 12 }}>Complétez les premières données cliniques pour afficher l'analyse.</p>
                     )}
                     {clinicalReasoning.analysis?.nextQuestion && (
                       <div style={{ display: 'grid', gap: 9, border: '1px solid var(--border,#526675)', borderRadius: 10, padding: 11, background: 'var(--background,rgba(127,127,127,.06))' }}>
@@ -946,10 +967,11 @@ export default function Consultations({
                         )}
                       </div>
                     )}
-                    <p style={{ margin: 0, paddingTop: 8, borderTop: '1px solid var(--border,#526675)', fontSize: 10, lineHeight: 1.45, color: 'var(--text-secondary,#bdcbd5)' }}>
-                      Pourcentages indicatifs générés par l’IA : ils ne constituent ni des probabilités validées ni un score clinique.
-                    </p>
-                    {clinicalReasoning.analysis?.evolutionNote && <p style={{ margin: 0, fontSize: 11, color: 'var(--text-secondary,#bdcbd5)' }}>Évolution : {clinicalReasoning.analysis.evolutionNote}</p>}
+                    {clinicalReasoning.analysis?.evolutionNote && (
+                      <p style={{ margin: 0, paddingTop: 7, borderTop: '1px solid var(--border,#526675)', fontSize: 10, color: 'var(--text-secondary,#bdcbd5)' }}>
+                        Évolution : {clinicalReasoning.analysis.evolutionNote}
+                      </p>
+                    )}
                   </section>
                 )}
               </>
