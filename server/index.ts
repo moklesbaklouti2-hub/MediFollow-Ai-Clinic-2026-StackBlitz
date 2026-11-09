@@ -74,7 +74,54 @@ app.post('/api/clinical/analyze', async (req, res) => {
       ],
       temperature: 0.1,
       max_completion_tokens: 1200,
-      response_format: { type: 'json_object' },
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'clinical_reasoning',
+          strict: true,
+          schema: {
+            type: 'object',
+            properties: {
+              situationSummary: { type: 'string' },
+              evolutionNote: { type: 'string' },
+              priority: { type: 'string', enum: ['routine', 'attention', 'urgent'] },
+              priorityReason: { type: 'string' },
+              nextQuestion: { type: 'string' },
+              nextQuestionOptions: { type: 'array', items: { type: 'string' } },
+              whyThisQuestion: { type: 'string' },
+              pointsToVerify: { type: 'array', items: { type: 'string' } },
+              recommendedActions: { type: 'array', items: { type: 'string' } },
+              hypotheses: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'string' },
+                    reason: { type: 'string' },
+                    confidence: { type: 'string', enum: ['faible', 'modérée'] },
+                    percentage: { type: 'integer' },
+                  },
+                  required: ['label', 'reason', 'confidence', 'percentage'],
+                  additionalProperties: false,
+                },
+              },
+            },
+            required: [
+              'situationSummary',
+              'evolutionNote',
+              'priority',
+              'priorityReason',
+              'nextQuestion',
+              'nextQuestionOptions',
+              'whyThisQuestion',
+              'pointsToVerify',
+              'recommendedActions',
+              'hypotheses',
+            ],
+            additionalProperties: false,
+          },
+        },
+      },
     });
 
     const choice = completion.choices[0];
