@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
-import type { Medication } from '../types/medical';
+import type { InventoryData, Medication } from '../types/medical';
+import { dispenseInventoryItems, getInventoryData, getMedicalData, subscribeToMedicalData } from '../services/storage';
 
 const emptyMedication: Medication = {
   id: '',
@@ -23,6 +24,10 @@ export default function Prescriptions() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [medication, setMedication] =
     useState<Medication>({ ...emptyMedication });
+  const [inventory, setInventory] = useState<InventoryData>(() => getInventoryData());
+
+  useEffect(() => subscribeToMedicalData(() => setInventory(getInventoryData())), []);
+  const dispensableInventoryItems = inventory.items.filter((item) => item.category !== 'equipment');
 
   function updateMedication(field: keyof Medication, value: string) {
     setMedication((previous) => ({ ...previous, [field]: value }));
@@ -84,16 +89,75 @@ export default function Prescriptions() {
 
     const saved = editingId
       ? updatePrescription(editingId, prescriptionData)
-      : addPrescription(prescriptionData);
+      : addPrescription({ ...prescriptionData, status: 'draft' });
 
     if (!saved) {
       setSavedMessage('Échec de sauvegarde : le navigateur n’a pas confirmé l’enregistrement. Vérifiez le stockage puis réessayez.');
       return;
     }
 
+    if (!editingId && typeof saved === 'object' && saved !== null) {
+      setEditingId(saved.id);
+    }
+
     setSavedMessage(editingId
       ? 'Modifications de l’ordonnance enregistrées.'
       : 'Ordonnance enregistrée et reliée au dossier du patient.');
+  }
+
+  function updateDispensedQuantity(medicationId: string, rawValue: string) {
+    const parsed = rawValue.trim() === '' ? undefined : Number(rawValue);
+    setMedications((previous) => previous.map((item) =>
+      item.id === medicationId
+        ? { ...item, dispensedQuantity: parsed }
+        : item
+    ));
+    setSavedMessage('Quantité réelle modifiée : enregistrez les modifications avant la délivrance.');
+  }
+
+  function dispenseSavedPrescription() {
+    if (!editingId) return;
+    const savedPrescription = getMedicalData().prescriptions.find((item) => item.id === editingId);
+    if (!savedPrescription) {
+      setSavedMessage('Enregistrez d’abord l’ordonnance.');
+      return;
+    }
+    if (savedPrescription.status === 'dispensed') {
+      setSavedMessage('Cette ordonnance a déjà été délivrée. Aucune nouvelle déduction ne sera effectuée.');
+      return;
+    }
+
+    const linkedMedications = savedPrescription.medications.filter((item) => item.inventoryItemId);
+    if (linkedMedications.length === 0) {
+      setSavedMessage('Associez au moins un médicament à un article de stock avant la délivrance.');
+      return;
+    }
+    if (linkedMedications.some((item) => !Number.isFinite(item.dispensedQuantity) || (item.dispensedQuantity ?? 0) <= 0)) {
+      setSavedMessage('Saisissez la quantité réellement délivrée pour chaque médicament associé au stock.');
+      return;
+    }
+
+    const result = dispenseInventoryItems({
+      prescriptionId: savedPrescription.id,
+      patientId: savedPrescription.patientId,
+      items: linkedMedications.map((item) => ({
+        inventoryItemId: item.inventoryItemId!,
+        quantity: item.dispensedQuantity!,
+      })),
+    });
+
+    if (!result.success) {
+      setSavedMessage(result.error || 'La délivrance n’a pas été enregistrée.');
+      return;
+    }
+
+    const statusSaved = updatePrescription(savedPrescription.id, {
+      status: 'dispensed',
+      dispensedAt: new Date().toISOString(),
+    });
+    setSavedMessage(statusSaved
+      ? 'Délivrance enregistrée : le stock a été déduit et le mouvement tracé.'
+      : 'Stock déduit et mouvement enregistré, mais le statut de l’ordonnance n’a pas été actualisé. Ne relancez pas la délivrance.');
   }
 
   function openPrescription(item: (typeof prescriptions)[number]) {
@@ -279,6 +343,22 @@ export default function Prescriptions() {
           />
         </div>
 
+        <div className="prescription-field">
+          <label>Article de stock associé (facultatif)</label>
+          <select
+            value={medication.inventoryItemId || ''}
+            onChange={(e) => updateMedication('inventoryItemId', e.target.value)}
+          >
+            <option value="">Aucun lien avec le stock</option>
+            {dispensableInventoryItems.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.name} · Stock : {item.quantity} {item.unit}
+              </option>
+            ))}
+          </select>
+          <p className="prescription-empty">Le stock ne sera pas modifié à la prescription. La quantité réelle sera saisie au moment de la délivrance.</p>
+        </div>
+
         <button className="prescription-add" onClick={addMedication}>
           + Ajouter ce médicament
         </button>
@@ -301,6 +381,23 @@ export default function Prescriptions() {
                     {item.duration || 'Durée non précisée'}
                   </p>
                   {item.instructions && <p>{item.instructions}</p>}
+                  {item.inventoryItemId && (() => {
+                    const stockItem = inventory.items.find((stock) => stock.id === item.inventoryItemId);
+                    return (
+                      <div className="prescription-field prescription-dispensed-quantity">
+                        <label>Quantité réellement délivrée {stockItem ? `(${stockItem.unit})` : ''}</label>
+                        <input
+                          type="number"
+                          min="0"
+                          step="any"
+                          value={item.dispensedQuantity ?? ''}
+                          onChange={(e) => updateDispensedQuantity(item.id, e.target.value)}
+                          placeholder="À saisir au moment de la délivrance"
+                        />
+                        <p className="prescription-empty">Article lié : {stockItem?.name || 'Article introuvable'} · Stock actuel : {stockItem ? `${stockItem.quantity} ${stockItem.unit}` : 'indisponible'}</p>
+                      </div>
+                    );
+                  })()}
                 </div>
                 <button
                   className="prescription-remove"
@@ -331,9 +428,19 @@ export default function Prescriptions() {
           Prévisualiser l'ordonnance
         </button>
 
-        <button className="prescription-primary" onClick={savePrescription} disabled={patients.length === 0}>
+        <button className="prescription-primary" onClick={savePrescription} disabled={patients.length === 0 || prescriptions.some((item) => item.id === editingId && item.status === 'dispensed')}>
           {editingId ? 'Enregistrer les modifications' : "Enregistrer l'ordonnance"}
         </button>
+
+        {editingId && prescriptions.some((item) => item.id === editingId) && (
+          <button
+            className="prescription-primary"
+            onClick={dispenseSavedPrescription}
+            disabled={prescriptions.some((item) => item.id === editingId && item.status === 'dispensed')}
+          >
+            {prescriptions.some((item) => item.id === editingId && item.status === 'dispensed') ? 'Délivrance déjà enregistrée' : 'Enregistrer la délivrance et déduire le stock'}
+          </button>
+        )}
 
         {editingId && (
           <button className="prescription-secondary" onClick={resetForm}>
@@ -410,6 +517,9 @@ export default function Prescriptions() {
                 </span>
                 <span>
                   {item.medications.length} médicament(s)
+                </span>
+                <span>
+                  Statut : {item.status === 'dispensed' ? 'Délivrée' : item.status === 'cancelled' ? 'Annulée' : 'Brouillon / non délivrée'}
                 </span>
 
                 <div className="history-actions">
