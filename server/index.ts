@@ -162,6 +162,16 @@ app.post('/api/clinical/analyze', async (req, res) => {
       return res.status(413).json({ error: 'Le contexte clinique est trop volumineux.' });
     }
 
+    // Entretien ORL : réponse stable sans appel supplémentaire au fournisseur IA.
+    // Ne s'applique qu'à une demande explicite ou à sa continuation, et jamais
+    // lorsqu'un signe de danger positif est signalé (laisser l'IA orienter).
+    const interviewRequested = [message, ...history.filter(item => item.role === 'user').map(item => item.content)]
+      .some(value => /\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\b/.test(normalizeClinicalText(value)));
+    if (clinicalInterview && interviewRequested) {
+      const facts = documentedInterviewFacts(history, message, contextText);
+      const nextQuestion = prioritizedSoreThroatQuestion(facts);
+      if (nextQuestion) return res.json({ reply: nextQuestion });
+    }
     const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
@@ -536,20 +546,26 @@ function documentedInterviewFacts(history: Array<{ role: string; content: string
 function clinicalInterviewState(facts: string) {
   const soreThroat = /\b(odynophag\w*|pharyngalg\w*|mal de gorge|douleur a la gorge)\b/.test(facts);
   const fever = /\b(fievre|temperature|39 c|39 degre)\b/.test(facts);
-  const swallowPain = /\b(odynophag\w*|douleur.*(deglut|aval)|mal.*aval)\b/.test(facts);
-  const breathing = /\b(difficulte respiratoire|dyspne\w*|essoufflement|etouffement|respiration normale)\b/.test(facts);
-  const saliva = /\b(salive|bav\w*|secretions)\b/.test(facts);
-  const trismus = /\b(trismus|ouvr(?:ir|e|es|ons|ez|ent|ait|ais|aient|ant|ert|erte|erts|ertes)\b[^.!?]{0,100}\bbouche|ouverture (?:de la bouche|buccale)|bouche[^.!?]{0,80}\b(?:ouvre|ouvrir|ouverture))\b/.test(facts);
-  const voice = /\b(voix etouffee|voix modifiee|voix changee)\b/.test(facts);
-  const unilateral = /\b(unilateral\w*|un seul cote|cote droit|cote gauche|asymetri\w*)\b/.test(facts);
+  const swallowPain = /\b(odynophag\w*|douleur.{0,40}(deglut|aval)|mal.{0,30}aval)\b/.test(facts);
+  // Une donnée est documentée uniquement si son énoncé comporte une réponse
+  // clinique explicite. La simple mention du mot dans une question ne suffit pas.
+  const breathing = /\b(aucune|pas de|sans|absence de) (difficulte respiratoire|dyspne\w*|essoufflement|etouffement)\b|\b(respiration normale|respire normalement|difficulte a respirer|ne peut pas respirer)\b/.test(facts);
+  const saliva = /\b(aval\w*|deglut\w*) (?:.{0,35} )?salive\b|\bsalive (?:normalement|sans difficulte|impossible|difficile|coule|n est pas avalee)\b|\b(bave|bavage|hypersialorrhee)\b/.test(facts);
+  const trismus = /\btrismus\b|\b(ouvre|ouvrir|ouverture|ouvrirait|ouvrant|n ouvre|ne peut pas ouvrir|difficulte a ouvrir)\b.{0,65}\bbouche\b|\bbouche\b.{0,50}\b(ouvre|ouvrir|ouverture)\b/.test(facts);
+  const voice = /\b(voix etouffee|voix modifiee|voix changee|voix normale|voix inhabituelle|parle normalement|voix rauque)\b/.test(facts);
+  const unilateral = /\b(unilateral\w*|un seul cote|cote droit|cote gauche|asymetri\w*|des deux cotes|bilateral\w*)\b/.test(facts);
   return { soreThroat, fever, swallowPain, breathing, saliva, trismus, voice, unilateral };
 }
 
-// Filet de sécurité ciblé pour le scénario ORL documenté : question unique,
-// sans inférer de résultat et sans reposer la question sur l'odynophagie.
+// Les questions de l'assistant ne constituent pas des faits cliniques.
+// On ne force jamais une réponse si le patient signale un danger actuel.
+function reportedSoreThroatDanger(facts: string): boolean {
+  return /\b(impossible d avaler (?:la )?salive|ne peux pas avaler (?:ma |la )?salive|n arrive pas a avaler (?:ma |la )?salive|bave en permanence|difficulte respiratoire importante|ne peux pas respirer|etouffe|stridor)\b/.test(facts);
+}
+
 function prioritizedSoreThroatQuestion(facts: string): string | null {
   const s = clinicalInterviewState(facts);
-  if (!s.soreThroat || !s.fever) return null;
+  if (!s.soreThroat || !s.fever || reportedSoreThroatDanger(facts)) return null;
   if (!s.breathing) return 'Avez-vous actuellement des difficultés à respirer ?';
   if (!s.saliva) return 'Parvenez-vous à avaler votre salive normalement ?';
   if (!s.trismus) return 'Avez-vous des difficultés à ouvrir complètement la bouche ?';
@@ -601,7 +617,7 @@ app.post('/api/chat', async (req, res) => {
 
     const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(req.body?.history)
       ? req.body.history.filter((item: any) => item && (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string')
-          .slice(-12).map((item: any) => ({ role: item.role, content: item.content.slice(0, 5000) }))
+          .slice(-40).map((item: any) => ({ role: item.role, content: item.content.slice(0, 5000) }))
       : [];
     const clinicalInterview = /\b(interrogatoire|question|patient|sympt[oô]me|odynophagie|dysphagie|fi[eè]vre|douleur|consultation)\b/i.test(
       [message, ...history.filter(item => item.role === 'user').map(item => item.content)].join(' ')
