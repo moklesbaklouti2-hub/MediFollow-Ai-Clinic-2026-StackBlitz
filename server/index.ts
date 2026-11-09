@@ -146,8 +146,44 @@ app.post('/api/clinical/analyze', async (req, res) => {
     console.error('Erreur analyse clinique détaillée:', error);
 
     if (statusCode === 429) {
+      const errorHeaders = isPlainObject(error) ? error.headers : undefined;
+      const readHeader = (name: string): string | undefined => {
+        if (errorHeaders && typeof (errorHeaders as any).get === 'function') {
+          const value = (errorHeaders as any).get(name);
+          if (typeof value === 'string') return value;
+        }
+        if (isPlainObject(errorHeaders)) {
+          const value = errorHeaders[name] ?? errorHeaders[name.toLowerCase()];
+          if (typeof value === 'string') return value;
+        }
+        return undefined;
+      };
+      let retryAfterSeconds: number | null = null;
+      const retryAfter = readHeader('retry-after');
+      if (retryAfter) {
+        const seconds = Number(retryAfter);
+        if (Number.isFinite(seconds) && seconds > 0) retryAfterSeconds = Math.ceil(seconds);
+        else {
+          const date = Date.parse(retryAfter);
+          if (Number.isFinite(date)) retryAfterSeconds = Math.max(1, Math.ceil((date - Date.now()) / 1000));
+        }
+      }
+      if (retryAfterSeconds === null) {
+        const reset = readHeader('x-ratelimit-reset-tokens');
+        if (reset) {
+          const parts = [...reset.matchAll(/(\\d+(?:\\.\\d+)?)(ms|s|m|h)/gi)];
+          const multipliers: Record<string, number> = { ms: 0.001, s: 1, m: 60, h: 3600 };
+          const total = parts.reduce((sum, part) => sum + Number(part[1]) * multipliers[part[2].toLowerCase()], 0);
+          if (total > 0) retryAfterSeconds = Math.ceil(total);
+        }
+      }
+      if (retryAfterSeconds === null) {
+        const minutes = detail.match(/(?:in|after)\\s+(\\d+)\\s+minutes?/i);
+        if (minutes) retryAfterSeconds = Number(minutes[1]) * 60;
+      }
       return res.status(429).json({
-        error: 'Quota Groq temporairement atteint. Attendez son renouvellement, puis modifiez une donnée clinique pour relancer l’analyse. Aucune donnée de consultation n’a été supprimée.',
+        error: 'Quota Groq temporairement atteint. Attendez le renouvellement, puis modifiez une donnée clinique pour relancer l’analyse. Aucune donnée de consultation n’a été supprimée.',
+        retryAfterSeconds,
       });
     }
 
