@@ -9,7 +9,9 @@
     "preview": "vite preview --host 0.0.0.0",
     "dev:full": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 0.0.0.0\"",
     "test:ai-providers": "tsx server/ai/test-providers.ts",
-    "test:ai-resilience": "tsx server/ai/test-resilience.ts"
+    "test:ai-resilience": "tsx server/ai/test-resilience.ts",
+    "test:clinical-regression": "tsx server/ai/test-clinical-regression.ts",
+    "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
