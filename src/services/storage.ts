@@ -251,6 +251,11 @@ export function getPrescriptions(): Prescription[] {
           frequency: String(medication.frequency ?? ''),
           duration: String(medication.duration ?? ''),
           instructions: String(medication.instructions ?? ''),
+          inventoryItemId: medication.inventoryItemId ? String(medication.inventoryItemId) : undefined,
+          dispensedQuantity:
+            medication.dispensedQuantity === undefined || medication.dispensedQuantity === null
+              ? undefined
+              : Number(medication.dispensedQuantity),
         }))
       : [];
 
