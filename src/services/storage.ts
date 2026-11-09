@@ -322,6 +322,18 @@ export function dispenseInventoryItems(input: {
   items: Array<{ inventoryItemId: string; quantity: number }>;
 }): { success: boolean; error?: string } {
   const data = getInventoryData();
+
+  // Idempotence : empêcher une seconde déduction pour la même ordonnance.
+  // Le journal des mouvements reste la référence, même si l'interface est rechargée.
+  const existingDispense = data.movements.some(
+    (movement) =>
+      movement.type === 'dispense' &&
+      movement.prescriptionId === input.prescriptionId
+  );
+  if (existingDispense) {
+    return { success: true, alreadyDispensed: true };
+  }
+
   const requested = input.items.filter(
     (line) => line.inventoryItemId && Number.isFinite(line.quantity) && line.quantity > 0
   );
