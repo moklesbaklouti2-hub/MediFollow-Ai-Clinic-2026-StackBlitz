@@ -84,33 +84,33 @@ function isClinicalTopicAlreadyDocumented(item: string, documentedText: string):
 
   const rules: Array<{ question: RegExp; evidence: RegExp }> = [
     {
-      question: /\\b(mal de gorge|odynophag|gorge douloureuse|douleur a la deglutition|pharyngalg)\\w*/,
-      evidence: /\\b(odynophag|mal de gorge|douleur a la deglutition|gorge douloureuse)\\w*/,
+      question: /\b(mal de gorge|odynophag|gorge douloureuse|douleur a la deglutition|pharyngalg)\w*/,
+      evidence: /\b(odynophag|mal de gorge|douleur a la deglutition|gorge douloureuse)\w*/,
     },
     {
-      question: /\\b(ganglion|adenopath|aire cervicale)\\w*/,
-      evidence: /\\b(ganglion|adenopath)\\w*/,
+      question: /\b(ganglion|adenopath|aire cervicale)\w*/,
+      evidence: /\b(ganglion|adenopath)\w*/,
     },
     {
-      question: /\\b(amygdal|tonsill|pharyn|oropharyn|exsudat|plaque|examen de la gorge)\\w*/,
-      evidence: /\\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\\w*/,
+      question: /\b(amygdal|tonsill|pharyn|oropharyn|exsudat|plaque|examen de la gorge)\w*/,
+      evidence: /\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\w*/,
     },
-    { question: /\\b(toux|tuss)\\w*/, evidence: /\\b(toux|tuss)\\w*/ },
+    { question: /\b(toux|tuss)\w*/, evidence: /\b(toux|tuss)\w*/ },
     {
-      question: /\\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\\w*/,
-      evidence: /\\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\\w*/,
-    },
-    {
-      question: /\\b(fievre|temperature|febrile)\\w*/,
-      evidence: /\\b(fievre|temperature|febrile)\\w*/,
+      question: /\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\w*/,
+      evidence: /\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\w*/,
     },
     {
-      question: /\\b(respir|dyspne|essouff|stridor)\\w*/,
-      evidence: /\\b(difficulte respiratoire|dyspne|essouff|stridor|polypne|detresse respiratoire)\\w*/,
+      question: /\b(fievre|temperature|febrile)\w*/,
+      evidence: /\b(fievre|temperature|febrile)\w*/,
     },
     {
-      question: /\\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\\w*/,
-      evidence: /\\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\\w*/,
+      question: /\b(respir|dyspne|essouff|stridor)\w*/,
+      evidence: /\b(difficulte respiratoire|dyspne|essouff|stridor|polypne|detresse respiratoire)\w*/,
+    },
+    {
+      question: /\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\w*/,
+      evidence: /\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\w*/,
     },
   ];
 
@@ -125,8 +125,8 @@ function removeDocumentedQuestionParts(question: string, documentedText: string)
 
   // Les formulations ouvertes et vagues ne constituent pas une question clinique ciblée.
   const parts = question
-    .split(/([,;?!]|\\b(?:et|ou)\\b)/i)
-    .filter((part) => !/^(?:,|;|\\?|!|\\b(?:et|ou)\\b)$/i.test(part.trim()));
+    .split(/([,;?!]|\b(?:et|ou)\b)/i)
+    .filter((part) => !/^(?:,|;|\?|!|\b(?:et|ou)\b)$/i.test(part.trim()));
 
   const kept = parts
     .map((part) => part.trim())
@@ -136,10 +136,10 @@ function removeDocumentedQuestionParts(question: string, documentedText: string)
 
   return kept
     .join(', ')
-    .replace(/\\s+,/g, ',')
-    .replace(/,\\s*,/g, ', ')
-    .replace(/\\s{2,}/g, ' ')
-    .replace(/^[,;\\s]+|[,;\\s]+$/g, '')
+    .replace(/\s+,/g, ',')
+    .replace(/,\s*,/g, ', ')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/^[,;\s]+|[,;\s]+$/g, '')
     .trim();
 }
 
