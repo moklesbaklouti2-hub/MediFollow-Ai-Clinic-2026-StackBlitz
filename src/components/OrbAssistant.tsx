@@ -188,7 +188,11 @@ const [isListening, setIsListening] = useState(false);
         setInterimTranscript('');
         setIsListening(false);
         if (mode === 'command' && commandListeningEnabledRef.current) {
-          if (dictatedText) {
+          const normalizedVoiceCommand = dictatedText.toLocaleLowerCase('fr').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim();
+          if (/^(stop|arrete|arret|stop ecoute|arrete ecoute|arret ecoute)$/.test(normalizedVoiceCommand)) {
+            commandListeningEnabledRef.current = false;
+            setSpeechMessage('Écoute vocale arrêtée.');
+          } else if (dictatedText) {
             void sendMessage(dictatedText).finally(() => {
               if (commandListeningEnabledRef.current) {
                 window.setTimeout(() => {
@@ -258,7 +262,8 @@ const [isListening, setIsListening] = useState(false);
         ];
         const quickMatch = quickRoutes.find(route =>
           route.patterns.some(pattern => pattern.test(normalized)) &&
-          /\\b(ouvre|ouvrir|affiche|afficher|va|aller|retourne|accede|acceder|montre|montre moi)\\b/.test(normalized)
+          /\\b(ouvre|ouvrir|affiche|afficher|va|aller|retourne|accede|acceder|montre|montre moi)\\b/.test(normalized) &&
+          !/\\b(choisis|choisir|selectionne|selectionner|ecris|ecrire|remplis|remplir|ajoute|ajouter|enregistre|enregistrer|cree|creer|modifie|modifier|prescris|prescrire)\\b/.test(normalized)
         );
         if (quickMatch) {
           onNavigate(quickMatch.page);
