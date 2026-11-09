@@ -55,6 +55,7 @@ function normalizeSpeechCandidate(value: string): string {
 // Elles restent soumises à la confirmation du médecin : aucune substitution automatique.
 const observedMedicalSpeechCorrections: Record<string, string> = {
   exuda: 'exsudat',
+  exudar: 'exsudat',
   exodat: 'exsudat',
   disney: 'dyspnée',
   audiophagie: 'odynophagie',
