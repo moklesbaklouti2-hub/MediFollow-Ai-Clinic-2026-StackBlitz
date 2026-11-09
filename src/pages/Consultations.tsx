@@ -197,11 +197,14 @@ export default function Consultations({
           continue;
         }
         const exact = patients.filter((patient) => normalize(patient.name) === requested);
+        const requestedWords = requested.split(' ').filter((word) => word.length > 1);
         const candidates = exact.length > 0
           ? exact
           : patients.filter((patient) => {
               const name = normalize(patient.name);
-              return name.includes(requested) || requested.includes(name);
+              return name.includes(requested) ||
+                requested.includes(name) ||
+                (requestedWords.length > 0 && requestedWords.every((word) => name.includes(word)));
             });
 
         if (candidates.length === 1) {
