@@ -1,5 +1,4 @@
-import { completeWithGroq } from './providers/groq.ts';
-import { isGroqConfigured } from './providers/groq.ts';
+import { completeWithGroq, isGroqConfigured } from './providers/groq.ts';
 
 export type AiTask = 'commands' | 'clinical' | 'chat';
 export type AiProviderId = 'groq';
