@@ -187,8 +187,12 @@ export default function Consultations({
   }
 
   function recordCopilotAnswer(question: string, answer: string) {
-    const entry = `• ${question.trim()}\n  Réponse : ${answer.trim()}`;
-    setTargetedInterview((previous) => previous.trim() ? `${previous.trim()}\n\n${entry}` : entry);
+    const cleanQuestion = question.trim();
+    const entry = `• ${cleanQuestion}\n  Réponse : ${answer.trim()}`;
+    setTargetedInterview((previous) => {
+      const remaining = previous.split(/\n\n/).filter((block) => !block.startsWith(`• ${cleanQuestion}`));
+      return [...remaining, entry].filter(Boolean).join('\n\n');
+    });
     setSaved(false);
   }
 
