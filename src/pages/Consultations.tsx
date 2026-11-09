@@ -541,71 +541,6 @@ export default function Consultations({
         }
       `}</style>
 
-      {differentialPopupOpen && motif.trim().length >= 3 && (
-        <div
-          role="presentation"
-          onClick={() => setDifferentialPopupOpen(false)}
-          style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 12, background: 'rgba(5,15,28,.68)' }}
-        >
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="differential-title"
-            onClick={(event) => event.stopPropagation()}
-            style={{ width: 'min(520px, calc(100vw - 24px))', maxHeight: 'min(78dvh, 720px)', overflowY: 'auto', padding: 18, borderRadius: 16, border: '1px solid var(--color-border,#dce4e8)', background: 'var(--color-surface,#fff)', color: 'var(--color-text,#243641)', boxShadow: '0 20px 70px rgba(0,0,0,.35)' }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
-              <div>
-                <h3 id="differential-title" style={{ margin: 0, fontSize: 18, color: 'var(--color-text,#243641)' }}>Diagnostics différentiels</h3>
-                <p style={{ margin: '5px 0 0', color: 'var(--color-text-secondary,#73838a)', fontSize: 12 }}>Motif : {motif}</p>
-              </div>
-              <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer" style={{ border: 0, background: 'transparent', color: 'inherit', fontSize: 25, lineHeight: 1, cursor: 'pointer' }}>×</button>
-            </div>
-            <div style={{ marginTop: 16 }}>
-              {!selectedPatient ? (
-                <p style={{ fontSize: 13 }}>Sélectionnez d’abord le patient pour lancer l’analyse du motif et afficher les diagnostics différentiels.</p>
-              ) : clinicalReasoning.status === 'analyzing' || clinicalReasoning.status === 'idle' ? (
-                <p style={{ fontSize: 13 }}>Analyse du contexte clinique en cours… Les estimations seront actualisées avec les nouvelles données.</p>
-              ) : clinicalReasoning.status === 'error' ? (
-                <p role="status" style={{ color: '#b45309', fontSize: 13 }}>{clinicalReasoning.error || 'Analyse momentanément indisponible.'}</p>
-              ) : clinicalReasoning.analysis?.hypotheses?.length ? (
-                <div style={{ display: 'grid', gap: 14 }}>
-                  {clinicalReasoning.analysis.hypotheses.map((item, index) => (
-                    <article key={item.label} style={{ display: 'grid', gap: 5 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
-                        <strong style={{ fontSize: 13, color: 'var(--color-text,#243641)' }}>{index + 1}. {item.label}</strong>
-                        <strong style={{ fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>{item.percentage}%</strong>
-                      </div>
-                      <div style={{ height: 8, borderRadius: 10, background: 'var(--border,#e5ebef)', overflow: 'hidden' }}>
-                        <div style={{ height: '100%', width: `${item.percentage}%`, borderRadius: 10, background: '#38bfa6', transition: 'width .25s ease' }} />
-                      </div>
-                      <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--color-text-secondary,#73838a)' }}>{item.reason}</p>
-                    </article>
-                  ))}
-                  {clinicalReasoning.analysis.recommendedActions.length > 0 && (
-                    <div style={{ borderTop: '1px solid var(--border,#e5ebef)', paddingTop: 12 }}>
-                      <strong style={{ fontSize: 12 }}>Actions utiles maintenant</strong>
-                      <ul style={{ margin: '7px 0 0', paddingLeft: 19, fontSize: 12, lineHeight: 1.55 }}>
-                        {clinicalReasoning.analysis.recommendedActions.map((action, index) => <li key={index}>{action}</li>)}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <p style={{ fontSize: 13 }}>Le moteur n'a pas encore identifié de diagnostic différentiel exploitable. Complétez les premières données cliniques.</p>
-              )}
-            </div>
-            <p style={{ margin: '15px 0 0', paddingTop: 10, borderTop: '1px solid var(--border,#e5ebef)', fontSize: 10, lineHeight: 1.45, color: 'var(--text-secondary,#81909c)' }}>
-              Pourcentages = pondération indicative relative générée par l’IA, non probabilités validées ni score clinique. À interpréter avec le jugement médical.
-            </p>
-            {clinicalReasoning.analysis?.evolutionNote && (
-              <p style={{ margin: '8px 0 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>Évolution : {clinicalReasoning.analysis.evolutionNote}</p>
-            )}
-            <button type="button" onClick={() => setDifferentialPopupOpen(false)} style={{ marginTop: 14, width: '100%', border: 0, borderRadius: 9, padding: 11, background: '#42d5b4', color: '#12332f', fontWeight: 700, cursor: 'pointer' }}>Continuer la consultation</button>
-          </section>
-        </div>
-      )}
-
       <header className="consultation-header">
         <div>
           <h2>{editingId ? 'Modifier la consultation' : 'Nouvelle consultation'}</h2>
@@ -789,13 +724,66 @@ export default function Consultations({
               placeholder="Motif principal"
             />
             {motif.trim().length >= 3 && (
-              <button
-                type="button"
-                onClick={() => setDifferentialPopupOpen(true)}
-                style={{ justifySelf: 'start', border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '7px 10px', background: 'var(--color-surface-secondary,#edf2f3)', color: 'var(--color-text,#243641)', borderColor: 'var(--color-border,#e2e9eb)', fontSize: 11, fontWeight: 700 }}
-              >
-                Voir les diagnostics différentiels
-              </button>
+              <>
+                <button
+                  type="button"
+                  aria-expanded={differentialPopupOpen}
+                  onClick={() => setDifferentialPopupOpen((open) => !open)}
+                  style={{ justifySelf: 'start', border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 11px', background: 'var(--color-surface-secondary,#263b49)', color: 'var(--color-text,#f2f7fa)', borderColor: 'var(--color-border,#526675)', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+                >
+                  {differentialPopupOpen ? 'Masquer les diagnostics différentiels' : 'Voir les diagnostics différentiels'}
+                </button>
+                {differentialPopupOpen && (
+                  <section
+                    aria-label="Diagnostics différentiels"
+                    style={{ marginTop: 10, width: '100%', boxSizing: 'border-box', padding: 14, borderRadius: 12, border: '1px solid var(--color-border,#526675)', background: 'var(--color-surface,#172b3a)', color: 'var(--color-text,#f2f7fa)', display: 'grid', gap: 12 }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                      <div>
+                        <strong style={{ fontSize: 14 }}>Diagnostics différentiels</strong>
+                        <p style={{ margin: '4px 0 0', fontSize: 11, color: 'var(--color-text-secondary,#bdcbd5)' }}>Motif : {motif}</p>
+                      </div>
+                      <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer les diagnostics différentiels" style={{ flex: '0 0 auto', border: '1px solid var(--color-border,#526675)', borderRadius: 8, padding: '5px 9px', background: 'transparent', color: 'inherit', fontSize: 18, lineHeight: 1, cursor: 'pointer' }}>×</button>
+                    </div>
+                    {!selectedPatient ? (
+                      <p style={{ margin: 0, fontSize: 12 }}>Sélectionnez un patient pour lancer l’analyse clinique.</p>
+                    ) : clinicalReasoning.status === 'analyzing' || clinicalReasoning.status === 'idle' ? (
+                      <p style={{ margin: 0, fontSize: 12 }}>Analyse du contexte clinique en cours…</p>
+                    ) : clinicalReasoning.status === 'error' ? (
+                      <p role="status" style={{ margin: 0, color: '#f4b66b', fontSize: 12 }}>{clinicalReasoning.error || 'Analyse momentanément indisponible.'}</p>
+                    ) : clinicalReasoning.analysis?.hypotheses?.length ? (
+                      <div style={{ display: 'grid', gap: 13 }}>
+                        {clinicalReasoning.analysis.hypotheses.map((item, index) => (
+                          <article key={item.label} style={{ display: 'grid', gap: 5 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+                              <strong style={{ fontSize: 13, color: 'var(--color-text,#f2f7fa)' }}>{index + 1}. {item.label}</strong>
+                              <strong style={{ fontSize: 14, fontVariantNumeric: 'tabular-nums' }}>{item.percentage}%</strong>
+                            </div>
+                            <div style={{ height: 7, borderRadius: 10, background: 'var(--color-border,#526675)', overflow: 'hidden' }}>
+                              <div style={{ height: '100%', width: `${item.percentage}%`, borderRadius: 10, background: '#38bfa6', transition: 'width .25s ease' }} />
+                            </div>
+                            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.45, color: 'var(--color-text-secondary,#bdcbd5)' }}>{item.reason}</p>
+                          </article>
+                        ))}
+                        {clinicalReasoning.analysis.recommendedActions.length > 0 && (
+                          <div style={{ borderTop: '1px solid var(--color-border,#526675)', paddingTop: 10 }}>
+                            <strong style={{ fontSize: 12 }}>Actions utiles maintenant</strong>
+                            <ul style={{ margin: '6px 0 0', paddingLeft: 19, fontSize: 12, lineHeight: 1.55 }}>
+                              {clinicalReasoning.analysis.recommendedActions.map((action, index) => <li key={index}>{action}</li>)}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p style={{ margin: 0, fontSize: 12 }}>Complétez les premières données cliniques pour afficher les hypothèses pertinentes.</p>
+                    )}
+                    <p style={{ margin: 0, paddingTop: 8, borderTop: '1px solid var(--color-border,#526675)', fontSize: 10, lineHeight: 1.45, color: 'var(--color-text-secondary,#bdcbd5)' }}>
+                      Pourcentages indicatifs générés par l’IA : ils ne constituent ni des probabilités validées ni un score clinique.
+                    </p>
+                    {clinicalReasoning.analysis?.evolutionNote && <p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-secondary,#bdcbd5)' }}>Évolution : {clinicalReasoning.analysis.evolutionNote}</p>}
+                  </section>
+                )}
+              </>
             )}
           </div>
         </div>
