@@ -171,6 +171,10 @@ export type Medication = {
   frequency: string;
   duration: string;
   instructions: string;
+  // Liaison facultative avec le stock du cabinet.
+  inventoryItemId?: string;
+  // Quantité réellement remise au patient, distincte de la prescription.
+  dispensedQuantity?: number;
 };
 
 // ---------- ORDONNANCE ET EXAMENS ----------
