@@ -170,14 +170,6 @@ app.post('/api/clinical/analyze', async (req, res) => {
       const nextQuestion = prioritizedSoreThroatQuestion(facts);
       if (nextQuestion) return res.json({ reply: nextQuestion });
     }
-    // Mémoire de consultation structurée : seulement les déclarations de l'utilisateur,
-    // sans convertir les questions de l'assistant en observations.
-    const clinicalMemory = buildClinicalMemory(history, message);
-    const memoryContext = clinicalInterview
-      ? '\n\nMémoire clinique (extraction heuristique, à confirmer en cas de contradiction) :\n' +
-        JSON.stringify(clinicalMemory) +
-        '\nLes données inconnues restent inconnues. Ne repose pas une question dont le fait est confirmé. Si un fait est contradictoire, demande une clarification.'
-      : '';
     const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
@@ -667,6 +659,14 @@ app.post('/api/chat', async (req, res) => {
     const clinicalInterview = /\b(interrogatoire|question|patient|sympt[oô]me|odynophagie|dysphagie|fi[eè]vre|douleur|consultation)\b/i.test(
       [message, ...history.filter(item => item.role === 'user').map(item => item.content)].join(' ')
     );
+    // Mémoire de consultation structurée : seulement les déclarations de l'utilisateur,
+    // sans convertir les questions de l'assistant en observations.
+    const clinicalMemory = buildClinicalMemory(history, message);
+    const memoryContext = clinicalInterview
+      ? '\n\nMémoire clinique (extraction heuristique, à confirmer en cas de contradiction) :\n' +
+        JSON.stringify(clinicalMemory) +
+        '\nLes données inconnues restent inconnues. Ne repose pas une question dont le fait est confirmé. Si un fait est contradictoire, demande une clarification.'
+      : '';
     const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
