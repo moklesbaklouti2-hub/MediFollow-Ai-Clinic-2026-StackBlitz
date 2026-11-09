@@ -50,6 +50,18 @@ const medicalSpeechTerms = [
   'streptocoque', 'amoxicilline', 'paracétamol', 'ibuprofène',
   'antécédents', 'anamnèse', 'palpation', 'percussion', 'conjonctivite',
   'hypoxémie', 'saturation', 'glycémie', 'hémoglobine', 'leucocytes',
+  'érythème', 'œdème', 'purpura', 'pétéchies', 'ecchymose', 'cyanose',
+  'pâleur', 'ictère', 'déshydratation', 'polypnée', 'orthopnée',
+  'apnée', 'bradypnée', 'hyperthermie', 'hypothermie', 'frissons',
+  'odynodysphagie', 'dysphonie', 'dysarthrie', 'aphasie', 'paresthésie',
+  'hémiparésie', 'convulsions', 'céphalées', 'raideur méningée',
+  'hépatomégalie', 'splénomégalie', 'œdèmes des membres inférieurs',
+  'souffle cardiaque', 'galop', 'murmure vésiculaire', 'matité',
+  'tympanisme', 'reflux hépato-jugulaire', 'pouls périphériques',
+  'temps de recoloration cutanée', 'conscience', 'orientation',
+  'abdomen', 'défense', 'contracture', 'météorisme', 'diarrhée',
+  'constipation', 'hématurie', 'dysurie', 'pollakiurie', 'protéinurie',
+  'leucocyturie', 'grossesse', 'allaitement', 'posologie', 'contre-indication',
 ];
 
 function normalizeSpeechCandidate(value: string): string {
@@ -60,7 +72,9 @@ function normalizeSpeechCandidate(value: string): string {
 // Elles restent soumises à la confirmation du médecin : aucune substitution automatique.
 const observedMedicalSpeechCorrections: Record<string, string> = {
   exuda: 'exsudat',
+  exodat: 'exsudat',
   disney: 'dyspnée',
+  inaudipnee: 'dyspnée',
   athenopathie: 'adénopathie',
 };
 
