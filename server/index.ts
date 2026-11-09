@@ -147,7 +147,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
 
     if (statusCode === 429) {
       return res.status(429).json({
-        error: 'Quota Groq temporairement atteint. Le raisonnement clinique reprendra lorsque le quota sera renouvelé. Aucune donnée de consultation n’a été supprimée.',
+        error: 'Quota Groq temporairement atteint. Attendez son renouvellement, puis modifiez une donnée clinique pour relancer l’analyse. Aucune donnée de consultation n’a été supprimée.',
       });
     }
 
