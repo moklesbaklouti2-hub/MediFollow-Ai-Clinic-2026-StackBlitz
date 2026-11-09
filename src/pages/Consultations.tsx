@@ -562,7 +562,9 @@ export default function Consultations({
               <button type="button" onClick={() => setDifferentialPopupOpen(false)} aria-label="Fermer" style={{ border: 0, background: 'transparent', color: 'inherit', fontSize: 25, lineHeight: 1, cursor: 'pointer' }}>×</button>
             </div>
             <div style={{ marginTop: 16 }}>
-              {clinicalReasoning.status === 'analyzing' || clinicalReasoning.status === 'idle' ? (
+              {!selectedPatient ? (
+                <p style={{ fontSize: 13 }}>Sélectionnez d’abord le patient pour lancer l’analyse du motif et afficher les diagnostics différentiels.</p>
+              ) : clinicalReasoning.status === 'analyzing' || clinicalReasoning.status === 'idle' ? (
                 <p style={{ fontSize: 13 }}>Analyse du contexte clinique en cours… Les estimations seront actualisées avec les nouvelles données.</p>
               ) : clinicalReasoning.status === 'error' ? (
                 <p role="status" style={{ color: '#b45309', fontSize: 13 }}>{clinicalReasoning.error || 'Analyse momentanément indisponible.'}</p>
