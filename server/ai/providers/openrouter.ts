@@ -75,5 +75,36 @@ export async function completeWithOpenRouter(request: any): Promise<any> {
     throw makeProviderError('Réponse OpenRouter incompatible avec le format Chat Completions.', 502, response.headers);
   }
 
+  // Certains modèles OpenRouter renvoient un contenu structuré (objet ou
+  // tableau de blocs) au lieu d'une chaîne. Normalise vers le format attendu
+  // par MediFollow et par les autres adaptateurs OpenAI-compatibles.
+  for (const choice of payload.choices) {
+    const message = choice?.message;
+    if (!message || message.content == null) continue;
+
+    if (typeof message.content === 'string') continue;
+
+    if (Array.isArray(message.content)) {
+      message.content = message.content
+        .map((part: any) => {
+          if (typeof part === 'string') return part;
+          if (typeof part?.text === 'string') return part.text;
+          return '';
+        })
+        .filter(Boolean)
+        .join('');
+      continue;
+    }
+
+    if (typeof message.content === 'object') {
+      message.content = typeof message.content.text === 'string'
+        ? message.content.text
+        : JSON.stringify(message.content);
+      continue;
+    }
+
+    message.content = String(message.content);
+  }
+
   return payload;
 }
