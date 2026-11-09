@@ -139,8 +139,11 @@ app.post('/api/clinical/analyze', async (req, res) => {
       },
     });
   } catch (error) {
-    console.error('Erreur analyse clinique:', error);
-    return res.status(500).json({ error: 'Erreur interne pendant le raisonnement clinique.' });
+    const detail = error instanceof Error ? error.message : String(error);
+    console.error('Erreur analyse clinique détaillée:', error);
+    return res.status(500).json({
+      error: `Erreur du moteur clinique : ${detail.slice(0, 500)}`,
+    });
   }
 });
 
