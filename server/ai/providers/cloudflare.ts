@@ -67,7 +67,7 @@ export async function completeWithCloudflare(request: any): Promise<any> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(45000),
+      signal: AbortSignal.timeout(12000),
     });
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : 'Erreur réseau Cloudflare.';
