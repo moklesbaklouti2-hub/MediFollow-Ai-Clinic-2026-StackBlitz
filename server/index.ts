@@ -131,8 +131,14 @@ function removeDocumentedQuestionParts(question: string, documentedText: string)
   const kept = parts
     .map((part) => part.trim())
     .filter(Boolean)
-    .filter((part) => !/^(?:le patient presente t il|presente t il|d autres symptomes|autres symptomes|tout)$/i.test(normalizeClinicalText(part)))
-    .filter((part) => !isClinicalTopicAlreadyDocumented(part, documentedText));
+    .filter((part) => !/(?:autres symptomes|presente t il)/i.test(normalizeClinicalText(part)))
+    .filter((part) => !isClinicalTopicAlreadyDocumented(part, documentedText))
+    .map((part) => {
+      const normalizedPart = normalizeClinicalText(part);
+      if (normalizedPart === 'respirer') return 'difficulté à respirer';
+      if (normalizedPart === 'avaler') return 'difficulté à avaler';
+      return part;
+    });
 
   return kept
     .join(', ')
