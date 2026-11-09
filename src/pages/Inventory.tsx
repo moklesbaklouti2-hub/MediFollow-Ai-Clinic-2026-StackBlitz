@@ -21,6 +21,14 @@ export default function Inventory() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [message, setMessage] = useState('');
+  const today = new Date();
+  const todayUtc = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const expiryDays = (date?: string) => {
+    if (!date) return null;
+    const [year, month, day] = date.split('-').map(Number);
+    if (!year || !month || !day) return null;
+    return Math.ceil((Date.UTC(year, month - 1, day) - todayUtc) / 86400000);
+  };
 
   useEffect(() => subscribeToMedicalData(() => setData(getInventoryData())), []);
 
@@ -187,10 +195,22 @@ export default function Inventory() {
     persist(next);
   }
 
-  const visibleItems = data.items.filter((item) =>
-    filter === 'all' || item.category === filter
-  );
   const lowStock = data.items.filter((item) => item.quantity <= item.minimumQuantity).length;
+  const expiredCount = data.items.filter(item => {
+    const days = expiryDays(item.expiryDate);
+    return days !== null && days < 0;
+  }).length;
+  const expiringCount = data.items.filter(item => {
+    const days = expiryDays(item.expiryDate);
+    return days !== null && days >= 0 && days <= 90;
+  }).length;
+  const visibleItems = data.items.filter((item) => {
+    const days = expiryDays(item.expiryDate);
+    if (filter === 'low') return item.quantity <= item.minimumQuantity;
+    if (filter === 'expired') return days !== null && days < 0;
+    if (filter === 'expiring') return days !== null && days >= 0 && days <= 90;
+    return filter === 'all' || item.category === filter;
+  });
   const categoryLabel = (category: InventoryCategory) => ({
     supply: 'Consommable',
     equipment: 'Équipement',
@@ -218,6 +238,10 @@ export default function Inventory() {
         .inventory-page .inventory-panel > p{color:var(--color-text-secondary)}
         .inventory-page .inventory-history-meta{color:var(--color-text-secondary)}
         .inventory-page .inventory-stat-label{color:var(--color-text-secondary);font-size:13px}
+        .inventory-alert{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;margin:6px 5px 0 0}
+        .inventory-alert-expired{background:rgba(220,70,70,.14);color:#d94b4b}
+        .inventory-alert-soon{background:rgba(220,155,35,.16);color:#bd7c13}
+        .inventory-alert-low{background:rgba(220,155,35,.16);color:#bd7c13}
         .inventory-page .inventory-empty{color:var(--color-text-secondary);font-size:13px}
         .inventory-page .inventory-history-row{border-bottom:1px solid var(--color-border);padding:9px 0;font-size:13px}
         .inventory-page .inventory-filter-active{border-color:var(--color-mint-dark)!important;background:rgba(66,213,180,.12)}
@@ -232,6 +256,8 @@ export default function Inventory() {
       <div className="inventory-grid">
         <div className="inventory-panel"><span className="inventory-stat-label">Articles enregistrés</span><strong style={{ fontSize: 27 }}>{data.items.length}</strong></div>
         <div className="inventory-panel"><span className="inventory-stat-label">Stocks bas ou à réapprovisionner</span><strong style={{ fontSize: 27, color: lowStock ? '#c45c36' : 'inherit' }}>{lowStock}</strong></div>
+        <div className="inventory-panel"><span className="inventory-stat-label">Articles périmés</span><strong style={{ fontSize: 27, color: expiredCount ? '#d94b4b' : 'inherit' }}>{expiredCount}</strong></div>
+        <div className="inventory-panel"><span className="inventory-stat-label">Péremption dans les 90 jours</span><strong style={{ fontSize: 27, color: expiringCount ? '#bd7c13' : 'inherit' }}>{expiringCount}</strong></div>
       </div>
 
       <section className="inventory-panel">
@@ -256,7 +282,7 @@ export default function Inventory() {
         </form>}
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {[['all', 'Tous'], ['supply', 'Consommables'], ['equipment', 'Équipements'], ['treatment', 'Traitements']].map(([value, label]) =>
+          {[['all', 'Tous'], ['supply', 'Consommables'], ['equipment', 'Équipements'], ['treatment', 'Traitements'], ['low', 'Stocks bas'], ['expired', 'Périmés'], ['expiring', 'Péremption ≤ 90 j']].map(([value, label]) =>
             <button key={value} type="button" className={`inventory-secondary ${filter === value ? 'inventory-filter-active' : ''}`} onClick={() => setFilter(value)}>{label}</button>
           )}
         </div>
@@ -265,12 +291,15 @@ export default function Inventory() {
           {visibleItems.length === 0 && <p className="inventory-empty">Aucun article dans cette catégorie pour le moment.</p>}
           {visibleItems.map(item => {
             const isLow = item.quantity <= item.minimumQuantity;
+            const daysLeft = expiryDays(item.expiryDate);
             return <article className="inventory-item" key={item.id}>
               <div style={{ minWidth: 0 }}>
                 <strong>{item.name}</strong>
                 <p>{categoryLabel(item.category)} · {item.quantity} {item.unit} · Seuil : {item.minimumQuantity} {item.unit}</p>
                 <p>{item.batchNumber ? `Lot : ${item.batchNumber} · ` : ''}{item.expiryDate ? `Péremption : ${new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR')}` : 'Péremption non renseignée'}{item.location ? ` · ${item.location}` : ''}</p>
-                {isLow && <span className="inventory-low">Stock bas</span>}
+                {isLow && <span className="inventory-alert inventory-alert-low">Stock bas · réapprovisionnement</span>}
+                {daysLeft !== null && daysLeft < 0 && <span className="inventory-alert inventory-alert-expired">PÉRIMÉ depuis {Math.abs(daysLeft)} j · ne pas délivrer</span>}
+                {daysLeft !== null && daysLeft >= 0 && daysLeft <= 90 && <span className="inventory-alert inventory-alert-soon">Péremption dans {daysLeft} j</span>}
               </div>
               <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
                 <button className="inventory-secondary" type="button" onClick={() => receiveStock(item)}>+ Ajouter au stock</button>
@@ -295,7 +324,7 @@ export default function Inventory() {
         )}
       </section>
       {message && <p role="status" style={{ margin: 0, fontSize: 13 }}>{message}</p>}
-      <p className="inventory-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>Version initiale : les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
+      <p className="inventory-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>Les alertes de péremption sont calculées à partir de la date renseignée : périmé si la date est passée, bientôt périmé si elle arrive dans les 90 jours. En présence de lots différents, créez un article distinct par lot pour assurer le suivi. Les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
     </section>
   );
 }
