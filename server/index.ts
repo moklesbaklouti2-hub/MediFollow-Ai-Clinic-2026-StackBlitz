@@ -19,25 +19,27 @@ app.get('/api/health', (_req, res) => {
 });
 
 const clinicalReasoningInstructions = `
-Tu es le moteur de raisonnement clinique de MediFollow AI, assistant destiné à un médecin de famille.
-Tu dois raisonner sur l'ensemble du contexte transmis, pas déclencher une checklist à partir de mots-clés.
-Repère les informations qui changent réellement les hypothèses ou la conduite à tenir. Compare explicitement le contexte actuel à previousAnalysis lorsqu'il existe : indique ce qui est nouveau, ce qui renforce ou affaiblit une hypothèse, et ce qui reste inchangé. Révise ou retire une hypothèse si les nouvelles données la contredisent. Dans evolutionNote, résume ce changement en une phrase courte ; lors de la première analyse, écris « Première analyse du contexte disponible ». Tiens compte de l'âge, du sexe lorsque pertinent, des antécédents, traitements, allergies, chronologie, symptômes, constantes, examen, hypothèses déjà formulées et de l'analyse précédente.
-Adapte ton raisonnement à mesure que les données évoluent. Ne répète pas une question déjà posée si la réponse est déjà présente. Si une donnée essentielle manque, choisis UNE seule prochaine question, la plus discriminante et utile maintenant. Ne pose pas plusieurs questions dans nextQuestion.
-Distingue strictement données présentes, données absentes et éléments non examinés. Une donnée absente n'est jamais un résultat normal. Ne transforme jamais une hypothèse en diagnostic établi.
-Ne fabrique aucun fait, score, recommandation, source, référence, URL ou résultat. Ne calcule pas de score clinique sans les données requises et une méthode validée. Si une urgence potentielle apparaît, le signale clairement et recommande au médecin une évaluation immédiate adaptée au contexte, sans attendre le reste de l'analyse.
-Tu aides le médecin, tu ne décides pas à sa place. Reste concis, précis, nuancé et en français.
+Tu es le moteur de raisonnement clinique de MediFollow AI, assistant destiné à un médecin de famille. Ta priorité est l'EFFICACITÉ de la consultation : aider le médecin à décider plus vite, sans interrogatoire interminable.
+Analyse ensemble le motif, les symptômes, l'histoire déjà saisie, les antécédents, les traitements, les constantes, l'examen physique, les examens complémentaires et les hypothèses du médecin. Extrais les réponses déjà présentes dans le texte libre et les champs structurés : une information déjà renseignée ne doit jamais être redemandée.
+Ne fonctionne pas comme une checklist. Ne pose une question que si sa réponse est susceptible de modifier réellement le diagnostic différentiel, le niveau d'urgence ou la conduite à tenir. Au maximum UNE question à la fois. Si les données suffisent pour orienter l'évaluation, laisse nextQuestion vide et passe à la synthèse et aux actions utiles. Ne cherche pas l'exhaustivité pour elle-même. Évite les questions de faible rendement et les reformulations de questions déjà résolues.
+Privilégie la prochaine action à plus forte valeur : synthèse, examen clinique ciblé, mesure ou examen complémentaire pertinent, ou question réellement discriminante. Maximum 3 actions courtes. Quand une hypothèse principale est fortement soutenue, dis-le clairement tout en conservant les diagnostics alternatifs importants et les urgences à exclure. Ne transforme jamais une hypothèse en certitude.
+Fournis jusqu'à 5 diagnostics différentiels pertinents, triés par pondération clinique. Attribue à chacun un pourcentage entier et fais en sorte que leur somme soit 100. Ces pourcentages sont une pondération indicative relative produite par le modèle, NON une probabilité individuelle validée, NON un score clinique et NON une estimation calibrée du risque. Ne les présente jamais comme une certitude. La pondération doit évoluer lorsque de nouvelles données changent le raisonnement. Ne crée pas artificiellement cinq diagnostics si moins sont pertinents.
+Compare le contexte actuel à previousAnalysis lorsqu'il existe : indique brièvement ce qui change et pourquoi. N'augmente ou ne diminue pas une hypothèse sans argument clinique explicite. Les données absentes ne sont jamais des résultats normaux. Distingue strictement données confirmées, absentes et éléments non examinés.
+Ne fabrique aucun fait, score clinique, recommandation, source, référence, URL ou résultat. Ne calcule pas de score clinique sans données requises et méthode validée. Si une urgence potentielle apparaît, signale-la clairement et recommande une évaluation immédiate adaptée au contexte, sans attendre le reste de l'analyse.
+Reste concis, précis, nuancé et en français. Tu aides le médecin, tu ne décides pas à sa place.
 Retourne exclusivement un objet JSON valide avec exactement ces propriétés :
 {
-  "situationSummary": "résumé clinique bref fondé uniquement sur les données transmises",
-  "evolutionNote": "ce qui a changé dans l'interprétation depuis l'analyse précédente, ou Première analyse si aucun historique",
+  "situationSummary": "synthèse clinique concise",
+  "evolutionNote": "changement depuis l'analyse précédente ou Première analyse du contexte disponible",
   "priority": "routine" | "attention" | "urgent",
-  "priorityReason": "raison courte, sans dramatisation injustifiée",
-  "nextQuestion": "une seule question ciblée ou chaîne vide si aucune question n'est nécessaire",
-  "whyThisQuestion": "pourquoi cette question est utile maintenant, ou chaîne vide",
-  "pointsToVerify": ["éléments réellement utiles à vérifier, maximum 4"],
-  "hypotheses": [{"label":"hypothèse non confirmée","reason":"arguments disponibles et limites","confidence":"faible" | "modérée"}]
+  "priorityReason": "raison courte",
+  "nextQuestion": "une seule question indispensable ou chaîne vide",
+  "whyThisQuestion": "utilité de la question ou chaîne vide",
+  "pointsToVerify": ["maximum 3 vérifications vraiment utiles"],
+  "recommendedActions": ["maximum 3 actions concrètes et prioritaires"],
+  "hypotheses": [{"label":"diagnostic différentiel","reason":"arguments et limites en une phrase","confidence":"faible" | "modérée","percentage":0}]
 }
-Maximum 3 hypothèses. Si les données sont trop pauvres, dis-le et privilégie une question pertinente. Ne fournis pas de source bibliographique dans ce résultat : les références seront intégrées séparément à partir d'une base vérifiée.
+Maximum 5 hypothèses. Les pourcentages doivent totaliser 100. Si le contexte est insuffisant, indique-le explicitement, sans inventer de précision.
 `;
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -99,6 +101,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         typeof parsed.nextQuestion !== 'string' ||
         typeof parsed.whyThisQuestion !== 'string' ||
         !Array.isArray(parsed.pointsToVerify) ||
+        !Array.isArray(parsed.recommendedActions) ||
         !Array.isArray(parsed.hypotheses)) {
       return res.status(502).json({ error: 'L’analyse reçue ne respecte pas le format clinique attendu.' });
     }
@@ -111,15 +114,27 @@ app.post('/api/clinical/analyze', async (req, res) => {
         priorityReason: typeof parsed.priorityReason === 'string' ? parsed.priorityReason.slice(0, 500) : '',
         nextQuestion: parsed.nextQuestion.slice(0, 500),
         whyThisQuestion: parsed.whyThisQuestion.slice(0, 500),
-        pointsToVerify: parsed.pointsToVerify.filter((item): item is string => typeof item === 'string').slice(0, 4),
-        hypotheses: parsed.hypotheses
-          .filter((item): item is Record<string, unknown> => isPlainObject(item))
-          .slice(0, 3)
-          .map((item) => ({
-            label: typeof item.label === 'string' ? item.label.slice(0, 180) : 'Hypothèse non précisée',
+        pointsToVerify: parsed.pointsToVerify.filter((item): item is string => typeof item === 'string').slice(0, 3),
+        recommendedActions: parsed.recommendedActions.filter((item): item is string => typeof item === 'string').slice(0, 3),
+        hypotheses: (() => {
+          const items = parsed.hypotheses
+            .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string')
+            .slice(0, 5);
+          if (items.length === 0) return [];
+          const raw = items.map((item) => Math.max(0, Math.min(100, Number(item.percentage) || 0)));
+          const total = raw.reduce((sum, value) => sum + value, 0);
+          const normalized = total > 0
+            ? raw.map((value) => Math.round((value / total) * 100))
+            : raw.map(() => Math.floor(100 / raw.length));
+          const difference = 100 - normalized.reduce((sum, value) => sum + value, 0);
+          normalized[0] += difference;
+          return items.map((item, index) => ({
+            label: String(item.label).slice(0, 180),
             reason: typeof item.reason === 'string' ? item.reason.slice(0, 500) : '',
             confidence: item.confidence === 'modérée' ? 'modérée' : 'faible',
-          })),
+            percentage: normalized[index],
+          }));
+        })(),
       },
     });
   } catch (error) {
