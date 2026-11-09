@@ -1,7 +1,8 @@
 import { completeWithGroq, isGroqConfigured } from './providers/groq.ts';
+import { completeWithCloudflare, isCloudflareConfigured } from './providers/cloudflare.ts';
 
 export type AiTask = 'commands' | 'clinical' | 'chat';
-export type AiProviderId = 'groq';
+export type AiProviderId = 'groq' | 'cloudflare';
 
 type ProviderAdapter = {
   id: AiProviderId;
@@ -9,24 +10,24 @@ type ProviderAdapter = {
   complete: (request: any) => Promise<any>;
 };
 
-/**
- * Registre central des fournisseurs.
- * Les prochains adaptateurs (Cloudflare, OpenRouter, Gemini) seront ajoutés ici,
- * sans modifier les routes HTTP ni le frontend.
- */
 const providers: Record<AiProviderId, ProviderAdapter> = {
   groq: {
     id: 'groq',
     isConfigured: isGroqConfigured,
     complete: completeWithGroq,
   },
+  cloudflare: {
+    id: 'cloudflare',
+    isConfigured: isCloudflareConfigured,
+    complete: completeWithCloudflare,
+  },
 };
 
-/** Ordre d'essai par catégorie. Pour cette première étape, Groq reste seul actif. */
+/** Groq reste prioritaire ; Cloudflare est le premier secours configuré. */
 const providerOrder: Record<AiTask, AiProviderId[]> = {
-  commands: ['groq'],
-  clinical: ['groq'],
-  chat: ['groq'],
+  commands: ['groq', 'cloudflare'],
+  clinical: ['groq', 'cloudflare'],
+  chat: ['groq', 'cloudflare'],
 };
 
 export function isAiProviderConfigured(): boolean {
@@ -39,34 +40,49 @@ export function getAvailableAiProviders(): AiProviderId[] {
     .map(provider => provider.id);
 }
 
+function isTemporaryProviderFailure(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const status = (error as { status?: unknown }).status;
+  return typeof status === 'number' &&
+    (status === 408 || status === 425 || status === 429 || status >= 500);
+}
+
 /**
- * Point d'entrée unique pour toutes les requêtes IA.
- * Les erreurs du fournisseur sont propagées pour préserver le statut HTTP,
- * les en-têtes de quota et les informations de temporisation.
+ * Routeur central avec basculement uniquement sur les erreurs temporaires
+ * (limite de quota, indisponibilité serveur ou délai dépassé).
+ * Les erreurs de configuration et de requête ne déclenchent pas de basculement.
  */
 export async function createAiCompletion(request: any, task: AiTask = 'chat'): Promise<any> {
   const order = providerOrder[task];
   let lastError: unknown = null;
+  let attemptedProvider = false;
 
   for (const providerId of order) {
     const provider = providers[providerId];
     if (!provider.isConfigured()) continue;
 
+    attemptedProvider = true;
     try {
       return await provider.complete(request);
     } catch (error) {
       lastError = error;
-      throw error;
+      if (!isTemporaryProviderFailure(error)) {
+        throw error;
+      }
+      console.warn(
+        `Fournisseur IA ${providerId} temporairement indisponible pour la tâche ${task}; tentative du fournisseur suivant.`,
+      );
     }
   }
 
   if (lastError instanceof Error) throw lastError;
 
-  const error = new Error('Aucun fournisseur IA configuré pour cette fonction.') as Error & {
-    status: number;
-    provider: string;
-  };
-  error.status = 503;
+  const error = new Error(
+    attemptedProvider
+      ? 'Tous les fournisseurs IA configurés sont temporairement indisponibles.'
+      : 'Aucun fournisseur IA configuré pour cette fonction.',
+  ) as Error & { status: number; provider: string };
+  error.status = attemptedProvider ? 503 : 503;
   error.provider = 'router';
   throw error;
 }
