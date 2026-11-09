@@ -50,6 +50,47 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+// Corpus des seules données saisies : les anciennes questions de l'IA ne sont
+// jamais considérées comme des réponses du médecin.
+function collectClinicalText(value: unknown, output: string[] = []): string[] {
+  if (typeof value === 'string' && value.trim()) {
+    output.push(value.trim());
+  } else if (Array.isArray(value)) {
+    value.forEach((item) => collectClinicalText(item, output));
+  } else if (isPlainObject(value)) {
+    for (const [key, nested] of Object.entries(value)) {
+      output.push(key);
+      collectClinicalText(nested, output);
+    }
+  }
+  return output;
+}
+
+function normalizeClinicalText(value: string): string {
+  return value.normalize('NFD')
+    .replace(/[\\u0300-\\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+// Garde-fou déterministe : masquer une question uniquement si une donnée
+// explicite sur le même thème figure déjà dans la consultation.
+function isClinicalTopicAlreadyDocumented(item: string, documentedText: string): boolean {
+  const topic = normalizeClinicalText(item);
+  if (!topic || !documentedText) return false;
+
+  const rules: Array<{ question: RegExp; evidence: RegExp }> = [
+    { question: /\\b(ganglion|adenopath|aire cervicale)\\w*/, evidence: /\\b(ganglion|adenopath)\\w*/ },
+    { question: /\\b(gorge|oropharyn|pharyn|amygdal|tonsill)\\w*/, evidence: /\\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\\w*/ },
+    { question: /\\b(toux|tuss)\\w*/, evidence: /\\b(toux|tuss)\\w*/ },
+    { question: /\\b(dysphag|difficulte deglut|avaler.*liquide|liquide.*avaler)\\w*/, evidence: /\\b(dysphag|liquide|deglut)\\w*/ },
+    { question: /\\b(fievre|temperature)\\w*/, evidence: /\\b(fievre|temperature)\\w*/ },
+  ];
+
+  return rules.some(({ question, evidence }) => question.test(topic) && evidence.test(documentedText));
+}
+
 app.post('/api/clinical/analyze', async (req, res) => {
   try {
     const context = req.body?.context;
@@ -151,16 +192,37 @@ app.post('/api/clinical/analyze', async (req, res) => {
       return res.status(502).json({ error: 'L’analyse reçue ne respecte pas le format clinique attendu.' });
     }
 
+    const consultationData = isPlainObject(context.consultation) ? context.consultation : {};
+    const documentedCorpus = normalizeClinicalText(
+      collectClinicalText({ patient: context.patient, consultation: consultationData }).join(' ')
+    );
+    const candidateQuestion = parsed.nextQuestion.trim().slice(0, 300);
+    const questionIsRedundant = candidateQuestion
+      ? isClinicalTopicAlreadyDocumented(candidateQuestion, documentedCorpus)
+      : false;
+    const nextQuestion = questionIsRedundant ? '' : candidateQuestion;
+    const nextQuestionOptions = nextQuestion
+      ? (Array.isArray(parsed.nextQuestionOptions) ? parsed.nextQuestionOptions : [])
+          .filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+          .map((item) => item.trim().slice(0, 90))
+          .slice(0, 5)
+      : [];
+    const pointsToVerify = parsed.pointsToVerify
+      .filter((item): item is string => typeof item === 'string')
+      .filter((item) => !isClinicalTopicAlreadyDocumented(item, documentedCorpus))
+      .slice(0, 3)
+      .map((item) => item.slice(0, 180));
+
     return res.json({
       analysis: {
         situationSummary: parsed.situationSummary.slice(0, 500),
         evolutionNote: parsed.evolutionNote.slice(0, 220),
         priority: parsed.priority,
         priorityReason: typeof parsed.priorityReason === 'string' ? parsed.priorityReason.slice(0, 220) : '',
-        nextQuestion: parsed.nextQuestion.slice(0, 300),
-        nextQuestionOptions: (() => { const options = (Array.isArray(parsed.nextQuestionOptions) ? parsed.nextQuestionOptions : []).filter((item): item is string => typeof item === 'string' && item.trim().length > 0).map((item) => item.trim().slice(0, 90)).slice(0, 5); return parsed.nextQuestion.trim() && options.length < 2 ? ['Oui', 'Non', 'Non recherché / non évalué'] : options; })(),
-        whyThisQuestion: parsed.whyThisQuestion.slice(0, 180),
-        pointsToVerify: parsed.pointsToVerify.filter((item): item is string => typeof item === 'string').slice(0, 3).map((item) => item.slice(0, 180)),
+        nextQuestion,
+        nextQuestionOptions: nextQuestion && nextQuestionOptions.length < 2 ? ['Oui', 'Non', 'Non recherché / non évalué'] : nextQuestionOptions,
+        whyThisQuestion: nextQuestion ? parsed.whyThisQuestion.slice(0, 180) : '',
+        pointsToVerify,
         recommendedActions: parsed.recommendedActions.filter((item): item is string => typeof item === 'string').slice(0, 3).map((item) => item.slice(0, 180)),
         hypotheses: parsed.hypotheses
           .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string')
