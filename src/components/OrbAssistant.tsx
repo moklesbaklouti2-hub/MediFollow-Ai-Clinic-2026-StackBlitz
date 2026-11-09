@@ -172,6 +172,7 @@ export default function OrbAssistant({
                 {clinicalInsight.analysis.priority === 'urgent' ? 'Priorité urgente' : clinicalInsight.analysis.priority === 'attention' ? 'Attention' : 'Analyse'}
               </span>
               <p>{clinicalInsight.analysis.situationSummary}</p>
+              {clinicalInsight.analysis.evolutionNote && <p><strong>Évolution :</strong> {clinicalInsight.analysis.evolutionNote}</p>}
               {clinicalInsight.analysis.nextQuestion && (
                 <div className="mf-orb-insight-question">
                   <small>QUESTION SUIVANTE</small>
@@ -264,6 +265,7 @@ export default function OrbAssistant({
                 <span>RAISONNEMENT CLINIQUE · {clinicalInsight.updatedAt}</span>
                 <p><strong>{clinicalInsight.analysis.priority === 'urgent' ? 'Priorité urgente — évaluation immédiate' : clinicalInsight.analysis.priority === 'attention' ? 'Point d’attention' : 'Analyse clinique'}</strong></p>
                 <p>{clinicalInsight.analysis.situationSummary}</p>
+                {clinicalInsight.analysis.evolutionNote && <p><strong>Évolution :</strong> {clinicalInsight.analysis.evolutionNote}</p>}
                 {clinicalInsight.analysis.nextQuestion && (
                   <p><strong>Question à explorer :</strong> {clinicalInsight.analysis.nextQuestion}</p>
                 )}
