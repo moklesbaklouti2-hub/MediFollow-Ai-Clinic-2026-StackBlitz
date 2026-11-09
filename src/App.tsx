@@ -320,8 +320,6 @@ function App() {
       <OrbAssistant
         isThinking={loading}
         currentPage={active}
-        patients={patients}
-        consultations={consultations}
         clinicalPrompt={orbPrompt}
         clinicalInsight={active === 'Consultations' ? clinicalInsight : undefined}
         onClinicalPromptConsumed={() => setOrbPrompt('')}
