@@ -541,7 +541,7 @@ function interviewQuestionIssues(reply: string, facts: string, history: Array<{ 
   if (isClinicalTopicAlreadyDocumented(question, facts)) {
     // Les thèmes larges comme la gorge ou la fièvre ne suffisent pas à eux seuls
     // pour prouver qu'une sous-question précise a déjà reçu réponse.
-    const repeatedKnown = /\b(dysphag|difficulte.*avaler|avaler.*(solides|liquides)|respir|dyspne|essouff|temperature maximale)\b/.test(normalized);
+    const repeatedKnown = /\b(dysphag\w*|difficulte.*avaler|avaler.*(solides|liquides)|respir\w*|dyspne\w*|essouff\w*|temperature maximale)\b/.test(normalized);
     if (repeatedKnown) issues.push('information déjà documentée');
   }
   const earlierQuestions = history.filter(item => item.role === 'assistant')
@@ -569,7 +569,7 @@ app.post('/api/chat', async (req, res) => {
       ? req.body.history.filter((item: any) => item && (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string')
           .slice(-12).map((item: any) => ({ role: item.role, content: item.content.slice(0, 5000) }))
       : [];
-    const clinicalInterview = /\\b(interrogatoire|question|patient|sympt[oô]me|odynophagie|dysphagie|fi[eè]vre|douleur|consultation)\\b/i.test(
+    const clinicalInterview = /\b(interrogatoire|question|patient|sympt[oô]me|odynophagie|dysphagie|fi[eè]vre|douleur|consultation)\b/i.test(
       [message, ...history.filter(item => item.role === 'user').map(item => item.content)].join(' ')
     );
     const completion = await createAiCompletion({
