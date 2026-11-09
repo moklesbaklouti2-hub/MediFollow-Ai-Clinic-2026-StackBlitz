@@ -83,3 +83,39 @@
   font-size:10px;font-weight:700;cursor:pointer
 }
 .mf-orb-live-analysis button:hover{background:rgba(91,218,204,.2)}
+
+
+/* ORBE FLOTTANT — rendu énergétique cyan/violet inspiré de la référence */
+.mf-orb-launcher {
+  width: 148px !important;
+  height: 164px !important;
+}
+.mf-orb-canvas {
+  inset: 0 !important;
+}
+.mf-orb-caption {
+  margin-top: -7px;
+  position: relative;
+  z-index: 5;
+}
+.mf-orb-panel {
+  bottom: 180px;
+}
+.mf-orb-insight-bubble {
+  bottom: 184px;
+}
+@media(max-width:650px) {
+  .mf-orb-launcher {
+    width: 116px !important;
+    height: 132px !important;
+  }
+  .mf-orb-panel {
+    bottom: 144px;
+  }
+  .mf-orb-insight-bubble {
+    bottom: 146px;
+  }
+  .mf-orb-caption {
+    margin-top: -5px;
+  }
+}
