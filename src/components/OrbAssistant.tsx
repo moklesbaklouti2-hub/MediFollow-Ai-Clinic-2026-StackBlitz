@@ -109,101 +109,112 @@ const [isListening, setIsListening] = useState(false);
     }
 
     try {
-      const recognition = new Recognition();
-      recognition.lang = 'fr-FR';
-      recognition.continuous = true;
-      recognition.interimResults = true;
       speechBaseInputRef.current = input;
-      speechFinalSegmentsRef.current.clear();
       speechCurrentTextRef.current = '';
       shouldContinueListeningRef.current = true;
-      recognition.onresult = (event) => {
-        let interimText = '';
-        // Update only the segments changed by this event. Final segments are
-        // retained by their stable index instead of being appended repeatedly.
-        for (let index = event.resultIndex; index < event.results.length; index += 1) {
-          const result = event.results[index];
-          const transcript = (result[0]?.transcript || '').trim();
-          if (result.isFinal) {
-            if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
-          } else {
-            interimText += `${transcript} `;
-          }
-        }
-        const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
-          .sort(([a], [b]) => a - b)
-          .map(([, value]) => value);
 
-        // Speech services may return overlapping phrases in adjacent results.
-        // Merge each segment by removing the longest suffix/prefix word overlap.
-        const normalizeWord = (value: string) =>
-          value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?¿¡]+|[.,;:!?¿¡]+$/g, '');
-        const mergedWords: string[] = [];
-        for (const part of finalParts) {
-          const partWords = part.split(/\s+/).filter(Boolean);
-          let overlap = 0;
-          const maxOverlap = Math.min(mergedWords.length, partWords.length, 12);
-          for (let size = maxOverlap; size > 0; size -= 1) {
-            const left = mergedWords.slice(-size).map(normalizeWord);
-            const right = partWords.slice(0, size).map(normalizeWord);
-            if (left.every((word, index) => word === right[index])) {
-              overlap = size;
-              break;
+      const startSession = () => {
+        if (!shouldContinueListeningRef.current) return;
+
+        // A fresh recognition instance prevents Android Chrome from replaying
+        // results belonging to the previous recognition session.
+        const recognition = new Recognition();
+        recognition.lang = 'fr-FR';
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        speechFinalSegmentsRef.current.clear();
+
+        recognition.onresult = (event) => {
+          let interimText = '';
+          for (let index = event.resultIndex; index < event.results.length; index += 1) {
+            const result = event.results[index];
+            const transcript = (result[0]?.transcript || '').trim();
+            if (result.isFinal) {
+              if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
+            } else {
+              interimText += `${transcript} `;
             }
           }
-          mergedWords.push(...partWords.slice(overlap));
-        }
-        const dictatedText = mergedWords.join(' ').trim();
-        speechCurrentTextRef.current = dictatedText;
-        const base = speechBaseInputRef.current.trimEnd();
-        setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
-        setInterimTranscript(interimText.trim());
-      };
-      recognition.onerror = (event) => {
-        const messages: Record<string, string> = {
-          'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
-          'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
-          'no-speech': 'Aucune parole détectée. Réessayez.',
-          'audio-capture': 'Aucun microphone accessible n’a été détecté.',
-          network: 'La reconnaissance vocale nécessite une connexion réseau.',
+
+          const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
+            .sort(([a], [b]) => a - b)
+            .map(([, value]) => value);
+
+          const normalizeWord = (value: string) =>
+            value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?¿¡]+|[.,;:!?¿¡]+$/g, '');
+          const mergedWords: string[] = [];
+          for (const part of finalParts) {
+            const partWords = part.split(/\\s+/).filter(Boolean);
+            let overlap = 0;
+            const maxOverlap = Math.min(mergedWords.length, partWords.length, 12);
+            for (let size = maxOverlap; size > 0; size -= 1) {
+              const left = mergedWords.slice(-size).map(normalizeWord);
+              const right = partWords.slice(0, size).map(normalizeWord);
+              if (left.every((word, index) => word === right[index])) {
+                overlap = size;
+                break;
+              }
+            }
+            mergedWords.push(...partWords.slice(overlap));
+          }
+
+          const dictatedText = mergedWords.join(' ').trim();
+          speechCurrentTextRef.current = dictatedText;
+          const base = speechBaseInputRef.current.trimEnd();
+          setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
+          setInterimTranscript(interimText.trim());
         };
-        if (event.error !== 'no-speech' && event.error !== 'aborted') {
-          setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
-          shouldContinueListeningRef.current = false;
+
+        recognition.onerror = (event) => {
+          const messages: Record<string, string> = {
+            'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
+            'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
+            'no-speech': 'Aucune parole détectée. L’écoute reprend automatiquement.',
+            'audio-capture': 'Aucun microphone accessible n’a été détecté.',
+            network: 'La reconnaissance vocale nécessite une connexion réseau.',
+          };
+          if (event.error !== 'no-speech' && event.error !== 'aborted') {
+            shouldContinueListeningRef.current = false;
+            setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
+            setIsListening(false);
+            setInterimTranscript('');
+            recognitionRef.current = null;
+          }
+        };
+
+        recognition.onend = () => {
+          if (recognitionRef.current !== recognition) return;
+          if (shouldContinueListeningRef.current) {
+            const previousBase = speechBaseInputRef.current.trimEnd();
+            const previousText = speechCurrentTextRef.current.trim();
+            speechBaseInputRef.current = `${previousBase}${previousBase && previousText ? ' ' : ''}${previousText}`;
+            speechCurrentTextRef.current = '';
+            setInterimTranscript('');
+            speechRestartTimerRef.current = setTimeout(() => {
+              if (!shouldContinueListeningRef.current) return;
+              startSession();
+            }, 350);
+            return;
+          }
           setIsListening(false);
           setInterimTranscript('');
+          recognitionRef.current = null;
+        };
+
+        recognitionRef.current = recognition;
+        try {
+          recognition.start();
+        } catch {
+          shouldContinueListeningRef.current = false;
+          setIsListening(false);
+          setSpeechMessage('Impossible de reprendre la dictée. Appuyez sur le microphone pour réessayer.');
+          recognitionRef.current = null;
         }
       };
-      recognition.onend = () => {
-        if (shouldContinueListeningRef.current) {
-          // Mobile Chrome may end recognition after a short silence even with
-          // continuous=true. Keep dictation active and transparently restart it.
-          const previousBase = speechBaseInputRef.current.trimEnd();
-          const previousText = speechCurrentTextRef.current.trim();
-          speechBaseInputRef.current = `${previousBase}${previousBase && previousText ? ' ' : ''}${previousText}`;
-          speechCurrentTextRef.current = '';
-          speechFinalSegmentsRef.current.clear();
-          speechRestartTimerRef.current = setTimeout(() => {
-            if (!shouldContinueListeningRef.current) return;
-            try {
-              recognition.start();
-            } catch {
-              shouldContinueListeningRef.current = false;
-              setIsListening(false);
-              setSpeechMessage('La dictée s’est interrompue. Appuyez sur le microphone pour reprendre.');
-              recognitionRef.current = null;
-            }
-          }, 300);
-          return;
-        }
-        setIsListening(false);
-        setInterimTranscript('');
-        recognitionRef.current = null;
-      };
-      recognitionRef.current = recognition;
+
       setSpeechMessage('');
       setIsListening(true);
-      recognition.start();
+      startSession();
     } catch {
       setIsListening(false);
       setSpeechMessage('Impossible de démarrer le microphone. Vérifiez les autorisations du navigateur.');
