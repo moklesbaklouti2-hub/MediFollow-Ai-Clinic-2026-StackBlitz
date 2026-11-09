@@ -42,3 +42,33 @@
 @keyframes mfPanelAppear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:650px){.mf-orb-assistant{right:5px;bottom:72px}.mf-orb-launcher{width:88px;height:88px}.mf-orb-panel{right:0;bottom:102px;width:min(360px,calc(100vw - 16px));height:min(560px,calc(100dvh - 125px))}.mf-orb-caption{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.mf-orb-panel{animation:none}}
+
+
+/* Bulle d'analyse clinique reliée à l'Orb */
+.mf-orb-insight-bubble{
+  position:absolute;right:5px;bottom:132px;width:310px;max-width:calc(100vw - 28px);
+  max-height:min(42dvh,330px);overflow-y:auto;box-sizing:border-box;
+  padding:13px 14px;border:1px solid rgba(104,224,211,.42);border-radius:16px 16px 5px 16px;
+  color:#e9f8fb;background:linear-gradient(145deg,rgba(9,34,49,.98),rgba(35,29,65,.98));
+  box-shadow:0 12px 38px rgba(0,12,28,.42),0 0 22px rgba(75,215,204,.12);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);pointer-events:auto;
+  animation:mfPanelAppear .2s ease-out;
+}
+.mf-orb-insight-bubble:after{
+  content:'';position:absolute;right:31px;bottom:-7px;width:13px;height:13px;
+  transform:rotate(45deg);background:#211e3d;border-right:1px solid rgba(104,224,211,.35);
+  border-bottom:1px solid rgba(104,224,211,.35);
+}
+.mf-orb-insight-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:12px}
+.mf-orb-insight-bubble p{margin:8px 0;color:#d4e5ed;font-size:11px;line-height:1.55;overflow-wrap:anywhere}
+.mf-orb-priority{display:inline-block;padding:4px 8px;border-radius:20px;background:rgba(73,211,184,.13);color:#8cebd9;font-size:9px;font-weight:800}
+.mf-orb-priority.priority-attention{background:rgba(242,184,91,.15);color:#ffd18a}
+.mf-orb-priority.priority-urgent{background:rgba(239,91,105,.18);color:#ffabb2}
+.mf-orb-insight-question{display:grid;gap:4px;margin:9px 0;padding:9px 10px;border-left:2px solid #54d8c1;border-radius:0 8px 8px 0;background:rgba(255,255,255,.055)}
+.mf-orb-insight-question small{color:#88dccc;font-size:8px;font-weight:800;letter-spacing:.8px}
+.mf-orb-insight-question strong{font-size:11px;line-height:1.5}
+.mf-orb-insight-bubble>button{margin-top:5px;padding:8px 11px;border:0;border-radius:8px;background:linear-gradient(120deg,#72e8d3,#a58af5);color:#102d3c;font-size:10px;font-weight:800;cursor:pointer}
+@media(max-width:650px){
+  .mf-orb-insight-bubble{right:0;bottom:108px;width:min(310px,calc(100vw - 18px));max-height:36dvh;padding:11px 12px}
+  .mf-orb-assistant{z-index:1250}
+}
