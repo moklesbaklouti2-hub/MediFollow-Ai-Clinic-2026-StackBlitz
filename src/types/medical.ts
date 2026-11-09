@@ -223,6 +223,8 @@ export type InventoryItem = {
   unit: string;
   quantity: number;
   minimumQuantity: number;
+  /** Coût d'achat unitaire en dinars tunisiens, facultatif. */
+  unitCost?: number;
   batchNumber?: string;
   expiryDate?: string;
   location?: string;
