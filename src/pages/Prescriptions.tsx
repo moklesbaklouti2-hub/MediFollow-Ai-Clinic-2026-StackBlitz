@@ -389,7 +389,7 @@ export default function Prescriptions() {
               </option>
             ))}
           </select>
-          <p className="prescription-empty">Le stock ne sera pas modifié à la prescription. La quantité réelle sera saisie au moment de la délivrance.</p>
+          <p className="prescription-empty">Le stock ne sera pas modifié à la prescription. À la délivrance, la quantité réelle sera répartie automatiquement entre les lots valides du même produit, en utilisant d’abord celui dont la péremption est la plus proche (FEFO). Chaque lot utilisé sera enregistré séparément.</p>
         </div>
 
         <button className="prescription-add" onClick={addMedication}>
