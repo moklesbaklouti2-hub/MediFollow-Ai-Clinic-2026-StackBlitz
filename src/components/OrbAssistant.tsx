@@ -63,6 +63,7 @@ const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechMessage, setSpeechMessage] = useState('');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
+  const speechBaseInputRef = useRef('');
 
   useEffect(() => {
     if (clinicalInsight?.updatedAt) setInsightDismissed(false);
@@ -104,19 +105,22 @@ const [isListening, setIsListening] = useState(false);
       recognition.lang = 'fr-FR';
       recognition.continuous = true;
       recognition.interimResults = true;
+      speechBaseInputRef.current = input;
       recognition.onresult = (event) => {
         let finalText = '';
         let interimText = '';
-        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        // Rebuild the session transcript from all current results. Do not append
+        // each event: browsers can resend finalized segments in later events.
+        for (let index = 0; index < event.results.length; index += 1) {
           const result = event.results[index];
           const transcript = result[0]?.transcript || '';
           if (result.isFinal) finalText += transcript;
           else interimText += transcript;
         }
-        if (finalText.trim()) {
-          setInput(previous => `${previous.trimEnd()}${previous.trim() ? ' ' : ''}${finalText.trim()}`);
-        }
-        setInterimTranscript(interimText);
+        const base = speechBaseInputRef.current.trimEnd();
+        const dictatedText = finalText.trim();
+        setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
+        setInterimTranscript(interimText.trim());
       };
       recognition.onerror = (event) => {
         const messages: Record<string, string> = {
