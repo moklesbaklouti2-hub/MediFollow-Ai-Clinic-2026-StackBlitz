@@ -661,10 +661,10 @@ app.post('/api/chat', async (req, res) => {
       // question de sécurité non documentée même si le modèle a reformulé
       // l'odynophagie d'une manière non reconnue par le détecteur de doublons.
       // Ne pas substituer une réponse comportant un signalement d'urgence.
-      const explicitInterviewRequest = /\\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\\b/i.test(
+      const explicitInterviewRequest = /\b(poursuis|poursuivre|interrogatoire|pose une seule question|question a la fois)\b/i.test(
         normalizeClinicalText(message)
       );
-      const urgentAdvice = /\\b(urgence|urgent|appelez les secours|evaluation immediate|hospitalisation immediate)\\b/i.test(
+      const urgentAdvice = /\b(urgence|urgent|appelez les secours|evaluation immediate|hospitalisation immediate)\b/i.test(
         normalizeClinicalText(reply)
       );
       if (prioritized && !urgentAdvice && (issues.length > 0 || explicitInterviewRequest)) {
