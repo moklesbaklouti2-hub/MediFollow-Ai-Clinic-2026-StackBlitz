@@ -106,25 +106,38 @@ export default function Inventory() {
   return (
     <section className="inventory-page" style={{ display: 'grid', gap: 20, color: 'var(--text-primary,#20334b)' }}>
       <style>{`
-        .inventory-panel{background:var(--surface,#fff);border:1px solid var(--border,#e5ebef);border-radius:16px;padding:18px;display:grid;gap:14px}
+        .inventory-page{color:var(--color-text)}
+        .inventory-page h2,.inventory-page h3,.inventory-page strong{color:var(--color-text)}
+        .inventory-page .inventory-panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:16px;padding:18px;display:grid;gap:14px}
         .inventory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-        .inventory-field{display:grid;gap:6px}.inventory-field label{font-size:13px;color:#81909c;font-weight:600}
-        .inventory-field input,.inventory-field select,.inventory-field textarea{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--border,#dce4e8);border-radius:9px;background:var(--surface,#fff);color:inherit;font:inherit}
-        .inventory-button{border:0;border-radius:9px;padding:11px 15px;background:#42d5b4;color:#12332f;font-weight:700;cursor:pointer}
-        .inventory-secondary{border:1px solid var(--border,#dce4e8);border-radius:9px;padding:10px 13px;background:transparent;color:inherit;font-weight:600;cursor:pointer}
-        .inventory-list{display:grid;gap:10px}.inventory-item{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--border,#e5ebef);border-radius:12px;padding:14px}
-        .inventory-item p{margin:5px 0 0;color:#81909c;font-size:12px}.inventory-low{color:#c45c36;font-weight:700;font-size:12px}
+        .inventory-page .inventory-muted,.inventory-page .inventory-field label{font-size:13px;color:var(--color-text-secondary);font-weight:600}
+        .inventory-field{display:grid;gap:6px}
+        .inventory-field input,.inventory-field select,.inventory-field textarea{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--color-border);border-radius:9px;background:var(--color-surface-secondary);color:var(--color-text);font:inherit}
+        .inventory-field input::placeholder,.inventory-field textarea::placeholder{color:var(--color-text-secondary);opacity:.8}
+        .inventory-button{border:0;border-radius:9px;padding:11px 15px;background:var(--color-mint);color:#12332f;font-weight:700;cursor:pointer}
+        .inventory-secondary{border:1px solid var(--color-border);border-radius:9px;padding:10px 13px;background:var(--color-surface-secondary);color:var(--color-text);font-weight:600;cursor:pointer}
+        .inventory-list{display:grid;gap:10px}
+        .inventory-page .inventory-item{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid var(--color-border);border-radius:12px;padding:14px;background:var(--color-surface-secondary);color:var(--color-text)}
+        .inventory-item p{margin:5px 0 0;color:var(--color-text-secondary);font-size:12px}
+        .inventory-low{color:var(--color-warning);font-weight:700;font-size:12px}
+        .inventory-page .inventory-panel h3{color:var(--color-text)}
+        .inventory-page .inventory-panel > p{color:var(--color-text-secondary)}
+        .inventory-page .inventory-history-meta{color:var(--color-text-secondary)}
+        .inventory-page .inventory-stat-label{color:var(--color-text-secondary);font-size:13px}
+        .inventory-page .inventory-empty{color:var(--color-text-secondary);font-size:13px}
+        .inventory-page .inventory-history-row{border-bottom:1px solid var(--color-border);padding:9px 0;font-size:13px}
+        .inventory-page .inventory-filter-active{border-color:var(--color-mint-dark)!important;background:rgba(66,213,180,.12)}
         @media(max-width:650px){.inventory-grid{grid-template-columns:1fr}.inventory-item{align-items:flex-start;flex-direction:column}}
       `}</style>
 
       <header>
-        <h2 style={{ margin: '0 0 6px', fontSize: 25 }}>Gestion de l’inventaire</h2>
-        <p style={{ margin: 0, color: '#81909c' }}>Suivi des consommables, équipements et traitements du cabinet.</p>
+        <h2 style={{ margin: '0 0 6px', fontSize: 25, color: 'var(--color-text)' }}>Gestion de l’inventaire</h2>
+        <p className="inventory-muted" style={{ margin: 0 }}>Suivi des consommables, équipements et traitements du cabinet.</p>
       </header>
 
       <div className="inventory-grid">
-        <div className="inventory-panel"><span style={{ color: '#81909c', fontSize: 13 }}>Articles enregistrés</span><strong style={{ fontSize: 27 }}>{data.items.length}</strong></div>
-        <div className="inventory-panel"><span style={{ color: '#81909c', fontSize: 13 }}>Stocks bas ou à réapprovisionner</span><strong style={{ fontSize: 27, color: lowStock ? '#c45c36' : 'inherit' }}>{lowStock}</strong></div>
+        <div className="inventory-panel"><span className="inventory-stat-label">Articles enregistrés</span><strong style={{ fontSize: 27 }}>{data.items.length}</strong></div>
+        <div className="inventory-panel"><span className="inventory-stat-label">Stocks bas ou à réapprovisionner</span><strong style={{ fontSize: 27, color: lowStock ? '#c45c36' : 'inherit' }}>{lowStock}</strong></div>
       </div>
 
       <section className="inventory-panel">
@@ -150,12 +163,12 @@ export default function Inventory() {
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {[['all', 'Tous'], ['supply', 'Consommables'], ['equipment', 'Équipements'], ['treatment', 'Traitements']].map(([value, label]) =>
-            <button key={value} type="button" className="inventory-secondary" onClick={() => setFilter(value)} style={{ borderColor: filter === value ? '#42b99d' : undefined }}>{label}</button>
+            <button key={value} type="button" className="inventory-secondary" onClick={() => setFilter(value)} className={`inventory-secondary ${filter === value ? 'inventory-filter-active' : ''}`}>{label}</button>
           )}
         </div>
 
         <div className="inventory-list">
-          {visibleItems.length === 0 && <p style={{ color: '#81909c', fontSize: 13 }}>Aucun article dans cette catégorie pour le moment.</p>}
+          {visibleItems.length === 0 && <p className="inventory-empty">Aucun article dans cette catégorie pour le moment.</p>}
           {visibleItems.map(item => {
             const isLow = item.quantity <= item.minimumQuantity;
             return <article className="inventory-item" key={item.id}>
@@ -173,15 +186,15 @@ export default function Inventory() {
 
       <section className="inventory-panel">
         <h3 style={{ margin: 0 }}>Historique des mouvements</h3>
-        {data.movements.length === 0 ? <p style={{ color: '#81909c', fontSize: 13 }}>Aucun mouvement enregistré.</p> : data.movements.slice(0, 30).map(movement =>
-          <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, borderBottom: '1px solid var(--border,#e5ebef)', padding: '9px 0', fontSize: 13 }}>
-            <span><strong>{movement.itemName}</strong><br /><span style={{ color: '#81909c' }}>{movement.reason || movement.type} · {new Date(movement.date).toLocaleString('fr-FR')}</span></span>
+        {data.movements.length === 0 ? <p className="inventory-empty">Aucun mouvement enregistré.</p> : data.movements.slice(0, 30).map(movement =>
+          <div key={movement.id} className="inventory-history-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+            <span><strong>{movement.itemName}</strong><br /><span className="inventory-history-meta">{movement.reason || movement.type} · {new Date(movement.date).toLocaleString('fr-FR')}</span></span>
             <strong style={{ whiteSpace: 'nowrap' }}>{movement.type === 'dispense' ? '−' : '+'}{movement.quantity}</strong>
           </div>
         )}
       </section>
       {message && <p role="status" style={{ margin: 0, fontSize: 13 }}>{message}</p>}
-      <p style={{ margin: 0, color: '#81909c', fontSize: 12, lineHeight: 1.5 }}>Version initiale : les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
+      <p className="inventory-muted" style={{ margin: 0, fontSize: 12, lineHeight: 1.5 }}>Version initiale : les données restent stockées localement dans ce navigateur. Ne pas y enregistrer de données patient réelles avant la mise en place d’un stockage sécurisé et conforme.</p>
     </section>
   );
 }
