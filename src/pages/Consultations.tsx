@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
-import type { Vitals, PhysicalExamination } from '../types/medical';
+import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 
@@ -145,9 +145,13 @@ type ClinicalInsightPayload = {
 export default function Consultations({
   onAskCopilot,
   onClinicalReasoningChange,
+  commandActions = [],
+  onCommandActionsConsumed,
 }: {
   onAskCopilot?: (prompt: string) => void;
   onClinicalReasoningChange?: (insight: ClinicalInsightPayload) => void;
+  commandActions?: VoiceCommandAction[];
+  onCommandActionsConsumed?: () => void;
 }) {
   const { patients, consultations, addConsultation, updateConsultation } = useMedicalData();
 
@@ -163,12 +167,107 @@ export default function Consultations({
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
   const [saved, setSaved] = useState(false);
+  const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
   const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
   const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(true);
   const [differentialPopupOpen, setDifferentialPopupOpen] = useState(false);
   const differentialPopupTriggered = useRef(false);
+
+  useEffect(() => {
+    if (commandActions.length === 0) return;
+
+    const normalize = (value: string) =>
+      value.toLocaleLowerCase('fr')
+        .normalize('NFD')
+        .replace(/[\\u0300-\\u036f]/g, '')
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .replace(/\\s+/g, ' ')
+        .trim();
+
+    const feedback: string[] = [];
+    let applied = 0;
+
+    for (const action of commandActions) {
+      if (action.type === 'select_patient') {
+        const requested = normalize(action.patientName);
+        const exact = patients.filter((patient) => normalize(patient.name) === requested);
+        const candidates = exact.length > 0
+          ? exact
+          : patients.filter((patient) => {
+              const name = normalize(patient.name);
+              return name.includes(requested) || requested.includes(name);
+            });
+
+        if (candidates.length === 1) {
+          setPatientId(candidates[0].id);
+          setSaved(false);
+          applied += 1;
+        } else if (candidates.length > 1) {
+          feedback.push(`Plusieurs patients correspondent à « ${action.patientName} ». Précisez le nom complet.`);
+        } else {
+          feedback.push(`Patient « ${action.patientName} » introuvable. Aucun patient n'a été sélectionné.`);
+        }
+        continue;
+      }
+
+      if (action.type === 'set_consultation_field') {
+        const value = action.value;
+        if (action.field === 'specialty') {
+          const options = specialtyGroups.flatMap((group) => group.options).concat('Autre spécialité');
+          const requested = normalize(value);
+          const specialtyValue = requested === 'orl' || requested.includes('oto rhino')
+            ? 'Oto-rhino-laryngologie (ORL)'
+            : options.find((option) => normalize(option) === requested);
+          if (!specialtyValue) {
+            feedback.push(`Spécialité « ${value} » non reconnue. Le champ n'a pas été modifié.`);
+          } else {
+            setSpecialty(specialtyValue);
+            setSaved(false);
+            applied += 1;
+          }
+        } else {
+          const setters: Record<string, (next: string) => void> = {
+            motif: setMotif,
+            symptoms: setSymptoms,
+            history: setHistory,
+            targetedInterview: setTargetedInterview,
+            examination: setExamination,
+            diagnosis: setDiagnosis,
+            plan: setPlan,
+          };
+          const setter = setters[action.field];
+          if (setter) {
+            setter(value);
+            setSaved(false);
+            applied += 1;
+          } else {
+            feedback.push(`Champ « ${action.field} » non autorisé.`);
+          }
+        }
+        continue;
+      }
+
+      if (action.type === 'set_vital') {
+        const allowedVitals: (keyof Vitals)[] = [
+          'systolic', 'diastolic', 'heartRate', 'spo2', 'temperature',
+          'respiratoryRate', 'weight', 'height', 'glycemia',
+        ];
+        if (allowedVitals.includes(action.field)) {
+          setVitals((previous) => ({ ...previous, [action.field]: action.value }));
+          setSaved(false);
+          applied += 1;
+        } else {
+          feedback.push(`Constante « ${action.field} » non reconnue.`);
+        }
+      }
+    }
+
+    if (applied > 0) feedback.unshift(`${applied} modification(s) appliquée(s) au formulaire de consultation. Vérifiez les champs avant l'enregistrement.`);
+    setCommandFeedback(feedback.join(' '));
+    onCommandActionsConsumed?.();
+  }, [commandActions, patients, onCommandActionsConsumed]);
 
   useEffect(() => {
     if (motif.trim().length < 3) {
@@ -566,6 +665,12 @@ export default function Consultations({
           }
         }
       `}</style>
+
+      {commandFeedback && (
+        <div role="status" style={{ padding: '11px 14px', borderRadius: 10, border: '1px solid var(--border,#dce4e8)', background: 'var(--surface,#fff)', fontSize: 13, lineHeight: 1.5 }}>
+          {commandFeedback}
+        </div>
+      )}
 
       <header className="consultation-header">
         <div>
