@@ -76,47 +76,71 @@ function normalizeClinicalText(value: string): string {
     .trim();
 }
 
-// Garde-fou déterministe : masquer une question uniquement si une donnée
-// explicite sur le même thème figure déjà dans la consultation.
+// Garde-fou déterministe : une question n'est retirée que si le même fait
+// clinique est explicitement documenté. Odynophagie et dysphagie restent distinctes.
 function isClinicalTopicAlreadyDocumented(item: string, documentedText: string): boolean {
   const topic = normalizeClinicalText(item);
   if (!topic || !documentedText) return false;
 
   const rules: Array<{ question: RegExp; evidence: RegExp }> = [
-    { question: /\b(ganglion|adenopath|aire cervicale)\w*/, evidence: /\b(ganglion|adenopath)\w*/ },
-    { question: /\b(gorge|oropharyn|pharyn|amygdal|tonsill)\w*/, evidence: /\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\w*/ },
-    { question: /\b(toux|tuss)\w*/, evidence: /\b(toux|tuss)\w*/ },
-    { question: /\b(dysphag|difficulte.*deglut|difficulte.*avaler|avaler.*liquide|liquide.*avaler)\w*/, evidence: /\b(dysphag|liquide|deglut|avaler)\w*/ },
-    { question: /\b(fievre|temperature)\w*/, evidence: /\b(fievre|temperature)\w*/ },
+    {
+      question: /\\b(mal de gorge|odynophag|gorge douloureuse|douleur a la deglutition|pharyngalg)\\w*/,
+      evidence: /\\b(odynophag|mal de gorge|douleur a la deglutition|gorge douloureuse)\\w*/,
+    },
+    {
+      question: /\\b(ganglion|adenopath|aire cervicale)\\w*/,
+      evidence: /\\b(ganglion|adenopath)\\w*/,
+    },
+    {
+      question: /\\b(amygdal|tonsill|pharyn|oropharyn|exsudat|plaque|examen de la gorge)\\w*/,
+      evidence: /\\b(exsudat|plaque|amygdal|tonsill|pharyn|oropharyn|erythem)\\w*/,
+    },
+    { question: /\\b(toux|tuss)\\w*/, evidence: /\\b(toux|tuss)\\w*/ },
+    {
+      question: /\\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\\w*/,
+      evidence: /\\b(dysphag|difficulte.*(deglut|avaler)|avaler.*liquide|liquide.*avaler)\\w*/,
+    },
+    {
+      question: /\\b(fievre|temperature|febrile)\\w*/,
+      evidence: /\\b(fievre|temperature|febrile)\\w*/,
+    },
+    {
+      question: /\\b(respir|dyspne|essouff|stridor)\\w*/,
+      evidence: /\\b(difficulte respiratoire|dyspne|essouff|stridor|polypne|detresse respiratoire)\\w*/,
+    },
+    {
+      question: /\\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\\w*/,
+      evidence: /\\b(gonflement.*cou|cou.*gonfle|tumefaction cervicale|oedeme cervical)\\w*/,
+    },
   ];
 
   return rules.some(({ question, evidence }) => question.test(topic) && evidence.test(documentedText));
 }
 
-// Si une question regroupe plusieurs demandes séparées par une virgule ou un
-// point-virgule, conserve les parties utiles et retire uniquement les répétitions.
+// Retire les segments déjà documentés sans confondre des notions proches.
+// Les questions composées sont découpées sur la ponctuation et les conjonctions.
 function removeDocumentedQuestionParts(question: string, documentedText: string): string {
-  const parts = question.split(/([,;]|\b(?:et|ou)\b)/i);
-  if (parts.length === 1) {
-    return isClinicalTopicAlreadyDocumented(question, documentedText) ? '' : question;
-  }
+  const normalized = normalizeClinicalText(question);
+  if (!normalized) return '';
 
-  const kept: string[] = [];
-  let current = '';
-  for (const part of parts) {
-    if (/^(?:,|;|et|ou)$/i.test(part.trim())) {
-      if (current.trim() && !isClinicalTopicAlreadyDocumented(current, documentedText)) {
-        kept.push(current.trim());
-      }
-      current = '';
-    } else {
-      current += part;
-    }
-  }
-  if (current.trim() && !isClinicalTopicAlreadyDocumented(current, documentedText)) {
-    kept.push(current.trim());
-  }
-  return kept.join(', ');
+  // Les formulations ouvertes et vagues ne constituent pas une question clinique ciblée.
+  const parts = question
+    .split(/([,;?!]|\\b(?:et|ou)\\b)/i)
+    .filter((part) => !/^(?:,|;|\\?|!|\\b(?:et|ou)\\b)$/i.test(part.trim()));
+
+  const kept = parts
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .filter((part) => !/^(?:le patient presente t il|presente t il|d autres symptomes|autres symptomes|tout)$/i.test(normalizeClinicalText(part)))
+    .filter((part) => !isClinicalTopicAlreadyDocumented(part, documentedText));
+
+  return kept
+    .join(', ')
+    .replace(/\\s+,/g, ',')
+    .replace(/,\\s*,/g, ', ')
+    .replace(/\\s{2,}/g, ' ')
+    .replace(/^[,;\\s]+|[,;\\s]+$/g, '')
+    .trim();
 }
 
 app.post('/api/clinical/analyze', async (req, res) => {
