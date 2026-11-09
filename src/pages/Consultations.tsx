@@ -777,7 +777,16 @@ export default function Consultations({
                     ) : clinicalReasoning.status === 'analyzing' || clinicalReasoning.status === 'idle' ? (
                       <p style={{ margin: 0, fontSize: 12 }}>Analyse du contexte clinique en cours…</p>
                     ) : clinicalReasoning.status === 'error' ? (
-                      <p role="status" style={{ margin: 0, color: '#f4b66b', fontSize: 12 }}>{clinicalReasoning.error || 'Analyse momentanément indisponible.'}</p>
+                      <div role="status" style={{ display: 'grid', gap: 7, color: '#f4b66b', fontSize: 12 }}>
+                        <p style={{ margin: 0 }}>{clinicalReasoning.error || 'Analyse momentanément indisponible.'}</p>
+                        {clinicalReasoning.quotaSecondsRemaining > 0 ? (
+                          <strong style={{ fontVariantNumeric: 'tabular-nums' }}>
+                            Nouvelle tentative possible dans {Math.floor(clinicalReasoning.quotaSecondsRemaining / 60).toString().padStart(2, '0')}:{(clinicalReasoning.quotaSecondsRemaining % 60).toString().padStart(2, '0')}
+                          </strong>
+                        ) : clinicalReasoning.error.toLowerCase().includes('quota groq') ? (
+                          <span>Délai écoulé ou non communiqué. Modifiez une donnée clinique pour relancer l’analyse.</span>
+                        ) : null}
+                      </div>
                     ) : clinicalReasoning.analysis?.hypotheses?.length ? (
                       <div style={{ display: 'grid', gap: 13 }}>
                         {clinicalReasoning.analysis.hypotheses.map((item, index) => (
