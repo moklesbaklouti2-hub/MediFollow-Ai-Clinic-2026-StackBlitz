@@ -434,7 +434,7 @@ const [isListening, setIsListening] = useState(false);
             </p>
           )}
           <form className="mf-orb-chat-form" onSubmit={handleSubmit}>
-            {mode !== 'command' && <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder={mode === 'command' ? 'Ex. : ouvre les consultations' : 'Écrivez ou dictez à votre assistant…'} rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />}
+            {mode !== 'command' && <textarea ref={inputRef} value={input} onChange={event => setInput(event.target.value)} placeholder="Écrivez ou dictez à votre assistant…" rows={2} disabled={sending} onKeyDown={event => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} />}
             <button
               type="button"
               className={`mf-orb-mic-button${isListening ? ' is-listening' : ''}`}
