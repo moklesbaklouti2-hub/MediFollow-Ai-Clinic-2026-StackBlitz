@@ -136,12 +136,28 @@ function findClosestMedicalTerm(word: string): string | null {
   return bestTerm || null;
 }
 
+function isLikelyExsudatContext(value: string): boolean {
+  const normalizedText = normalizeSpeechCandidate(value);
+  const hasClinicalCue = /\\b(presence|depot|depots|plaque|plaques|enduit|examen)\\b/.test(normalizedText);
+  const hasAnatomicalSite = /\\b(amygdale|amygdales|tonsille|tonsilles|pharynx|gorge)\\b/.test(normalizedText);
+  const hasLocationLink = /\\b(sur|dans|au niveau de|au niveau des|au niveau du)\\b/.test(normalizedText);
+  return hasClinicalCue && hasAnatomicalSite && hasLocationLink;
+}
+
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
-  for (const original of value.match(/[\p{L}]+/gu) || []) {
+  const exsudatContext = isLikelyExsudatContext(value);
+  for (const original of value.match(/[\\p{L}]+/gu) || []) {
     const normalized = normalizeSpeechCandidate(original);
+    // « excellent » est un mot français valide : ne le rapprocher d'« exsudat »
+    // que dans une phrase ORL décrivant un dépôt ou une plaque sur une zone compatible.
+    const contextualReplacement = normalized === 'excellent' && exsudatContext
+      ? 'exsudat'
+      : null;
     const explicitReplacement = observedMedicalSpeechCorrections[normalized];
-    const replacement = explicitReplacement || findClosestMedicalTerm(original);
+    const replacement = contextualReplacement
+      || explicitReplacement
+      || (normalized === 'excellent' ? null : findClosestMedicalTerm(original));
     if (replacement && normalized !== normalizeSpeechCandidate(replacement)) {
       if (!found.has(normalized)) found.set(normalized, { original, replacement });
     }
