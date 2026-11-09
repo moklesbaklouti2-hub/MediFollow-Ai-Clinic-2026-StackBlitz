@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import type { InventoryCategory, InventoryData, InventoryItem } from '../types/medical';
 import { createId, getInventoryData, saveInventoryData, subscribeToMedicalData } from '../services/storage';
 
@@ -33,7 +33,7 @@ export default function Inventory() {
     return true;
   }
 
-  function addItem(event: React.FormEvent<HTMLFormElement>) {
+  function addItem(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const quantity = Number(form.quantity);
     const minimumQuantity = Number(form.minimumQuantity);
@@ -165,7 +165,7 @@ export default function Inventory() {
                 <p>{item.batchNumber ? `Lot : ${item.batchNumber} · ` : ''}{item.expiryDate ? `Péremption : ${new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR')}` : 'Péremption non renseignée'}{item.location ? ` · ${item.location}` : ''}</p>
                 {isLow && <span className="inventory-low">Stock bas</span>}
               </div>
-              {item.category !== 'equipment' && <button className="inventory-secondary" type="button" onClick={() => receiveStock(item)}>+ Réapprovisionner</button>}
+              <button className="inventory-secondary" type="button" onClick={() => receiveStock(item)}>+ Ajouter au stock</button>
             </article>;
           })}
         </div>
