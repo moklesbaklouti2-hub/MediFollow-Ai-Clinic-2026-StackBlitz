@@ -72,3 +72,10 @@
   .mf-orb-insight-bubble{right:0;bottom:108px;width:min(310px,calc(100vw - 18px));max-height:36dvh;padding:11px 12px}
   .mf-orb-assistant{z-index:1250}
 }
+
+.mf-orb-live-analysis button{
+  margin-top:8px;padding:7px 10px;border:1px solid rgba(108,226,220,.28);
+  border-radius:8px;background:rgba(91,218,204,.12);color:#a5f1e5;
+  font-size:10px;font-weight:700;cursor:pointer
+}
+.mf-orb-live-analysis button:hover{background:rgba(91,218,204,.2)}
