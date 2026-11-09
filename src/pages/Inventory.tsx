@@ -154,6 +154,18 @@ export default function Inventory() {
     }
   }
 
+  function clearMovementHistory() {
+    if (data.movements.length === 0) {
+      setMessage('L’historique est déjà vide.');
+      return;
+    }
+    const confirmed = window.confirm(
+      'Effacer définitivement tout l’historique des mouvements ? Les quantités actuelles de chaque article seront conservées. Cette action est irréversible.'
+    );
+    if (!confirmed) return;
+    persist({ ...data, movements: [] });
+  }
+
   function receiveStock(item: InventoryItem) {
     const raw = window.prompt(`Quantité à ajouter au stock de « ${item.name} » :`);
     if (raw === null) return;
@@ -271,7 +283,10 @@ export default function Inventory() {
       </section>
 
       <section className="inventory-panel">
-        <h3 style={{ margin: 0 }}>Historique des mouvements</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <h3 style={{ margin: 0 }}>Historique des mouvements</h3>
+          {data.movements.length > 0 && <button className="inventory-secondary" type="button" onClick={clearMovementHistory}>Effacer l’historique</button>}
+        </div>
         {data.movements.length === 0 ? <p className="inventory-empty">Aucun mouvement enregistré.</p> : data.movements.slice(0, 30).map(movement =>
           <div key={movement.id} className="inventory-history-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
             <span><strong>{movement.itemName}</strong><br /><span className="inventory-history-meta">{movement.reason || movement.type} · {new Date(movement.date).toLocaleString('fr-FR')}</span></span>
