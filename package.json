@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "dev:full": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 0.0.0.0\"",
-    "test:ai-providers": "tsx server/ai/test-providers.ts"
+    "test:ai-providers": "tsx server/ai/test-providers.ts",
+    "test:ai-resilience": "tsx server/ai/test-resilience.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
