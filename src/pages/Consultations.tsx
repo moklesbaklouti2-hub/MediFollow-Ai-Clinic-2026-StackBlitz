@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useClinicalReasoning } from '../hooks/useClinicalReasoning';
+import { useEffect, useState } from 'react';
+import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
@@ -134,7 +134,21 @@ const emptyVitals: Vitals = {
   glycemia: '',
 };
 
-export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt: string) => void }) {
+type ClinicalInsightPayload = {
+  enabled: boolean;
+  status: 'idle' | 'analyzing' | 'ready' | 'error';
+  analysis: ClinicalReasoningAnalysis | null;
+  error: string;
+  updatedAt: string;
+};
+
+export default function Consultations({
+  onAskCopilot,
+  onClinicalReasoningChange,
+}: {
+  onAskCopilot?: (prompt: string) => void;
+  onClinicalReasoningChange?: (insight: ClinicalInsightPayload) => void;
+}) {
   const { patients, consultations, addConsultation, updateConsultation } = useMedicalData();
 
   const [patientId, setPatientId] = useState('');
@@ -279,6 +293,17 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
     diagnosis,
     plan,
   });
+
+  useEffect(() => {
+    onClinicalReasoningChange?.({
+      enabled: smartCopilotEnabled,
+      status: clinicalReasoning.status,
+      analysis: clinicalReasoning.analysis,
+      error: clinicalReasoning.error,
+      updatedAt: clinicalReasoning.updatedAt,
+    });
+  }, [smartCopilotEnabled, clinicalReasoning.status, clinicalReasoning.analysis, clinicalReasoning.error, clinicalReasoning.updatedAt, onClinicalReasoningChange]);
+
 
   return (
     <section className="consultation-page">
@@ -523,61 +548,20 @@ export default function Consultations({ onAskCopilot }: { onAskCopilot?: (prompt
           <span>
             <strong style={{ display: 'block', fontSize: 13 }}>Copilote clinique intelligent</strong>
             <span style={{ display: 'block', marginTop: 2, fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
-              Analyse évolutive pendant la consultation
+              {clinicalReasoning.status === 'analyzing' ? 'Analyse en cours…' : clinicalReasoning.status === 'ready' ? 'Analyse disponible dans l’Orb' : 'Analyse évolutive pendant la consultation'}
             </span>
           </span>
         </label>
-        <p style={{ margin: 0, fontSize: 10, lineHeight: 1.4, color: 'var(--text-secondary,#81909c)' }}>
-          Contexte clinique anonymisé envoyé à Groq. Données fictives pendant le développement.
-        </p>
+        {smartCopilotEnabled && (
+          <p style={{ margin: 0, fontSize: 10, lineHeight: 1.4, color: 'var(--text-secondary,#81909c)' }}>
+            Analyse transmise à l’Orb · Contexte clinique sans nom ni téléphone.
+          </p>
+        )}
         {!selectedPatient && smartCopilotEnabled && (
           <p style={{ margin: 0, fontSize: 10, color: 'var(--text-secondary,#81909c)' }}>En attente de la sélection du patient.</p>
         )}
-        {smartCopilotEnabled && (
-          <div style={{ display: 'grid', gap: 8, paddingTop: 8, borderTop: '1px solid var(--border,#e5ebef)' }}>
-            <strong style={{ fontSize: 12 }}>
-              {clinicalReasoning.status === 'analyzing' ? 'Analyse en cours…' :
-               clinicalReasoning.status === 'error' ? 'Analyse indisponible' :
-               clinicalReasoning.analysis ? 'Analyse clinique' : 'En attente de données'}
-            </strong>
-            {clinicalReasoning.error && <p role="status" style={{ margin: 0, color: '#c07836', fontSize: 12 }}>{clinicalReasoning.error}</p>}
-            {clinicalReasoning.analysis && (
-              <div style={{ display: 'grid', gap: 9, fontSize: 12, lineHeight: 1.55 }}>
-                <div style={{ padding: 11, borderRadius: 9, border: '1px solid var(--border,#e5ebef)', background: 'var(--background,rgba(127,127,127,.04))' }}>
-                  <strong>
-                    {clinicalReasoning.analysis.priority === 'urgent' ? 'Priorité urgente — vérification immédiate' :
-                     clinicalReasoning.analysis.priority === 'attention' ? 'Attention particulière' : 'Lecture clinique'}
-                  </strong>
-                  <p style={{ margin: '5px 0 0' }}>{clinicalReasoning.analysis.situationSummary}</p>
-                  {clinicalReasoning.analysis.priorityReason && <p style={{ margin: '5px 0 0', color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.priorityReason}</p>}
-                </div>
-                {clinicalReasoning.analysis.nextQuestion && (
-                  <div style={{ padding: 11, borderRadius: 9, borderLeft: '3px solid #38bfa6', background: 'var(--background,rgba(127,127,127,.04))' }}>
-                    <strong>Question suivante</strong>
-                    <p style={{ margin: '5px 0' }}>{clinicalReasoning.analysis.nextQuestion}</p>
-                    {clinicalReasoning.analysis.whyThisQuestion && <p style={{ margin: 0, color: 'var(--text-secondary,#81909c)' }}>{clinicalReasoning.analysis.whyThisQuestion}</p>}
-                    <button type="button" onClick={() => onAskCopilot?.(clinicalReasoning.analysis!.nextQuestion)}
-                      style={{ marginTop: 8, border: 0, borderRadius: 7, padding: '8px 11px', background: '#42d5b4', color: '#12332f', fontWeight: 700, fontSize: 11 }}>
-                      Continuer avec l’Orb
-                    </button>
-                  </div>
-                )}
-                {clinicalReasoning.analysis.pointsToVerify.length > 0 && (
-                  <div><strong>À vérifier</strong><ul style={{ margin: '5px 0 0', paddingLeft: 19 }}>
-                    {clinicalReasoning.analysis.pointsToVerify.map((point, index) => <li key={index}>{point}</li>)}
-                  </ul></div>
-                )}
-                {clinicalReasoning.analysis.hypotheses.length > 0 && (
-                  <div><strong>Hypothèses — non confirmées</strong>
-                    {clinicalReasoning.analysis.hypotheses.map((item, index) => (
-                      <p key={index} style={{ margin: '5px 0' }}><b>{item.label}</b> · confiance {item.confidence}. {item.reason}</p>
-                    ))}
-                  </div>
-                )}
-                <span style={{ color: 'var(--text-secondary,#81909c)', fontSize: 10 }}>{clinicalReasoning.updatedAt} · Validation médicale requise.</span>
-              </div>
-            )}
-          </div>
+        {clinicalReasoning.error && smartCopilotEnabled && (
+          <p role="status" style={{ margin: 0, color: '#c07836', fontSize: 11 }}>{clinicalReasoning.error}</p>
         )}
       </section>
 
