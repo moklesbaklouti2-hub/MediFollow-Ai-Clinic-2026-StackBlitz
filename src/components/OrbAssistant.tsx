@@ -91,7 +91,6 @@ const [isListening, setIsListening] = useState(false);
 
   function toggleVoiceInput() {
     if (isListening) {
-      shouldContinueListeningRef.current = false;
       recognitionRef.current?.stop();
       return;
     }
@@ -108,42 +107,48 @@ const [isListening, setIsListening] = useState(false);
     }
 
     try {
-      // One user action = one recognition session. Never auto-restart:
-      // Android Chrome can replay late results when sessions are chained.
+      // Android Chrome peut renvoyer plusieurs fois les résultats d'une session
+      // continue. Une session correspond donc à une seule prise de parole.
       const recognition = new Recognition();
       let sessionEnded = false;
       speechBaseInputRef.current = input;
       speechCurrentTextRef.current = '';
       speechFinalSegmentsRef.current.clear();
-      shouldContinueListeningRef.current = false;
 
       recognition.lang = 'fr-FR';
-      recognition.continuous = true;
+      recognition.continuous = false;
       recognition.interimResults = true;
 
       recognition.onresult = (event) => {
         if (sessionEnded || recognitionRef.current !== recognition) return;
 
-        let interimText = '';
-        for (let index = event.resultIndex; index < event.results.length; index += 1) {
+        const finalParts: string[] = [];
+        const interimParts: string[] = [];
+
+        // Relire la liste complète à chaque événement : ne jamais concaténer
+        // un résultat déjà reçu avec sa nouvelle version.
+        for (let index = 0; index < event.results.length; index += 1) {
           const result = event.results[index];
           const transcript = (result[0]?.transcript || '').trim();
+          if (!transcript) continue;
+
           if (result.isFinal) {
-            if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
+            finalParts.push(transcript);
           } else {
-            interimText += `${transcript} `;
+            interimParts.push(transcript);
           }
         }
 
-        const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
-          .sort(([a], [b]) => a - b)
-          .map(([, value]) => value);
-        const dictatedText = finalParts.join(' ').trim();
+        // Éliminer uniquement les répétitions consécutives strictement identiques.
+        const uniqueFinalParts = finalParts.filter((part, index) =>
+          index === 0 || part.toLocaleLowerCase() !== finalParts[index - 1].toLocaleLowerCase()
+        );
+        const dictatedText = uniqueFinalParts.join(' ').trim();
         speechCurrentTextRef.current = dictatedText;
 
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
-        setInterimTranscript(interimText.trim());
+        setInterimTranscript(interimParts.join(' ').trim());
       };
 
       recognition.onerror = (event) => {
@@ -183,7 +188,6 @@ const [isListening, setIsListening] = useState(false);
       recognitionRef.current = recognition;
       recognition.start();
     } catch {
-      shouldContinueListeningRef.current = false;
       recognitionRef.current = null;
       setIsListening(false);
       setInterimTranscript('');
