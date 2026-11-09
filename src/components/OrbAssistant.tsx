@@ -167,8 +167,8 @@ const [isListening, setIsListening] = useState(false);
           'audio-capture': 'Aucun microphone accessible n’a été détecté.',
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
-        setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
         if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
           shouldContinueListeningRef.current = false;
           setIsListening(false);
           setInterimTranscript('');
