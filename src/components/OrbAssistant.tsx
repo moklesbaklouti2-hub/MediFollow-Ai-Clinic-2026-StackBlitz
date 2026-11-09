@@ -23,11 +23,12 @@ type OrbAssistantProps = {
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
 type SpeechAlternativeLike = { transcript: string };
-type SpeechResultLike = { isFinal: boolean; [index: number]: SpeechAlternativeLike };
+type SpeechResultLike = { isFinal: boolean; length: number; [index: number]: SpeechAlternativeLike };
 type SpeechEventLike = { resultIndex: number; results: ArrayLike<SpeechResultLike> };
 type SpeechErrorLike = { error: string };
 type SpeechRecognitionLike = {
   lang: string;
+  maxAlternatives: number;
   continuous: boolean;
   interimResults: boolean;
   onresult: ((event: SpeechEventLike) => void) | null;
@@ -38,6 +39,46 @@ type SpeechRecognitionLike = {
   abort: () => void;
 };
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
+
+// Vocabulaire médical utilisé pour départager les alternatives proposées
+// par le moteur vocal du navigateur. Il ne remplace pas une validation humaine.
+const medicalSpeechTerms = [
+  'exsudat', 'odynophagie', 'dysphagie', 'amygdalite', 'pharyngite',
+  'angine', 'adénopathie', 'dyspnée', 'tachycardie', 'bradycardie',
+  'auscultation', 'crépitants', 'sibilants', 'ronchi', 'stridor',
+  'hémoptysie', 'épistaxis', 'otorrhée', 'otalgie', 'vertige',
+  'streptocoque', 'amoxicilline', 'paracétamol', 'ibuprofène',
+  'antécédents', 'anamnèse', 'palpation', 'percussion', 'conjonctivite',
+  'hypoxémie', 'saturation', 'glycémie', 'hémoglobine', 'leucocytes',
+];
+
+function normalizeSpeechCandidate(value: string): string {
+  return value.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('fr');
+}
+
+function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
+  const candidates = Array.from({ length: result.length }, (_, index) =>
+    (result[index]?.transcript || '').trim()
+  ).filter(Boolean);
+
+  if (candidates.length <= 1) return candidates[0] || '';
+
+  const scored = candidates.map((transcript, index) => {
+    const normalized = normalizeSpeechCandidate(transcript);
+    const score = medicalSpeechTerms.reduce((total, term) => {
+      const normalizedTerm = normalizeSpeechCandidate(term);
+      return total + (normalized.includes(normalizedTerm) ? 3 : 0);
+    }, 0);
+    return { transcript, score, index };
+  });
+
+  // Ne choisit une alternative que si elle contient un terme médical reconnu
+  // que la première proposition ne contient pas. En cas d'égalité, garde l'original.
+  const best = scored.reduce((current, candidate) =>
+    candidate.score > current.score ? candidate : current
+  );
+  return best.score > scored[0].score ? best.transcript : candidates[0];
+}
 
 const suggestionsByPage: Record<string, string[]> = {
   'Tableau de bord': ['Aide-moi à organiser ma journée.', 'Quels points dois-je surveiller dans mon activité ?'],
@@ -126,6 +167,7 @@ const [isListening, setIsListening] = useState(false);
       speechFinalSegmentsRef.current.clear();
 
       recognition.lang = 'fr-FR';
+      recognition.maxAlternatives = 5;
       recognition.continuous = false;
       recognition.interimResults = true;
 
@@ -139,7 +181,7 @@ const [isListening, setIsListening] = useState(false);
         // un résultat déjà reçu avec sa nouvelle version.
         for (let index = 0; index < event.results.length; index += 1) {
           const result = event.results[index];
-          const transcript = (result[0]?.transcript || '').trim();
+          const transcript = chooseMedicalSpeechAlternative(result);
           if (!transcript) continue;
 
           if (result.isFinal) {
