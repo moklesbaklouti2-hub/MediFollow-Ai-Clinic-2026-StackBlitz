@@ -1,6 +1,6 @@
 import express from 'express';
-import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
+import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
 
@@ -8,14 +8,11 @@ const app = express();
 const PORT = 3001;
 app.use(express.json({ limit: '64kb' }));
 
-const apiKey = process.env.GROQ_API_KEY?.trim();
-const groq = apiKey ? new Groq({ apiKey }) : null;
-
-console.log('GROQ_API_KEY détectée :', Boolean(apiKey));
+console.log('Fournisseur IA principal configuré :', isAiProviderConfigured());
 console.log('MediFollow backend démarré');
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'MediFollow AI' });
+  res.json({ status: 'ok', service: 'MediFollow AI', ai: { configured: isAiProviderConfigured(), primaryProvider: 'groq' } });
 });
 
 const clinicalReasoningInstructions = `
@@ -49,10 +46,6 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 app.post('/api/clinical/analyze', async (req, res) => {
   try {
-    if (!groq) {
-      return res.status(503).json({ error: 'Clé GROQ_API_KEY non configurée.' });
-    }
-
     const context = req.body?.context;
     if (!isPlainObject(context)) {
       return res.status(400).json({ error: 'Contexte clinique invalide.' });
@@ -63,7 +56,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
       return res.status(413).json({ error: 'Le contexte clinique est trop volumineux.' });
     }
 
-    const completion = await groq.chat.completions.create({
+    const completion = await createAiCompletion({
       model: 'openai/gpt-oss-20b',
       messages: [
         { role: 'system', content: clinicalReasoningInstructions },
@@ -255,8 +248,6 @@ const commandPages = [
 
 app.post('/api/commands/interpret', async (req, res) => {
   try {
-    if (!groq) return res.status(503).json({ error: 'Clé GROQ_API_KEY non configurée.' });
-
     const instruction = String(req.body?.instruction ?? '').trim();
     const currentPage = String(req.body?.currentPage ?? 'Tableau de bord');
     if (!instruction) return res.status(400).json({ error: 'Commande vide.' });
@@ -421,8 +412,6 @@ app.post('/api/chat', async (req, res) => {
       }
     }
 
-    if (!groq) return res.status(503).json({ error: 'Clé GROQ_API_KEY non configurée.' });
-
     const completion = await groq.chat.completions.create({
       model: 'openai/gpt-oss-20b',
       messages: [
@@ -449,8 +438,15 @@ app.post('/api/chat', async (req, res) => {
     const reply = completion.choices[0]?.message?.content ?? 'Aucune réponse générée.';
     return res.json({ reply });
   } catch (error) {
-    console.error('Erreur Groq détaillée:', error);
-    return res.status(500).json({ error: 'Erreur interne du moteur IA.' });
+    console.error('Erreur du routeur IA:', error);
+    const statusCode = isPlainObject(error) && typeof error.status === 'number'
+      ? error.status
+      : 500;
+    return res.status(statusCode >= 400 && statusCode < 600 ? statusCode : 500).json({
+      error: statusCode === 429
+        ? 'Quota du fournisseur IA atteint. Réessayez plus tard.'
+        : 'Erreur interne du moteur IA.',
+    });
   }
 });
 
