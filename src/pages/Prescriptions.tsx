@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { InventoryData, Medication } from '../types/medical';
-import { dispenseInventoryItems, getInventoryData, getMedicalData, subscribeToMedicalData } from '../services/storage';
+import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
 
 const emptyMedication: Medication = {
   id: '',
@@ -193,6 +193,52 @@ export default function Prescriptions() {
       : 'Stock déduit et mouvement enregistré, mais le statut de l’ordonnance n’a pas été actualisé. Ne relancez pas la délivrance.');
   }
 
+  function handlePartialReturn(movementId: string, itemName: string, remaining: number) {
+    const raw = window.prompt(`Quantité réellement retournée pour ${itemName} (maximum : ${remaining}) :`);
+    if (raw === null) return;
+    const quantity = Number(raw.replace(',', '.'));
+    if (!Number.isFinite(quantity) || quantity <= 0) {
+      alert('Saisissez une quantité valide.');
+      return;
+    }
+    if (!window.confirm('Confirmez-vous que cette quantité a été physiquement récupérée, est intacte et peut être réintégrée au stock ?')) return;
+
+    const result = returnDispensedStock({
+      dispenseMovementId: movementId,
+      quantity,
+      reason: 'Retour partiel contrôlé — produit récupéré et réintégrable',
+    });
+    if (!result.success) {
+      alert(result.error || 'Retour non enregistré.');
+      return;
+    }
+    setInventory(getInventoryData());
+    setSavedMessage('Retour partiel enregistré dans le lot d’origine.');
+  }
+
+  function cancelPrescription(item: (typeof prescriptions)[number]) {
+    if (item.status === 'cancelled') return;
+    if (item.status === 'dispensed') {
+      if (!window.confirm('Confirmez-vous l’annulation de cette délivrance ET la récupération physique de tous les produits restants, intacts et réintégrables ? Le reliquat de chaque lot d’origine sera réintégré.')) return;
+      const stockResult = cancelDispensedPrescriptionStock({ prescriptionId: item.id });
+      if (!stockResult.success) {
+        alert(stockResult.error || 'Impossible de réintégrer le stock.');
+        return;
+      }
+      setInventory(getInventoryData());
+    } else if (!window.confirm('Annuler cette ordonnance non délivrée ? Aucun mouvement de stock ne sera effectué.')) {
+      return;
+    }
+
+    const saved = updatePrescription(item.id, {
+      status: 'cancelled',
+      cancelledAt: new Date().toISOString(),
+    });
+    setSavedMessage(saved
+      ? 'Ordonnance annulée. La traçabilité des mouvements est conservée.'
+      : 'Le stock a été traité, mais le statut n’a pas été actualisé. Actualisez la page avant toute nouvelle action.');
+  }
+
   function openPrescription(item: (typeof prescriptions)[number]) {
     setPatientId(item.patientId);
     setDate(item.date);
@@ -205,6 +251,11 @@ export default function Prescriptions() {
   }
 
   function confirmDeletePrescription(id: string) {
+    const target = prescriptions.find((item) => item.id === id);
+    if (target?.status === 'dispensed' || target?.status === 'cancelled') {
+      alert('Suppression bloquée : une ordonnance délivrée ou annulée doit rester conservée pour assurer la traçabilité.');
+      return;
+    }
     if (!window.confirm('Supprimer définitivement cette ordonnance ?')) return;
     deletePrescription(id);
   }
@@ -259,6 +310,9 @@ export default function Prescriptions() {
         .history-card strong { font-size:15px; }
         .history-card span { font-size:12px; color:#81909c; }
         .history-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .return-lot-list { display:grid; gap:8px; margin-top:8px; padding:10px; border-radius:10px; background:var(--surface-muted,rgba(120,130,140,.08)); }
+        .return-lot-row { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; font-size:12px; }
+        .return-lot-row button { border:1px solid var(--border,#dce4e8); background:var(--surface,#fff); color:inherit; border-radius:8px; padding:7px 10px; cursor:pointer; }
         .history-open { border:0; background:#e2f8f1; color:#21866e; border-radius:8px; padding:9px 12px; font-weight:700; cursor:pointer; }
         @media(max-width:600px) {
           .prescription-grid { grid-template-columns:1fr; }
@@ -560,6 +614,38 @@ export default function Prescriptions() {
                   Statut : {item.status === 'dispensed' ? 'Délivrée' : item.status === 'cancelled' ? 'Annulée' : 'Brouillon / non délivrée'}
                 </span>
 
+                {item.status === 'dispensed' && (
+                  <div className="return-lot-list">
+                    <strong>Retours et traçabilité par lot</strong>
+                    {(() => {
+                      const dispenseMovements = inventory.movements.filter((movement) =>
+                        movement.type === 'dispense' && movement.prescriptionId === item.id
+                      );
+                      if (dispenseMovements.length === 0) {
+                        return <span>Aucun mouvement de stock retrouvé pour cette délivrance.</span>;
+                      }
+                      return dispenseMovements.map((movement) => {
+                        const returned = inventory.movements
+                          .filter((entry) => entry.type === 'return' && entry.reversesMovementId === movement.id)
+                          .reduce((sum, entry) => sum + entry.quantity, 0);
+                        const remaining = Math.max(0, movement.quantity - returned);
+                        const lot = inventory.items.find((entry) => entry.id === movement.itemId);
+                        return (
+                          <div className="return-lot-row" key={movement.id}>
+                            <span>{movement.itemName} · {movement.reason || 'Lot'} — délivré : {movement.quantity} · retourné : {returned} · reste : {remaining} {lot?.unit || ''}</span>
+                            {remaining > 0 && (
+                              <button onClick={() => handlePartialReturn(movement.id, movement.itemName, remaining)}>
+                                Enregistrer un retour partiel
+                              </button>
+                            )}
+                          </div>
+                        );
+                      });
+                    })()}
+                    <span>Ne réintégrez que les produits physiquement récupérés, intacts et dont les conditions de conservation sont garanties.</span>
+                  </div>
+                )}
+
                 <div className="history-actions">
                   <button
                     className="history-open"
@@ -568,6 +654,14 @@ export default function Prescriptions() {
                     Modifier
                   </button>
 
+                  {item.status !== 'cancelled' && (
+                    <button
+                      className="prescription-remove"
+                      onClick={() => cancelPrescription(item)}
+                    >
+                      Annuler l’ordonnance
+                    </button>
+                  )}
                   <button
                     className="prescription-remove"
                     onClick={() => confirmDeletePrescription(item.id)}
