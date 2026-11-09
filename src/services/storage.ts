@@ -320,7 +320,7 @@ export function dispenseInventoryItems(input: {
   prescriptionId: string;
   patientId: string;
   items: Array<{ inventoryItemId: string; quantity: number }>;
-}): { success: boolean; error?: string } {
+}): { success: boolean; error?: string; alreadyDispensed?: boolean } {
   const data = getInventoryData();
 
   // Idempotence : empêcher une seconde déduction pour la même ordonnance.
