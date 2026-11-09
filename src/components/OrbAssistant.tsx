@@ -64,6 +64,7 @@ const [isListening, setIsListening] = useState(false);
   const [speechMessage, setSpeechMessage] = useState('');
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const speechBaseInputRef = useRef('');
+  const speechFinalSegmentsRef = useRef<Map<number, string>>(new Map());
 
   useEffect(() => {
     if (clinicalInsight?.updatedAt) setInsightDismissed(false);
@@ -106,19 +107,35 @@ const [isListening, setIsListening] = useState(false);
       recognition.continuous = true;
       recognition.interimResults = true;
       speechBaseInputRef.current = input;
+      speechFinalSegmentsRef.current.clear();
       recognition.onresult = (event) => {
-        let finalText = '';
         let interimText = '';
-        // Rebuild the session transcript from all current results. Do not append
-        // each event: browsers can resend finalized segments in later events.
-        for (let index = 0; index < event.results.length; index += 1) {
+        // Update only the segments changed by this event. Final segments are
+        // retained by their stable index instead of being appended repeatedly.
+        for (let index = event.resultIndex; index < event.results.length; index += 1) {
           const result = event.results[index];
-          const transcript = result[0]?.transcript || '';
-          if (result.isFinal) finalText += transcript;
-          else interimText += transcript;
+          const transcript = (result[0]?.transcript || '').trim();
+          if (result.isFinal) {
+            if (transcript) speechFinalSegmentsRef.current.set(index, transcript);
+          } else {
+            interimText += `${transcript} `;
+          }
         }
+        const finalParts = Array.from(speechFinalSegmentsRef.current.entries())
+          .sort(([a], [b]) => a - b)
+          .map(([, value]) => value);
+        // Some mobile speech services repeat a word at a segment boundary.
+        // Collapse only immediately duplicated words; preserve normal phrasing.
+        const words = finalParts.join(' ').split(/\\s+/).filter(Boolean);
+        const cleanedWords: string[] = [];
+        for (const word of words) {
+          const previous = cleanedWords[cleanedWords.length - 1];
+          const normalize = (value: string) => value.toLocaleLowerCase('fr-FR').replace(/^[.,;:!?]+|[.,;:!?]+$/g, '');
+          if (previous && normalize(previous) === normalize(word)) continue;
+          cleanedWords.push(word);
+        }
+        const dictatedText = cleanedWords.join(' ').trim();
         const base = speechBaseInputRef.current.trimEnd();
-        const dictatedText = finalText.trim();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
         setInterimTranscript(interimText.trim());
       };
