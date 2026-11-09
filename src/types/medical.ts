@@ -173,7 +173,25 @@ export type Medication = {
   instructions: string;
 };
 
-// ---------- ORDONNANCE ----------
+// ---------- ORDONNANCE ET EXAMENS ----------
+
+export type PrescriptionCategory =
+  | 'treatment'
+  | 'laboratory'
+  | 'radiology'
+  | 'other';
+
+export type PrescriptionItem = {
+  id: string;
+  category: PrescriptionCategory;
+  name: string;
+  details?: string;
+  instructions?: string;
+  inventoryItemId?: string;
+  quantity?: number;
+};
+
+export type PrescriptionStatus = 'draft' | 'validated' | 'dispensed' | 'cancelled';
 
 export type Prescription = {
   id: string;
@@ -182,6 +200,51 @@ export type Prescription = {
   medications: Medication[];
   advice: string;
   savedAt: string;
+  // Nouveaux champs facultatifs : compatibilité avec les anciennes ordonnances.
+  items?: PrescriptionItem[];
+  status?: PrescriptionStatus;
+  validatedAt?: string;
+  dispensedAt?: string;
+  cancelledAt?: string;
+};
+
+// ---------- INVENTAIRE DU CABINET ----------
+
+export type InventoryCategory = 'supply' | 'equipment' | 'treatment';
+
+export type InventoryItem = {
+  id: string;
+  name: string;
+  category: InventoryCategory;
+  unit: string;
+  quantity: number;
+  minimumQuantity: number;
+  batchNumber?: string;
+  expiryDate?: string;
+  location?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type StockMovementType = 'receipt' | 'dispense' | 'return' | 'adjustment';
+
+export type StockMovement = {
+  id: string;
+  itemId: string;
+  itemName: string;
+  type: StockMovementType;
+  quantity: number;
+  date: string;
+  reason?: string;
+  prescriptionId?: string;
+  patientId?: string;
+  reversesMovementId?: string;
+};
+
+export type InventoryData = {
+  items: InventoryItem[];
+  movements: StockMovement[];
 };
 
 // ---------- PARAMÈTRES MÉDECIN ----------
