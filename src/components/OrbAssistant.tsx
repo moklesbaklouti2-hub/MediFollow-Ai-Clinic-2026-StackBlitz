@@ -161,7 +161,7 @@ export default function OrbAssistant({
   return (
     <div className={`mf-orb-assistant${isThinking || sending ? ' is-thinking' : ''}`}>
       {clinicalInsight?.enabled && clinicalInsight.status !== 'idle' && !panelOpen && (
-        <aside className={`mf-orb-insight-bubble ${clinicalInsight.status === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de l’Orb">
+        <aside className={`mf-orb-insight-bubble ${clinicalInsight.analysis?.priority === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de l’Orb">
           <div className="mf-orb-insight-top">
             <span className={`mf-orb-status-dot${clinicalInsight.status === 'analyzing' ? ' is-thinking' : ''}`} />
             <strong>{clinicalInsight.status === 'analyzing' ? 'MediFollow analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
@@ -259,6 +259,23 @@ export default function OrbAssistant({
           </div>
 
           <div className="mf-orb-conversation" ref={conversationRef} aria-live="polite">
+            {clinicalInsight?.enabled && clinicalInsight.status === 'ready' && clinicalInsight.analysis && (
+              <div className="mf-orb-message assistant mf-orb-live-analysis">
+                <span>RAISONNEMENT CLINIQUE · {clinicalInsight.updatedAt}</span>
+                <p><strong>{clinicalInsight.analysis.priority === 'urgent' ? 'Priorité urgente — évaluation immédiate' : clinicalInsight.analysis.priority === 'attention' ? 'Point d’attention' : 'Analyse clinique'}</strong></p>
+                <p>{clinicalInsight.analysis.situationSummary}</p>
+                {clinicalInsight.analysis.nextQuestion && (
+                  <p><strong>Question à explorer :</strong> {clinicalInsight.analysis.nextQuestion}</p>
+                )}
+                {clinicalInsight.analysis.whyThisQuestion && <p>{clinicalInsight.analysis.whyThisQuestion}</p>}
+                <button type="button" onClick={() => setInput(clinicalInsight.analysis?.nextQuestion || 'Approfondissons cette analyse clinique.')}>
+                  Reprendre la question dans le chat
+                </button>
+              </div>
+            )}
+            {clinicalInsight?.enabled && clinicalInsight.status === 'error' && (
+              <div className="mf-orb-message assistant"><span>ANALYSE CLINIQUE</span><p>{clinicalInsight.error || 'Analyse indisponible. Réessayez après quelques secondes.'}</p></div>
+            )}
             {messages.length === 0 ? (
               <div className="mf-orb-welcome">
                 <div className="mf-orb-mini"><span className="mf-orb-mini-core" /></div>
