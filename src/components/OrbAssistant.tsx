@@ -327,7 +327,7 @@ const [isListening, setIsListening] = useState(false);
         }
         setMessages(previous => [...previous, {
           role: 'assistant',
-          content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action de navigation sûre. Pouvez-vous préciser la page à ouvrir ?',
+          content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action sûre à effectuer. Pouvez-vous reformuler la commande ?',
         }]);
         return;
       }
