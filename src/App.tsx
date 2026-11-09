@@ -11,6 +11,7 @@ import Consultations from './pages/Consultations';
 import Copilot, { type Message } from './pages/Copilot';
 import Protocols from './pages/Protocols';
 import Prescriptions from './pages/Prescriptions';
+import Inventory from './pages/Inventory';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
 import OrbAssistant from './components/OrbAssistant';
@@ -249,6 +250,9 @@ function App() {
 
       case 'Ordonnances':
         return <Prescriptions />;
+
+      case 'Inventaire':
+        return <Inventory />;
 
       case 'Paramètres':
         return (
