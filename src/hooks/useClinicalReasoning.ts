@@ -34,12 +34,26 @@ export function useClinicalReasoning(input: ReasoningInput) {
   const [status, setStatus] = useState<'idle' | 'analyzing' | 'ready' | 'error'>('idle');
   const [error, setError] = useState('');
   const [updatedAt, setUpdatedAt] = useState('');
+  const [quotaUntil, setQuotaUntil] = useState<number | null>(null);
+  const [quotaSecondsRemaining, setQuotaSecondsRemaining] = useState(0);
   const lastSnapshot = useRef('');
   const lastRequestAt = useRef(0);
   const inFlight = useRef(false);
   const activeRequest = useRef<AbortController | null>(null);
 
   const previousPatientId = useRef(input.patient?.id ?? '');
+
+  useEffect(() => {
+    if (!quotaUntil) { setQuotaSecondsRemaining(0); return; }
+    const updateCountdown = () => {
+      const remaining = Math.max(0, Math.ceil((quotaUntil - Date.now()) / 1000));
+      setQuotaSecondsRemaining(remaining);
+      if (remaining === 0) setQuotaUntil(null);
+    };
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(timer);
+  }, [quotaUntil]);
 
   useEffect(() => {
     const nextPatientId = input.patient?.id ?? '';
@@ -143,7 +157,13 @@ export function useClinicalReasoning(input: ReasoningInput) {
         } catch {
           throw new Error(`Réponse serveur illisible (HTTP ${response.status}). Le moteur IA n'a pas fourni un JSON valide.`);
         }
-        if (!response.ok) throw new Error(data?.error || `Analyse clinique indisponible (HTTP ${response.status}).`);
+        if (!response.ok) {
+          if (response.status === 429 && Number.isFinite(Number(data?.retryAfterSeconds)) && Number(data.retryAfterSeconds) > 0) {
+            setQuotaUntil(Date.now() + Number(data.retryAfterSeconds) * 1000);
+          }
+          throw new Error(data?.error || `Analyse clinique indisponible (HTTP ${response.status}).`);
+        }
+        setQuotaUntil(null);
         if (!data?.analysis || typeof data.analysis.situationSummary !== 'string') {
           throw new Error('Réponse du moteur clinique incomplète. Réessayez après quelques secondes.');
         }
@@ -166,5 +186,5 @@ export function useClinicalReasoning(input: ReasoningInput) {
     return () => window.clearTimeout(timer);
   }, [input.enabled, hasUsefulContent, snapshot, safeContext, analysis, status]);
 
-  return { analysis, status, error, updatedAt };
+  return { analysis, status, error, updatedAt, quotaSecondsRemaining };
 }
