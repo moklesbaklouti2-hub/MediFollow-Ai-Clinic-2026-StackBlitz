@@ -18,6 +18,7 @@ export default function Inventory() {
   const [data, setData] = useState<InventoryData>(() => getInventoryData());
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [message, setMessage] = useState('');
 
@@ -31,6 +32,87 @@ export default function Inventory() {
     setData(next);
     setMessage('Modification enregistrée.');
     return true;
+  }
+
+  function startEditing(item: InventoryItem) {
+    setEditingId(item.id);
+    setForm({
+      name: item.name,
+      category: item.category,
+      unit: item.unit,
+      quantity: String(item.quantity),
+      minimumQuantity: String(item.minimumQuantity),
+      batchNumber: item.batchNumber || '',
+      expiryDate: item.expiryDate || '',
+      location: item.location || '',
+      notes: item.notes || '',
+    });
+    setShowForm(true);
+    setMessage('');
+  }
+
+  function saveEdit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!editingId) return;
+    const quantity = Number(form.quantity);
+    const minimumQuantity = Number(form.minimumQuantity);
+    if (!form.name.trim() || !form.unit.trim() || !Number.isFinite(quantity) || quantity < 0 ||
+        !Number.isFinite(minimumQuantity) || minimumQuantity < 0) {
+      setMessage('Vérifiez le nom, l’unité et les quantités saisies.');
+      return;
+    }
+    const current = data.items.find(item => item.id === editingId);
+    if (!current) {
+      setMessage('Article introuvable. Actualisez la page.');
+      return;
+    }
+    const timestamp = new Date().toISOString();
+    const delta = quantity - current.quantity;
+    const updated: InventoryItem = {
+      ...current,
+      name: form.name.trim(),
+      category: form.category,
+      unit: form.unit.trim(),
+      quantity,
+      minimumQuantity,
+      batchNumber: form.batchNumber.trim() || undefined,
+      expiryDate: form.expiryDate || undefined,
+      location: form.location.trim() || undefined,
+      notes: form.notes.trim() || undefined,
+      updatedAt: timestamp,
+    };
+    const movements = delta === 0 ? data.movements : [{
+      id: createId(),
+      itemId: current.id,
+      itemName: updated.name,
+      type: 'adjustment' as const,
+      quantity: delta,
+      date: timestamp,
+      reason: delta > 0 ? 'Correction manuelle : augmentation du stock' : 'Correction manuelle : diminution du stock',
+    }, ...data.movements];
+    if (persist({
+      items: data.items.map(item => item.id === editingId ? updated : item),
+      movements,
+    })) {
+      setForm(emptyForm);
+      setEditingId(null);
+      setShowForm(false);
+    }
+  }
+
+  function deleteItem(item: InventoryItem) {
+    const hasHistory = data.movements.some(movement => movement.itemId === item.id);
+    const warning = hasHistory
+      ? `Supprimer « ${item.name} » de l’inventaire ? Son historique de mouvements sera conservé, mais l’article ne sera plus disponible pour les prochaines délivrances.`
+      : `Supprimer définitivement « ${item.name} » de l’inventaire ?`;
+    if (!window.confirm(warning)) return;
+    if (persist({ ...data, items: data.items.filter(entry => entry.id !== item.id) })) {
+      if (editingId === item.id) {
+        setEditingId(null);
+        setForm(emptyForm);
+        setShowForm(false);
+      }
+    }
   }
 
   function addItem(event: FormEvent<HTMLFormElement>) {
@@ -143,10 +225,10 @@ export default function Inventory() {
       <section className="inventory-panel">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
           <h3 style={{ margin: 0 }}>Stock du cabinet</h3>
-          <button className="inventory-button" type="button" onClick={() => { setShowForm(!showForm); setMessage(''); }}>{showForm ? 'Fermer' : '+ Ajouter un article'}</button>
+          <button className="inventory-button" type="button" onClick={() => { if (showForm) { setEditingId(null); setForm(emptyForm); } setShowForm(!showForm); setMessage(''); }}>{showForm ? 'Fermer' : '+ Ajouter un article'}</button>
         </div>
 
-        {showForm && <form onSubmit={addItem} style={{ display: 'grid', gap: 13 }}>
+        {showForm && <form onSubmit={editingId ? saveEdit : addItem} style={{ display: 'grid', gap: 13 }}>
           <div className="inventory-grid">
             <div className="inventory-field"><label>Nom de l’article *</label><input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="Ex. Gants nitrile, paracétamol..." /></div>
             <div className="inventory-field"><label>Catégorie</label><select value={form.category} onChange={e => setForm({ ...form, category: e.target.value as InventoryCategory })}><option value="supply">Consommable</option><option value="equipment">Équipement</option><option value="treatment">Traitement</option></select></div>
@@ -158,7 +240,7 @@ export default function Inventory() {
             <div className="inventory-field"><label>Emplacement</label><input value={form.location} onChange={e => setForm({ ...form, location: e.target.value })} placeholder="Armoire, réserve..." /></div>
           </div>
           <div className="inventory-field"><label>Notes</label><textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} rows={2} /></div>
-          <div><button className="inventory-button" type="submit">Enregistrer l’article</button></div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}><button className="inventory-button" type="submit">{editingId ? 'Enregistrer les modifications' : 'Enregistrer l’article'}</button>{editingId && <button className="inventory-secondary" type="button" onClick={() => { setEditingId(null); setForm(emptyForm); setShowForm(false); }}>Annuler</button>}</div>
         </form>}
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -178,7 +260,11 @@ export default function Inventory() {
                 <p>{item.batchNumber ? `Lot : ${item.batchNumber} · ` : ''}{item.expiryDate ? `Péremption : ${new Date(item.expiryDate + 'T00:00:00').toLocaleDateString('fr-FR')}` : 'Péremption non renseignée'}{item.location ? ` · ${item.location}` : ''}</p>
                 {isLow && <span className="inventory-low">Stock bas</span>}
               </div>
-              <button className="inventory-secondary" type="button" onClick={() => receiveStock(item)}>+ Ajouter au stock</button>
+              <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
+                <button className="inventory-secondary" type="button" onClick={() => receiveStock(item)}>+ Ajouter au stock</button>
+                <button className="inventory-secondary" type="button" onClick={() => startEditing(item)}>Modifier</button>
+                <button className="inventory-secondary" type="button" onClick={() => deleteItem(item)}>Supprimer</button>
+              </div>
             </article>;
           })}
         </div>
@@ -189,7 +275,7 @@ export default function Inventory() {
         {data.movements.length === 0 ? <p className="inventory-empty">Aucun mouvement enregistré.</p> : data.movements.slice(0, 30).map(movement =>
           <div key={movement.id} className="inventory-history-row" style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
             <span><strong>{movement.itemName}</strong><br /><span className="inventory-history-meta">{movement.reason || movement.type} · {new Date(movement.date).toLocaleString('fr-FR')}</span></span>
-            <strong style={{ whiteSpace: 'nowrap' }}>{movement.type === 'dispense' ? '−' : '+'}{movement.quantity}</strong>
+            <strong style={{ whiteSpace: 'nowrap' }}>{movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '−' : '+'}{Math.abs(movement.quantity)}</strong>
           </div>
         )}
       </section>
