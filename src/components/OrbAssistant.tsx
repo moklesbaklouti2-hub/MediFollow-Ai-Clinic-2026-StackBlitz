@@ -53,7 +53,7 @@ const medicalSpeechTerms = [
 ];
 
 function normalizeSpeechCandidate(value: string): string {
-  return value.normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLocaleLowerCase('fr');
+  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
 }
 
 function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
