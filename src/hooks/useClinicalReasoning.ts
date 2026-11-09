@@ -10,7 +10,7 @@ export type ClinicalReasoningAnalysis = {
   nextQuestionOptions: string[];
   whyThisQuestion: string;
   pointsToVerify: string[];
-  hypotheses: { label: string; reason: string; confidence: 'faible' | 'modérée'; percentage: number }[];
+  hypotheses: { label: string; reason: string }[];
   recommendedActions: string[];
 };
 
@@ -139,9 +139,9 @@ export function useClinicalReasoning(input: ReasoningInput) {
                 situationSummary: analysis.situationSummary.slice(0, 500),
                 priority: analysis.priority,
                 nextQuestionPreviouslyAsked: analysis.nextQuestion.slice(0, 250),
-                hypotheses: analysis.hypotheses.map(({ label, percentage }) => ({
+                hypotheses: analysis.hypotheses.slice(0, 3).map(({ label, reason }) => ({
                   label: label.slice(0, 100),
-                  percentage,
+                  reason: reason.slice(0, 180),
                 })),
               } : undefined,
             },
