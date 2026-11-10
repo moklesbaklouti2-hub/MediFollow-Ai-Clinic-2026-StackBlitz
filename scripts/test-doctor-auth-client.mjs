@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const client = readFileSync(new URL('../src/services/doctorAuthClient.ts', import.meta.url), 'utf8');
+const app = readFileSync(new URL('../src/App.tsx', import.meta.url), 'utf8');
+assert.match(client, /credentials: 'same-origin'/);
+assert.match(client, /cache: 'no-store'/);
+assert.match(client, /redirect: 'error'/);
+assert.match(client, /response\.status !== 204/);
+assert.match(client, /Connexion sécurisée par cookie non encore disponible/);
+assert.doesNotMatch(client, /localStorage|sessionStorage|document\.cookie|Authorization|Bearer/);
+assert.doesNotMatch(app, /doctorAuthClient|loginDoctor|logoutDoctor/);
+console.log('PASS: preparatory browser auth client is same-origin, cookie-only and not mounted.');
+console.log('WARNING: backend cookie sessions, CSRF, login UI and real clinical route auth remain unimplemented.');
