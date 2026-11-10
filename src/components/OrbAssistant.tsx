@@ -174,6 +174,16 @@ const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: 
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
   const exsudatContext = isLikelyExsudatContext(value);
+  // Expression entière observée dans le test : suggestion, jamais substitution
+  // automatique. Ne pas changer « excédent » ni « amygdalia » isolément.
+  for (const match of value.matchAll(/\bexc[eé]dent\s+amygdalia\b/giu)) {
+    const original = match[0];
+    found.set(normalizeSpeechCandidate(original), {
+      original,
+      replacement: 'exsudat amygdalien',
+    });
+  }
+
   // Accord grammatical proposé uniquement après validation du médecin.
   for (const match of value.matchAll(/\bdes\s+ad[eé]nopathie\s+cervicales\s+bilat[eé]rale\b/giu)) {
     const original = match[0];
