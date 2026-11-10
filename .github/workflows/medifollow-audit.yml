@@ -89,6 +89,20 @@ jobs:
       - name: Inventorier les routes et signaler les risques
         run: node scripts/audit-api-exposure.mjs
 
+  api-security-regression:
+    name: Regression inventaire securite API
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifier alertes et routes sensibles
+        run: node scripts/test-api-security-inventory.mjs
+
   access-policy-contract:
     name: Contrat des permissions (documentation)
     runs-on: ubuntu-latest
@@ -106,7 +120,7 @@ jobs:
   relay:
     name: Bilan des controles
     if: always()
-    needs: [build, offline-tests, coordination, api-security-inventory, access-policy-contract]
+    needs: [build, offline-tests, coordination, api-security-inventory, api-security-regression, access-policy-contract]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -117,6 +131,7 @@ jobs:
           COORDINATION_RESULT: ${{ needs.coordination.result }}
           POLICY_RESULT: ${{ needs.access-policy-contract.result }}
           API_INVENTORY_RESULT: ${{ needs.api-security-inventory.result }}
+          SECURITY_REGRESSION_RESULT: ${{ needs.api-security-regression.result }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
           {
@@ -126,11 +141,12 @@ jobs:
             echo "- Tests hors ligne (4 modules) : $TEST_RESULT"
             echo "- Coordination : $COORDINATION_RESULT"
             echo "- Inventaire API : $API_INVENTORY_RESULT"
+            echo "- Regression securite API : $SECURITY_REGRESSION_RESULT"
             echo "- Contrat permissions : $POLICY_RESULT"
             echo '- Si echec : consulter les logs du job concerne avant de modifier le code.'
             echo '- Si succes : poursuivre les taches independantes sur la branche audit.'
             echo '- Ce workflow ne lance aucun agent IA et ne modifie aucun fichier.'
           } >> "$GITHUB_STEP_SUMMARY"
-          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ] || [ "$COORDINATION_RESULT" != success ] || [ "$API_INVENTORY_RESULT" != success ] || [ "$POLICY_RESULT" != success ]; then
+          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ] || [ "$COORDINATION_RESULT" != success ] || [ "$API_INVENTORY_RESULT" != success ] || [ "$SECURITY_REGRESSION_RESULT" != success ] || [ "$POLICY_RESULT" != success ]; then
             exit 1
           fi
