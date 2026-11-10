@@ -29,6 +29,7 @@ const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'server/
     REMOTE_ACCESS_MODE: 'enabled',
     REMOTE_COOKIE_AUTH_MODE: 'integration-test',
     COOKIE_AUTH_TEST_ONLY_ACK: 'synthetic-fixture-only',
+    COOKIE_AUTH_TEST_TTL_MS: '6000',
     PUBLIC_ORIGIN: origin + '/',
     REMOTE_TRUST_PROXY: 'verified',
     DOCTOR_USERNAME: 'fixture-doctor',
@@ -115,6 +116,22 @@ try {
   for (const item of clinical) {
     assert.equal((await request(item.path, { body: item.body, cookie, csrf: csrfToken })).status, 401, item.path + ' revoked');
   }
+  // A fresh session must actually expire on the REAL Express process.
+  const finalLogin = await request('/api/auth/login', { body: fictional });
+  assert.equal(finalLogin.status, 204);
+  const expiringCookie = (finalLogin.headers.get('set-cookie') ?? '').split(';')[0];
+  assert.match(expiringCookie, /^__Host-medifollow_session=/);
+  const activeBeforeExpiry = await request('/api/auth/csrf', { method: 'GET', cookie: expiringCookie, requestOrigin: null });
+  assert.equal(activeBeforeExpiry.status, 200, 'New session valid before expiry');
+  await delay(6300);
+  assert.equal((await request('/api/auth/csrf', {
+    method: 'GET', cookie: expiringCookie, requestOrigin: null,
+  })).status, 401, 'Expired session must not obtain a CSRF token');
+  for (const item of clinical) {
+    assert.equal((await request(item.path, { body: item.body, cookie: expiringCookie })).status,
+      401, item.path + ' expired session');
+  }
+
   console.log('PASS: REAL Express handlers are reached only with synthetic cookie session + Origin + CSRF.');
   console.log('WARNING: loopback-only integration fixture with simulated HTTPS, NOT remotely deployable.');
 } finally {
