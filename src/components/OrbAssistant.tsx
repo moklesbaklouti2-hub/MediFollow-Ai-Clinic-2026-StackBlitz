@@ -181,7 +181,7 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
 // Les valeurs numériques dictées sont sensibles : une confusion 97/87 %
 // ne peut pas être résolue par un dictionnaire ou une correction phonétique.
 function hasDictatedClinicalNumber(value: string): boolean {
-  return /\b\d+(?:[,.]\d+)?\s*(?:%|pour\s*cent|degr[eé]s?|°|mmhg|g\s*\/\s*l|mg\s*\/\s*dl|bpm)\b?/iu.test(value)
+  return /\b\d+(?:[,.]\d+)?\s*(?:%|pour\s*cent|degr[eé]s?|°|mmhg|g\s*\/\s*l|mg\s*\/\s*dl|bpm)/iu.test(value)
     || /\b(?:saturation|spo2|glyc[eé]mie|pression|tension|fr[eé]quence\s+cardiaque|temp[eé]rature)\b[^.!?]{0,50}\d/iu.test(value);
 }
 
