@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
 import App from '../App';
 import DoctorLogin from './DoctorLogin';
-import { getDoctorCsrfToken, loginDoctor, logoutDoctor } from '../services/doctorAuthClient';
+import { DoctorAuthError, getDoctorCsrfToken, loginDoctor, logoutDoctor } from '../services/doctorAuthClient';
 import { doctorAuthPreviewEnabled, subscribeDoctorSessionInvalid } from '../services/doctorAuthMode';
+import { nextDoctorGatePhase, type DoctorGatePhase } from '../services/doctorGateTransitions';
 import './DoctorAppGate.css';
 
-type Phase = 'verifying' | 'login' | 'authenticated' | 'locked';
-
-// Opt-in, HTTPS-only browser integration preview with fictional data.
-// NOT a medical deployment or an alternative to a security review.
+// Opt-in HTTPS-only synthetic browser preview. No medical deployment is approved.
 export default function DoctorAppGate() {
-  const [phase, setPhase] = useState<Phase>('verifying');
+  const [phase, setPhase] = useState<DoctorGatePhase>('verifying');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const secure = typeof window !== 'undefined' && window.location.protocol === 'https:';
@@ -19,7 +17,7 @@ export default function DoctorAppGate() {
     if (!doctorAuthPreviewEnabled || !secure) return;
     return subscribeDoctorSessionInvalid(() => {
       setError('Session expirée ou accès refusé. Reconnectez-vous.');
-      setPhase('login');
+      setPhase(previous => nextDoctorGatePhase(previous, 'session-rejected'));
     });
   }, [secure]);
 
@@ -27,8 +25,15 @@ export default function DoctorAppGate() {
     if (phase !== 'verifying' || !doctorAuthPreviewEnabled || !secure) return;
     let active = true;
     getDoctorCsrfToken()
-      .then(() => { if (active) { setError(''); setPhase('authenticated'); } })
-      .catch(() => { if (active) setPhase('login'); });
+      .then(() => {
+        if (!active) return;
+        setError('');
+        setPhase(previous => document.visibilityState === 'hidden'
+          ? 'locked' : nextDoctorGatePhase(previous, 'verify-success'));
+      })
+      .catch(() => {
+        if (active) setPhase(previous => nextDoctorGatePhase(previous, 'verify-failure'));
+      });
     return () => { active = false; };
   }, [phase, secure]);
 
@@ -40,15 +45,18 @@ export default function DoctorAppGate() {
       catch {
         if (active) {
           setError('La session ne peut plus être vérifiée. Reconnectez-vous.');
-          setPhase('login');
+          setPhase(previous => nextDoctorGatePhase(previous, 'session-rejected'));
         }
       }
     };
     const lockOnBackground = () => {
-      if (document.visibilityState === 'hidden') setPhase('locked');
+      if (document.visibilityState === 'hidden') {
+        setPhase(previous => nextDoctorGatePhase(previous, 'background'));
+      }
     };
     const timer = window.setInterval(() => { void recheck(); }, 30_000);
     document.addEventListener('visibilitychange', lockOnBackground);
+    lockOnBackground();
     return () => {
       active = false;
       window.clearInterval(timer);
@@ -59,37 +67,49 @@ export default function DoctorAppGate() {
   useEffect(() => {
     if (phase !== 'locked') return;
     const checkOnReturn = () => {
-      if (document.visibilityState === 'visible') setPhase('verifying');
+      if (document.visibilityState === 'visible') {
+        setPhase(previous => nextDoctorGatePhase(previous, 'foreground'));
+      }
     };
-    if (document.visibilityState === 'visible') checkOnReturn();
+    checkOnReturn();
     document.addEventListener('visibilitychange', checkOnReturn);
     return () => document.removeEventListener('visibilitychange', checkOnReturn);
   }, [phase]);
 
   async function submit(username: string, password: string) {
+    if (busy || phase !== 'login') return;
     setBusy(true);
     setError('');
     try {
       await loginDoctor(username, password);
       await getDoctorCsrfToken();
-      setPhase('authenticated');
+      setPhase(previous => document.visibilityState === 'hidden'
+        ? 'locked' : nextDoctorGatePhase(previous, 'login-success'));
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Connexion sécurisée indisponible.');
-      setPhase('login');
+      setPhase(previous => nextDoctorGatePhase(previous, 'login-failure'));
     } finally {
       setBusy(false);
     }
   }
 
   async function signOut() {
-    // Immediately unmount clinical screens, before awaiting network logout.
-    setPhase('login');
+    if (busy || (phase !== 'authenticated' && phase !== 'logout-pending')) return;
+    // Unmount App first; a network failure must never restore the clinical UI.
+    setPhase(previous => nextDoctorGatePhase(previous, 'logout-start'));
     setBusy(true);
     setError('');
     try {
       await logoutDoctor();
-    } catch {
-      setError('Écran verrouillé, mais la révocation distante n’a pas été confirmée.');
+      setPhase(previous => nextDoctorGatePhase(previous, 'logout-success'));
+    } catch (reason) {
+      if (reason instanceof DoctorAuthError && reason.status === 401) {
+        // A missing/expired server session is already effectively logged out.
+        setPhase(previous => nextDoctorGatePhase(previous, 'logout-success'));
+      } else {
+        setError('La révocation distante n’est pas confirmée. Réessayez la déconnexion.');
+        setPhase(previous => nextDoctorGatePhase(previous, 'logout-failure'));
+      }
     } finally {
       setBusy(false);
     }
@@ -109,6 +129,18 @@ export default function DoctorAppGate() {
     return (
       <main className="doctor-preview-blocked" role="status">
         Vérification de la session médecin…
+      </main>
+    );
+  }
+
+  if (phase === 'logout-pending') {
+    return (
+      <main className="doctor-preview-blocked" role="alert">
+        <h1>Accès clinique verrouillé</h1>
+        <p>{error || 'Déconnexion en cours : les consultations sont masquées.'}</p>
+        <button type="button" disabled={busy} onClick={() => { void signOut(); }}>
+          {busy ? 'Déconnexion en cours…' : 'Réessayer la déconnexion'}
+        </button>
       </main>
     );
   }
