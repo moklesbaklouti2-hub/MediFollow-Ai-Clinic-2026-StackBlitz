@@ -67,3 +67,11 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Portée :** les scénarios fictifs du contrat d'accès utilisent désormais de véritables caractères échappés de tabulation et de retour à la ligne ; correction du test après les échecs #62 et #63.
 - **Limites :** le contrat reste une simulation hors ligne, non reliée aux routes Express ; la CI verte ne certifie pas la sécurité d'un déploiement.
 - **Suite :** examiner la stratégie d'authentification effective et les frontières des routes cliniques sans activer de blocage ni toucher à `main` ; utiliser uniquement des données fictives.
+
+### 2026-11-10 — Contrôle de reprise : CI #66 et critères de clôture
+- **Source de validation :** capture GitHub Actions transmise par l'utilisateur : exécutions #64, #65 et #66 vertes ; #66 au commit abrégé `b318c7c` (41 s). Ce constat concerne les workflows visibles, pas un audit de production.
+- **État de la branche :** comparaison GitHub `main...audit-stabilisation-2026-11-10` : 135 commits en avance, 0 en retard au moment de ce contrôle ; `main` inchangée par cette session.
+- **Priorité bloquante avant clôture :** les tests d'accès 401/403 sont **fictifs** et non raccordés aux routes Express. Ne pas qualifier l'application de sécurisée pour des patients réels ni la déployer publiquement.
+- **Critères de clôture de la boucle de stabilisation :** (1) CI verte sur le commit final ; (2) compilation et quatre suites de régression hors ligne réussies ; (3) aucune donnée réelle ni secret dans les tests ; (4) vérification explicite de l'absence d'authentification effective sur les routes cliniques et décision documentée de ne pas déployer tant que ce point n'est pas traité ; (5) revue des écarts restants et des tests Android non exécutés ; (6) aucune fusion vers `main` sans accord utilisateur.
+- **Prochaine tâche indépendante :** préparer un test HTTP local fictif démontrant le comportement réel des routes cliniques en accès non authentifié, sans exposer le serveur ni modifier la politique d'accès en production. Éviter toute activation implicite d'un middleware bloquant.
+- **Avancement :** le pourcentage annoncé dans la conversation est une estimation de suivi, non un indicateur calculé à partir des workflows.
