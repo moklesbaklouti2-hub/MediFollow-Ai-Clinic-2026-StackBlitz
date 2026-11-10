@@ -7,7 +7,10 @@ assert.match(client, /cache: 'no-store'/);
 assert.match(client, /redirect: 'error'/);
 assert.match(client, /response\.status !== 204/);
 assert.match(client, /Connexion sécurisée par cookie non encore disponible/);
-assert.doesNotMatch(client, /localStorage|sessionStorage|document\.cookie|Authorization|Bearer/);
+// Ignore explanatory comments: they intentionally mention forbidden APIs.
+// Continue checking executable source for browser token persistence.
+const executableClient = client.replace(/^\s*\/\/.*$/gm, '');
+assert.doesNotMatch(executableClient, /localStorage|sessionStorage|document\.cookie|Authorization|Bearer/);
 assert.doesNotMatch(app, /doctorAuthClient|loginDoctor|logoutDoctor/);
 console.log('PASS: preparatory browser auth client is same-origin, cookie-only and not mounted.');
 console.log('WARNING: backend cookie sessions, CSRF, login UI and real clinical route auth remain unimplemented.');
