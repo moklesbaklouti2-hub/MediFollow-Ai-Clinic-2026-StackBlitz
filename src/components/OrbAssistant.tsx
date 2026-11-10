@@ -174,6 +174,15 @@ const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: 
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
   const exsudatContext = isLikelyExsudatContext(value);
+  // Accord grammatical proposé uniquement après validation du médecin.
+  for (const match of value.matchAll(/\bdes\s+ad[eé]nopathie\s+cervicales\s+bilat[eé]rale\b/giu)) {
+    const original = match[0];
+    found.set(normalizeSpeechCandidate(original), {
+      original,
+      replacement: 'des adénopathies cervicales bilatérales',
+    });
+  }
+
   // « excédent amygdalien » est une confusion observée trois fois.
   // Ne jamais remplacer « excédent » seul, ni « amygdalite » qui peut
   // désigner un diagnostic réel. Le médecin confirme la phrase entière.
@@ -225,9 +234,11 @@ function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCo
   // Les suggestions portant sur plusieurs mots doivent remplacer la séquence
   // complète, sans modifier des occurrences isolées (« ex », « soudain »).
   if (/\s/u.test(correction.original)) {
-    const phrasePattern = target === 'excedent amygdalien'
+    // Remplacer uniquement la séquence complète approuvée par le médecin.
+    const escaped = correction.original.replace(/[^\p{L}\p{N}\s]/gu, '\\    const phrasePattern = target === 'excedent amygdalien'
       ? /\bexc[eé]dent\s+amygdalien\b/giu
-      : /\bex\s+soudain\b/giu;
+      : /\bex\s+soudain\b/giu;');
+    const phrasePattern = new RegExp('(?<![\\p{L}])' + escaped.replace(/\s+/g, '\\s+') + '(?![\\p{L}])', 'giu');
     return value.replace(phrasePattern, (phrase, offset: number) => {
       if (normalizeSpeechCandidate(phrase).replace(/\s+/g, ' ') !== target.replace(/\s+/g, ' ')) return phrase;
       const before = value.slice(0, offset).trimEnd();
