@@ -185,7 +185,7 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
 // ne peut pas être résolue par un dictionnaire ou une correction phonétique.
 function hasDictatedClinicalNumber(value: string): boolean {
   return /\b\d+(?:[,.]\d+)?\s*(?:%|pour\s*cent|degr[eé]s?|°|mmhg|g\s*\/\s*l|mg\s*\/\s*dl|bpm)/iu.test(value)
-    || /\b(?:saturation|spo[2₂]|glyc[eé]mie|pression|tension|fr[eé]quence\s+cardiaque|temp[eé]rature)\b[^.!?]{0,50}\d/iu.test(value);
+    || /\b(?:saturation|spo[2₂]|glyc[eé]mie|pression|tension|fr[eé]quence\s+cardiaque|temp[eé]rature)(?=\s|:)[^.!?]{0,50}\d/iu.test(value);
 }
 
 function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
