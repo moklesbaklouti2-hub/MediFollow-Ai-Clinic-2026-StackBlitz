@@ -29,6 +29,11 @@ assert.match(gate, /nextDoctorGatePhase\(previous, 'foreground'\)/);
 assert.match(gate, /phase === 'logout-pending'/);
 assert.match(gate, /Réessayer la déconnexion/);
 assert.match(gate, /session-rejected/);
+assert.match(gate, /subscribeDoctorCrossTab/);
+assert.match(gate, /broadcastDoctorSessionEvent\('logout-start'\)/);
+assert.match(gate, /broadcastDoctorSessionEvent\('logout-success'\)/);
+assert.match(gate, /event === 'logout-start'/);
+assert.match(gate, /event === 'logout-success'/);
 assert.match(gate, /<DoctorLogin /);
 assert.match(gate, /<App \/>/);
 
@@ -49,5 +54,5 @@ for (const [name, content] of [['clinical reasoning', clinical], ['HELIOS orb', 
 // Remote deployments must still refuse all clinical API requests by default.
 assert.match(server, /res\.status\(503\)\.json\(\{ error: 'Accès clinique distant indisponible/);
 assert.match(server, /cookieIntegrationMode === 'integration-test'/);
-console.log('PASS: React sign-in gate and 3 clinical calls opt in only; default local behavior and remote 503 unchanged.');
+console.log('PASS: opt-in React doctor gate locks on cross-tab logout, clinical calls preserve local mode and remote 503.');
 console.log('WARNING: no real HTTPS browser login or patient-data deployment has been certified.');
