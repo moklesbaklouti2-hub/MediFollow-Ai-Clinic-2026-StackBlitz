@@ -138,6 +138,8 @@ jobs:
         run: npm run test:access-decision
       - name: Verifier que la simulation ne protege pas artificiellement les routes
         run: node scripts/test-api-auth-boundary.mjs
+      - name: Verifier la garde contre un port local deja occupe
+        run: node scripts/test-port-availability.mjs
       - name: Observer les routes HTTP locales sans authentification (donnees fictives)
         run: node scripts/test-local-http-auth-boundary.mjs
       - name: Verifier le contrat HTTP isole 401-403 (sans branchement production)
