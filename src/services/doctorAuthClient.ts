@@ -47,8 +47,40 @@ export async function loginDoctor(username: string, password: string): Promise<v
   }
 }
 
+// CSRF is short-lived in JS memory only; never persist this value in browser storage.
+export async function getDoctorCsrfToken(): Promise<string> {
+  let response: Response;
+  try {
+    response = await fetch('/api/auth/csrf', {
+      method: 'GET',
+      credentials: 'same-origin',
+      cache: 'no-store',
+      redirect: 'error',
+    });
+  } catch {
+    throw new DoctorAuthError(0, 'Connexion au serveur impossible.');
+  }
+  if (response.status === 401) throw new DoctorAuthError(401, 'Session expirée.');
+  if (!response.ok) throw new DoctorAuthError(response.status, 'Protection de session indisponible.');
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch {
+    throw new DoctorAuthError(503, 'Réponse de protection de session invalide.');
+  }
+  const csrfToken = payload && typeof payload === 'object' && 'csrfToken' in payload
+    ? payload.csrfToken : null;
+  if (typeof csrfToken !== 'string' || !/^[a-f0-9]{64}$/.test(csrfToken)) {
+    throw new DoctorAuthError(503, 'Jeton de protection de session invalide.');
+  }
+  return csrfToken;
+}
+
 export async function logoutDoctor(): Promise<void> {
-  const response = await authRequest('/api/auth/logout', {});
+  const csrfToken = await getDoctorCsrfToken();
+  const response = await authRequest('/api/auth/logout', {
+    headers: { 'x-medifollow-csrf': csrfToken },
+  });
   if (response.status !== 204) {
     throw new DoctorAuthError(503, 'Déconnexion non confirmée.');
   }
