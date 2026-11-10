@@ -66,3 +66,11 @@
 - **Vérification :** inspection du contenu GitHub avant modification, contrôle des occurrences dans le contenu écrit (1 occurrence de chaque terme corrigé). Aucun autre terme modifié.
 - **Non exécutés :** `npm run build`, tests automatisés du projet et dictée sur Android. **EN ATTENTE — intervention utilisateur** pour les tests sur appareil, lorsque l'accès sera disponible. La validation clinique n'est pas revendiquée.
 - **Suite :** exécuter les tests techniques dans un environnement disposant du dépôt ; renforcer les tests de régression du lexique et des routes cliniques.
+
+### 2026-11-10 — Test structurel hors ligne du lexique médical (branche audit)
+- **Commits :** `f1c599bc0ceb2895c806e5a97738caa6012ecf92` (nouveau `scripts/test-medical-dictionary.ts`), `0a8902209ba34aeb9350372d941c6722f7984ed0` (`package.json`). Branche `audit-stabilisation-2026-11-10` uniquement ; `main` inchangée.
+- **Objectif :** prévenir les doublons dans un même domaine et la disparition de termes critiques du lexique de dictée, sans substituer automatiquement les mots ni modifier les données cliniques.
+- **Contrôle 1 :** relecture des fichiers distants après commits et vérification de l'intégration du script dans `test:all-offline`.
+- **Contrôle 2 :** reproduction des assertions structurelles dans l'environnement JavaScript du connecteur sur le lexique distant : **239 entrées, aucun doublon dans un même domaine, 4/4 termes essentiels présents**. Ce contrôle n'exécute PAS `tsx` ou la suite npm.
+- **EN ATTENTE — intervention utilisateur / environnement d'exécution :** lancer dans Codespaces sur cette branche `npm run build && npm run test:all-offline`, puis transmettre les sorties. Résultat attendu : compilation et tests réussis sans erreur ; corriger tout échec avant fusion. Les essais de microphone sur Android restent également non effectués.
+- **Limites :** aucune validation médicale, aucun test navigateur, aucun test IA live ; les entrées communes à plusieurs domaines sont permises intentionnellement. Prochaine étape : compilation complète, tests et régressions ciblées.
