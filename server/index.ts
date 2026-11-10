@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { validateRemoteStartup } from './security/remoteAccessConfig.ts';
+import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
+import { createSessionStore } from './security/sessionStore.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -8,20 +10,53 @@ dotenv.config();
 // Invalid opt-in configuration stops startup rather than silently weakening security.
 const remoteAccessConfig = validateRemoteStartup(process.env);
 
+// Explicit test-only integration of REAL Express handlers. This is NOT a remote
+// deployment option. Only run with fictional credentials on loopback.
+const cookieIntegrationMode = process.env.REMOTE_COOKIE_AUTH_MODE;
+if (cookieIntegrationMode && cookieIntegrationMode !== 'integration-test') {
+  throw new Error('Invalid REMOTE_COOKIE_AUTH_MODE; expected integration-test or unset');
+}
+if (cookieIntegrationMode === 'integration-test' &&
+    (!remoteAccessConfig ||
+     process.env.COOKIE_AUTH_TEST_ONLY_ACK !== 'synthetic-fixture-only' ||
+     !process.env.DOCTOR_USERNAME ||
+     process.env.DOCTOR_USERNAME.trim() !== process.env.DOCTOR_USERNAME ||
+     process.env.DOCTOR_USERNAME.length > 128 ||
+     !/^scrypt\\$v1\\$[a-f0-9]{32}\\$[a-f0-9]{128}$/.test(process.env.DOCTOR_PASSWORD_HASH ?? ''))) {
+  throw new Error('Cookie integration-test mode requires validated remote settings, explicit fixture acknowledgement and synthetic credentials');
+}
+
 const app = express();
 const PORT = 3001;
 app.use(express.json({ limit: '64kb' }));
 
-// Remote mode is deliberately NOT a production login feature yet.
-// Block all real clinical POST routes until a complete authenticated session
-// lifecycle and browser login have been wired and verified end-to-end.
-// This guard is registered BEFORE the real handlers and fails closed.
+// All real sensitive POST handlers are below this middleware boundary.
+// Remote mode is blocked by default; only a loopback, synthetic integration
+// test may traverse the actual handlers using a secure-cookie session.
+// No public remote access can be enabled by REMOTE_ACCESS_MODE alone.
 if (remoteAccessConfig) {
-  app.use(['/api/clinical/analyze', '/api/commands/interpret', '/api/chat'], (req, res, next) => {
-    if (req.method !== 'POST') { next(); return; }
-    res.setHeader('Cache-Control', 'no-store');
-    res.status(503).json({ error: 'Accès clinique distant indisponible : authentification non activée.' });
-  });
+  if (cookieIntegrationMode === 'integration-test') {
+    // Trust ONLY local integration test requests; never trust an open proxy.
+    app.set('trust proxy', 'loopback');
+    const continueToRealHandler: express.RequestHandler = (_req, _res, next) => next();
+    app.use(createDoctorCookieAuth({
+      username: process.env.DOCTOR_USERNAME!,
+      passwordHash: process.env.DOCTOR_PASSWORD_HASH!,
+      sessions: createSessionStore(),
+      publicOrigin: remoteAccessConfig.publicOrigin,
+      handlers: {
+        '/api/clinical/analyze': continueToRealHandler,
+        '/api/commands/interpret': continueToRealHandler,
+        '/api/chat': continueToRealHandler,
+      },
+    }));
+  } else {
+    app.use(['/api/clinical/analyze', '/api/commands/interpret', '/api/chat'], (req, res, next) => {
+      if (req.method !== 'POST') { next(); return; }
+      res.setHeader('Cache-Control', 'no-store');
+      res.status(503).json({ error: 'Accès clinique distant indisponible : authentification non activée.' });
+    });
+  }
 }
 
 
@@ -774,6 +809,6 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, cookieIntegrationMode === 'integration-test' ? '127.0.0.1' : '0.0.0.0', () => {
   console.log(`Serveur MediFollow AI démarré sur le port ${PORT}`);
 });
