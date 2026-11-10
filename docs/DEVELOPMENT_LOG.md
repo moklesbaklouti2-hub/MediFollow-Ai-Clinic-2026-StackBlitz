@@ -234,3 +234,11 @@
 - **Risque restant :** « display » est aussi un mot anglais valide ; vérifier le contexte avant de confirmer. Les accords/pluriels restent à relire manuellement.
 - **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage et nouveau test Android avec la phrase clinique fictive. Vérifier la présence et l'application de la suggestion, et qu'aucune correction non confirmée n'est appliquée.
 - **Tests :** compilation et test Android de ce commit non réalisés ici.
+
+
+### 2026-11-10 — Garde-fou ORL « amygdania »
+- **Observation utilisateur :** la dictée « patient de 35 ans ... exsudat amygdalien » a donné « annexida amygdania » ; HELIOS semblait proposer « amygdania » → « amygdalite », ce qui confond adjectif anatomique et diagnostic.
+- **Commit :** `722e4c5c6b2f2390f3f8d1900cf1c50ce411a2a9` ; les variantes ambiguës « amygdania » et « amygdalia » sont exclues des suggestions phonétiques automatiques. Le texte original reste visible pour correction manuelle.
+- **Accords grammaticaux :** « des adénopathie cervicales bilatérale » demeure à relire manuellement. Ne pas corriger automatiquement le nombre d'un terme clinique sans validation.
+- **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer, vérifier qu'« amygdania » ne suggère plus « amygdalite » ; vérifier que les suggestions déjà validées restent disponibles.
+- **Tests :** non exécutés ici. Ne pas fusionner sur `main` avant validation.
