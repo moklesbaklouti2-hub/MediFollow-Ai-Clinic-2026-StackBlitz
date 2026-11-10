@@ -267,3 +267,10 @@
 - **Double contrôle statique effectué :** les quatre expressions cibles correspondent aux motifs ; « amygdalite », « un excédent budgétaire » et « des adénopathies cervicales bilatérales » ne déclenchent pas ces motifs. Ce contrôle ne remplace pas l'exécution de l'application.
 - **Limite structurelle :** Chrome Web Speech API demeure une reconnaissance générale non spécialisée. Les règles heuristiques ne garantissent pas une transcription médicale fiable ; nécessité d'un corpus de dictées annotées, d'une suite de tests automatisés des suggestions, et à terme d'un moteur ASR médical plus adapté si les performances demeurent insuffisantes.
 - **EN ATTENTE :** `npm run test:complete`, validation Android et tests de clic des suggestions. Ne pas fusionner sur `main` avant validation. Aucun test de compilation effectué ici.
+
+
+### 2026-11-10 — Tests exécutant les fonctions réelles de dictée
+- **Commit :** `c6ef5565cc246c0bd8381369a81cb960e0fbb114` : remplacement des tests purement textuels par un banc de tests qui transpile et exécute les fonctions réelles `findMedicalSpeechCorrections`, `applyMedicalSpeechCorrection`, `chooseMedicalSpeechAlternative`, `hasDictatedClinicalNumber` extraites de `OrbAssistant.tsx`, avec le véritable dictionnaire médical.
+- **Cas :** expressions ORL fragmentées, corrections des adénopathies, termes non modifiables, nombres SpO₂ et température, négation, alternatives vocales ; vérification du remplacement après confirmation simulée.
+- **Limites :** les tests ne simulent ni le navigateur ni l'interface de clic React ; l'extraction par délimiteurs source est un compromis provisoire. À terme, isoler le moteur dans un module TypeScript autonome importable par l'UI et les tests.
+- **EN ATTENTE :** exécution `npm run test:complete` sur la branche audit ; corriger toute erreur révélée avant de déclarer les tests réussis. Aucun test npm exécuté dans cette session.
