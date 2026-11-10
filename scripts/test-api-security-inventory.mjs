@@ -16,5 +16,7 @@ for (const route of ['/api/clinical/analyze', '/api/commands/interpret', '/api/c
 }
 const recognizedGlobalAuth = /app\.use\(['"]\/api['"]\s*,\s*(?:requireAuth|authenticate|authMiddleware|verifyToken)\b/.test(source);
 if (!recognizedGlobalAuth) assert.match(scan.stdout, /No recognizable global \/api authentication middleware/);
+const healthExposesProvider = /app\.get\(['"]\/api\/health['"]/.test(source) && /primaryProvider:\s*['"]/.test(source);
+if (healthExposesProvider) assert.match(scan.stdout, /Public health response may expose AI provider metadata/);
 console.log('PASS: security inventory covers sensitive routes and transparently warns when no global auth is recognized.');
 console.log('No real patient data used; not a penetration test or deployment authorization.');
