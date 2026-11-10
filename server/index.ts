@@ -286,7 +286,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         pointsToVerify,
         recommendedActions: parsed.recommendedActions.filter((item): item is string => typeof item === 'string').slice(0, 3).map((item) => item.slice(0, 180)),
         hypotheses: parsed.hypotheses
-          .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string')
+          .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string' && item.label.trim().length > 0 && typeof item.reason === 'string' && item.reason.trim().length > 0)
           .slice(0, 3)
           .map((item) => ({
             label: String(item.label).slice(0, 140),
