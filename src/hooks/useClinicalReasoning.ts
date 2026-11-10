@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Patient, Vitals, PhysicalExamination } from '../types/medical';
+import { sendClinicalRequest } from '../services/doctorClinicalTransport';
 
 export type ClinicalReasoningAnalysis = {
   situationSummary: string;
@@ -127,12 +128,8 @@ export function useClinicalReasoning(input: ReasoningInput) {
       setError('');
 
       try {
-        const response = await fetch('/api/clinical/analyze', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({
-            context: {
+        const response = await sendClinicalRequest('/api/clinical/analyze', {
+          context: {
               ...safeContext,
               // Historique compact : conserve les éléments nécessaires à l'évolution du raisonnement.
               previousAnalysis: analysis ? {
@@ -145,8 +142,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
                 })),
               } : undefined,
             },
-          }),
-        });
+        }, { signal: controller.signal });
         const responseText = await response.text();
         if (!responseText.trim()) {
           throw new Error(`Le serveur a retourné une réponse vide (HTTP ${response.status}). Vérifiez que le moteur IA est démarré.`);
