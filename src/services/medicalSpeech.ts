@@ -226,6 +226,16 @@ export function applyMedicalSpeechCorrection(value: string, correction: MedicalS
   });
 }
 
+// Ne jamais changer automatiquement une valeur numérique ou une négation
+// entre deux hypothèses de reconnaissance vocale, même si l'autre contient
+// davantage de termes médicaux. Le médecin conserve la transcription initiale.
+function criticalSpeechTokens(value: string): string {
+  const normalized = normalizeSpeechCandidate(value);
+  const numbers = Array.from(normalized.matchAll(/\b\d+(?:[,.]\d+)?\b/gu), match => match[0].replace(',', '.'));
+  const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations });
+}
+
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
   const candidates = Array.from({ length: result.length }, (_, index) =>
     (result[index]?.transcript || '').trim()
@@ -251,7 +261,11 @@ export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string
 
   // Ne choisit une alternative que si elle contient un terme médical reconnu
   // que la première proposition ne contient pas. En cas d'égalité, garde l'original.
-  const best = scored.reduce((current, candidate) =>
+  const initialCriticalTokens = criticalSpeechTokens(candidates[0]);
+  const safeCandidates = scored.filter(candidate =>
+    criticalSpeechTokens(candidate.transcript) === initialCriticalTokens
+  );
+  const best = safeCandidates.reduce((current, candidate) =>
     candidate.score > current.score ? candidate : current
   );
   return best.score > scored[0].score ? best.transcript : candidates[0];
