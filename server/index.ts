@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type RequestHandler } from 'express';
 import dotenv from 'dotenv';
 import { validateRemoteStartup } from './security/remoteAccessConfig.ts';
 import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
@@ -22,7 +22,7 @@ if (cookieIntegrationMode === 'integration-test' &&
      !process.env.DOCTOR_USERNAME ||
      process.env.DOCTOR_USERNAME.trim() !== process.env.DOCTOR_USERNAME ||
      process.env.DOCTOR_USERNAME.length > 128 ||
-     !/^scrypt\\$v1\\$[a-f0-9]{32}\\$[a-f0-9]{128}$/.test(process.env.DOCTOR_PASSWORD_HASH ?? ''))) {
+     !/^scrypt\$v1\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(process.env.DOCTOR_PASSWORD_HASH ?? ''))) {
   throw new Error('Cookie integration-test mode requires validated remote settings, explicit fixture acknowledgement and synthetic credentials');
 }
 
@@ -38,7 +38,7 @@ if (remoteAccessConfig) {
   if (cookieIntegrationMode === 'integration-test') {
     // Trust ONLY local integration test requests; never trust an open proxy.
     app.set('trust proxy', 'loopback');
-    const continueToRealHandler: express.RequestHandler = (_req, _res, next) => next();
+    const continueToRealHandler: RequestHandler = (_req, _res, next) => next();
     app.use(createDoctorCookieAuth({
       username: process.env.DOCTOR_USERNAME!,
       passwordHash: process.env.DOCTOR_PASSWORD_HASH!,
