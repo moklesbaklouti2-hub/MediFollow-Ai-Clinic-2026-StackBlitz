@@ -140,6 +140,8 @@ jobs:
         run: node scripts/test-api-auth-boundary.mjs
       - name: Observer les routes HTTP locales sans authentification (donnees fictives)
         run: node scripts/test-local-http-auth-boundary.mjs
+      - name: Verifier le contrat HTTP isole 401-403 (sans branchement production)
+        run: node scripts/test-isolated-http-access-contract.mjs
 
   relay:
     name: Bilan des controles
