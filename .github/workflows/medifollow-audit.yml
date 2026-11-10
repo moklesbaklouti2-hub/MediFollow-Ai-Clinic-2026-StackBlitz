@@ -186,6 +186,8 @@ jobs:
         run: npx --no-install tsx scripts/test-doctor-react-local-transport.mts
       - name: Tester expiration de session et verrouillage deconnexion React
         run: npx --no-install tsx scripts/test-doctor-gate-transitions.mts
+      - name: Tester la deconnexion et l'expiration de session entre onglets (fixture)
+        run: npx --no-install tsx scripts/test-doctor-cross-tab.mts
       - name: Tester la vraie API Express via un proxy HTTPS local avec certificat verifie
         run: node scripts/test-real-local-https-cookie-proxy.mjs
 
