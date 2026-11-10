@@ -48,10 +48,11 @@ export async function loginDoctor(username: string, password: string): Promise<v
 }
 
 // CSRF is short-lived in JS memory only; never persist this value in browser storage.
-export async function getDoctorCsrfToken(): Promise<string> {
+export async function getDoctorCsrfToken(signal?: AbortSignal): Promise<string> {
   let response: Response;
   try {
     response = await fetch('/api/auth/csrf', {
+      signal,
       method: 'GET',
       credentials: 'same-origin',
       cache: 'no-store',
