@@ -243,7 +243,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         typeof parsed.situationSummary !== 'string' ||
         typeof parsed.evolutionNote !== 'string' ||
         !['routine', 'attention', 'urgent'].includes(String(parsed.priority)) ||
-        typeof parsed.priorityReason !== 'string' ||
+        typeof parsed.priorityReason !== 'string' || !parsed.priorityReason.trim() ||
         !Array.isArray(parsed.nextQuestionOptions) ||
         typeof parsed.nextQuestion !== 'string' ||
         typeof parsed.whyThisQuestion !== 'string' ||
