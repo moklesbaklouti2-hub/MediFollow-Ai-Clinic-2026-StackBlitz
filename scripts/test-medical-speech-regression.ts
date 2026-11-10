@@ -94,6 +94,10 @@ const unsafeAlternatives = [
   ['symptôme ancien avec disney', 'symptôme récent avec dyspnée'],
   ['allergie et disney', 'dyspnée'],
   ['sans allergie avec disney', 'allergie avec dyspnée'],
+  ['paracétamol 500 mg matin avec disney', 'paracétamol 500 mg soir avec dyspnée'],
+  ['prise quotidienne avec disney', 'prise hebdomadaire avec dyspnée'],
+  ['une fois par jour avec disney', 'une fois par semaine avec dyspnée'],
+  ['dose unique avec disney', 'dose quotidienne avec dyspnée'],
 ];
 for (const [initial, unsafe] of unsafeAlternatives) {
   assert.equal(runtime.chooseMedicalSpeechAlternative({
