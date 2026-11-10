@@ -259,3 +259,11 @@
 - **Sécurité :** pas de remplacement automatique de « excédent », « amygdalia », « amygdalite » ou de tout diagnostic isolé. Les autres mots et données cliniques sont conservés.
 - **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer et dicter la phrase de test ; si la variante réapparaît, contrôler la suggestion et le remplacement complet après clic. Vérifier qu'« amygdalite » n'est pas altéré.
 - **Tests :** non exécutés ici ; ne pas fusionner sur `main` avant validation.
+
+
+### 2026-11-10 — Arrêt des correctifs isolés ; consolidation contextuelle et contrôle de non-régression
+- **Demande utilisateur :** éviter un cycle sans fin de variantes et effectuer un double contrôle avant de nouveaux tests manuels.
+- **Commit :** `8e25c365be26323044ede9331e3411245a8544ff` : les règles d'expressions ORL et d'accord sont regroupées dans `contextualPhrases` au lieu de blocs dupliqués. Ajout de « alexuda amygdalien », « excédent amygdalia », et de l'accord « des adénopathies cervicales bilatérale » comme suggestions confirmées, sans remplacement automatique.
+- **Double contrôle statique effectué :** les quatre expressions cibles correspondent aux motifs ; « amygdalite », « un excédent budgétaire » et « des adénopathies cervicales bilatérales » ne déclenchent pas ces motifs. Ce contrôle ne remplace pas l'exécution de l'application.
+- **Limite structurelle :** Chrome Web Speech API demeure une reconnaissance générale non spécialisée. Les règles heuristiques ne garantissent pas une transcription médicale fiable ; nécessité d'un corpus de dictées annotées, d'une suite de tests automatisés des suggestions, et à terme d'un moteur ASR médical plus adapté si les performances demeurent insuffisantes.
+- **EN ATTENTE :** `npm run test:complete`, validation Android et tests de clic des suggestions. Ne pas fusionner sur `main` avant validation. Aucun test de compilation effectué ici.
