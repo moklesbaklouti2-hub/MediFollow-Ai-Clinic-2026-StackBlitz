@@ -6,10 +6,14 @@ import { createHash, randomBytes } from 'node:crypto';
 type Session = { subjectId: string; role: 'doctor'; expiresAt: number };
 const hash = (token: string) => createHash('sha256').update(token).digest('hex');
 
-export function createSessionStore(options: { ttlMs?: number; now?: () => number } = {}) {
+export function createSessionStore(options: { ttlMs?: number; now?: () => number; maxSessions?: number } = {}) {
   const ttlMs = options.ttlMs ?? 30 * 60 * 1000;
   if (!Number.isSafeInteger(ttlMs) || ttlMs <= 0 || ttlMs > 24 * 60 * 60 * 1000) {
     throw new Error('Invalid session TTL');
+  }
+  const maxSessions = options.maxSessions ?? 5;
+  if (!Number.isSafeInteger(maxSessions) || maxSessions < 1 || maxSessions > 100) {
+    throw new Error('Invalid session capacity');
   }
   const now = options.now ?? Date.now;
   const sessions = new Map<string, Session>();
@@ -21,6 +25,15 @@ export function createSessionStore(options: { ttlMs?: number; now?: () => number
       }
       const token = randomBytes(32).toString('base64url');
       const expiresAt = now() + ttlMs;
+      // Keep bounded memory use and prevent unlimited concurrent sessions.
+      for (const [key, session] of sessions) {
+        if (expiresAt - ttlMs >= session.expiresAt) sessions.delete(key);
+      }
+      while (sessions.size >= maxSessions) {
+        const oldest = sessions.keys().next().value;
+        if (oldest === undefined) break;
+        sessions.delete(oldest);
+      }
       sessions.set(hash(token), { subjectId, role: 'doctor', expiresAt });
       return { token, expiresAt };
     },
