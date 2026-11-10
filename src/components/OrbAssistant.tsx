@@ -159,9 +159,23 @@ function isLikelyExsudatContext(value: string): boolean {
   return hasClinicalCue && hasAnatomicalSite && hasLocationLink;
 }
 
+// Certains moteurs vocaux découpent « exsudat » en « ex soudain ».
+// Une suggestion est affichée, jamais appliquée sans confirmation du médecin.
+const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: string }> = [
+  { pattern: /\bex\s+soudain\b/giu, replacement: 'exsudat' },
+];
+
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
   const exsudatContext = isLikelyExsudatContext(value);
+  for (const { pattern, replacement } of fragmentedMedicalSpeechCorrections) {
+    for (const match of value.matchAll(pattern)) {
+      const original = match[0];
+      if (!found.has(normalizeSpeechCandidate(original))) {
+        found.set(normalizeSpeechCandidate(original), { original, replacement });
+      }
+    }
+  }
   for (const original of value.match(/[\p{L}]+/gu) || []) {
     const normalized = normalizeSpeechCandidate(original);
     // « excellent » est un mot français valide : ne le rapprocher d'« exsudat »
@@ -190,6 +204,18 @@ function hasDictatedClinicalNumber(value: string): boolean {
 
 function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
   const target = normalizeSpeechCandidate(correction.original);
+  // Les suggestions portant sur plusieurs mots doivent remplacer la séquence
+  // complète, sans modifier des occurrences isolées (« ex », « soudain »).
+  if (/\s/u.test(correction.original)) {
+    return value.replace(/\bex\s+soudain\b/giu, (phrase, offset: number) => {
+      if (normalizeSpeechCandidate(phrase).replace(/\s+/g, ' ') !== target.replace(/\s+/g, ' ')) return phrase;
+      const before = value.slice(0, offset).trimEnd();
+      const startsSentence = before.length === 0 || /[.!?]\s*$/.test(before);
+      return startsSentence && phrase[0] === phrase[0].toLocaleUpperCase('fr')
+        ? correction.replacement.charAt(0).toLocaleUpperCase('fr') + correction.replacement.slice(1)
+        : correction.replacement;
+    });
+  }
   return value.replace(/[\p{L}]+/gu, (word, offset: number) => {
     if (normalizeSpeechCandidate(word) !== target) return word;
     // Une majuscule de reconnaissance (« Disney ») ne doit pas contaminer
