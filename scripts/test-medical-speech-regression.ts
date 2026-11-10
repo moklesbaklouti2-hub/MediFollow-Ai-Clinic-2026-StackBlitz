@@ -159,4 +159,19 @@ for (const { input, expected } of edgeCases) {
   assertions++;
 }
 
+// Stabilité : sélectionner une hypothèse ne doit ni modifier les résultats
+// fournis par le navigateur, ni changer la transcription à un second appel.
+const stableInput = {
+  length: 3,
+  0: { transcript: 'présence d’un exsudat' },
+  1: { transcript: '   ' },
+  2: { transcript: 'présence d’un exsudat amygdalien' },
+};
+const stableSnapshot = JSON.stringify(stableInput);
+const firstChoice = runtime.chooseMedicalSpeechAlternative(stableInput);
+assert.equal(firstChoice, 'présence d’un exsudat amygdalien');
+assert.equal(runtime.chooseMedicalSpeechAlternative(stableInput), firstChoice);
+assert.equal(JSON.stringify(stableInput), stableSnapshot);
+assertions += 3;
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
