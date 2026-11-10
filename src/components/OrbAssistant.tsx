@@ -114,6 +114,10 @@ function frenchPhoneticKey(value: string): string {
 function findClosestMedicalTerm(word: string): string | null {
   const normalizedWord = normalizeSpeechCandidate(word);
   if (normalizedWord.length < 5) return null;
+  // Une graphie ambiguë entre un adjectif anatomique et un diagnostic
+  // ne doit jamais être rapprochée automatiquement de « amygdalite ».
+  // La dictée brute reste visible et doit être clarifiée par le médecin.
+  if (['amygdania', 'amygdalia'].includes(normalizedWord)) return null;
   // Les mots ordinaires et les adjectifs anatomiques ne doivent pas devenir
   // un diagnostic par simple ressemblance phonétique.
   if (['amical', 'amicale', 'amicales', 'amicaux', 'amygdalien', 'amygdalienne', 'amygdaliens', 'amygdaliennes'].includes(normalizedWord)) return null;
