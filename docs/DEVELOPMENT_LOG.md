@@ -50,3 +50,12 @@
 - **Contrôle 2 :** relecture indépendante du fichier distant après commit : nouveau motif présent, ancien `includes` absent. Aucune modification des dossiers ou prescriptions.
 - **Limites :** compilation TypeScript, suite complète hors ligne et validation Android non exécutées ; correction ciblée à confirmer en intégration.
 - **Suite :** `npm run build && npm run test:all-offline` dans Codespaces, puis dictée réelle sur Android.
+
+
+### 2026-11-10 — Validation stricte de deux champs de réponse clinique
+- **Commit code :** `79276a5c1d75daa9ab83afc4292dd93c352d21fc` ; fichier `server/index.ts`.
+- **Correction :** l'API refuse désormais une réponse IA clinique sans justification textuelle de priorité ou sans tableau d'options de question, au lieu de masquer ces erreurs de contrat. Aucun changement des prescriptions ou données réelles.
+- **Contrôle 1 :** diff limité à deux vérifications de type, cohérent avec le schéma JSON existant ; absence de modification des routes voisines.
+- **Contrôle 2 :** nouvelle lecture distante du fichier après commit et quatre assertions statiques sur le contrat (4/4 présentes). **Ce ne sont pas des tests d'exécution.**
+- **Non exécutés :** `npm run build`, `npm run test:all-offline`, tests d'intégration et tests médicaux. Environnement local sans accès réseau au dépôt ; aucun résultat de compilation n'est revendiqué.
+- **Suite :** vérifier compilation et tests hors ligne dans Codespaces ; contrôler le comportement de la route avec réponses IA fictives valides et invalides.
