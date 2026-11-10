@@ -171,6 +171,10 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
   for (const { pattern, replacement } of fragmentedMedicalSpeechCorrections) {
     for (const match of value.matchAll(pattern)) {
       const original = match[0];
+      // Éviter de transformer l'expression française « ex soudain » hors
+      // contexte ORL : exiger un site anatomique adjacent.
+      const nearby = normalizeSpeechCandidate(value.slice(match.index ?? 0, (match.index ?? 0) + original.length + 35));
+      if (!/\b(amygdalien|amygdalienne|amygdales|tonsilles|pharynge|pharynx)\b/u.test(nearby)) continue;
       if (!found.has(normalizeSpeechCandidate(original))) {
         found.set(normalizeSpeechCandidate(original), { original, replacement });
       }
