@@ -78,6 +78,21 @@ Le certificat et sa cle ne sont **jamais commits** : ils sont generes dans un do
 
 **Ce test ne valide pas Chrome Android, les cookies sur mobile, une infrastructure publique, un certificat d'autorite reconnue ni l'hebergement de donnees medicales.** Le mode de test reste uniquement local et ne doit pas etre expose a Internet.
 
+## Verrouillage des onglets du meme navigateur (essai prepare)
+
+`src/services/doctorCrossTab.ts` fournit un canal `BroadcastChannel` limite a trois messages fixes : `logout-start`, `logout-success`, `session-rejected`. **Aucun jeton, identifiant, secret ou texte clinique** n'est emis entre onglets.
+
+- Deconnexion lancee dans un onglet : tous les autres onglets compatibles masquent immediatement leur interface clinique, meme si une authentification est en cours.
+- Deconnexion confirmee : les onglets peuvent revenir a leur ecran de connexion.
+- Deconnexion echouee : les autres onglets restent verrouilles dans l'attente de la revocation (possibilite de retenter).
+- Session refusee (401/403) sur un appel clinique : les autres onglets sont informes et masquent l'interface clinique.
+- Les messages inconnus sont ignores ; le traitement d'un message recu n'en declenche pas de nouvel envoi (pas de boucle). La fermeture de l'interface nettoie l'abonnement au canal.
+- Si `BroadcastChannel` n'est pas pris en charge, les appels cliniques restent proteges cote serveur et le retour au premier plan declenche une nouvelle verification de session. Il n'y a pas de transfert entre navigateurs ou appareils.
+
+`scripts/test-doctor-cross-tab.mts` simule deux onglets et valide la reception, l'absence de boucles, le rejet des messages inconnus et la fermeture des canaux. `scripts/test-doctor-gate-transitions.mts` couvre aussi les reponses de connexion tardives pendant une deconnexion distante. Ces tests sont ajoutes a GitHub Actions.
+
+**Attention :** il s'agit d'une coordination d'affichage, pas d'un mecanisme autonome de revocation des cookies. Une fermeture/actualisation d'onglet peut encore exposer une session non revoquee si le serveur etait injoignable lors de la deconnexion. Un test de navigateur Android reel et un audit restent requis avant toute donnee patient.
+
 ## Avant tout branchement dans le serveur clinique
 1. Provisionner un identifiant et un hash scrypt forts **cote serveur**, hors Git ; ne jamais exposer les secrets au frontend.
 2. Configurer et verifier HTTPS de bout en bout, `PUBLIC_ORIGIN`, un reverse proxy dont la confiance est restreinte a des adresses/IP precises. Ne jamais faire `app.set('trust proxy', true)` pour l'ensemble d'Internet.
