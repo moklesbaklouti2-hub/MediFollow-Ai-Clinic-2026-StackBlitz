@@ -143,3 +143,11 @@
 - **Sécurité :** aucune correction automatique appliquée sans confirmation du médecin ; les mots cliniques non reconnus restent à relire.
 - **EN ATTENTE — intervention utilisateur :** dans Codespaces, sur `audit-stabilisation-2026-11-10`, arrêter le serveur si nécessaire, exécuter `git pull origin audit-stabilisation-2026-11-10` puis `npm run test:complete` ; relancer `npm run dev:full` et répéter la phrase fictive sur Android. Vérifier la suggestion « annexeda » → « exsudat », « audenophagie » → « odynophagie » et l'absence de suggestion « amygdalien » → « amygdalite ».
 - **Limites :** aucune compilation, test automatisé ou retest Android de ce nouveau commit n'a été effectué au moment de l'écriture. Ne pas fusionner avant validation.
+
+
+### 2026-11-10 — Android : éviter les fausses corrections des termes déjà corrects
+- **Capture réelle :** suggestion « odynophagie » → « dysphagie » (sens clinique différent) et « adénopathies » → « adénopathie » (perte du pluriel). La fin « Annick soudain amical » au lieu de « exsudat amygdalien » reste non résolue.
+- **Commit :** `876833862930cbeda2b61632be80d676b4c99a95` ; `src/components/OrbAssistant.tsx` ignore désormais dans la recherche de rapprochement les termes exacts du dictionnaire ainsi que leurs pluriels réguliers.
+- **Sécurité :** ne pas accepter les anciennes suggestions affichées ; ne pas inférer automatiquement « exsudat » depuis des mots ordinaires sans correspondance fiable.
+- **EN ATTENTE — intervention utilisateur :** sur branche audit, `git pull origin audit-stabilisation-2026-11-10`, puis `npm run test:complete`, redémarrer l'application et dicter la phrase fictive. Vérifier absence des deux fausses suggestions. Réexaminer séparément la reconnaissance de « exsudat amygdalien ».
+- **Limites :** commit non compilé/testé sur Android à cette étape. Ne pas fusionner avant validation.
