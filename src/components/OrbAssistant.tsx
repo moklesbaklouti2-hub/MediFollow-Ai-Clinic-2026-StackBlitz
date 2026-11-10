@@ -249,7 +249,11 @@ function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
       const exactTerm = new RegExp(`(^|[^\\p{L}])${escapedTerm}(?=$|[^\\p{L}])`, 'u');
       return total + (exactTerm.test(normalized) ? 3 : 0);
     }, 0);
-    return { transcript, score, index };
+    // Favoriser une expression ORL complète uniquement lorsqu'elle est
+    // effectivement proposée par Chrome, sans fabriquer de mots.
+    // Ce bonus ne s'applique pas à des termes isolés ni à d'autres contextes.
+    const orlPhraseBonus = /\\bexsudat\\s+amygdalien(?:ne|s|nes)?\\b/u.test(normalized) ? 7 : 0;
+    return { transcript, score: score + orlPhraseBonus, index };
   });
 
   // Ne choisit une alternative que si elle contient un terme médical reconnu
