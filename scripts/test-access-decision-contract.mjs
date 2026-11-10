@@ -34,6 +34,10 @@ const cases = [
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: [null, 'fictional-B'] }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A ', assignedPatientIds: ['fictional-A'] }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: ['fictional-A '] }, 403],
+  [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: {} }, 403],
+  [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: [123, 'fictional-A'] }, 200],
+  [{ authenticated: true, role: 'patient', action: 'prescription-sign' }, 403],
+  [{ authenticated: true, role: 'doctor', action: 'unexpected-clinical-operation' }, 403],
   [{ authenticated: true, role: 'patient', action: 'patient-record', patientId: 'fictional-A' }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: null }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: 'fictional-A' }, 403],
@@ -44,4 +48,4 @@ const cases = [
   [{ authenticated: true, role: 'visitor', action: 'clinical-ai' }, 403],
 ];
 for (const [request, expected] of cases) assert.equal(proposedAccessDecision(request), expected, JSON.stringify(request));
-console.log('Proposed access decision contract: 25/25 assertions PASS (offline simulation only, no runtime authentication).');
+console.log('Proposed access decision contract: 29/29 assertions PASS (offline simulation only, no runtime authentication).');
