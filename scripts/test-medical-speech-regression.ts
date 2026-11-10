@@ -192,4 +192,20 @@ for (const [initial, omitted] of criticalOmissions) {
   assertions++;
 }
 
+// La sélection doit rester stable si le navigateur répète des hypothèses
+// identiques et ne doit pas altérer les mesures déjà présentes.
+const duplicateAlternatives = {
+  length: 3,
+  0: { transcript: 'SpO₂ 98 % avec dyspnée' },
+  1: { transcript: 'SpO₂ 98 % avec dyspnée' },
+  2: { transcript: 'SpO₂ 98 % avec dyspnée' },
+};
+const duplicateSnapshot = JSON.stringify(duplicateAlternatives);
+for (let attempt = 0; attempt < 5; attempt++) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative(duplicateAlternatives), 'SpO₂ 98 % avec dyspnée');
+  assertions++;
+}
+assert.equal(JSON.stringify(duplicateAlternatives), duplicateSnapshot);
+assertions++;
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
