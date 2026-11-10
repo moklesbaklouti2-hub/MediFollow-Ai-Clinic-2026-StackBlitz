@@ -226,3 +226,11 @@
 - **Modification :** si la séquence complète « excédent amygdalien » est présente, HELIOS propose « exsudat amygdalien » ; le clic du médecin remplace les deux mots ensemble. Aucun remplacement automatique de « excédent » isolé ni de « amygdalite », qui peut être un diagnostic réel.
 - **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrer, tester « présence d'un exsudat amygdalien » et vérifier la suggestion si Chrome transcrit « excédent amygdalien ». Tester également « un excédent budgétaire » et « amygdalite » pour vérifier l'absence de substitution indue.
 - **Tests :** pas de compilation ni de test Android exécutés ici ; conserver la branche de stabilisation isolée de `main`.
+
+
+### 2026-11-10 — Variante vocale « display » → « dyspnée »
+- **Capture utilisateur :** dictée de « patient de 35 ans présentant une odynophagie, une dyspnée, des adénopathies cervicales bilatérales et un exsudat amygdalien » ; Chrome affiche notamment « audinophagie », « display », « adénopathie », « bilatérale », « excédent amygdalien ». Les suggestions odynophagie et exsudat amygdalien apparaissent déjà.
+- **Commit :** `a773d3575734f88c5119ff62bbc1587624123a1b` ajoute `display` → `dyspnée` aux suggestions explicitement confirmées par le médecin. Ne corrige pas automatiquement le terme.
+- **Risque restant :** « display » est aussi un mot anglais valide ; vérifier le contexte avant de confirmer. Les accords/pluriels restent à relire manuellement.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage et nouveau test Android avec la phrase clinique fictive. Vérifier la présence et l'application de la suggestion, et qu'aucune correction non confirmée n'est appliquée.
+- **Tests :** compilation et test Android de ce commit non réalisés ici.
