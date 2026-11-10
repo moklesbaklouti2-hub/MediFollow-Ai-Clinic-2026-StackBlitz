@@ -20,4 +20,16 @@ assert.equal(store.verify(b.token), null);
 const c = store.issue('fictional-doctor');
 store.revokeAll();
 assert.equal(store.verify(c.token), null);
+
+// A moving clock must not create a mismatch between returned and stored expiry.
+let ticks = 5000;
+const moving = createSessionStore({ ttlMs: 1000, now: () => ticks++ });
+const issued = moving.issue('fictional-doctor');
+assert.equal(issued.expiresAt, 6000);
+ticks = 5999;
+assert.equal(moving.verify(issued.token)?.expiresAt, issued.expiresAt);
+ticks = 6000;
+assert.equal(moving.verify(issued.token), null);
+assert.equal(moving.verify(issued.token), null);
+
 console.log('PASS: isolated session lifecycle issue/verify/revoke/expire/revokeAll; not production-wired.');
