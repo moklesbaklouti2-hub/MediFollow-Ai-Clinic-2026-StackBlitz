@@ -105,3 +105,10 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Contrôle 1 :** syntaxe Node.js et test occupé/libéré exécutés dans une copie isolée de la fonction sous Node : PASS. **Contrôle 2 :** relecture indépendante du fichier distant : délai, nettoyage du socket et comportement refus/connexion présents. Le scénario réseau réellement bloqué n'a pas été reproduit.
 - **CI :** statuts GitHub du SHA documentaire antérieur non disponibles (tableaux vides) ; aucun succès Actions récent attesté. **Limites :** pas de build complet, test Express ni Android ; aucune donnée réelle et aucun déploiement.
 - **Reprise :** consulter le job `access-decision-contract` sur le dernier SHA ; si vert, examiner les routes HTTP cliniques ; si rouge, analyser les logs. Authentification effective toujours non certifiée.
+
+### 2026-11-11 00 h 57 — Relais CI / sondes concurrentes
+- **Branche :** `audit-stabilisation-2026-11-10` ; **code :** `cbcc5d76707c6172447a7db82f4864bb716986c0` ; **journal :** `4bce9527871d193cf33cd1d84d7c094eee280c60`.
+- **Fichiers :** `scripts/test-port-availability.mjs`, `docs/DEVELOPMENT_LOG.md`, ce relais.
+- **Réalisé :** régression concurrente sur huit sondes loopback fictives ; tests Node isolés exécutés deux fois et réussis ; code distant relu.
+- **Dernier CI confirmé avant changement :** run `42926489358` sur `bccc2ecb0486ea5a1c9410050122a35e18d3aae3`, dix jobs `completed/success`. **CI du nouveau HEAD non encore confirmée.**
+- **Reprise :** vérifier le SHA actuel de la PR #2, puis les jobs du run correspondant exactement à ce SHA. Si rouge, consulter les logs ; si vert, poursuivre le contrôle des routes cliniques. Pas de déploiement, ni fusion, ni données réelles. Tests Android/microphone toujours EN ATTENTE — intervention utilisateur.
