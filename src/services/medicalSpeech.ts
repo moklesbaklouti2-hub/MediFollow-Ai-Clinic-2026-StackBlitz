@@ -235,7 +235,11 @@ function criticalSpeechTokens(value: string): string {
   const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)\b/gu), match => match[0]);
   // Même valeur chiffrée avec une unité différente = risque de dose erronée.
   const units = Array.from(normalized.matchAll(/\b(?:mg|mcg|µg|ug|g|kg|ml|l|mmhg|bpm)\b|%/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units });
+  // La latéralité et la polarité d'un examen ne doivent pas être changées
+  // par le classement automatique des hypothèses du navigateur.
+  const laterality = Array.from(normalized.matchAll(/\b(?:droit|droite|droits|droites|gauche|gauches|bilateral|bilaterale|bilateraux|bilaterales|unilateral|unilaterale|unilateraux|unilaterales)\b/gu), match => match[0]);
+  const polarity = Array.from(normalized.matchAll(/\b(?:positif|positive|positifs|positives|negatifs|negatives)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations, units, laterality, polarity });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
