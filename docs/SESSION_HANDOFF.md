@@ -1,0 +1,39 @@
+# MediFollow AI — relais de sessions
+
+> Coordination du développement sur `audit-stabilisation-2026-11-10`.
+> Ce fichier ne déclenche **aucune** session ChatGPT. Il documente le relais pour la prochaine session autorisée.
+
+## État technique connu (2026-11-10)
+
+- Branche de travail : `audit-stabilisation-2026-11-10` ; **ne pas modifier ni fusionner `main`** sans validation.
+- Workflow : `.github/workflows/medifollow-audit.yml` (commit `0f02d7ac957967eefb3053e8830da47674d8afab`).
+- Travaux automatisés indépendants : compilation TypeScript/Vite, résilience IA, régression clinique, dictionnaire médical, dictée HELIOS.
+- Résultats d'exécution GitHub Actions : **non vérifiés à la création de ce relais**. Ne pas présumer que les tests ont réussi.
+- Aucun agent IA parallèle de codage n'est installé par ce workflow ; les jobs GitHub Actions ne font que compiler et tester.
+- Aucun accès aux données réelles, aucun secret ni appel IA payant requis par le workflow.
+
+## Protocole obligatoire à chaque session
+
+1. Lire les derniers commits distants, `docs/DEVELOPMENT_LOG.md` et ce relais **avant** toute écriture.
+2. Examiner les résultats du workflow du commit actuel si accessibles. Distinguer les tests réellement exécutés des tests simplement configurés.
+3. Choisir une tâche indépendante, petite et vérifiable. Privilégier sécurité, compilation et non-régression.
+4. Ne pas travailler simultanément sur les mêmes fichiers qu'une autre session. Vérifier la version distante immédiatement avant écriture ; jamais de push forcé.
+5. Exécuter les contrôles disponibles ; si impossibles, expliquer pourquoi et ne pas déclarer le travail validé.
+6. Si un serveur, un quota ou un outil bloque, tenter au plus trois approches distinctes, puis basculer vers un autre module indépendant.
+7. Enregistrer les changements dans un commit réversible, mettre à jour le journal et laisser un relais : module, fichiers, SHA, tests, anomalies, prochaine tâche.
+8. Ne jamais fusionner, déployer, modifier des données réelles, engager des dépenses ou approuver une décision clinique sans autorisation explicite.
+
+## Modules indépendants et prochaines tâches candidates
+
+| Module | Prochaine tâche candidate | Conditions |
+| --- | --- | --- |
+| HELIOS / dictée | Vérifier le module `src/services/medicalSpeech.ts` après extraction et ses tests directs | Compiler et tester avant de conclure |
+| Consultations | Auditer le modèle de pièces jointes et la séparation données/présentation | Pas de données réelles ni de migration destructive |
+| Sécurité clinique | Vérifier les tests de régression et les cas de négation/chiffres | Suggestions non appliquées sans confirmation médicale |
+| Espace patient | Définir les frontières d'accès et la sélection explicite des informations | Ne pas exposer de dossiers ou données privées |
+| Formation continue | Préparer les structures et critères de provenance des recommandations | Pas d'affirmation de certification sans preuve |
+| CI / coordination | Vérifier les exécutions GitHub Actions et corriger les erreurs réelles | Ne pas lancer d'agents autonomes payants ou non autorisés |
+
+## Résultat attendu
+
+Une progression mesurable en modifications de code réellement testées, avec un minimum d'attente entre tâches **au sein d'une même session**. Les sessions ChatGPT programmées restent limitées par leur calendrier ; GitHub Actions ne peut pas les redémarrer immédiatement.
