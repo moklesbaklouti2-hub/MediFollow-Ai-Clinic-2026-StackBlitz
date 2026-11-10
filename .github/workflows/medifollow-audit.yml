@@ -148,6 +148,8 @@ jobs:
         run: npx --no-install tsx scripts/test-session-store.mts
       - name: Tester la protection HTTP par session (fixture isolee)
         run: npx --no-install tsx scripts/test-doctor-session-guard.mts
+      - name: Tester les identifiants du medecin (donnees fictives)
+        run: npx --no-install tsx scripts/test-doctor-credentials.mts
 
   relay:
     name: Bilan des controles
