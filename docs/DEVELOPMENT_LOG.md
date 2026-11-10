@@ -218,3 +218,11 @@
 - **Commit :** `b6f4eae2e5767dd1ccf2385e278139b16cb4436a` ; la sélection d'alternatives favorise la séquence complète exacte « exsudat amygdalien » **uniquement si Chrome la fournit parmi ses alternatives**. Aucune reconstruction automatique d'un signe clinique absent des hypothèses du moteur vocal.
 - **Limites :** bonus lexical heuristique ; peut encore choisir une alternative inexacte. L'utilisateur doit relire avant tout usage clinique. Les corrections manuelles existantes restent actives.
 - **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, trois essais distincts avec effacement du champ entre essais, captures avant correction. Aucun test npm ni Android exécuté ici.
+
+
+### 2026-11-10 — Dictée ORL : suggestion contextuelle « excédent amygdalien »
+- **Trois essais utilisateur :** deux fois « présence d'un excédent amygdalien », une fois « présence d'un excédent amygdalite », pour « présence d'un exsudat amygdalien ». Aucun essai entièrement exact.
+- **Commit :** `8aa358dee924bf3648e731f9416e77d53ce7b56f`.
+- **Modification :** si la séquence complète « excédent amygdalien » est présente, HELIOS propose « exsudat amygdalien » ; le clic du médecin remplace les deux mots ensemble. Aucun remplacement automatique de « excédent » isolé ni de « amygdalite », qui peut être un diagnostic réel.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrer, tester « présence d'un exsudat amygdalien » et vérifier la suggestion si Chrome transcrit « excédent amygdalien ». Tester également « un excédent budgétaire » et « amygdalite » pour vérifier l'absence de substitution indue.
+- **Tests :** pas de compilation ni de test Android exécutés ici ; conserver la branche de stabilisation isolée de `main`.
