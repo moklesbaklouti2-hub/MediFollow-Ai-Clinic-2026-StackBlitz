@@ -151,7 +151,7 @@ const edgeCases = [
   { input: { length: 0 }, expected: '' },
   { input: { length: 1, 0: { transcript: '  dyspnée  ' } }, expected: 'dyspnée' },
   { input: { length: 2, 0: { transcript: 'toux' }, 1: { transcript: 'toux' } }, expected: 'toux' },
-  { input: { length: 3, 0: { transcript: 'toux' }, 1: { transcript: '  ' }, 2: { transcript: 'dyspnée' } }, expected: 'dyspnée' },
+  { input: { length: 3, 0: { transcript: 'exsudat' }, 1: { transcript: '  ' }, 2: { transcript: 'exsudat amygdalien' } }, expected: 'exsudat amygdalien' },
   { input: { length: 2, 0: { transcript: 'absence de dyspnée' }, 1: { transcript: 'dyspnée' } }, expected: 'absence de dyspnée' },
 ];
 for (const { input, expected } of edgeCases) {
