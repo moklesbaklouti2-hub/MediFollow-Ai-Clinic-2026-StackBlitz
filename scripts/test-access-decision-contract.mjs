@@ -10,7 +10,7 @@ export function proposedAccessDecision({ authenticated = false, role = 'visitor'
     return role === 'doctor' ? 200 : 403;
   }
   if (action === 'patient-record') {
-    return role === 'doctor' && typeof patientId === 'string' && patientId.length > 0 &&
+    return role === 'doctor' && typeof patientId === 'string' && patientId.trim().length > 0 &&
       Array.isArray(assignedPatientIds) && assignedPatientIds.includes(patientId) ? 200 : 403;
   }
   return 403; // Unknown actions are denied by default.
@@ -30,8 +30,10 @@ const cases = [
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: null }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 'fictional-A', assignedPatientIds: 'fictional-A' }, 403],
   [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: '', assignedPatientIds: [''] }, 403],
+  [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: '   ', assignedPatientIds: ['   '] }, 403],
+  [{ authenticated: true, role: 'doctor', action: 'patient-record', patientId: 123, assignedPatientIds: [123] }, 403],
   [{ authenticated: true, role: 'doctor', action: 'unknown-action' }, 403],
   [{ authenticated: true, role: 'visitor', action: 'clinical-ai' }, 403],
 ];
 for (const [request, expected] of cases) assert.equal(proposedAccessDecision(request), expected, JSON.stringify(request));
-console.log('Proposed access decision contract: 15/15 assertions PASS (offline simulation only, no runtime authentication).');
+console.log('Proposed access decision contract: 17/17 assertions PASS (offline simulation only, no runtime authentication).');
