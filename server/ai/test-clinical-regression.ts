@@ -5,6 +5,8 @@ const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
 const clinical = source.split("app.post('/api/clinical/analyze'")[1]?.split("app.post('/api/")[0] ?? '';
 const chat = source.split("app.post('/api/chat'")[1] ?? '';
 assert.ok(clinical.includes("createAiCompletion"), 'Analyse clinique manquante');
+assert.ok(!clinical.includes('Erreur du moteur clinique : ${detail'), 'Détails internes du fournisseur exposés au client');
+assert.ok(!clinical.includes("console.error('Erreur analyse clinique détaillée:', error)"), 'Erreur fournisseur brute journalisée');
 assert.ok(!/\b(?:message|history|clinicalInterview|memoryContext)\b/.test(
   clinical.slice(0, clinical.indexOf('const completion ='))
 ), 'La route clinique référence une variable de conversation non déclarée');
