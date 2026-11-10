@@ -75,3 +75,11 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Critères de clôture de la boucle de stabilisation :** (1) CI verte sur le commit final ; (2) compilation et quatre suites de régression hors ligne réussies ; (3) aucune donnée réelle ni secret dans les tests ; (4) vérification explicite de l'absence d'authentification effective sur les routes cliniques et décision documentée de ne pas déployer tant que ce point n'est pas traité ; (5) revue des écarts restants et des tests Android non exécutés ; (6) aucune fusion vers `main` sans accord utilisateur.
 - **Prochaine tâche indépendante :** préparer un test HTTP local fictif démontrant le comportement réel des routes cliniques en accès non authentifié, sans exposer le serveur ni modifier la politique d'accès en production. Éviter toute activation implicite d'un middleware bloquant.
 - **Avancement :** le pourcentage annoncé dans la conversation est une estimation de suivi, non un indicateur calculé à partir des workflows.
+
+### 2026-11-10 21 h — Relais sonde HTTP réelle (locale)
+- **Module :** sécurité API ; **branche :** `audit-stabilisation-2026-11-10` ; **commits :** `a3b1e8131a3051031ed22961f191af2e6f467eb4` (sonde), `57c19aa0d218c1c703ae750b28705996bb214cb5` (CI), `2c312775b93d622bfe7cf5a6827f5e3067d42a54` (journal).
+- **Fichiers :** `scripts/test-local-http-auth-boundary.mjs`, `.github/workflows/medifollow-audit.yml`, `docs/DEVELOPMENT_LOG.md`, ce relais.
+- **Achevé :** sonde HTTP Express locale avec entrées fictives et absence de clés IA ; aucune modification des routes ou données patients.
+- **Vérification :** revue statique en deux passes ; **CI du dernier commit non encore confirmée**. Dernière CI observée avant les changements : #74 verte sur `c406842`.
+- **Blocage :** authentification réelle non implémentée, tests Android non exécutés. Ne pas déployer ni fusionner.
+- **Reprise :** consulter le dernier run Actions ; si la sonde échoue, lire les logs du job `access-decision-contract`, corriger puis retester. Sinon, poursuivre l'audit des routes cliniques et définir une migration d'authentification avec accord explicite avant activation.
