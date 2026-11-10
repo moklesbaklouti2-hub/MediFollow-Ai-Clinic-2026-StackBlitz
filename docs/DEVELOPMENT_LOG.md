@@ -74,3 +74,12 @@
 - **Contrôle 2 :** reproduction des assertions structurelles dans l'environnement JavaScript du connecteur sur le lexique distant : **239 entrées, aucun doublon dans un même domaine, 4/4 termes essentiels présents**. Ce contrôle n'exécute PAS `tsx` ou la suite npm.
 - **EN ATTENTE — intervention utilisateur / environnement d'exécution :** lancer dans Codespaces sur cette branche `npm run build && npm run test:all-offline`, puis transmettre les sorties. Résultat attendu : compilation et tests réussis sans erreur ; corriger tout échec avant fusion. Les essais de microphone sur Android restent également non effectués.
 - **Limites :** aucune validation médicale, aucun test navigateur, aucun test IA live ; les entrées communes à plusieurs domaines sont permises intentionnellement. Prochaine étape : compilation complète, tests et régressions ciblées.
+
+### 2026-11-10 — Contrôles supplémentaires du lexique (session 09 h)
+- **Objectif :** rejeter les termes avec espaces parasites et les domaines vides ou mal formés dans le test hors ligne existant.
+- **Fichier :** `scripts/test-medical-dictionary.ts` ; **commit :** `3f5aee225ac3386a7eccd3d64279f9c5b6f3ab1e`.
+- **Contrôle 1 :** lecture du diff et du fichier distant : deux assertions supplémentaires présentes. Aucun changement du lexique, de l'interface ou des données patient.
+- **Contrôle 2 :** analyse indépendante via JavaScript du lexique distant : 239 entrées analysées, 0 domaine vide/mal formé et 0 terme avec espaces parasites. **Ce n'est pas une exécution du script TypeScript**.
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** l'environnement local ne résout pas github.com (échec `git ls-remote` : `Could not resolve host: github.com`), et le connecteur GitHub n'exécute pas npm. Une alternative a permis la lecture et les assertions JavaScript, sans compilation du projet.
+- **EN ATTENTE — intervention utilisateur :** dans Codespaces, sélectionner `audit-stabilisation-2026-11-10`, puis lancer `npm install && npm run build && npm run test:all-offline` ; fournir les erreurs exactes s'il y en a. Résultat attendu : zéro erreur de compilation et tests hors ligne réussis. Essais microphone Chrome Android toujours non effectués.
+- **Statut :** assertions ajoutées et inspection statique conforme ; validation de build et non-régression complète non réalisée. Prochaine étape : exécuter les tests réels, puis traiter les anomalies observées.
