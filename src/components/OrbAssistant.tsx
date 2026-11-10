@@ -174,31 +174,27 @@ const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: 
 function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
   const exsudatContext = isLikelyExsudatContext(value);
-  // Expression entière observée dans le test : suggestion, jamais substitution
-  // automatique. Ne pas changer « excédent » ni « amygdalia » isolément.
-  for (const match of value.matchAll(/\bexc[eé]dent\s+amygdalia\b/giu)) {
-    const original = match[0];
-    found.set(normalizeSpeechCandidate(original), {
-      original,
+  // Corrections contextuelles : l'expression complète, jamais un diagnostic
+  // inféré d'un mot isolé. Chaque suggestion exige un clic du médecin.
+  const contextualPhrases: Array<{ pattern: RegExp; replacement: string }> = [
+    {
+      pattern: /\b(?:exc[eé]dent|alexuda)\s+(?:amygdalien|amygdalia)\b/giu,
       replacement: 'exsudat amygdalien',
-    });
-  }
-
-  // Accord grammatical proposé uniquement après validation du médecin.
-  for (const match of value.matchAll(/\bdes\s+ad[eé]nopathie\s+cervicales\s+bilat[eé]rale\b/giu)) {
-    const original = match[0];
-    found.set(normalizeSpeechCandidate(original), {
-      original,
+    },
+    {
+      pattern: /\bdes\s+ad[eé]nopathie\s+cervicales\s+bilat[eé]rale\b/giu,
       replacement: 'des adénopathies cervicales bilatérales',
-    });
-  }
-
-  // « excédent amygdalien » est une confusion observée trois fois.
-  // Ne jamais remplacer « excédent » seul, ni « amygdalite » qui peut
-  // désigner un diagnostic réel. Le médecin confirme la phrase entière.
-  for (const match of value.matchAll(/\bexc[eé]dent\s+amygdalien\b/giu)) {
-    const original = match[0];
-    found.set(normalizeSpeechCandidate(original), { original, replacement: 'exsudat amygdalien' });
+    },
+    {
+      pattern: /\bdes\s+ad[eé]nopathies\s+cervicales\s+bilat[eé]rale\b/giu,
+      replacement: 'des adénopathies cervicales bilatérales',
+    },
+  ];
+  for (const { pattern, replacement } of contextualPhrases) {
+    for (const match of value.matchAll(pattern)) {
+      const original = match[0];
+      found.set(normalizeSpeechCandidate(original), { original, replacement });
+    }
   }
 
   for (const { pattern, replacement } of fragmentedMedicalSpeechCorrections) {
