@@ -311,3 +311,12 @@
 - **Contrôle 2 :** relecture indépendante du fichier distant après commit : garde `Array.isArray` présent, branche inchangée, CI du nouveau commit initialement en attente (`42881792524`). Ne pas considérer la CI réussie tant que le résultat final n'est pas constaté.
 - **Statut :** code versionné, **validation CI en attente** ; aucune validation médicale, aucun test de navigateur ni données réelles.
 - **Suite :** contrôler le résultat de la CI du commit, puis auditer l'authentification réellement appliquée aux routes cliniques sans activer de middleware de production.
+
+### 2026-11-10 21 h — Sonde HTTP locale de frontière d'authentification
+- **Module :** sécurité API ; **branche :** `audit-stabilisation-2026-11-10` ; **code :** `a3b1e8131a3051031ed22961f191af2e6f467eb4` ; **CI :** `57c19aa0d218c1c703ae750b28705996bb214cb5`.
+- **Fichiers :** `scripts/test-local-http-auth-boundary.mjs`, `.github/workflows/medifollow-audit.yml`.
+- **Objectif :** lancer Express uniquement en boucle locale avec clés IA désactivées, envoyer trois requêtes fictives et constater si les routes cliniques et vocales répondent avant toute authentification. Attendu actuel : /api/health=200, contexte clinique invalide=400, commande vide=400. Ces codes 400 sans identité sont une **preuve de frontière d'accès absente**, pas un succès de sécurité.
+- **Contrôle 1 :** revue du script et du workflow ; aucune requête clinique valide, aucun appel IA voulu, aucun dossier réel, processus enfant arrêté en finally.
+- **Contrôle 2 :** relecture de l'intégration CI et contrôle de la portée : uniquement test, aucune modification des routes, pas de fusion/déploiement. **Exécution Node locale non effectuée** ; CI sur le commit final à vérifier avant validation.
+- **Statut :** EN ATTENTE — vérification GitHub Actions du commit final ; ne pas déployer sur un réseau accessible à des tiers. Les contrôles 401/403 sont toujours simulés, sans middleware serveur.
+- **Prochaine étape :** consulter le job `access-decision-contract` du commit final ; corriger la sonde si échec technique, puis proposer une authentification côté serveur avec stratégie de migration et validation explicite avant activation.
