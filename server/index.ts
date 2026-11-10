@@ -1,8 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import { validateRemoteStartup } from './security/remoteAccessConfig.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
+// Optional remote-deployment preflight; no public access or authentication is enabled here.
+// Invalid opt-in configuration stops startup rather than silently weakening security.
+validateRemoteStartup(process.env);
 
 const app = express();
 const PORT = 3001;
