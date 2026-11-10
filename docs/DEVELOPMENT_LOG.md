@@ -274,3 +274,12 @@
 - **Cas :** expressions ORL fragmentées, corrections des adénopathies, termes non modifiables, nombres SpO₂ et température, négation, alternatives vocales ; vérification du remplacement après confirmation simulée.
 - **Limites :** les tests ne simulent ni le navigateur ni l'interface de clic React ; l'extraction par délimiteurs source est un compromis provisoire. À terme, isoler le moteur dans un module TypeScript autonome importable par l'UI et les tests.
 - **EN ATTENTE :** exécution `npm run test:complete` sur la branche audit ; corriger toute erreur révélée avant de déclarer les tests réussis. Aucun test npm exécuté dans cette session.
+
+
+### 2026-11-10 — HELIOS : bonus ORL rétabli pour le classement des hypothèses vocales
+- **Objectif :** corriger un motif RegExp littéral qui utilisait `\\b` et `\\s` (antislashs doubles), rendant inopérant le bonus réservé à l'expression « exsudat amygdalien ».
+- **Commits :** `25c9b819d4bad349f403d584a6a4a3d906d0cbb0` (code), `8a550b82a2ba6e0daee80631324942aedf743cdd` (régression). **Fichiers :** `src/services/medicalSpeech.ts`, `scripts/test-medical-speech-regression.ts`.
+- **Contrôle 1 :** comparaison ciblée du motif avant/après et ajout de deux assertions au test hors ligne existant : priorité à l'expression complète si Chrome la fournit, absence de bonus pour un suffixe de mot.
+- **Contrôle 2 :** relecture indépendante des fichiers distants après les deux commits ; quatre cas JavaScript isolés du motif corrigé (expression masculine, féminine, suffixe interdit, terme seul) : **4/4 conformes**. Cela ne constitue pas l'exécution du module TypeScript ni de l'interface.
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** le conteneur ne résout pas `github.com` (`git ls-remote` : `Could not resolve host`) ; impossible d'installer/exécuter la suite npm complète dans cet environnement. Aucun test navigateur ni validation médicale effectué.
+- **EN ATTENTE — intervention utilisateur :** dans Codespaces sur `audit-stabilisation-2026-11-10`, lancer `npm run test:complete` et communiquer toute erreur ; puis contrôler sur Chrome Android deux alternatives ORL, sans correction automatique. **Prochaine étape :** traiter les échecs réels éventuels avant fusion, puis audit des accès serveur.
