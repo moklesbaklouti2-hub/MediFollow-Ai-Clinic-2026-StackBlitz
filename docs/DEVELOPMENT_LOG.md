@@ -59,3 +59,10 @@
 - **Contrôle 2 :** nouvelle lecture distante du fichier après commit et quatre assertions statiques sur le contrat (4/4 présentes). **Ce ne sont pas des tests d'exécution.**
 - **Non exécutés :** `npm run build`, `npm run test:all-offline`, tests d'intégration et tests médicaux. Environnement local sans accès réseau au dépôt ; aucun résultat de compilation n'est revendiqué.
 - **Suite :** vérifier compilation et tests hors ligne dans Codespaces ; contrôler le comportement de la route avec réponses IA fictives valides et invalides.
+
+### 2026-11-10 — Nettoyage du lexique médical (branche audit)
+- **Branche :** `audit-stabilisation-2026-11-10` ; **commit :** `6d03a314a39ceb3516db65c0c5416c7469ceebe6`.
+- **Correction :** suppression de deux entrées strictement dupliquées (`asthénie` et `dyspepsie`) dans `src/data/medicalDictionary.ts`. L'entrée `défense abdominale` apparaît dans deux domaines distincts (`semiologie` et `digestif`) et a été conservée intentionnellement.
+- **Vérification :** inspection du contenu GitHub avant modification, contrôle des occurrences dans le contenu écrit (1 occurrence de chaque terme corrigé). Aucun autre terme modifié.
+- **Non exécutés :** `npm run build`, tests automatisés du projet et dictée sur Android. **EN ATTENTE — intervention utilisateur** pour les tests sur appareil, lorsque l'accès sera disponible. La validation clinique n'est pas revendiquée.
+- **Suite :** exécuter les tests techniques dans un environnement disposant du dépôt ; renforcer les tests de régression du lexique et des routes cliniques.
