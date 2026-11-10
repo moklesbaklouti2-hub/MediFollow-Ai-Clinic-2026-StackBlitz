@@ -75,4 +75,26 @@ const nonOrlAlternatives = {
 };
 assert.equal(runtime.chooseMedicalSpeechAlternative(nonOrlAlternatives), 'exsudat');
 assertions++;
+// Ne jamais préférer une alternative qui change une donnée clinique critique.
+const unsafeAlternatives = [
+  ['SpO₂ 87 % avec disney', 'SpO₂ 97 % avec dyspnée'],
+  ['absence de disney', 'présence de dyspnée'],
+  ['sans disney', 'avec dyspnée'],
+  ['glycémie 1,2 g/L avec disney', 'glycémie 12 g/L avec dyspnée'],
+];
+for (const [initial, unsafe] of unsafeAlternatives) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: unsafe },
+  }), initial, 'Alternative clinique dangereuse retenue : ' + unsafe);
+  assertions++;
+}
+assert.equal(runtime.chooseMedicalSpeechAlternative({
+  length: 2,
+  0: { transcript: 'SpO₂ 97 % avec disney' },
+  1: { transcript: 'SpO₂ 97 % avec dyspnée' },
+}), 'SpO₂ 97 % avec dyspnée');
+assertions++;
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
