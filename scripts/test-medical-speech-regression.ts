@@ -98,6 +98,10 @@ const unsafeAlternatives = [
   ['prise quotidienne avec disney', 'prise hebdomadaire avec dyspnée'],
   ['une fois par jour avec disney', 'une fois par semaine avec dyspnée'],
   ['dose unique avec disney', 'dose quotidienne avec dyspnée'],
+  ['traitement oral avec disney', 'traitement intraveineux avec dyspnée'],
+  ['injection intramusculaire avec disney', 'injection sous-cutanée avec dyspnée'],
+  ['voie IV avec disney', 'voie IM avec dyspnée'],
+  ['voie rectale avec disney', 'voie orale avec dyspnée'],
 ];
 for (const [initial, unsafe] of unsafeAlternatives) {
   assert.equal(runtime.chooseMedicalSpeechAlternative({
