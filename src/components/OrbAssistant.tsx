@@ -57,6 +57,7 @@ const observedMedicalSpeechCorrections: Record<string, string> = {
   exuda: 'exsudat',
   exudar: 'exsudat',
   exodat: 'exsudat',
+  exida: 'exsudat',
   annexeda: 'exsudat',
   annexida: 'exsudat',
   audenophagie: 'odynophagie',
