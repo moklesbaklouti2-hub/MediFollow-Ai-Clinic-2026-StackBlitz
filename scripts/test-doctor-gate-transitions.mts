@@ -10,6 +10,19 @@ assert.equal(next('authenticated', 'background'), 'locked', 'Android background 
 assert.equal(next('locked', 'foreground'), 'verifying', 'Android foreground forces recheck');
 assert.equal(next('locked', 'verify-success'), 'locked', 'Stale verify must not unlock on background');
 
+// A logout starting in another tab must also interrupt a login/verification
+// already underway. Its eventual 200 response must never reopen the UI.
+for (const phase of ['verifying', 'login', 'locked'] as const) {
+  const interrupted = next(phase, 'logout-start');
+  assert.equal(interrupted, 'logout-pending', phase + ' must lock on another tab logout');
+  assert.equal(next(interrupted, 'verify-success'), 'logout-pending',
+    phase + ' stale CSRF verification must not reopen the app');
+  assert.equal(next(interrupted, 'login-success'), 'logout-pending',
+    phase + ' pending login must not reopen the app');
+}
+assert.equal(next('logout-pending', 'logout-success'), 'login',
+  'Confirmed logout in another tab permits the login screen');
+
 const pending = next('authenticated', 'logout-start');
 assert.equal(pending, 'logout-pending', 'Logout unmounts App before network request');
 assert.equal(next(pending, 'logout-failure'), 'logout-pending', 'Network failure must not reopen App');
