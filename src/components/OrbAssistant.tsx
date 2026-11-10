@@ -57,6 +57,8 @@ const observedMedicalSpeechCorrections: Record<string, string> = {
   exuda: 'exsudat',
   exudar: 'exsudat',
   exodat: 'exsudat',
+  annexeda: 'exsudat',
+  audenophagie: 'odynophagie',
   disney: 'dyspnée',
   audiophagie: 'odynophagie',
   audinophagie: 'odynophagie',
@@ -109,6 +111,9 @@ function frenchPhoneticKey(value: string): string {
 function findClosestMedicalTerm(word: string): string | null {
   const normalizedWord = normalizeSpeechCandidate(word);
   if (normalizedWord.length < 5) return null;
+  // Ne pas proposer un autre diagnostic à partir d'un adjectif anatomique.
+  // Exemple : « amygdalien » ne doit pas devenir « amygdalite ».
+  if (normalizedWord === 'amygdalien' || normalizedWord === 'amygdalienne') return null;
 
   let bestTerm = '';
   let bestDistance = Number.POSITIVE_INFINITY;
