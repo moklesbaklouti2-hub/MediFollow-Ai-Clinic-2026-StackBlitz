@@ -37,3 +37,13 @@
 ## Résultat attendu
 
 Une progression mesurable en modifications de code réellement testées, avec un minimum d'attente entre tâches **au sein d'une même session**. Les sessions ChatGPT programmées restent limitées par leur calendrier ; GitHub Actions ne peut pas les redémarrer immédiatement.
+
+### 2026-11-10 19 h — Contrat des hypothèses différentielles (relais)
+- **Module :** sécurité clinique ; **branche :** `audit-stabilisation-2026-11-10`.
+- **Commits :** code `3bbaaf8cd4d1e9c8719fb831176b2fdfdc80cb84`, test `267f8e687e2c73d23b4b564067a94f950ddc25e3`.
+- **Fichiers :** `server/index.ts`, `server/ai/test-clinical-regression.ts`.
+- **Modification :** exclure les hypothèses IA dont le diagnostic ou l'argument est absent, vide ou de type incorrect ; aucune prescription ni donnée patient modifiée.
+- **Contrôle 1 :** relecture ciblée du prédicat et assertion statique ajoutée à la suite existante ; **npm non exécuté**.
+- **Contrôle 2 :** essai JavaScript isolé sur cinq entrées fictives (valide, libellé vide, justification vide, justification numérique, null) : une hypothèse valide conservée. Ce n'est ni un test de la route HTTP ni un test médical.
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** exécuter `npm run test:complete` et vérifier la CI sur la branche ; aucun succès de build/CI attesté ici.
+- **Prochaine tâche indépendante :** examiner les accès aux routes API et les refus d'accès sans activer d'authentification risquant de casser l'application ; préserver la validation médecin et ne jamais déployer.
