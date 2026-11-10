@@ -154,6 +154,8 @@ jobs:
         run: npx --no-install tsx scripts/test-doctor-login.mts
       - name: Tester les tentatives de connexion paralleles
         run: npx --no-install tsx scripts/test-doctor-login-concurrency.mts
+      - name: Tester la configuration HTTPS et origine distante
+        run: npx --no-install tsx scripts/test-remote-access-config.mts
 
   relay:
     name: Bilan des controles
