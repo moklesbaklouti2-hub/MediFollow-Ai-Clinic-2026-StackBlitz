@@ -19,3 +19,12 @@
 - **Contrôle 2 :** relecture indépendante du fichier distant après commit et simulation Node.js de six codes d'erreur : les trois erreurs terminales empêchent une relance, les trois autres conservent le comportement existant (6/6 conformes à la logique testée).
 - **Limites :** simulation ciblée de la logique seulement ; compilation TypeScript, tests d'intégration et essai Chrome Android **non exécutés**. L'erreur réseau peut encore entraîner des relances ; elle sera à traiter avec temporisation/limite de tentatives.
 - **Statut :** correctif versionné, validation intégrée en attente. **Suite :** `npm run build && npm run test:all-offline`, puis test des permissions sur Android.
+
+### 2026-11-10 — HELIOS : échec réseau et démarrage du microphone
+- Commit : `aeccbc22730c07abec4f6e714b6fa14c0d2d86f4`.
+- Fichier : `src/components/OrbAssistant.tsx`.
+- Correction : la perte du service réseau vocal coupe les relances automatiques ; un échec synchrone de `recognition.start()` désarme aussi l'écoute automatique. Le médecin peut relancer manuellement. Aucun changement des données cliniques.
+- Contrôle 1 : inspection des branches `onerror` et `catch`, cohérence avec les refus d'autorisation déjà traités ; contrôle statique ciblé de la logique.
+- Contrôle 2 : relecture du fichier distant après commit et vérification statique de cinq invariants (réseau, exception de démarrage, interruption, fallback texte, absence de parole) : 5/5 présents. Ces contrôles ne prouvent pas l'exécution navigateur.
+- Non exécutés : compilation TypeScript, tests hors ligne du projet, essais Chrome Android. Validation intégrée toujours requise.
+- Suite : tester sur appareil la reprise manuelle après perte réseau et les commandes composées ; exécuter `npm run build && npm run test:all-offline`.
