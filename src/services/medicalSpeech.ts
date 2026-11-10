@@ -232,7 +232,7 @@ export function applyMedicalSpeechCorrection(value: string, correction: MedicalS
 function criticalSpeechTokens(value: string): string {
   const normalized = normalizeSpeechCandidate(value);
   const numbers = Array.from(normalized.matchAll(/\b\d+(?:[,.]\d+)?\b/gu), match => match[0].replace(',', '.'));
-  const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative)\b/gu), match => match[0]);
+  const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)\b/gu), match => match[0]);
   // Même valeur chiffrée avec une unité différente = risque de dose erronée.
   const units = Array.from(normalized.matchAll(/\b(?:mg|mcg|µg|ug|g|kg|ml|l|mmhg|bpm)\b|%/gu), match => match[0]);
   return JSON.stringify({ numbers, negations, units });
