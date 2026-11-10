@@ -138,6 +138,16 @@ try {
     });
 
   const loginBody = { username: fictionalUsername, password: fictionalPassword };
+  // The backend itself must not accept a plain HTTP login, even if a client
+  // spoofs the Origin header. Only the loopback TLS terminator supplies HTTPS.
+  const directHttp = await fetch('http://127.0.0.1:3001/api/auth/login', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', origin },
+    body: JSON.stringify(loginBody),
+    signal: AbortSignal.timeout(5000),
+  });
+  assert.equal(directHttp.status, 403, 'Plain HTTP login must be rejected');
+
   const anonymous = await tlsRequest('/api/clinical/analyze', { body: { context: null } });
   assert.equal(anonymous.authorized, true, 'Self-signed local certificate must verify against fixture CA');
   assert.equal(anonymous.status, 401, 'Anonymous real clinical API must fail over verified TLS');
