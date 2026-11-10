@@ -58,4 +58,21 @@ const alternatives = {
 };
 assert.equal(runtime.chooseMedicalSpeechAlternative(alternatives), 'présence d’un exsudat amygdalien');
 assertions++;
+
+// La phrase ORL exacte doit bénéficier du bonus de classement, sans créer
+// de diagnostic absent des alternatives fournies par le navigateur.
+const orlAlternatives = {
+  length: 2,
+  0: { transcript: 'présence d’un exsudat' },
+  1: { transcript: 'présence d’un exsudat amygdalien' },
+};
+assert.equal(runtime.chooseMedicalSpeechAlternative(orlAlternatives), 'présence d’un exsudat amygdalien');
+assertions++;
+const nonOrlAlternatives = {
+  length: 2,
+  0: { transcript: 'exsudat' },
+  1: { transcript: 'exsudat amygdaliennement' },
+};
+assert.equal(runtime.chooseMedicalSpeechAlternative(nonOrlAlternatives), 'exsudat');
+assertions++;
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
