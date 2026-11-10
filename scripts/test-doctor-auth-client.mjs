@@ -16,4 +16,4 @@ const executableClient = client.replace(/^\s*\/\/.*$/gm, '');
 assert.doesNotMatch(executableClient, /localStorage|sessionStorage|document\.cookie|Authorization|Bearer/);
 assert.doesNotMatch(app, /doctorAuthClient|loginDoctor|logoutDoctor/);
 console.log('PASS: preparatory browser auth client is same-origin, cookie-only and not mounted.');
-console.log('WARNING: cookie sessions and CSRF are isolated; login UI and real clinical route auth remain unmounted.');
+console.log('WARNING: React preview gate is opt-in and real Express cookie auth is loopback-only; not a public deployment.');
