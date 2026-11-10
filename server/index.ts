@@ -299,7 +299,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
-    console.error('Erreur analyse clinique détaillée:', error);
+    console.error('Erreur analyse clinique (statut):', statusCode);
 
     if (statusCode === 429) {
       const errorHeaders = isPlainObject(error) ? error.headers : undefined;
@@ -345,7 +345,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
     }
 
     return res.status(statusCode >= 400 && statusCode < 600 ? statusCode : 500).json({
-      error: `Erreur du moteur clinique : ${detail.slice(0, 500)}`,
+      error: 'Le moteur clinique est temporairement indisponible. Réessayez ultérieurement.',
     });
   }
 });
