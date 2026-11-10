@@ -335,3 +335,13 @@
 - **Contrôle 1 :** exécution Node.js 22 du test isolé dans l'environnement de travail, avec le même contenu de fichiers : PASS (port occupé puis libéré). **Contrôle 2 :** relecture indépendante des quatre fichiers GitHub après écriture ; import, assertion et étape CI présents. Aucun test Express complet ni compilation TypeScript exécuté ici.
 - **Limites :** résultat GitHub Actions sur le dernier commit non confirmé ; test local isolé ne prouve pas la sécurité des routes cliniques, l'authentification serveur reste à traiter avant déploiement. Aucun dossier réel, secret, paiement ou appel IA.
 - **Reprise :** vérifier le workflow GitHub Actions du commit `b592b68` (job `access-decision-contract`) et, en cas d'échec, consulter les logs ; ensuite poursuivre les tests d'accès réels sur données fictives. **EN ATTENTE — intervention utilisateur :** tests microphone Chrome Android.
+
+### 2026-11-10 23 h 56 — Sonde TCP locale : délai de sécurité
+- **Objectif :** éviter un blocage indéfini du contrôle préalable au test HTTP quand un port ne répond ni par connexion ni par refus.
+- **Branche :** `audit-stabilisation-2026-11-10` ; **commit code :** `a312e4cc6ca8f62f68b1cc1d1819e2bd55abd083` ; **fichier :** `scripts/port-availability.mjs`.
+- **Correction :** délai 1500 ms et résolution unique, avec fermeture du socket ; timeout => port considéré indisponible, sans tenter de tester un service inconnu.
+- **Vérification 1 :** copie locale isolée exécutée avec Node : `node --check` réussi, serveur TCP fictif occupé puis libéré : 2/2 assertions réussies.
+- **Vérification 2 :** lecture indépendante du contenu GitHub après écriture ; présence du délai, fermeture et protection contre résolution multiple. **Limite :** aucune simulation fiable d'un vrai timeout réseau ; tests intégrés Express et `npm run build` non exécutés.
+- **CI :** recherche de statuts sur le SHA précédent : aucun statut ni run PR remonté ; ne pas conclure que GitHub Actions est vert ou rouge.
+- **Statut :** correctif versionné, vérification isolée favorable, intégration complète EN ATTENTE — BLOCAGE TECHNIQUE (accès aux résultats CI et environnement npm du dépôt).
+- **Suite :** contrôler le workflow `access-decision-contract` sur le dernier commit, puis les tests HTTP de refus d'accès ; aucune activation de protection production ni validation clinique.
