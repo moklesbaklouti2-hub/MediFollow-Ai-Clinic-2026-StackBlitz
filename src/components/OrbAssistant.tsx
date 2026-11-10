@@ -3,6 +3,7 @@ import OrbVisual from './OrbVisual';
 import type { ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import type { VoiceCommandAction } from '../types/medical';
 import { normalizeSpeechCandidate, findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type SpeechResultLike, type MedicalSpeechCorrection } from '../services/medicalSpeech';
+import { sendClinicalRequest } from '../services/doctorClinicalTransport';
 import './OrbAssistant.css';
 
 type OrbAssistantProps = {
@@ -357,10 +358,9 @@ const [isListening, setIsListening] = useState(false);
           return;
         }
 
-        const response = await fetch('/api/commands/interpret', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instruction: message, currentPage }),
+        const response = await sendClinicalRequest('/api/commands/interpret', {
+          instruction: message,
+          currentPage,
         });
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) throw new Error('Réponse inattendue du moteur de commandes.');
@@ -416,12 +416,9 @@ const [isListening, setIsListening] = useState(false);
         return;
       }
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, context, history }),
-        signal: AbortSignal.timeout(45000),
-      });
+      const response = await sendClinicalRequest('/api/chat', {
+        message, context, history,
+      }, { signal: AbortSignal.timeout(45000) });
       const contentType = response.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
         const unexpected = await response.text();
