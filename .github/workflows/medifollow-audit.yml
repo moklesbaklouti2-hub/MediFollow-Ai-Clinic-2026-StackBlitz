@@ -1,6 +1,6 @@
-name: MediFollow AI - validation autonome
+name: MediFollow AI - controles paralleles
 
-# Only validate the isolated audit branch. No deployment, no AI calls, no repository writes.
+# Automated checks only. No code-writing AI, deployment, secrets, or production data.
 on:
   push:
     branches:
@@ -15,36 +15,72 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Compilation et tests hors ligne
+  build:
+    name: Compilation TypeScript et Vite
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Recuperer la branche
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Installer Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Installer les dependances sans scripts tiers
+      - name: Installer les dependances
         run: npm install --ignore-scripts --no-audit --no-fund
-      - name: Compilation TypeScript et Vite
+      - name: Compiler
         run: npm run build
-      - name: Tests hors ligne sur donnees fictives
-        run: npm run test:all-offline
-      - name: Rapport de relais
-        if: always()
+
+  offline-tests:
+    name: Tests / ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: resilience-ia
+            command: test:ai-resilience
+          - module: clinique
+            command: test:clinical-regression
+          - module: dictionnaire-medical
+            command: test:medical-dictionary
+          - module: dictee-helios
+            command: test:medical-speech
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer les dependances
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Executer les tests fictifs
+        run: npm run ${{ matrix.command }}
+
+  relay:
+    name: Bilan des controles
+    if: always()
+    needs: [build, offline-tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Publier le relais sans ecriture au depot
         env:
-          JOB_STATUS: ${{ job.status }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.offline-tests.result }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
           {
-            echo '## Validation MediFollow AI'
-            echo "- Branche : \`audit-stabilisation-2026-11-10\`"
-            echo "- Commit : \`$COMMIT_SHA\`"
-            echo "- Statut : $JOB_STATUS"
-            echo '- Suite : verifier les logs si echec ; reprendre les travaux independants sur la branche audit.'
-            echo '- Aucun deploiement, aucune modification du depot, aucun appel IA.'
+            echo '## Relais MediFollow AI'
+            echo "- Commit : $COMMIT_SHA"
+            echo "- Compilation : $BUILD_RESULT"
+            echo "- Tests hors ligne (4 modules) : $TEST_RESULT"
+            echo '- Si echec : consulter les logs du job concerne avant de modifier le code.'
+            echo '- Si succes : poursuivre les taches independantes sur la branche audit.'
+            echo '- Ce workflow ne lance aucun agent IA et ne modifie aucun fichier.'
           } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ]; then
+            exit 1
+          fi
