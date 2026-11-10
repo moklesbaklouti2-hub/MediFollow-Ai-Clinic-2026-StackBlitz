@@ -235,10 +235,8 @@ function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCo
   // complète, sans modifier des occurrences isolées (« ex », « soudain »).
   if (/\s/u.test(correction.original)) {
     // Remplacer uniquement la séquence complète approuvée par le médecin.
-    const escaped = correction.original.replace(/[^\p{L}\p{N}\s]/gu, '\\    const phrasePattern = target === 'excedent amygdalien'
-      ? /\bexc[eé]dent\s+amygdalien\b/giu
-      : /\bex\s+soudain\b/giu;');
-    const phrasePattern = new RegExp('(?<![\\p{L}])' + escaped.replace(/\s+/g, '\\s+') + '(?![\\p{L}])', 'giu');
+    const escaped = correction.original.split(/\s+/u).join('\\s+');
+    const phrasePattern = new RegExp('(?<![\\p{L}])' + escaped + '(?![\\p{L}])', 'giu');
     return value.replace(phrasePattern, (phrase, offset: number) => {
       if (normalizeSpeechCandidate(phrase).replace(/\s+/g, ' ') !== target.replace(/\s+/g, ' ')) return phrase;
       const before = value.slice(0, offset).trimEnd();
