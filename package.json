@@ -15,7 +15,8 @@
     "test:clinical-live": "tsx server/ai/test-clinical-live.ts",
     "test:complete": "npm run build && npm run test:all-offline",
     "test:medical-dictionary": "tsx scripts/test-medical-dictionary.ts",
-    "test:medical-speech": "tsx scripts/test-medical-speech-regression.ts"
+    "test:medical-speech": "tsx scripts/test-medical-speech-regression.ts",
+    "test:access-decision": "node scripts/test-access-decision-contract.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
