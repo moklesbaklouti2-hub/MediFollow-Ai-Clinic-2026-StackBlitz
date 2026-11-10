@@ -176,3 +176,9 @@
 - **Limite importante :** détecteur heuristique non exhaustif ; la confirmation n'établit pas la véracité de la valeur ; le texte reste à vérifier par le médecin. Aucune correction automatique 87→97. Le moteur de reconnaissance Chrome reste inchangé.
 - **EN ATTENTE — intervention utilisateur :** sur `audit-stabilisation-2026-11-10`, `git pull origin audit-stabilisation-2026-11-10`, puis `npm run test:complete`, `npm run dev:full` et test Android avec une phrase fictive contenant SpO₂ 97 %. Vérifier blocage avant confirmation, correction manuelle possible, puis envoi. Vérifier qu'une commande vocale contenant un chiffre clinique n'est pas exécutée automatiquement.
 - **Tests non effectués ici :** build TypeScript, tests npm et test navigateur Android. Ne pas fusionner avant validation.
+
+
+### 2026-11-10 — Rectification utilisateur : valeur SpO₂ dictée et validation Android
+- **Rectification explicite :** l'utilisateur confirme avoir réellement prononcé « 87 % » pendant le test précédemment décrit comme une confusion « 97/87 % ». La transcription « 87 % » était donc **correcte** pour cet essai ; ne pas compter ce cas comme une erreur de reconnaissance des chiffres. Les mentions antérieures de confusion 97→87 sont une hypothèse infirmée par cette précision.
+- **Retour utilisateur :** compilation et contrôles fonctionnels demandés déclarés réussis, notamment l'affichage de la confirmation des chiffres. Validation rapportée par l'utilisateur, sans sortie de test ni inspection indépendante dans cette session.
+- **Décision :** conserver le garde-fou de confirmation des valeurs numériques comme mesure préventive, sans prétendre qu'une erreur chiffrée a été démontrée. Les erreurs lexicales « exsudat amygdalien » restent ouvertes.
