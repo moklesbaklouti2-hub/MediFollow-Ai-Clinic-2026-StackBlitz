@@ -39,14 +39,14 @@ assert.deepEqual(receivedB, ['logout-start', 'session-rejected'],
 const outsider = new FakeChannel(name);
 outsider.postMessage({ type: 'session-allowed', token: 'MUST_NOT_BE_USED' });
 outsider.postMessage('session-allowed');
-assert.deepEqual(receivedA, ['logout-success', 'session-rejected']);
+assert.deepEqual(receivedA, ['logout-success']);
 assert.deepEqual(receivedB, ['logout-start', 'session-rejected']);
 outsider.close();
 
 unsubscribeA();
 assert.equal(FakeChannel.instances.size, 1, 'Subscription cleanup closes the first tab channel');
 b.broadcast('logout-start');
-assert.deepEqual(receivedA, ['logout-success', 'session-rejected'],
+assert.deepEqual(receivedA, ['logout-success'],
   'Closed tab channel must not receive events');
 unsubscribeB();
 assert.equal(FakeChannel.instances.size, 0, 'No cross-tab channels should remain');
