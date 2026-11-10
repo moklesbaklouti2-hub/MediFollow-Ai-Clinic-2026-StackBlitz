@@ -61,3 +61,9 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Contrôles :** deux lectures indépendantes du code et de la version distante ; tests locaux non exécutés. CI du commit code #54 : in_progress / résultat non disponible au moment de la lecture ; vérifier son résultat final.
 - **Blocage :** aucune authentification effective n'est fournie par ce script ; aucune preuve de sécurité d'un serveur public.
 - **Reprise :** inspecter la CI du dernier commit et les routes Express, puis sélectionner un correctif isolé sans changer le comportement clinique sans autorisation. Aucun test utilisateur requis pour ce lot ; les essais Android/microphone restent EN ATTENTE — intervention utilisateur.
+
+### 2026-11-10 — CI #64 verte : caractères de contrôle fictifs
+- **Commit :** `3f5bce7cbd0481c161de8e5940a4b19cd1f20fa1` ; **workflow #64 : vert**, 37 s, confirmé par capture GitHub Actions fournie par l'utilisateur.
+- **Portée :** les scénarios fictifs du contrat d'accès utilisent désormais de véritables caractères échappés de tabulation et de retour à la ligne ; correction du test après les échecs #62 et #63.
+- **Limites :** le contrat reste une simulation hors ligne, non reliée aux routes Express ; la CI verte ne certifie pas la sécurité d'un déploiement.
+- **Suite :** examiner la stratégie d'authentification effective et les frontières des routes cliniques sans activer de blocage ni toucher à `main` ; utiliser uniquement des données fictives.
