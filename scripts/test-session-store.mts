@@ -32,4 +32,24 @@ ticks = 6000;
 assert.equal(moving.verify(issued.token), null);
 assert.equal(moving.verify(issued.token), null);
 
+// Capacity is enforced; older sessions become invalid when a new one is issued.
+assert.throws(() => createSessionStore({ maxSessions: 0 }));
+assert.throws(() => createSessionStore({ maxSessions: 101 }));
+const bounded = createSessionStore({ maxSessions: 2 });
+const oldest = bounded.issue('fictional-doctor');
+const middle = bounded.issue('fictional-doctor');
+const newest = bounded.issue('fictional-doctor');
+assert.equal(bounded.verify(oldest.token), null);
+assert.ok(bounded.verify(middle.token));
+assert.ok(bounded.verify(newest.token));
+
+// Expired entries must be removed before capacity-based eviction.
+let boundedClock = 100;
+const expiring = createSessionStore({ maxSessions: 2, ttlMs: 10, now: () => boundedClock });
+const expired = expiring.issue('fictional-doctor');
+boundedClock = 111;
+const fresh = expiring.issue('fictional-doctor');
+assert.equal(expiring.verify(expired.token), null);
+assert.ok(expiring.verify(fresh.token));
+
 console.log('PASS: isolated session lifecycle issue/verify/revoke/expire/revokeAll; not production-wired.');
