@@ -6,6 +6,9 @@ assert.match(client, /credentials: 'same-origin'/);
 assert.match(client, /cache: 'no-store'/);
 assert.match(client, /redirect: 'error'/);
 assert.match(client, /response\.status !== 204/);
+assert.match(client, /getDoctorCsrfToken/);
+assert.match(client, /'x-medifollow-csrf': csrfToken/);
+assert.match(client, /fetch\('\/api\/auth\/csrf'/);
 assert.match(client, /Connexion sécurisée par cookie non encore disponible/);
 // Ignore explanatory comments: they intentionally mention forbidden APIs.
 // Continue checking executable source for browser token persistence.
