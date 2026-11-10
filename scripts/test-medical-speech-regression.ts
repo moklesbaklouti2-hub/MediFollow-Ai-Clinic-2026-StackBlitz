@@ -1,30 +1,9 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { runInNewContext } from 'node:vm';
-import ts from 'typescript';
-import { MEDICAL_DICTIONARY } from '../src/data/medicalDictionary';
+import { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type MedicalSpeechCorrection } from '../src/services/medicalSpeech';
 
-// Exécute les fonctions réelles du correcteur extraites du composant,
-// sans monter React ni accéder au microphone. Aucun faux moteur de correction.
-const source = readFileSync(new URL('../src/components/OrbAssistant.tsx', import.meta.url), 'utf8');
-const start = source.indexOf('const medicalSpeechTerms =');
-const end = source.indexOf('const suggestionsByPage:', start);
-assert.ok(start >= 0 && end > start, 'Bloc du moteur de dictée introuvable');
-const engine = source.slice(start, end);
-const compiled = ts.transpileModule(engine, {
-  compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.None },
-}).outputText;
-type Correction = { original: string; replacement: string };
-type SpeechEngine = {
-  findMedicalSpeechCorrections: (text: string) => Correction[];
-  applyMedicalSpeechCorrection: (text: string, correction: Correction) => string;
-  chooseMedicalSpeechAlternative: (result: unknown) => string;
-  hasDictatedClinicalNumber: (text: string) => boolean;
-};
-const runtime = runInNewContext(
-  compiled + '\n({ findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber })',
-  { MEDICAL_DICTIONARY, console, RegExp, Map, Array },
-) as SpeechEngine;
+// Tests directs du module réellement utilisé par HELIOS, sans navigateur.
+const runtime = { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber };
+type Correction = MedicalSpeechCorrection;
 
 let assertions = 0;
 function suggestions(text: string): Correction[] {
