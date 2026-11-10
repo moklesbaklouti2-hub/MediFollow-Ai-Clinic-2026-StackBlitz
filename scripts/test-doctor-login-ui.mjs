@@ -1,4 +1,4 @@
-// Static regression: login UI remains unmounted until backend session design is ready.
+// Static regression: default App does not mount login; the HTTPS-only opt-in gate does.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const form = readFileSync(new URL('../src/components/DoctorLogin.tsx', import.meta.url), 'utf8');
