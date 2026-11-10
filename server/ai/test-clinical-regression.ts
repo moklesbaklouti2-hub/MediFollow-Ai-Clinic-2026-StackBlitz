@@ -7,6 +7,8 @@ const chat = source.split("app.post('/api/chat'")[1] ?? '';
 assert.ok(clinical.includes("createAiCompletion"), 'Analyse clinique manquante');
 assert.ok(clinical.includes("typeof parsed.priorityReason !== 'string' || !parsed.priorityReason.trim()"),
   'Une justification de priorité vide ne doit pas être acceptée');
+assert.ok(clinical.includes("typeof item.reason === 'string' && item.reason.trim().length > 0"),
+  'Les hypothèses sans argument clinique valide doivent être écartées');
 assert.ok(!clinical.includes('Erreur du moteur clinique : ${detail'), 'Détails internes du fournisseur exposés au client');
 assert.ok(!clinical.includes("console.error('Erreur analyse clinique détaillée:', error)"), 'Erreur fournisseur brute journalisée');
 assert.ok(!/\b(?:message|history|clinicalInterview|memoryContext)\b/.test(
