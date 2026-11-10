@@ -239,7 +239,11 @@ function criticalSpeechTokens(value: string): string {
   // par le classement automatique des hypothèses du navigateur.
   const laterality = Array.from(normalized.matchAll(/\b(?:droit|droite|droits|droites|gauche|gauches|bilateral|bilaterale|bilateraux|bilaterales|unilateral|unilaterale|unilateraux|unilaterales)\b/gu), match => match[0]);
   const polarity = Array.from(normalized.matchAll(/\b(?:positif|positive|positifs|positives|negatifs|negatives)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units, laterality, polarity });
+  // Temporalité et allergies : ne pas inverser aigu/chronique,
+  // ancien/récent ou présence/absence d'allergie lors du choix vocal.
+  const chronology = Array.from(normalized.matchAll(/\b(?:aigu|aigue|aigus|aigues|chronique|chroniques|ancien|ancienne|anciens|anciennes|recent|recente|recents|recentes)\b/gu), match => match[0]);
+  const allergy = Array.from(normalized.matchAll(/\b(?:allergie|allergies|allergique|allergiques|anaphylaxie)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
