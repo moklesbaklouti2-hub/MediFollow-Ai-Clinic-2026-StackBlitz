@@ -138,9 +138,9 @@ function findClosestMedicalTerm(word: string): string | null {
 
 function isLikelyExsudatContext(value: string): boolean {
   const normalizedText = normalizeSpeechCandidate(value);
-  const hasClinicalCue = /\b(presence|depot|depots|plaque|plaques|enduit|examen)\\b/.test(normalizedText);
-  const hasAnatomicalSite = /\b(amygdale|amygdales|tonsille|tonsilles|pharynx|gorge)\\b/.test(normalizedText);
-  const hasLocationLink = /\b(sur|dans|au niveau de|au niveau des|au niveau du)\\b/.test(normalizedText);
+  const hasClinicalCue = /\b(presence|depot|depots|plaque|plaques|enduit|examen)\b/.test(normalizedText);
+  const hasAnatomicalSite = /\b(amygdale|amygdales|tonsille|tonsilles|pharynx|gorge)\b/.test(normalizedText);
+  const hasLocationLink = /\b(sur|dans|au niveau de|au niveau des|au niveau du)\b/.test(normalizedText);
   return hasClinicalCue && hasAnatomicalSite && hasLocationLink;
 }
 
