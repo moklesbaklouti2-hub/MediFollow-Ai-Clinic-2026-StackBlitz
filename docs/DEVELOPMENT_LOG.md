@@ -35,3 +35,10 @@
 - **Contrôle 2 :** nouvelle lecture indépendante du fichier GitHub après commit ; cinq invariants statiques contrôlés : arrêt après `no-speech`, relance manuelle accessible, commande d'arrêt, fallback texte, message d'absence de parole. **5/5 présents** ; tests statiques uniquement.
 - **Limites :** aucune compilation TypeScript, suite complète hors ligne ou validation sur Android réalisée dans cette session ; ne pas assimiler ces vérifications à une validation navigateur.
 - **Suite :** `npm run build && npm run test:all-offline`, puis essais Chrome Android de la dictée silencieuse, des permissions et de la reprise manuelle.
+
+### 2026-11-10 — HELIOS : commande vocale d'arrêt avec ponctuation
+- **Commit :** `c48021bf27e9fca48d6257ce5dd79a124761d498` ; fichier : `src/components/OrbAssistant.tsx`.
+- **Correction :** la commande d'arrêt reconnaît désormais les variantes courtes avec ponctuation et « l'écoute » ; les phrases différentes telles que « stop ordonnance » ne sont pas interprétées comme un arrêt de microphone.
+- **Contrôle 1 :** revue du remplacement minimal, 8 scénarios JavaScript fictifs positifs/négatifs (8/8 conformes).
+- **Contrôle 2 :** relecture du fichier distant après commit et vérification du motif présent. Pas de test navigateur ni de compilation complète.
+- **Limites :** la suite TypeScript et `npm run test:all-offline` restent non exécutées ; les variantes vocales Android réelles nécessitent validation. Aucun changement de données patient.
