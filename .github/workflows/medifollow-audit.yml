@@ -75,10 +75,24 @@ jobs:
       - name: Preparer les taches independantes pour la prochaine session
         run: node scripts/plan-agent-tasks.mjs
 
+  api-security-inventory:
+    name: Inventaire securite API (informatif)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inventorier les routes et signaler les risques
+        run: node scripts/audit-api-exposure.mjs
+
   relay:
     name: Bilan des controles
     if: always()
-    needs: [build, offline-tests, coordination]
+    needs: [build, offline-tests, coordination, api-security-inventory]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
