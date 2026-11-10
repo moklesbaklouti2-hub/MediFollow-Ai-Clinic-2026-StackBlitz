@@ -248,7 +248,11 @@ function criticalSpeechTokens(value: string): string {
   const administration = Array.from(normalized.matchAll(/\b(?:matin|midi|soir|nuit|quotidien|quotidienne|quotidiens|quotidiennes|hebdomadaire|hebdomadaires|mensuel|mensuelle|mensuels|mensuelles|unique|uniques|fois|jour|jours|semaine|semaines|heure|heures)\b/gu), match => match[0]);
   // Voie d'administration : une confusion orale/IV/IM/SC peut être dangereuse.
   const routes = Array.from(normalized.matchAll(/\b(?:orale|oral|orales|oraux|intraveineuse|intraveineux|intramusculaire|intramusculaires|souscutanee|souscutanees|cutanee|cutanees|rectale|rectales|sublinguale|sublinguales|inhalation|inhalations|iv|im|sc)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration, routes });
+  // Grossesse et antécédents : ne pas ajouter, retirer ou remplacer
+  // ces éléments dans une transcription alternative sélectionnée.
+  const obstetrics = Array.from(normalized.matchAll(/\b(?:enceinte|grossesse|grossesses|gestante|gestantes|allaitement|allaite|menopause|menopausee|menopausees)\b/gu), match => match[0]);
+  const history = Array.from(normalized.matchAll(/\b(?:antecedent|antecedents|chirurgie|chirurgical|chirurgicale|chirurgicaux|diabete|diabetique|hypertension|hta|asthme|epilepsie|infarctus|avc)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
