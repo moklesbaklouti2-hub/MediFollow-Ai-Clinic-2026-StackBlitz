@@ -251,3 +251,11 @@
 - **Sécurité :** ne pas déduire automatiquement le nombre de ganglions d'un texte dicté. Le médecin confirme l'accord et la donnée clinique. Les autres formulations ne sont pas modifiées.
 - **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, test Android de la suggestion d'accord, puis vérification des corrections « ex soudain » et « excédent amygdalien » qui partagent le même remplacement multi-mots.
 - **Tests :** aucune compilation ou exécution Android réalisée ici ; ne pas fusionner avant validation.
+
+
+### 2026-11-10 — Expression ORL complète « excédent amygdalia »
+- **Capture utilisateur :** dictée fictive « ... odynophagie ... dyspnée ... adénopathies cervicales bilatérales ... » correctement reconnue sur ces termes ; « exsudat amygdalien » a été transcrit « excédent amygdalia » sans suggestion.
+- **Commit :** `f2b41952b322a890e372b70d7b1c39e1a4ddab21` ; suggestion de remplacement de la séquence complète « excédent amygdalia » par « exsudat amygdalien », uniquement après confirmation explicite du médecin.
+- **Sécurité :** pas de remplacement automatique de « excédent », « amygdalia », « amygdalite » ou de tout diagnostic isolé. Les autres mots et données cliniques sont conservés.
+- **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer et dicter la phrase de test ; si la variante réapparaît, contrôler la suggestion et le remplacement complet après clic. Vérifier qu'« amygdalite » n'est pas altéré.
+- **Tests :** non exécutés ici ; ne pas fusionner sur `main` avant validation.
