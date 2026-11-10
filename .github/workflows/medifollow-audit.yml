@@ -142,6 +142,8 @@ jobs:
         run: node scripts/test-local-http-auth-boundary.mjs
       - name: Verifier le contrat HTTP isole 401-403 (sans branchement production)
         run: node scripts/test-isolated-http-access-contract.mjs
+      - name: Tester le garde medecin unique desactive (HTTP fictif)
+        run: npx --no-install tsx scripts/test-single-doctor-guard.mts
 
   relay:
     name: Bilan des controles
