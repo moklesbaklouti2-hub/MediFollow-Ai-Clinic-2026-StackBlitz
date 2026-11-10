@@ -10,7 +10,7 @@ export function proposedAccessDecision({ authenticated = false, role = 'visitor'
     return role === 'doctor' ? 200 : 403;
   }
   if (action === 'patient-record') {
-    return role === 'doctor' && typeof patientId === 'string' && patientId.trim().length > 0 &&
+    return role === 'doctor' && typeof patientId === 'string' && patientId.trim().length > 0 && !/[\x00-\x1f\x7f]/.test(patientId) &&
       Array.isArray(assignedPatientIds) && assignedPatientIds.includes(patientId) ? 200 : 403;
   }
   return 403; // Unknown actions are denied by default.
