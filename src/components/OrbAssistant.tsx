@@ -186,7 +186,10 @@ function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
     const normalized = normalizeSpeechCandidate(transcript);
     const score = medicalSpeechTerms.reduce((total, term) => {
       const normalizedTerm = normalizeSpeechCandidate(term);
-      return total + (normalized.includes(normalizedTerm) ? 3 : 0);
+      // Évite les faux positifs sur des fragments de mots (ex. « mal » dans « normal »).
+      const escapedTerm = normalizedTerm.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\$&');
+      const exactTerm = new RegExp(`(^|[^\\p{L}])${escapedTerm}(?=$|[^\\p{L}])`, 'u');
+      return total + (exactTerm.test(normalized) ? 3 : 0);
     }, 0);
     return { transcript, score, index };
   });
