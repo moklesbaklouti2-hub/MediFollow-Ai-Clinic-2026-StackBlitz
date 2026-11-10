@@ -168,6 +168,8 @@ jobs:
         run: node scripts/test-doctor-login-ui.mjs
       - name: Verifier le client navigateur de connexion sans stockage de jetons
         run: node scripts/test-doctor-auth-client.mjs
+      - name: Tester session cookie HTTPS origine CSRF et API cliniques (fixture)
+        run: npx --no-install tsx scripts/test-doctor-cookie-auth.mts
 
   relay:
     name: Bilan des controles
