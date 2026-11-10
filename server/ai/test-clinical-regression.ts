@@ -12,6 +12,14 @@ assert.ok(!clinical.includes("console.error('Erreur analyse clinique détaillée
 assert.ok(!/\b(?:message|history|clinicalInterview|memoryContext)\b/.test(
   clinical.slice(0, clinical.indexOf('const completion ='))
 ), 'La route clinique référence une variable de conversation non déclarée');
+assert.ok(clinical.includes("if (contextText.length > 30000)"), 'Limite de taille du contexte clinique absente');
+assert.ok(clinical.includes("!['routine', 'attention', 'urgent'].includes(String(parsed.priority))"),
+  'Priorité clinique non restreinte aux trois valeurs attendues');
+assert.ok(clinical.includes("!Array.isArray(parsed.nextQuestionOptions)"),
+  'Options de réponse clinique non vérifiées');
+assert.ok(clinical.includes("if (statusCode === 429)"), 'Traitement du quota clinique absent');
+assert.ok(clinical.includes("error: 'Le moteur clinique est temporairement indisponible."),
+  'Message générique de panne clinique absent');
 assert.ok(chat.includes('const memoryContext ='), 'Mémoire conversationnelle absente');
 assert.ok(chat.indexOf('const memoryContext =') < chat.indexOf('interviewInstructions + memoryContext'),
   'Mémoire utilisée avant sa déclaration');
