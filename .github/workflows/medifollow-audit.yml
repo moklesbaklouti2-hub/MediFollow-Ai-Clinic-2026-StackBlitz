@@ -156,6 +156,8 @@ jobs:
         run: npx --no-install tsx scripts/test-doctor-login-concurrency.mts
       - name: Tester la configuration HTTPS et origine distante
         run: npx --no-install tsx scripts/test-remote-access-config.mts
+      - name: Tester le routeur clinique protege isole (trois routes)
+        run: npx --no-install tsx scripts/test-protected-clinical-router.mts
 
   relay:
     name: Bilan des controles
