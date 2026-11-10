@@ -345,3 +345,11 @@
 - **CI :** recherche de statuts sur le SHA précédent : aucun statut ni run PR remonté ; ne pas conclure que GitHub Actions est vert ou rouge.
 - **Statut :** correctif versionné, vérification isolée favorable, intégration complète EN ATTENTE — BLOCAGE TECHNIQUE (accès aux résultats CI et environnement npm du dépôt).
 - **Suite :** contrôler le workflow `access-decision-contract` sur le dernier commit, puis les tests HTTP de refus d'accès ; aucune activation de protection production ni validation clinique.
+
+### 2026-11-11 00 h 57 — Régression TCP concurrente (données fictives)
+- **Branche :** `audit-stabilisation-2026-11-10` ; **commit code :** `cbcc5d76707c6172447a7db82f4864bb716986c0` ; **module :** tests CI / sonde TCP.
+- **Fichier modifié :** `scripts/test-port-availability.mjs`. Cinq sondes parallèles doivent refuser un port occupé, trois sondes parallèles doivent accepter le port libéré ; le serveur fictif doit rester ouvert durant les sondes.
+- **Contrôle 1 :** `node --check` puis `node test-port-availability.mjs` dans une copie locale isolée des deux fichiers : PASS (8 assertions de sondes et vérification du listener).
+- **Contrôle 2 :** second lancement indépendant du test dans la même copie : PASS ; lecture GitHub du fichier commité conforme. **Limite :** ce n'est pas une exécution npm du dépôt complet.
+- **CI précédente :** run `42926489358`, SHA `bccc2ecb0486ea5a1c9410050122a35e18d3aae3` (HEAD avant modification), dix jobs terminés en succès, vérifiés par API GitHub ; **ce succès ne couvre pas le nouveau commit**. Vérifier la CI de `cbcc5d7` ou du HEAD documentaire final à la prochaine session.
+- **Blocages :** authentification clinique réelle et test Android non validés ; ne pas déployer. **Prochaine étape :** vérifier la CI du HEAD, puis poursuivre les tests d'accès clinique sans toucher à la production.
