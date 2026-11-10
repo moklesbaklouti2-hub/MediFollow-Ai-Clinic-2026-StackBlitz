@@ -102,6 +102,8 @@ jobs:
           node-version: '22'
       - name: Verifier alertes et routes sensibles
         run: node scripts/test-api-security-inventory.mjs
+      - name: Verifier le repli clinique sur erreur 429
+        run: node scripts/test-clinical-429-fallback.mjs
 
   access-policy-contract:
     name: Contrat des permissions (documentation)
