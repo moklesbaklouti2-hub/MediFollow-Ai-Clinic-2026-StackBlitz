@@ -102,6 +102,10 @@ const unsafeAlternatives = [
   ['injection intramusculaire avec disney', 'injection sous-cutanée avec dyspnée'],
   ['voie IV avec disney', 'voie IM avec dyspnée'],
   ['voie rectale avec disney', 'voie orale avec dyspnée'],
+  ['patiente enceinte avec disney', 'patiente ménopausée avec dyspnée'],
+  ['grossesse et disney', 'dyspnée'],
+  ['antécédent de diabète avec disney', 'antécédent d’asthme avec dyspnée'],
+  ['sans antécédent chirurgical avec disney', 'sans antécédent de diabète avec dyspnée'],
 ];
 for (const [initial, unsafe] of unsafeAlternatives) {
   assert.equal(runtime.chooseMedicalSpeechAlternative({
