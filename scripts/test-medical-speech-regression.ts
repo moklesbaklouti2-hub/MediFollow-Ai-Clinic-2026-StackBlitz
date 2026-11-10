@@ -100,4 +100,27 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'SpO₂ 97 % avec dyspnée');
 assertions++;
 
+// La suggestion médicale ne doit jamais être appliquée sans clic du médecin.
+const dictatedRaw = 'le patient présente une disney';
+const suggested = suggestions(dictatedRaw).find(item => item.replacement === 'dyspnée');
+assert.ok(suggested, 'Suggestion de dyspnée absente');
+assert.equal(dictatedRaw, 'le patient présente une disney', 'Dictée brute modifiée');
+assert.equal(runtime.applyMedicalSpeechCorrection(dictatedRaw, suggested!), 'le patient présente une dyspnée');
+assertions += 3;
+
+// Une alternative sûre doit rester sélectionnable à constantes et négations égales.
+const safeClinicalAlternatives = [
+  ['absence de disney', 'absence de dyspnée', 'absence de dyspnée'],
+  ['paracétamol 500 mg et disney', 'paracétamol 500 mg et dyspnée', 'paracétamol 500 mg et dyspnée'],
+  ['SpO₂ 97 % avec disney', 'SpO₂ 97 % avec dyspnée', 'SpO₂ 97 % avec dyspnée'],
+];
+for (const [initial, alternative, expected] of safeClinicalAlternatives) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: alternative },
+  }), expected);
+  assertions++;
+}
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
