@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "mode": "planning-only",
+  "branch": "audit-stabilisation-2026-11-10",
+  "rules": {
+    "noAutomaticMerge": true,
+    "noProductionData": true,
+    "noPaidAgentWithoutApproval": true,
+    "requireTestsBeforeIntegration": true
+  },
+  "modules": [
+    {
+      "id": "helios",
+      "owner": "unassigned",
+      "status": "ready",
+      "paths": ["src/components/OrbAssistant.tsx", "src/services/medicalSpeech.ts", "scripts/test-medical-speech-regression.ts"],
+      "nextTask": "Valider la reconnaissance et les suggestions de correction sans substitution clinique automatique",
+      "validation": ["npm run test:medical-speech", "npm run build"]
+    },
+    {
+      "id": "clinical",
+      "owner": "unassigned",
+      "status": "ready",
+      "paths": ["server/ai/test-clinical-regression.ts"],
+      "nextTask": "Renforcer les tests des négations, chiffres et risques de raisonnement clinique",
+      "validation": ["npm run test:clinical-regression"]
+    },
+    {
+      "id": "dictionary",
+      "owner": "unassigned",
+      "status": "ready",
+      "paths": ["src/data/medicalDictionary.ts", "scripts/test-medical-dictionary.ts"],
+      "nextTask": "Auditer la précision des termes et les faux positifs",
+      "validation": ["npm run test:medical-dictionary"]
+    },
+    {
+      "id": "interface",
+      "owner": "unassigned",
+      "status": "blocked",
+      "paths": [],
+      "nextTask": "Identifier les fichiers de l'interface avant attribution exclusive",
+      "validation": ["npm run build"]
+    }
+  ]
+}
