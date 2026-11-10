@@ -295,7 +295,6 @@ app.post('/api/clinical/analyze', async (req, res) => {
       },
     });
   } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
