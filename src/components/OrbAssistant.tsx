@@ -177,6 +177,14 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
   return Array.from(found.values());
 }
 
+
+// Les valeurs numériques dictées sont sensibles : une confusion 97/87 %
+// ne peut pas être résolue par un dictionnaire ou une correction phonétique.
+function hasDictatedClinicalNumber(value: string): boolean {
+  return /\b\d+(?:[,.]\d+)?\s*(?:%|pour\s*cent|degr[eé]s?|°|mmhg|g\s*\/\s*l|mg\s*\/\s*dl|bpm)\b?/iu.test(value)
+    || /\b(?:saturation|spo2|glyc[eé]mie|pression|tension|fr[eé]quence\s+cardiaque|temp[eé]rature)\b[^.!?]{0,50}\d/iu.test(value);
+}
+
 function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
   const target = normalizeSpeechCandidate(correction.original);
   return value.replace(/[\p{L}]+/gu, (word, offset: number) => {
@@ -254,6 +262,7 @@ const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechMessage, setSpeechMessage] = useState('');
   const [speechCorrections, setSpeechCorrections] = useState<MedicalSpeechCorrection[]>([]);
+  const [dictatedNumberPending, setDictatedNumberPending] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const commandListeningEnabledRef = useRef(false);
   const speechBaseInputRef = useRef('');
@@ -398,6 +407,7 @@ const [isListening, setIsListening] = useState(false);
         const dictatedText = uniqueFinalParts.join(' ').trim();
         speechCurrentTextRef.current = dictatedText;
         setSpeechCorrections(findMedicalSpeechCorrections(dictatedText));
+        if (mode !== 'command') setDictatedNumberPending(hasDictatedClinicalNumber(dictatedText));
 
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
@@ -444,6 +454,9 @@ const [isListening, setIsListening] = useState(false);
           if (/^(?:stop|arrete|arret)(?:[\s,;:.!?-]+(?:l['’]?)?ecoute)?[\s,;:.!?-]*$/.test(normalizedVoiceCommand)) {
             commandListeningEnabledRef.current = false;
             setSpeechMessage('Écoute vocale arrêtée.');
+          } else if (dictatedText && hasDictatedClinicalNumber(dictatedText)) {
+            commandListeningEnabledRef.current = false;
+            setSpeechMessage('Valeur numérique dictée : commande suspendue. Vérifiez et confirmez les chiffres manuellement avant toute action.');
           } else if (dictatedText) {
             void sendMessage(dictatedText).finally(() => {
               if (commandListeningEnabledRef.current && !voiceRepliesRef.current && !speakingRef.current) {
@@ -491,9 +504,14 @@ const [isListening, setIsListening] = useState(false);
   async function sendMessage(value = input) {
     const message = value.trim();
     if (!message || sending) return;
+    if (mode !== 'command' && dictatedNumberPending) {
+      setSpeechMessage('Confirmez les valeurs numériques dictées après relecture avant l’envoi.');
+      return;
+    }
     const history = messages.slice(-12);
     if (mode !== 'command') setMessages(previous => [...previous, { role: 'user', content: message }]);
     setInput('');
+    setDictatedNumberPending(false);
     setSending(true);
 
     const context = {
@@ -742,6 +760,12 @@ const [isListening, setIsListening] = useState(false);
             <div className={`mf-orb-speech-status${speechMessage ? ' has-error' : ''}`} aria-live="polite">
               {speechMessage || (isListening ? (mode === 'command' ? 'Écoute active : dictez vos commandes. Dites « stop écoute » pour arrêter.' : 'Écoute en cours… Parlez clairement en français.') : (mode === 'command' ? 'Appuyez sur le microphone pour démarrer les commandes vocales.' : interimTranscript))}
               {mode !== 'command' && interimTranscript && isListening ? ` ${interimTranscript}` : ''}
+            </div>
+          )}
+          {mode !== 'command' && dictatedNumberPending && (
+            <div className="mf-orb-speech-status has-error" role="alert">
+              <strong>Valeur clinique dictée à vérifier.</strong> La reconnaissance vocale peut confondre 87 et 97 %. Relisez et corrigez les chiffres dans le texte avant de poursuivre.
+              <button type="button" onClick={() => { setDictatedNumberPending(false); setSpeechMessage('Valeurs numériques confirmées par le médecin.'); }}>J’ai vérifié les chiffres</button>
             </div>
           )}
           {mode !== 'command' && speechCorrections.length > 0 && (
