@@ -15,7 +15,11 @@ export default function DoctorLogin({ onLogin, busy = false, error = '' }: Props
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (busy || !username.trim() || !password) return;
-    await onLogin(username.trim(), password);
+    try {
+      await onLogin(username.trim(), password);
+    } finally {
+      setPassword('');
+    }
   }
   return (
     <main className="doctor-login-shell">
