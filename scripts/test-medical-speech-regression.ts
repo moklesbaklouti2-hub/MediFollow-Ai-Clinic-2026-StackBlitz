@@ -90,6 +90,10 @@ const unsafeAlternatives = [
   ['douleur thoracique droite et disney', 'douleur thoracique gauche et dyspnée'],
   ['adénopathies bilatérales avec disney', 'adénopathies unilatérales avec dyspnée'],
   ['test positif avec disney', 'test négatif avec dyspnée'],
+  ['douleur aiguë avec disney', 'douleur chronique avec dyspnée'],
+  ['symptôme ancien avec disney', 'symptôme récent avec dyspnée'],
+  ['allergie et disney', 'dyspnée'],
+  ['sans allergie avec disney', 'allergie avec dyspnée'],
 ];
 for (const [initial, unsafe] of unsafeAlternatives) {
   assert.equal(runtime.chooseMedicalSpeechAlternative({
