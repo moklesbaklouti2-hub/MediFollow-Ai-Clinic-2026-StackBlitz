@@ -150,6 +150,8 @@ jobs:
         run: npx --no-install tsx scripts/test-doctor-session-guard.mts
       - name: Tester les identifiants du medecin (donnees fictives)
         run: npx --no-install tsx scripts/test-doctor-credentials.mts
+      - name: Tester la connexion-deconnexion fictive et le verrouillage
+        run: npx --no-install tsx scripts/test-doctor-login.mts
 
   relay:
     name: Bilan des controles
