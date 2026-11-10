@@ -159,3 +159,11 @@
 - **Choix de sécurité :** aucune correction automatique des accords grammaticaux cliniques ; relire et éditer manuellement « des adénopathie cervicale » si nécessaire.
 - **EN ATTENTE — intervention utilisateur :** sur la branche audit, récupérer les commits, exécuter `npm run test:complete`, redémarrer le serveur et vérifier sur Android que « Disney » devient « dyspnée » au milieu de la phrase.
 - **Limites :** tests npm et Android de ce commit non exécutés ici. Ne pas fusionner sans vérification.
+
+
+### 2026-11-10 — Alerte sécurité dictée Android : saturation 97 % devenue 87 %
+- **Retour test fictif utilisateur :** phrase source SpO₂ **97 %** ; dictée affichée **87 %**. Autres erreurs : « annexida amygdalite » pour « exsudat amygdalien », pluriels non reconnus.
+- **Risque :** altération d'une valeur clinique significative par la reconnaissance vocale du navigateur. Aucune méthode logicielle de post-correction ne peut garantir la valeur prononcée à partir de la seule transcription erronée.
+- **Correction limitée :** `6cbdd453db868cfa6e26d11a45dcc369a071978e` ajoute la variante observée « annexida » comme suggestion « exsudat », toujours avec confirmation explicite. Ne pas transformer automatiquement « amygdalite » en « amygdalien ».
+- **EN ATTENTE — sécurité clinique :** concevoir une étape de relecture/confirmation explicite des constantes et valeurs chiffrées dictées avant enregistrement, avec signalement des valeurs ambiguës ; ne pas prétendre que la reconnaissance du 97 % est réparée.
+- **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, compiler et retester une phrase fictive incluant 97 %, 87 %, 98 %, 78 %, sans patients réels ; vérifier la confirmation « annexida » → « exsudat » et le comportement de la relecture numérique. Pas de fusion tant que la régression clinique critique n'est pas traitée.
