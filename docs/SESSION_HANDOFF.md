@@ -53,3 +53,11 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Portée :** régression statique de la réponse de santé publique ; le test interdit la réintroduction accidentelle de métadonnées de fournisseurs IA ou de secrets dans le gestionnaire de cette route.
 - **Limite :** un workflow vert ne démontre ni une authentification des routes cliniques ni la sécurité d'un déploiement public. Le contrat de permissions reste documentaire et non appliqué.
 - **Suite prioritaire :** préparer une stratégie d'authentification sans casser les flux existants ; écrire d'abord des tests fictifs pour les réponses 401/403 et la séparation des rôles. Ne pas activer de middleware bloquant, ne pas déployer et ne pas fusionner `main` sans validation explicite.
+
+### 2026-11-10 20 h — Relais sécurité (contrat fictif)
+- **Branche :** `audit-stabilisation-2026-11-10` ; **code :** `074ffe015ed02fac457715963e44812e3fd61722` ; **journal :** `362b049dc622eb06219fa24086b0c41845f7a25f`.
+- **Module/fichiers :** sécurité simulée ; `scripts/test-access-decision-contract.mjs`, `docs/DEVELOPMENT_LOG.md`, ce relais.
+- **Achevé :** garde contre assignations nulles, chaînes et identifiant vide ; 15 scénarios fictifs présents.
+- **Contrôles :** deux lectures indépendantes du code et de la version distante ; tests locaux non exécutés. CI du commit code #54 : in_progress / résultat non disponible au moment de la lecture ; vérifier son résultat final.
+- **Blocage :** aucune authentification effective n'est fournie par ce script ; aucune preuve de sécurité d'un serveur public.
+- **Reprise :** inspecter la CI du dernier commit et les routes Express, puis sélectionner un correctif isolé sans changer le comportement clinique sans autorisation. Aucun test utilisateur requis pour ce lot ; les essais Android/microphone restent EN ATTENTE — intervention utilisateur.
