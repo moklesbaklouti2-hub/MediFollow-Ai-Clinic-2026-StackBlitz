@@ -83,3 +83,13 @@
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** l'environnement local ne résout pas github.com (échec `git ls-remote` : `Could not resolve host: github.com`), et le connecteur GitHub n'exécute pas npm. Une alternative a permis la lecture et les assertions JavaScript, sans compilation du projet.
 - **EN ATTENTE — intervention utilisateur :** dans Codespaces, sélectionner `audit-stabilisation-2026-11-10`, puis lancer `npm install && npm run build && npm run test:all-offline` ; fournir les erreurs exactes s'il y en a. Résultat attendu : zéro erreur de compilation et tests hors ligne réussis. Essais microphone Chrome Android toujours non effectués.
 - **Statut :** assertions ajoutées et inspection statique conforme ; validation de build et non-régression complète non réalisée. Prochaine étape : exécuter les tests réels, puis traiter les anomalies observées.
+
+### 2026-11-10 — Réduction des fuites d'erreurs du moteur clinique (session 10 h)
+- **Objectif :** ne plus transmettre au navigateur le détail brut des exceptions fournisseur IA, ni journaliser l'objet d'erreur complet dans cette route.
+- **Fichiers :** `server/index.ts`, `server/ai/test-clinical-regression.ts`.
+- **Commits :** `1caae130ef16d1eeeefae433898d6ea130bf6885` (réponse générique), `9d2c43ed95ee003fb06a0717e4ce97871055aa67` (garde de non-régression statique).
+- **Contrôle 1 :** modifications ciblées, maintien du traitement explicite 429 et ajout de deux assertions dans la suite hors ligne existante.
+- **Contrôle 2 :** relecture indépendante des deux fichiers depuis la branche distante ; 5/5 invariants statiques conformes (message générique, absence interpolation du détail, absence journalisation brute, 429 conservé, assertions présentes).
+- **Limites :** `npm run build` et `npm run test:all-offline` **non exécutés** ; aucune simulation HTTP, aucun test navigateur ou validation médicale. Le message générique ne démontre pas la sécurité globale des journaux ou autres routes.
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** compilation et tests npm nécessitent un environnement de travail pouvant exécuter le dépôt. Dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run build && npm run test:all-offline` ; attendu : exit code 0 pour chaque commande. Si échec, conserver la sortie exacte et corriger avant toute fusion.
+- **Statut :** code versionné, contrôle statique conforme, validation intégrée en attente. **Suite :** audit des autres réponses d'erreur et vérification de non-régression HTTP fictive.
