@@ -204,3 +204,10 @@
 - **Modification :** prise en charge d'une suggestion de correction portant sur plusieurs mots (« ex soudain » → « exsudat »), proposée uniquement si un contexte anatomique ORL voisin est présent. Le remplacement complet de la séquence exige un clic explicite du médecin ; les mots « amygdalien » et « amical » restent inchangés.
 - **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, dictée de « présence d'un exsudat amygdalien » et contrôle du bouton « ex soudain → exsudat ». Vérifier que le clic remplace les deux mots et que « un échange amical » ne déclenche aucune correction indue.
 - **Tests :** pas de compilation ou test Android exécuté ici ; ne pas fusionner avant validation.
+
+
+### 2026-11-10 — Variante dictée « exida »
+- **Capture et confirmation utilisateur :** la dictée était terminée, mais le texte affichait « présence d'un exida amygdalien » sans suggestion de correction visible.
+- **Commit :** `35a2c6f1802186361adccee37fb2e17d43d1c23a` ajoute l'erreur réellement observée `exida` → `exsudat` au dictionnaire de suggestions confirmées, sans remplacement automatique.
+- **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer et dicter « présence d'un exsudat amygdalien » ; si le moteur renvoie « exida », vérifier la présence du bouton « exida → exsudat » et le remplacement après clic.
+- **Tests :** compilation et test Android non effectués dans cette session.
