@@ -47,3 +47,9 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Contrôle 2 :** essai JavaScript isolé sur cinq entrées fictives (valide, libellé vide, justification vide, justification numérique, null) : une hypothèse valide conservée. Ce n'est ni un test de la route HTTP ni un test médical.
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** exécuter `npm run test:complete` et vérifier la CI sur la branche ; aucun succès de build/CI attesté ici.
 - **Prochaine tâche indépendante :** examiner les accès aux routes API et les refus d'accès sans activer d'authentification risquant de casser l'application ; préserver la validation médecin et ne jamais déployer.
+
+### 2026-11-10 — Validation CI de la protection de /api/health
+- **Commit testé :** `359619514808ce7d535aa085dd99c7a2a4a784b8` ; **workflow GitHub Actions #47 : vert**, durée **38 secondes**, confirmé par capture de l'interface GitHub Actions fournie par l'utilisateur.
+- **Portée :** régression statique de la réponse de santé publique ; le test interdit la réintroduction accidentelle de métadonnées de fournisseurs IA ou de secrets dans le gestionnaire de cette route.
+- **Limite :** un workflow vert ne démontre ni une authentification des routes cliniques ni la sécurité d'un déploiement public. Le contrat de permissions reste documentaire et non appliqué.
+- **Suite prioritaire :** préparer une stratégie d'authentification sans casser les flux existants ; écrire d'abord des tests fictifs pour les réponses 401/403 et la séparation des rôles. Ne pas activer de middleware bloquant, ne pas déployer et ne pas fusionner `main` sans validation explicite.
