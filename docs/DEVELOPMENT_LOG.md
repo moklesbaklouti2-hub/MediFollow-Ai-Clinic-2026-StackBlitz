@@ -320,3 +320,10 @@
 - **Contrôle 2 :** relecture de l'intégration CI et contrôle de la portée : uniquement test, aucune modification des routes, pas de fusion/déploiement. **Exécution Node locale non effectuée** ; CI sur le commit final à vérifier avant validation.
 - **Statut :** EN ATTENTE — vérification GitHub Actions du commit final ; ne pas déployer sur un réseau accessible à des tiers. Les contrôles 401/403 sont toujours simulés, sans middleware serveur.
 - **Prochaine étape :** consulter le job `access-decision-contract` du commit final ; corriger la sonde si échec technique, puis proposer une authentification côté serveur avec stratégie de migration et validation explicite avant activation.
+
+### 2026-11-10 22 h — Sonde HTTP : prévention des faux positifs si port occupé
+- **Module :** tests sécurité API ; **branche :** `audit-stabilisation-2026-11-10` ; **commit code :** `ff34a3c42f3ce24cca162ce73ac29da32686203e`.
+- **Fichier :** `scripts/test-local-http-auth-boundary.mjs`. Vérification préalable TCP sur 127.0.0.1:3001 : refuser le test si un autre processus occupe le port, au lieu de risquer de tester ce processus par erreur.
+- **Contrôle 1 :** relecture distante du script après commit : garde présente, assertions HTTP originales et arrêt du processus conservés. **Contrôle 2 :** deux essais Node isolés de la logique TCP (port libre : false ; port occupé par serveur fictif : true), tous deux conformes ; aucun test Express complet effectué.
+- **Limites :** `npm run test:complete`, workflow Actions sur ce commit, tests HTTP complets et Chrome Android non exécutés/confirmés dans cette session. Aucune authentification serveur réelle ajoutée, aucun patient réel, aucun secret ni déploiement. **EN ATTENTE — BLOCAGE TECHNIQUE :** confirmer le job `access-decision-contract` du dernier commit ; si échec, consulter les logs et corriger. **EN ATTENTE — intervention utilisateur :** essais microphone sur Android ultérieurement.
+- **Prochaine tâche indépendante :** contrôler le résultat CI de la sonde, puis poursuivre les tests d'accès 401/403 avec données fictives ; aucune activation de middleware sensible sans validation.
