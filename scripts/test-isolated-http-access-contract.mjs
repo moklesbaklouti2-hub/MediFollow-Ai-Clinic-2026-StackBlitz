@@ -1,17 +1,33 @@
-// Isolated Express contract: REAL HTTP 401/403 responses, but NOT production auth.
-// Synthetic roles are injected by the test harness only. Never mount this in server/index.ts.
+// Isolated Express HTTP contract: 401, 403, and 200 with synthetic identities.
+// This is NOT production authentication. Never import this fixture into server/index.ts.
 import assert from 'node:assert/strict';
 import express from 'express';
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '4kb' }));
+
 const requireDoctor = (req, res, next) => {
-  const identity = req.testIdentity; // Injected only by this local test fixture.
+  // Only the test server injects identities. HTTP headers never establish a role.
+  const identity = req.testIdentity;
   if (!identity) return res.status(401).json({ error: 'Authentification requise.' });
   if (identity.role !== 'doctor') return res.status(403).json({ error: 'Accès interdit.' });
   next();
 };
-app.post('/fictional/clinical', requireDoctor, (_req, res) => res.json({ ok: true }));
+
+// Test-only paths bind identities on the server side; they are not client credentials.
+const fixtures = [
+  { path: 'anonymous', identity: undefined, expected: 401 },
+  { path: 'patient', identity: { role: 'patient' }, expected: 403 },
+  { path: 'staff', identity: { role: 'staff' }, expected: 403 },
+  { path: 'doctor', identity: { role: 'doctor' }, expected: 200 },
+];
+for (const fixture of fixtures) {
+  app.post('/fictional/' + fixture.path + '/clinical',
+    (req, _res, next) => { req.testIdentity = fixture.identity; next(); },
+    requireDoctor,
+    (_req, res) => res.json({ ok: true }));
+}
+
 const server = app.listen(0, '127.0.0.1');
 try {
   await new Promise((resolve, reject) => {
@@ -21,29 +37,21 @@ try {
   });
   const address = server.address();
   assert.ok(address && typeof address !== 'string');
-  const url = 'http://127.0.0.1:' + address.port + '/fictional/clinical';
-  // Each identity is a synthetic in-process fixture, never a trusted HTTP header.
-  const cases = [
-    [undefined, 401],
-    [{ role: 'patient' }, 403],
-    [{ role: 'staff' }, 403],
-    [{ role: 'doctor' }, 200],
-  ];
-  for (const [identity, expected] of cases) {
-    // A new local app per identity is unnecessary: inject the fixture on a request
-    // through a dedicated middleware chosen by the test runner, not the client.
-    const handler = requireDoctor;
-    const req = { testIdentity: identity };
-    let status = 200;
-    const res = { status(code) { status = code; return this; }, json() { return this; } };
-    let nextCalled = false;
-    handler(req, res, () => { nextCalled = true; });
-    assert.equal(nextCalled ? 200 : status, expected);
+  const base = 'http://127.0.0.1:' + address.port;
+  for (const fixture of fixtures) {
+    const response = await fetch(base + '/fictional/' + fixture.path + '/clinical', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-role': 'doctor' },
+      body: JSON.stringify({ patientId: 'fictional-only' }),
+      signal: AbortSignal.timeout(3000),
+    });
+    assert.equal(response.status, fixture.expected, 'HTTP status mismatch for ' + fixture.path);
+    const body = await response.json();
+    if (fixture.expected === 200) assert.equal(body.ok, true);
+    else assert.equal(typeof body.error, 'string');
   }
-  const response = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' });
-  assert.equal(response.status, 401, 'Unauthenticated HTTP request must be rejected');
-  console.log('PASS: isolated Express fixture rejects anonymous HTTP with 401; synthetic role decisions 401/403/200 verified.');
-  console.log('WARNING: this fixture is NOT connected to MediFollow clinical routes and does NOT secure production.');
+  console.log('PASS: isolated Express HTTP responses 401 anonymous, 403 patient/staff, 200 doctor; forged x-role ignored.');
+  console.log('WARNING: fixture is NOT wired to MediFollow clinical endpoints; real authentication remains a deployment blocker.');
 } finally {
   await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve()));
 }
