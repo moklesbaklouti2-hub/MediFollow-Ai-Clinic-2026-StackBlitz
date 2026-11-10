@@ -4,7 +4,7 @@
 
 ## Contrôles attestés
 
-- GitHub Actions **#72 : vert**, selon le retour de l'utilisateur (sans capture). Il s'agit de la suite configurée sur la branche d'audit, pas d'une certification de sécurité.
+- GitHub Actions **#72 et #73 : verts**, selon le retour de l'utilisateur (sans capture). Il s'agit de la suite configurée sur la branche d'audit, pas d'une certification de sécurité.
 - Les suites CI comprennent la compilation Vite/TypeScript, les tests hors ligne (résilience IA, clinique, dictionnaire, dictée), l'inventaire API, la matrice de permissions simulée et la régression des erreurs de commande vocale.
 - Les correctifs récents empêchent une référence à `detail` non définie lors d'un repli 429 clinique et suppriment le détail brut des exceptions du fournisseur dans la réponse HTTP des commandes vocales.
 
@@ -22,9 +22,15 @@
 - [x] Compilation et tests hors ligne signalés verts dans GitHub Actions #72 (retour utilisateur)
 - [x] Erreur 429 et fuite des détails d'exception des commandes vocales corrigées, régressions ajoutées
 - [x] Risques majeurs explicitement documentés sans les présenter comme corrigés
-- [ ] Vérifier la CI du **dernier commit** de revue
+- [x] CI du commit de revue `562bfb7` : GitHub Actions #73 vert, selon le retour utilisateur
 - [ ] Exécuter les essais fonctionnels Android avec données fictives
 - [ ] Valider une stratégie d'authentification avant toute exposition publique
 - [ ] Revoir les changements et décider explicitement de la suite pour `main`
 
 **Portée de la clôture :** terminer cette boucle d'audit ne signifie pas terminer MediFollow AI ni autoriser son utilisation clinique en production.
+
+## Mise à jour après CI #73
+
+- L'utilisateur a confirmé le statut **vert** de l'exécution #73 ; ce résultat valide le dernier commit documentaire de revue, pas une authentification réelle.
+- **Décision de sécurité conservatrice :** aucune activation de middleware d'accès ni exposition Internet avant clarification du modèle d'identité et des comptes. Cette décision n'empêche pas les tests fictifs hors ligne.
+- **Prochaine action à forte valeur :** obtenir le choix d'architecture d'accès (cabinet mono-médecin local ou multi-utilisateur / distant), puis développer et tester un véritable contrôle 401/403 sur les routes, dans la branche d'audit seulement.
