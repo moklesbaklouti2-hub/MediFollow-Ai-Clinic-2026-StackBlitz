@@ -42,3 +42,11 @@
 - **Contrôle 1 :** revue du remplacement minimal, 8 scénarios JavaScript fictifs positifs/négatifs (8/8 conformes).
 - **Contrôle 2 :** relecture du fichier distant après commit et vérification du motif présent. Pas de test navigateur ni de compilation complète.
 - **Limites :** la suite TypeScript et `npm run test:all-offline` restent non exécutées ; les variantes vocales Android réelles nécessitent validation. Aucun changement de données patient.
+
+### 2026-11-10 — HELIOS : classement des alternatives de dictée sans correspondance partielle
+- **Commit code :** `415d98d1163ae5d7ff450da6313dc7c945877705` (`src/components/OrbAssistant.tsx`).
+- **Correction :** la préférence pour une alternative contenant un terme médical s'applique uniquement aux mots/expressions complets, sans détecter un terme comme fragment d'un autre mot. Aucune correction automatique de transcription ajoutée.
+- **Contrôle 1 :** inspection du changement ciblé et exécution Node.js de cinq scénarios fictifs (mot complet, fragment, expression composée, ponctuation, préfixe) : 5/5 conformes.
+- **Contrôle 2 :** relecture indépendante du fichier distant après commit : nouveau motif présent, ancien `includes` absent. Aucune modification des dossiers ou prescriptions.
+- **Limites :** compilation TypeScript, suite complète hors ligne et validation Android non exécutées ; correction ciblée à confirmer en intégration.
+- **Suite :** `npm run build && npm run test:all-offline` dans Codespaces, puis dictée réelle sur Android.
