@@ -6,11 +6,24 @@ import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 dotenv.config();
 // Optional remote-deployment preflight; no public access or authentication is enabled here.
 // Invalid opt-in configuration stops startup rather than silently weakening security.
-validateRemoteStartup(process.env);
+const remoteAccessConfig = validateRemoteStartup(process.env);
 
 const app = express();
 const PORT = 3001;
 app.use(express.json({ limit: '64kb' }));
+
+// Remote mode is deliberately NOT a production login feature yet.
+// Block all real clinical POST routes until a complete authenticated session
+// lifecycle and browser login have been wired and verified end-to-end.
+// This guard is registered BEFORE the real handlers and fails closed.
+if (remoteAccessConfig) {
+  app.use(['/api/clinical/analyze', '/api/commands/interpret', '/api/chat'], (req, res, next) => {
+    if (req.method !== 'POST') { next(); return; }
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(503).json({ error: 'Accès clinique distant indisponible : authentification non activée.' });
+  });
+}
+
 
 console.log('Fournisseur IA principal configuré :', isAiProviderConfigured());
 console.log('MediFollow backend démarré');
