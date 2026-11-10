@@ -8,6 +8,7 @@ const bindsAllInterfaces = /app\.listen\(PORT\s*,\s*['"]0\.0\.0\.0['"]/.test(sou
 const findings = [
   ...(!hasAuthMiddleware && clinical.length ? ['No recognizable global /api authentication middleware; manual route-level review required.'] : []),
   ...(bindsAllInterfaces ? ['Server binds to 0.0.0.0; restrict network exposure before deployment.'] : []),
+  ...(/app\.get\(['"]\/api\/health['"]/.test(source) && /primaryProvider:\s*['"]/.test(source) ? ['Public health response may expose AI provider metadata; restrict health output before deployment.'] : []),
 ];
 console.log('API inventory (static):');
 for (const r of routes) console.log(' -', r.method, r.path);
