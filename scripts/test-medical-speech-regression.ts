@@ -145,4 +145,18 @@ for (const [initial, alternative, expected] of safeClinicalAlternatives) {
   assertions++;
 }
 
+// Cas limites du navigateur : pas d'hypothèse, une seule hypothèse,
+// égalité de score et alternatives vides. La transcription d'origine prime.
+const edgeCases = [
+  { input: { length: 0 }, expected: '' },
+  { input: { length: 1, 0: { transcript: '  dyspnée  ' } }, expected: 'dyspnée' },
+  { input: { length: 2, 0: { transcript: 'toux' }, 1: { transcript: 'fièvre' } }, expected: 'toux' },
+  { input: { length: 3, 0: { transcript: 'toux' }, 1: { transcript: '  ' }, 2: { transcript: 'dyspnée' } }, expected: 'dyspnée' },
+  { input: { length: 2, 0: { transcript: 'absence de dyspnée' }, 1: { transcript: 'dyspnée' } }, expected: 'absence de dyspnée' },
+];
+for (const { input, expected } of edgeCases) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative(input), expected);
+  assertions++;
+}
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
