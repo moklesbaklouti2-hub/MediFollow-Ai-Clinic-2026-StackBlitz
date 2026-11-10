@@ -28,3 +28,10 @@
 - Contrôle 2 : relecture du fichier distant après commit et vérification statique de cinq invariants (réseau, exception de démarrage, interruption, fallback texte, absence de parole) : 5/5 présents. Ces contrôles ne prouvent pas l'exécution navigateur.
 - Non exécutés : compilation TypeScript, tests hors ligne du projet, essais Chrome Android. Validation intégrée toujours requise.
 - Suite : tester sur appareil la reprise manuelle après perte réseau et les commandes composées ; exécuter `npm run build && npm run test:all-offline`.
+
+### 2026-11-10 — HELIOS : éviter les relances en boucle après absence de parole
+- **Correctif :** `de580652a52a5053a794e36c05c6e3c5d498d46a` dans `src/components/OrbAssistant.tsx` : l'événement `no-speech` désarme désormais la relance automatique des commandes vocales. Le médecin peut relancer l'écoute manuellement. Aucun changement des données cliniques.
+- **Contrôle 1 :** diff minimal ciblé sur le gestionnaire `onerror` ; relecture du code et maintien du message explicite « Aucune parole détectée ».
+- **Contrôle 2 :** nouvelle lecture indépendante du fichier GitHub après commit ; cinq invariants statiques contrôlés : arrêt après `no-speech`, relance manuelle accessible, commande d'arrêt, fallback texte, message d'absence de parole. **5/5 présents** ; tests statiques uniquement.
+- **Limites :** aucune compilation TypeScript, suite complète hors ligne ou validation sur Android réalisée dans cette session ; ne pas assimiler ces vérifications à une validation navigateur.
+- **Suite :** `npm run build && npm run test:all-offline`, puis essais Chrome Android de la dictée silencieuse, des permissions et de la reprise manuelle.
