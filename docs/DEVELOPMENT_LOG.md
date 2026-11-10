@@ -242,3 +242,12 @@
 - **Accords grammaticaux :** « des adénopathie cervicales bilatérale » demeure à relire manuellement. Ne pas corriger automatiquement le nombre d'un terme clinique sans validation.
 - **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer, vérifier qu'« amygdania » ne suggère plus « amygdalite » ; vérifier que les suggestions déjà validées restent disponibles.
 - **Tests :** non exécutés ici. Ne pas fusionner sur `main` avant validation.
+
+
+### 2026-11-10 — Accord grammatical des adénopathies : suggestion confirmée
+- **Observation Android :** « des adénopathie cervicales bilatérale » au lieu de « des adénopathies cervicales bilatérales ».
+- **Commits :** `de0af2a0e301b86b16c8238eace317afe3d582de`, puis réparation du remplacement de séquences `a850c369a5515f57e20643a26cc951520789f5ef`.
+- **Modification :** suggestion de remplacement de l'expression complète observée, uniquement après clic « Corriger ». La fonction de remplacement multi-mots utilise la séquence exacte choisie, au lieu d'être limitée à « ex soudain » et « excédent amygdalien ».
+- **Sécurité :** ne pas déduire automatiquement le nombre de ganglions d'un texte dicté. Le médecin confirme l'accord et la donnée clinique. Les autres formulations ne sont pas modifiées.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, test Android de la suggestion d'accord, puis vérification des corrections « ex soudain » et « excédent amygdalien » qui partagent le même remplacement multi-mots.
+- **Tests :** aucune compilation ou exécution Android réalisée ici ; ne pas fusionner avant validation.
