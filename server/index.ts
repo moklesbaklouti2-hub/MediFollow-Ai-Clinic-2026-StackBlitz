@@ -12,7 +12,7 @@ console.log('Fournisseur IA principal configuré :', isAiProviderConfigured());
 console.log('MediFollow backend démarré');
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'MediFollow AI', ai: { configured: isAiProviderConfigured(), primaryProvider: 'groq' } });
+  res.json({ status: 'ok', service: 'MediFollow AI' });
 });
 
 const clinicalReasoningInstructions = `
