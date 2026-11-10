@@ -197,6 +197,9 @@ jobs:
     needs: [build, offline-tests, coordination, api-security-inventory, api-security-regression, access-policy-contract, access-decision-contract]
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write  # Only this final job can comment on PR #2.
     steps:
       - name: Publier le relais sans ecriture au depot
         env:
@@ -226,3 +229,34 @@ jobs:
           if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ] || [ "$COORDINATION_RESULT" != success ] || [ "$API_INVENTORY_RESULT" != success ] || [ "$SECURITY_REGRESSION_RESULT" != success ] || [ "$POLICY_RESULT" != success ] || [ "$DECISION_RESULT" != success ]; then
             exit 1
           fi
+
+      # This is a genuine GitHub webhook bridge, not a ChatGPT session launcher.
+      # Every comment cites the tested SHA and complete upstream job outcomes.
+      # Only GitHub's native token is used, with no API key or external server.
+      - name: Publier la couleur reelle sur la PR relais (pour Work)
+        if: always() && github.ref == 'refs/heads/audit-stabilisation-2026-11-10'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MEDIFOLLOW_RELAY_PR: '2'
+          COMMIT_SHA: ${{ github.sha }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.offline-tests.result }}
+          COORDINATION_RESULT: ${{ needs.coordination.result }}
+          POLICY_RESULT: ${{ needs.access-policy-contract.result }}
+          DECISION_RESULT: ${{ needs.access-decision-contract.result }}
+          API_INVENTORY_RESULT: ${{ needs.api-security-inventory.result }}
+          SECURITY_REGRESSION_RESULT: ${{ needs.api-security-regression.result }}
+        run: |
+          set -euo pipefail
+          COLOR=VERT
+          for RESULT in "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"; do
+            if [ "$RESULT" != success ]; then
+              COLOR=ROUGE
+              break
+            fi
+          done
+          printf -v MESSAGE 'MEDIFOLLOW_CI_RESULT_V1\nCouleur: %s\nCommit teste: %s\nWorkflow: %s\nCompilation: %s\nTests: %s\nCoordination: %s\nPermissions: %s\nAcces clinique: %s\nInventaire API: %s\nRegression API: %s\n\nStatut reel deduit des jobs GitHub Actions. Si le commit ne correspond plus a HEAD, ignorer cet ancien resultat. Le retour CI ne prouve pas la securite medicale.' \
+            "$COLOR" "$COMMIT_SHA" "$WORKFLOW_URL" "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${MEDIFOLLOW_RELAY_PR}/comments" -f "body=$MESSAGE" > /dev/null
+          echo "Relais CI publie sur PR #$MEDIFOLLOW_RELAY_PR : $COLOR / $COMMIT_SHA"
