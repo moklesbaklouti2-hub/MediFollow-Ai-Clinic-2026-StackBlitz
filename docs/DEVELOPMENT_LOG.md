@@ -182,3 +182,10 @@
 - **Rectification explicite :** l'utilisateur confirme avoir réellement prononcé « 87 % » pendant le test précédemment décrit comme une confusion « 97/87 % ». La transcription « 87 % » était donc **correcte** pour cet essai ; ne pas compter ce cas comme une erreur de reconnaissance des chiffres. Les mentions antérieures de confusion 97→87 sont une hypothèse infirmée par cette précision.
 - **Retour utilisateur :** compilation et contrôles fonctionnels demandés déclarés réussis, notamment l'affichage de la confirmation des chiffres. Validation rapportée par l'utilisateur, sans sortie de test ni inspection indépendante dans cette session.
 - **Décision :** conserver le garde-fou de confirmation des valeurs numériques comme mesure préventive, sans prétendre qu'une erreur chiffrée a été démontrée. Les erreurs lexicales « exsudat amygdalien » restent ouvertes.
+
+
+### 2026-11-10 — Réduction des fausses suggestions ORL (amical/amygdalite)
+- **Observation Android :** le moteur de reconnaissance Chrome déforme parfois « exsudat amygdalien » en « annexida amygdalite » ou « Annick soudain amical ». Le dictionnaire ne peut pas reconstruire avec certitude un diagnostic ou un signe clinique depuis ces mots.
+- **Commit :** `15b25b2e31aac0c064b4c2e55bcfb6b59e6c05dd` ; `src/components/OrbAssistant.tsx` empêche le rapprochement phonétique des mots ordinaires « amical » (et flexions) et des adjectifs « amygdalien » (et flexions) vers un terme médical différent. Aucune modification de prescription ni correction automatique.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage et dictée de « présence d'un exsudat amygdalien » et « un échange amical » ; contrôler l'absence de suggestion « amical » → « amygdalite », et relire manuellement tout segment non reconnu.
+- **Limites :** compilation et test Android de ce commit non réalisés ici. Une reconnaissance plus fiable nécessitera une évaluation de plusieurs alternatives du moteur vocal, sans correction clinique automatique.
