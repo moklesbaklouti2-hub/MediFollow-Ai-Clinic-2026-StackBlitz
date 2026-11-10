@@ -38,6 +38,30 @@ Le module `server/index.ts` importe le garde de session cookie, mais ne l'active
 
 **Ce mode de test local est interdit pour un deploiement public.** Les en-tetes HTTPS sont simules ; il reste a valider une infrastructure TLS, les appels React en navigateur reel et a mener un audit de securite. Le code React est raccorde sous indicateur d'essai mais l'interoperabilite HTTPS en environnement reel est encore a demontrer.
 
+## Renforcement de l'expiration et de la deconnexion (tests du 10 novembre 2026)
+
+- `src/services/doctorGateTransitions.ts` : transitions deterministes `verifying/login/authenticated/locked/logout-pending`. La fermeture de l'interface clinique precede la demande de revocation de la session.
+- En cas d'echec reseau a la deconnexion, le mode d'essai conserve un ecran **verrouille** avec un bouton de nouvelle tentative; il ne pretend pas qu'une session a ete revoquee. Un statut 401 (session deja invalide) peut finaliser la deconnexion.
+- Passage du navigateur en arriere-plan : retrait de l'interface clinique; au retour, nouvelle verification de la session avant son affichage. Les requetes de verification tardives ne doivent pas rouvrir un ecran en cours de deconnexion.
+- `scripts/test-doctor-gate-transitions.mts` : verification unitaire des transitions d'expiration, du retour de veille et de la deconnexion avec echec reseau.
+- `server/index.ts` accepte `COOKIE_AUTH_TEST_TTL_MS` **uniquement en mode `integration-test` lie au loopback** (de 1000 ms a 24 heures), afin de tester une session de courte duree.
+- `scripts/test-real-cookie-clinical-integration.mts` : apres un nouveau login fictif, attend l'expiration reelle du cookie et exige 401 sur `/api/auth/csrf` ainsi que sur les trois routes POST de la vraie API Express.
+
+**Limitation importante :** le navigateur ne peut pas forcer la revocation distante d'une session si le serveur est injoignable. Un rafraichissement de page peut recuperer un cookie encore valide tant que le serveur ne l'a pas revoque; ce mode n'est pas utilisable pour des donnees de patients reels. La revocation garantie entre onglets/appareils, la fermeture des connexions en cours, le chiffrement du stockage et les tests Android/HTTPS reels restent a concevoir et a valider.
+
+### Checklist manuelle Android (uniquement avec donnees fictives, apres un vrai HTTPS de test)
+
+1. En configuration normale sans indicateur, verifier que l'application locale conserve ses fonctions usuelles.
+2. En mode d'essai HTTPS, verifier que le tableau de bord n'est **pas** charge avant une connexion valide.
+3. Essayer un mot de passe incorrect, puis valide, et s'assurer qu'aucun jeton n'apparait dans le stockage du navigateur.
+4. Ouvrir une consultation fictive, envoyer une question HELIOS, puis passer la tablette en arriere-plan : l'ecran doit se verrouiller.
+5. Revenir au premier plan : verifier la session avant de revoir le dossier fictif.
+6. Cliquer sur deconnexion, constater le verrouillage immediat et verifier qu'un cookie revoque ne permet pas d'acceder aux routes cliniques.
+7. Simuler une coupure reseau pendant la deconnexion : l'ecran doit rester verrouille et proposer de reessayer.
+8. Sans connexion, tenter les trois API cliniques : 401 attendu. Avec mauvaise origine/CSRF : 403 attendu.
+
+Cette checklist ne remplace PAS un audit securite medical ni des tests multiplateformes; le mode d'integration actuel n'offre **pas** de serveur HTTPS public utilisable depuis Android.
+
 ## Avant tout branchement dans le serveur clinique
 1. Provisionner un identifiant et un hash scrypt forts **cote serveur**, hors Git ; ne jamais exposer les secrets au frontend.
 2. Configurer et verifier HTTPS de bout en bout, `PUBLIC_ORIGIN`, un reverse proxy dont la confiance est restreinte a des adresses/IP precises. Ne jamais faire `app.set('trust proxy', true)` pour l'ensemble d'Internet.
