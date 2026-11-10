@@ -25,6 +25,15 @@ if (cookieIntegrationMode === 'integration-test' &&
      !/^scrypt\$v1\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(process.env.DOCTOR_PASSWORD_HASH ?? ''))) {
   throw new Error('Cookie integration-test mode requires validated remote settings, explicit fixture acknowledgement and synthetic credentials');
 }
+// The shortened lifetime exists only for a loopback integration test; it must
+// never be usable as a public deployment or normal application option.
+const cookieTestTtlMs = cookieIntegrationMode === 'integration-test'
+  ? Number(process.env.COOKIE_AUTH_TEST_TTL_MS ?? 30 * 60_000)
+  : undefined;
+if (cookieIntegrationMode === 'integration-test' &&
+    (!Number.isSafeInteger(cookieTestTtlMs) || cookieTestTtlMs! < 1_000 || cookieTestTtlMs! > 24 * 60 * 60_000)) {
+  throw new Error('Invalid COOKIE_AUTH_TEST_TTL_MS for loopback integration fixture');
+}
 
 const app = express();
 const PORT = 3001;
@@ -42,7 +51,7 @@ if (remoteAccessConfig) {
     app.use(createDoctorCookieAuth({
       username: process.env.DOCTOR_USERNAME!,
       passwordHash: process.env.DOCTOR_PASSWORD_HASH!,
-      sessions: createSessionStore(),
+      sessions: createSessionStore({ ttlMs: cookieTestTtlMs }),
       publicOrigin: remoteAccessConfig.publicOrigin,
       handlers: {
         '/api/clinical/analyze': continueToRealHandler,
