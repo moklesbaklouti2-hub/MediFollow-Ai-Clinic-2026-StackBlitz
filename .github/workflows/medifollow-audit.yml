@@ -59,10 +59,24 @@ jobs:
       - name: Executer les tests fictifs
         run: npm run ${{ matrix.command }}
 
+  coordination:
+    name: Verifier le registre des modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifier les proprietaires et les conflits de fichiers
+        run: node scripts/validate-agent-coordination.mjs
+
   relay:
     name: Bilan des controles
     if: always()
-    needs: [build, offline-tests]
+    needs: [build, offline-tests, coordination]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -70,6 +84,7 @@ jobs:
         env:
           BUILD_RESULT: ${{ needs.build.result }}
           TEST_RESULT: ${{ needs.offline-tests.result }}
+          COORDINATION_RESULT: ${{ needs.coordination.result }}
           COMMIT_SHA: ${{ github.sha }}
         run: |
           {
@@ -77,10 +92,11 @@ jobs:
             echo "- Commit : $COMMIT_SHA"
             echo "- Compilation : $BUILD_RESULT"
             echo "- Tests hors ligne (4 modules) : $TEST_RESULT"
+            echo "- Coordination : $COORDINATION_RESULT"
             echo '- Si echec : consulter les logs du job concerne avant de modifier le code.'
             echo '- Si succes : poursuivre les taches independantes sur la branche audit.'
             echo '- Ce workflow ne lance aucun agent IA et ne modifie aucun fichier.'
           } >> "$GITHUB_STEP_SUMMARY"
-          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ]; then
+          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ] || [ "$COORDINATION_RESULT" != success ]; then
             exit 1
           fi
