@@ -17,7 +17,7 @@ export function nextDoctorGatePhase(phase: DoctorGatePhase, event: DoctorGateEve
     case 'session-rejected': return phase === 'logout-pending' ? phase : 'login';
     case 'background': return phase === 'authenticated' ? 'locked' : phase;
     case 'foreground': return phase === 'locked' ? 'verifying' : phase;
-    case 'logout-start': return phase === 'authenticated' ? 'logout-pending' : phase;
+    case 'logout-start': return 'logout-pending'; // Lock even an in-flight login or verification.
     case 'logout-success': return phase === 'logout-pending' ? 'login' : phase;
     case 'logout-failure': return phase === 'logout-pending' ? 'logout-pending' : phase;
   }
