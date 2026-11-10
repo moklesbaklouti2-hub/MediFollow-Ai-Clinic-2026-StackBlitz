@@ -1,0 +1,50 @@
+name: MediFollow AI - validation autonome
+
+# Only validate the isolated audit branch. No deployment, no AI calls, no repository writes.
+on:
+  push:
+    branches:
+      - audit-stabilisation-2026-11-10
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: medifollow-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Compilation et tests hors ligne
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Recuperer la branche
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer les dependances sans scripts tiers
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Compilation TypeScript et Vite
+        run: npm run build
+      - name: Tests hors ligne sur donnees fictives
+        run: npm run test:all-offline
+      - name: Rapport de relais
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          {
+            echo '## Validation MediFollow AI'
+            echo "- Branche : \`audit-stabilisation-2026-11-10\`"
+            echo "- Commit : \`$COMMIT_SHA\`"
+            echo "- Statut : $JOB_STATUS"
+            echo '- Suite : verifier les logs si echec ; reprendre les travaux independants sur la branche audit.'
+            echo '- Aucun deploiement, aucune modification du depot, aucun appel IA.'
+          } >> "$GITHUB_STEP_SUMMARY"
