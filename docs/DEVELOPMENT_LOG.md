@@ -196,3 +196,11 @@
 - **Contrôle 1 :** test Node.js isolé du motif : première tentative **échouée** pour `SpO₂ 87` à cause de `\\b` après le chiffre Unicode en indice ; correction par frontière explicite espace/deux-points, puis **6/6 scénarios fictifs réussis** (`SpO₂ 87`, `SpO2 87`, `SpO₂: 87`, absence de nombre, glycémie, texte ordinaire).
 - **Contrôle 2 :** nouvelle lecture du fichier distant après correction : présence du nouveau motif, maintien du blocage de commande chiffrée et de la confirmation ; inspection statique seulement. Aucun changement de prescription ni de donnée patient.
 - **Limites :** `npm run build`, `npm run test:all-offline` et Android Chrome non exécutés ; validation intégrée **EN ATTENTE — intervention utilisateur**. Dans Codespaces sur la branche audit : `npm run test:complete`, puis essai fictif « SpO₂ 87 » sans %, vérifier la suspension de commande et la confirmation. Ne pas fusionner avant ces vérifications.
+
+
+### 2026-11-10 — Dictée ORL : correction confirmée de « ex soudain »
+- **Capture utilisateur :** « présence d'un ex soudain amygdalien un échange amical » pour « présence d'un exsudat amygdalien » suivi de « un échange amical ».
+- **Commits :** `66f29ca7886619f441085ae20d6a6823459de604`, `91f26711168f585b114ed6c6b7a11fda1795882e`.
+- **Modification :** prise en charge d'une suggestion de correction portant sur plusieurs mots (« ex soudain » → « exsudat »), proposée uniquement si un contexte anatomique ORL voisin est présent. Le remplacement complet de la séquence exige un clic explicite du médecin ; les mots « amygdalien » et « amical » restent inchangés.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, dictée de « présence d'un exsudat amygdalien » et contrôle du bouton « ex soudain → exsudat ». Vérifier que le clic remplace les deux mots et que « un échange amical » ne déclenche aucune correction indue.
+- **Tests :** pas de compilation ou test Android exécuté ici ; ne pas fusionner avant validation.
