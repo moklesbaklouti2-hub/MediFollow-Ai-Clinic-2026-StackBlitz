@@ -130,6 +130,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      # The local HTTP probe launches Express through tsx, so dependencies
+      # must be present in this job (jobs do not share node_modules).
+      - name: Installer les dependances pour le test HTTP local
+        run: npm install --ignore-scripts --no-audit --no-fund
       - name: Tester les decisions d'acces fictives
         run: npm run test:access-decision
       - name: Verifier que la simulation ne protege pas artificiellement les routes
