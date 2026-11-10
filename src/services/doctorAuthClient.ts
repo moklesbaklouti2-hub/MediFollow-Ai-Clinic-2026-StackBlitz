@@ -1,5 +1,5 @@
-// Preparatory browser auth client. NOT used by App until server-side cookie
-// sessions, CSRF protection and real clinical route authorization are ready.
+// Opt-in test-preview browser auth client. App is gated behind a verified cookie
+// session in the preview only; real public HTTPS deployment is NOT supported.
 // Never put credentials or session tokens into localStorage or URLs.
 export type DoctorAuthState = 'anonymous' | 'authenticated';
 
