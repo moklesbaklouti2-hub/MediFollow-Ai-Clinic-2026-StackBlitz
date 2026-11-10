@@ -93,3 +93,11 @@
 - **Limites :** `npm run build` et `npm run test:all-offline` **non exécutés** ; aucune simulation HTTP, aucun test navigateur ou validation médicale. Le message générique ne démontre pas la sécurité globale des journaux ou autres routes.
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** compilation et tests npm nécessitent un environnement de travail pouvant exécuter le dépôt. Dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run build && npm run test:all-offline` ; attendu : exit code 0 pour chaque commande. Si échec, conserver la sortie exacte et corriger avant toute fusion.
 - **Statut :** code versionné, contrôle statique conforme, validation intégrée en attente. **Suite :** audit des autres réponses d'erreur et vérification de non-régression HTTP fictive.
+
+### 2026-11-10 — Justification de priorité clinique non vide (session 11 h)
+- **Objectif :** refuser une réponse structurée du modèle avec `priorityReason` vide ou constitué d'espaces, sans changer les prescriptions.
+- **Commits :** `918fff632f218c42a460e724fb841fb2604fce2` (`server/index.ts`), `aa0dd55f84387198cc2504567b4dbe10c4711f3e` (`server/ai/test-clinical-regression.ts`). Branche audit exclusivement.
+- **Contrôle 1 :** relecture du code et du test distant ; assertion statique de non-régression ajoutée.
+- **Contrôle 2 :** nouvelle inspection indépendante des deux fichiers distants et cinq invariants JavaScript ciblés : 5/5 conformes. **Aucun test npm, HTTP, navigateur ou clinique exécuté.**
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** environnement local incapable de résoudre `github.com`, connecteur GitHub sans exécution npm. Dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run build && npm run test:all-offline` ; résultat attendu : exit code 0. Corriger tout échec avant fusion.
+- **Statut :** correctif versionné, contrôles statiques conformes ; validation intégrée non réalisée. Suite : tester réponses cliniques fictives invalides/valides via HTTP hors ligne.
