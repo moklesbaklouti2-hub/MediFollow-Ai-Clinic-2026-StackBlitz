@@ -394,6 +394,11 @@ const [isListening, setIsListening] = useState(false);
           'audio-capture': 'Aucun microphone accessible n’a été détecté.',
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
+        // Ne pas relancer indéfiniment le microphone après un refus d'accès
+        // ou une panne non récupérable (notamment sur Chrome Android).
+        if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) {
+          commandListeningEnabledRef.current = false;
+        }
         if (event.error !== 'aborted') {
           setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
         }
