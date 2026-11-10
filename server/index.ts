@@ -333,6 +333,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         }
       }
       if (retryAfterSeconds === null) {
+        const detail = error instanceof Error ? error.message : '';
         const minutes = detail.match(/(?:in|after)\s+(\d+)\s+minutes?/i);
         if (minutes) retryAfterSeconds = Number(minutes[1]) * 60;
         else if (/in five minutes?/i.test(detail)) retryAfterSeconds = 300;
