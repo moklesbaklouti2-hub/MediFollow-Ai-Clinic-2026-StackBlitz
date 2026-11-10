@@ -178,9 +178,13 @@ function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] 
 
 function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
   const target = normalizeSpeechCandidate(correction.original);
-  return value.replace(/[\p{L}]+/gu, word => {
+  return value.replace(/[\p{L}]+/gu, (word, offset: number) => {
     if (normalizeSpeechCandidate(word) !== target) return word;
-    return word[0] === word[0].toLocaleUpperCase('fr')
+    // Une majuscule de reconnaissance (« Disney ») ne doit pas contaminer
+    // un terme médical au milieu d'une phrase. La conserver en début de phrase.
+    const before = value.slice(0, offset).trimEnd();
+    const startsSentence = before.length === 0 || /[.!?]\s*$/.test(before);
+    return startsSentence && word[0] === word[0].toLocaleUpperCase('fr')
       ? correction.replacement.charAt(0).toLocaleUpperCase('fr') + correction.replacement.slice(1)
       : correction.replacement;
   });
