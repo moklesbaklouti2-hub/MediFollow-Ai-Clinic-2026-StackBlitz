@@ -2,16 +2,12 @@
 // This documents current exposure; it does NOT certify authentication.
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { connect } from 'node:net';
+import { isPortUnavailable } from './port-availability.mjs';
 import { setTimeout as delay } from 'node:timers/promises';
 
 const base = 'http://127.0.0.1:3001';
 // Never accept responses from an unrelated process already bound to the test port.
-const occupied = await new Promise(resolve => {
-  const socket = connect({ host: '127.0.0.1', port: 3001 });
-  socket.once('connect', () => { socket.destroy(); resolve(true); });
-  socket.once('error', error => { socket.destroy(); resolve(error.code !== 'ECONNREFUSED'); });
-});
+const occupied = await isPortUnavailable(3001);
 assert.equal(occupied, false, 'Port 3001 already in use or unavailable; refusing a false-positive HTTP probe');
 
 const child = spawn(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'server/index.ts'], {
