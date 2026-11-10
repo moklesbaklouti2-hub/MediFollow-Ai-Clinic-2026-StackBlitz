@@ -123,13 +123,16 @@ try {
         hostname: '127.0.0.1', port: httpsPort, path, method, headers,
         servername: 'clinic.example', ca: cert, rejectUnauthorized: true,
       }, response => {
+        // IncomingMessage may clear .socket once the body ends (Node 22).
+        // Capture verified TLS state while the HTTPS response is still open.
+        const tlsAuthorized = response.socket?.authorized === true;
         const chunks = [];
         response.on('data', chunk => chunks.push(chunk));
         response.once('end', () => resolve({
           status: response.statusCode,
           headers: response.headers,
           body: Buffer.concat(chunks).toString('utf8'),
-          authorized: response.socket.authorized,
+          authorized: tlsAuthorized,
         }));
       });
       client.setTimeout(7000, () => client.destroy(new Error('TLS fixture request timed out')));
