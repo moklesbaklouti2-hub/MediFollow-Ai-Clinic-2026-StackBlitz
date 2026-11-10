@@ -118,3 +118,11 @@
 - **Contrôle 2 :** relecture distante indépendante : variable inutilisée absente de la route clinique, journal de statut conservé, traitement 429 et réponse générique conservés. Vérification statique uniquement.
 - **Limites :** `npm run build`, `npm run test:all-offline`, tests HTTP et Android non exécutés ; aucune validation médicale. **EN ATTENTE — BLOCAGE TECHNIQUE** pour l'exécution npm dans cet environnement. **EN ATTENTE — intervention utilisateur** pour les essais microphone sur Android.
 - **Suite :** dans Codespaces sur cette branche, lancer `npm install && npm run build && npm run test:all-offline` ; si échec, conserver la sortie exacte. Auditer ensuite les autres variables inutilisées et les réponses d'erreur sans toucher aux données patient.
+
+### 2026-11-10 — Robustesse Unicode du test de lexique (session 14 h)
+- **Objectif :** refuser dans le test structurel les caractères de contrôle et les termes non normalisés NFC, susceptibles de perturber la dictée et les correspondances.
+- **Fichier :** `scripts/test-medical-dictionary.ts` ; **commit code :** `d61f9f931a597919f690ae78c111278c3fe1b0d8` ; branche `audit-stabilisation-2026-11-10` uniquement.
+- **Contrôle 1 :** relecture du fichier distant après modification, présence des deux assertions confirmée.
+- **Contrôle 2 :** vérification JavaScript indépendante des 239 termes extraits du lexique distant : 0 terme non NFC, 0 caractère de contrôle. **Ce n'est pas l'exécution du script TypeScript.**
+- **Limites :** `npm run build` et `npm run test:all-offline` non exécutés ; test navigateur et validation médicale non effectués. Aucun dossier patient, secret ou prescription modifié.
+- **EN ATTENTE — intervention utilisateur :** ouvrir Codespaces sur cette branche, lancer `npm run build && npm run test:all-offline`, transmettre toute erreur ; résultat attendu : compilation et tests réussis. Continuer en parallèle les vérifications indépendantes.
