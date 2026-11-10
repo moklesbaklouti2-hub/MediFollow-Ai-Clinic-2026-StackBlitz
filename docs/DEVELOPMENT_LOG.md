@@ -167,3 +167,12 @@
 - **Correction limitée :** `6cbdd453db868cfa6e26d11a45dcc369a071978e` ajoute la variante observée « annexida » comme suggestion « exsudat », toujours avec confirmation explicite. Ne pas transformer automatiquement « amygdalite » en « amygdalien ».
 - **EN ATTENTE — sécurité clinique :** concevoir une étape de relecture/confirmation explicite des constantes et valeurs chiffrées dictées avant enregistrement, avec signalement des valeurs ambiguës ; ne pas prétendre que la reconnaissance du 97 % est réparée.
 - **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, compiler et retester une phrase fictive incluant 97 %, 87 %, 98 %, 78 %, sans patients réels ; vérifier la confirmation « annexida » → « exsudat » et le comportement de la relecture numérique. Pas de fusion tant que la régression clinique critique n'est pas traitée.
+
+
+### 2026-11-10 — Garde de sécurité des chiffres dictés (SpO₂ 97/87 %)
+- **Observation utilisateur :** sur une phrase fictive, la dictée a transformé SpO₂ 97 % en 87 %, et « exsudat amygdalien » en une expression incorrecte. Les chiffres ne doivent jamais être rectifiés par supposition.
+- **Commits :** `945a72c6cf13073b94a02525532c7c9d433dcb42` et correctif de syntaxe regex `7e463233345af0a48eb491c1939abefc844859d4`.
+- **Modification :** si la dictée contient une valeur clinique numérique, affichage d'un avertissement de relecture et blocage de l'envoi du chat jusqu'à confirmation explicite « J’ai vérifié les chiffres ». En mode commandes vocales, une phrase avec valeur clinique numérique suspend l'exécution automatique et l'écoute, avec message explicite.
+- **Limite importante :** détecteur heuristique non exhaustif ; la confirmation n'établit pas la véracité de la valeur ; le texte reste à vérifier par le médecin. Aucune correction automatique 87→97. Le moteur de reconnaissance Chrome reste inchangé.
+- **EN ATTENTE — intervention utilisateur :** sur `audit-stabilisation-2026-11-10`, `git pull origin audit-stabilisation-2026-11-10`, puis `npm run test:complete`, `npm run dev:full` et test Android avec une phrase fictive contenant SpO₂ 97 %. Vérifier blocage avant confirmation, correction manuelle possible, puis envoi. Vérifier qu'une commande vocale contenant un chiffre clinique n'est pas exécutée automatiquement.
+- **Tests non effectués ici :** build TypeScript, tests npm et test navigateur Android. Ne pas fusionner avant validation.
