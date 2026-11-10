@@ -126,3 +126,12 @@
 - **Contrôle 2 :** vérification JavaScript indépendante des 239 termes extraits du lexique distant : 0 terme non NFC, 0 caractère de contrôle. **Ce n'est pas l'exécution du script TypeScript.**
 - **Limites :** `npm run build` et `npm run test:all-offline` non exécutés ; test navigateur et validation médicale non effectués. Aucun dossier patient, secret ou prescription modifié.
 - **EN ATTENTE — intervention utilisateur :** ouvrir Codespaces sur cette branche, lancer `npm run build && npm run test:all-offline`, transmettre toute erreur ; résultat attendu : compilation et tests réussis. Continuer en parallèle les vérifications indépendantes.
+
+### 2026-11-10 — Tests complets sans appels IA live implicites (session 15 h)
+- **Objectif :** éviter qu'une commande de vérification générale lance involontairement un test clinique live consommant un quota IA.
+- **Fichier :** `package.json` ; **commit code :** `f94806a4ae5b95b13a261d491a4caefc2d6dd49c`.
+- **Contrôle 1 :** modification d'une seule commande, JSON parsé, conservation du build et des scripts existants.
+- **Contrôle 2 :** nouvelle lecture du fichier distant : 4/4 invariants de configuration vérifiés (build préservé, chaîne hors ligne, test live explicite, commande complète hors ligne).
+- **Limites :** aucun `npm run build`, `npm run test:complete`, test navigateur ni validation clinique exécuté ici. La commande `test:clinical-live` reste disponible séparément et ne doit être lancée qu'avec autorisation explicite.
+- **EN ATTENTE — BLOCAGE TECHNIQUE :** dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run test:complete` ; résultat attendu : code de sortie 0. Rapporter toute erreur. Aucun dossier réel ou secret touché.
+- **Statut :** configuration corrigée et contrôlée statiquement ; intégration npm non validée. **Suite :** corriger toute erreur de compilation ou de test révélée.
