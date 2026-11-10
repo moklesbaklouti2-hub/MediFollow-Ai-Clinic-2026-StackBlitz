@@ -104,6 +104,14 @@ try {
   now += 30_000;
   assert.equal((await request('/api/auth/csrf', { method: 'GET', cookie: freshCookie, origin: null })).status, 401);
   assert.deepEqual(executed, [...CLINICAL_PATHS], 'Expired or revoked sessions must not reach clinical handlers');
+  // Attempt throttling also applies to this cookie-based login controller.
+  for (let i = 0; i < 3; i++) {
+    assert.equal((await request('/api/auth/login', { body: { ...validLogin, password: 'wrong' } })).status, 401);
+  }
+  assert.equal((await request('/api/auth/login', { body: validLogin })).status, 429);
+  now += 5000;
+  assert.equal((await request('/api/auth/login', { body: validLogin })).status, 204);
+
   console.log('PASS: isolated cookie login 204, HttpOnly/Secure, same-origin, CSRF, clinical guard, logout, expiry.');
   console.log('WARNING: simulated reverse proxy only; NOT real TLS or production deployment.');
 } finally {
