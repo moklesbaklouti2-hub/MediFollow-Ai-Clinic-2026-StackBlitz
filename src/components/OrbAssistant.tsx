@@ -422,7 +422,7 @@ const [isListening, setIsListening] = useState(false);
         setIsListening(false);
         if (mode === 'command' && commandListeningEnabledRef.current) {
           const normalizedVoiceCommand = dictatedText.toLocaleLowerCase('fr').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-          if (/^(stop|arrete|arret|stop ecoute|arrete ecoute|arret ecoute)$/.test(normalizedVoiceCommand)) {
+          if (/^(?:stop|arrete|arret)(?:[\s,;:.!?-]+(?:l['’]?)?ecoute)?[\s,;:.!?-]*$/.test(normalizedVoiceCommand)) {
             commandListeningEnabledRef.current = false;
             setSpeechMessage('Écoute vocale arrêtée.');
           } else if (dictatedText) {
