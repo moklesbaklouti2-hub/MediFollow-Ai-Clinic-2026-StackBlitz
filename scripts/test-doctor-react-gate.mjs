@@ -21,8 +21,14 @@ assert.match(gate, /!doctorAuthPreviewEnabled \|\| !secure/);
 assert.match(gate, /getDoctorCsrfToken\(\)/);
 assert.match(gate, /loginDoctor\(username, password\)/);
 assert.match(gate, /await logoutDoctor\(\)/);
-assert.match(gate, /setPhase\('login'\)/);
-assert.match(gate, /setPhase\('locked'\)/);
+assert.match(gate, /nextDoctorGatePhase\(previous, 'logout-start'\)/);
+assert.match(gate, /nextDoctorGatePhase\(previous, 'logout-success'\)/);
+assert.match(gate, /nextDoctorGatePhase\(previous, 'logout-failure'\)/);
+assert.match(gate, /nextDoctorGatePhase\(previous, 'background'\)/);
+assert.match(gate, /nextDoctorGatePhase\(previous, 'foreground'\)/);
+assert.match(gate, /phase === 'logout-pending'/);
+assert.match(gate, /Réessayer la déconnexion/);
+assert.match(gate, /session-rejected/);
 assert.match(gate, /<DoctorLogin /);
 assert.match(gate, /<App \/>/);
 
