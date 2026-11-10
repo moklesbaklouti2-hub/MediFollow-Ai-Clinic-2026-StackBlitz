@@ -81,6 +81,9 @@ const unsafeAlternatives = [
   ['absence de disney', 'présence de dyspnée'],
   ['sans disney', 'avec dyspnée'],
   ['glycémie 1,2 g/L avec disney', 'glycémie 12 g/L avec dyspnée'],
+  ['paracétamol 500 mg avec disney', 'paracétamol 500 g avec dyspnée'],
+  ['solution 5 ml avec disney', 'solution 5 l avec dyspnée'],
+  ['SpO₂ 97 % avec disney', 'SpO₂ 97 avec dyspnée'],
 ];
 for (const [initial, unsafe] of unsafeAlternatives) {
   assert.equal(runtime.chooseMedicalSpeechAlternative({
