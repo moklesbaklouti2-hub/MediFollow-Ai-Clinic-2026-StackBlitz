@@ -98,3 +98,10 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** résultat du workflow du dernier commit à confirmer ; ne pas confondre étape configurée et exécution réussie. Authentification effective des routes cliniques non certifiée ; ne pas déployer.
 - **Prochaine tâche indépendante :** vérifier CI `access-decision-contract`, diagnostiquer les logs si échec, puis tester les refus d'accès 401/403 sur des fixtures fictives sans changer la politique de production.
 - **EN ATTENTE — intervention utilisateur :** Chrome Android/microphone lorsque disponible, résultat attendu : refus de permission et reprise manuelle sans boucle.
+
+### 2026-11-10 23 h 56 — Relais sonde TCP bornée
+- **Module :** CI / sonde HTTP ; **branche :** `audit-stabilisation-2026-11-10` ; **commit code :** `a312e4cc6ca8f62f68b1cc1d1819e2bd55abd083`.
+- **Fichier :** `scripts/port-availability.mjs`. Ajout d'un délai de 1500 ms : une connexion TCP bloquée est considérée indisponible ; garde contre les résolutions multiples.
+- **Contrôle 1 :** syntaxe Node.js et test occupé/libéré exécutés dans une copie isolée de la fonction sous Node : PASS. **Contrôle 2 :** relecture indépendante du fichier distant : délai, nettoyage du socket et comportement refus/connexion présents. Le scénario réseau réellement bloqué n'a pas été reproduit.
+- **CI :** statuts GitHub du SHA documentaire antérieur non disponibles (tableaux vides) ; aucun succès Actions récent attesté. **Limites :** pas de build complet, test Express ni Android ; aucune donnée réelle et aucun déploiement.
+- **Reprise :** consulter le job `access-decision-contract` sur le dernier SHA ; si vert, examiner les routes HTTP cliniques ; si rouge, analyser les logs. Authentification effective toujours non certifiée.
