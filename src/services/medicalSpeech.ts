@@ -243,7 +243,10 @@ function criticalSpeechTokens(value: string): string {
   // ancien/récent ou présence/absence d'allergie lors du choix vocal.
   const chronology = Array.from(normalized.matchAll(/\b(?:aigu|aigue|aigus|aigues|chronique|chroniques|ancien|ancienne|anciens|anciennes|recent|recente|recents|recentes)\b/gu), match => match[0]);
   const allergy = Array.from(normalized.matchAll(/\b(?:allergie|allergies|allergique|allergiques|anaphylaxie)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy });
+  // La fréquence et le moment d'administration sont des informations
+  // thérapeutiques critiques, indépendamment du nombre dicté.
+  const administration = Array.from(normalized.matchAll(/\b(?:matin|midi|soir|nuit|quotidien|quotidienne|quotidiens|quotidiennes|hebdomadaire|hebdomadaires|mensuel|mensuelle|mensuels|mensuelles|unique|uniques|fois|jour|jours|semaine|semaines|heure|heures)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
