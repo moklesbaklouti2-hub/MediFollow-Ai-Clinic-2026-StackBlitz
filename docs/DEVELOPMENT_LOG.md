@@ -211,3 +211,10 @@
 - **Commit :** `35a2c6f1802186361adccee37fb2e17d43d1c23a` ajoute l'erreur réellement observée `exida` → `exsudat` au dictionnaire de suggestions confirmées, sans remplacement automatique.
 - **EN ATTENTE — intervention utilisateur :** récupérer la branche audit, `npm run test:complete`, redémarrer et dicter « présence d'un exsudat amygdalien » ; si le moteur renvoie « exida », vérifier la présence du bouton « exida → exsudat » et le remplacement après clic.
 - **Tests :** compilation et test Android non effectués dans cette session.
+
+
+### 2026-11-10 — Sélection prudente des alternatives Chrome en dictée ORL
+- **Observation utilisateur :** trois dictées successives dans le même champ : « exsudat amygdalite », « excédent amygdalien », « exsudat amygdalien » ; une phrase entièrement exacte sur trois, mais échantillon insuffisant pour une estimation fiable.
+- **Commit :** `b6f4eae2e5767dd1ccf2385e278139b16cb4436a` ; la sélection d'alternatives favorise la séquence complète exacte « exsudat amygdalien » **uniquement si Chrome la fournit parmi ses alternatives**. Aucune reconstruction automatique d'un signe clinique absent des hypothèses du moteur vocal.
+- **Limites :** bonus lexical heuristique ; peut encore choisir une alternative inexacte. L'utilisateur doit relire avant tout usage clinique. Les corrections manuelles existantes restent actives.
+- **EN ATTENTE — intervention utilisateur :** `git pull origin audit-stabilisation-2026-11-10`, `npm run test:complete`, redémarrage, trois essais distincts avec effacement du champ entre essais, captures avant correction. Aucun test npm ni Android exécuté ici.
