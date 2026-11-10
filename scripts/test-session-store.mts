@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { createSessionStore } from '../server/security/sessionStore.ts';
+
+let clock = 1000;
+const store = createSessionStore({ ttlMs: 1000, now: () => clock });
+assert.throws(() => createSessionStore({ ttlMs: 0 }));
+assert.throws(() => store.issue(''));
+const a = store.issue('fictional-doctor');
+const b = store.issue('fictional-doctor');
+assert.notEqual(a.token, b.token);
+assert.equal(store.verify(a.token)?.role, 'doctor');
+assert.equal(store.verify(a.token)?.subjectId, 'fictional-doctor');
+assert.equal(store.verify('invalid'), null);
+assert.equal(store.verify(undefined), null);
+assert.equal(store.revoke(a.token), true);
+assert.equal(store.verify(a.token), null);
+assert.ok(store.verify(b.token));
+clock = 2000;
+assert.equal(store.verify(b.token), null);
+const c = store.issue('fictional-doctor');
+store.revokeAll();
+assert.equal(store.verify(c.token), null);
+console.log('PASS: isolated session lifecycle issue/verify/revoke/expire/revokeAll; not production-wired.');
