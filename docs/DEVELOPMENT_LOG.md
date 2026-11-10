@@ -110,3 +110,11 @@
 - **Non exécutés :** `npm run build`, `npm run test:all-offline`, tests HTTP, tests Android et validation médicale. **EN ATTENTE — BLOCAGE TECHNIQUE** : le connecteur GitHub permet de lire/écrire, pas d'exécuter npm sur le dépôt ; le clonage local réseau n'est pas disponible dans cet environnement.
 - **Prochaine étape :** dans Codespaces, sur `audit-stabilisation-2026-11-10`, lancer `npm install && npm run build && npm run test:all-offline` ; résultat attendu : codes de sortie 0. En cas d'échec, transmettre la sortie et corriger avant fusion. Aucun test IA payant requis.
 - **Statut :** garde statique versionnée ; validation intégrée non réalisée.
+
+### 2026-11-10 — Nettoyage d'une variable inutilisée dans la route clinique (session 13 h)
+- **Objectif :** supprimer `detail` devenu inutilisé dans le `catch` de `/api/clinical/analyze` après la suppression antérieure de l'exposition des erreurs fournisseur ; prévenir une erreur TypeScript TS6133 potentielle.
+- **Commit code :** `836f1fcb6e600745477f9c38fded2665114f2e39` ; fichier : `server/index.ts` ; branche `audit-stabilisation-2026-11-10` uniquement.
+- **Contrôle 1 :** remplacement exact d'une occurrence dans le gestionnaire clinique, vérification de l'absence de modification de la route vocale et de la conservation du statut HTTP.
+- **Contrôle 2 :** relecture distante indépendante : variable inutilisée absente de la route clinique, journal de statut conservé, traitement 429 et réponse générique conservés. Vérification statique uniquement.
+- **Limites :** `npm run build`, `npm run test:all-offline`, tests HTTP et Android non exécutés ; aucune validation médicale. **EN ATTENTE — BLOCAGE TECHNIQUE** pour l'exécution npm dans cet environnement. **EN ATTENTE — intervention utilisateur** pour les essais microphone sur Android.
+- **Suite :** dans Codespaces sur cette branche, lancer `npm install && npm run build && npm run test:all-offline` ; si échec, conserver la sortie exacte. Auditer ensuite les autres variables inutilisées et les réponses d'erreur sans toucher aux données patient.
