@@ -29,6 +29,8 @@ export function createDoctorLogin(options: LoginOptions): {
   // Single-doctor local process only. A shared store and IP controls are required for deployment.
   let failures = 0;
   let lockedUntil = 0;
+  // Serialize expensive password checks to prevent concurrent attempts bypassing lockout.
+  let verificationInProgress = false;
   const login: RequestHandler = async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     if (now() < lockedUntil) {
@@ -42,6 +44,11 @@ export function createDoctorLogin(options: LoginOptions): {
       res.status(400).json({ error: 'Identifiants invalides.' });
       return;
     }
+    if (verificationInProgress) {
+      res.status(429).json({ error: 'Authentification déjà en cours.' });
+      return;
+    }
+    verificationInProgress = true;
     try {
       // Always verify against the configured hash to avoid username enumeration.
       const passwordValid = await verifyDoctorPassword(suppliedPassword, passwordHash);
@@ -57,6 +64,8 @@ export function createDoctorLogin(options: LoginOptions): {
       res.status(200).json(session);
     } catch {
       res.status(503).json({ error: 'Authentification temporairement indisponible.' });
+    } finally {
+      verificationInProgress = false;
     }
   };
   const logout: RequestHandler = (req, res) => {
