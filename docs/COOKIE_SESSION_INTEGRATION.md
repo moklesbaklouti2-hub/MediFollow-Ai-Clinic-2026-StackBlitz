@@ -62,6 +62,22 @@ Le module `server/index.ts` importe le garde de session cookie, mais ne l'active
 
 Cette checklist ne remplace PAS un audit securite medical ni des tests multiplateformes; le mode d'integration actuel n'offre **pas** de serveur HTTPS public utilisable depuis Android.
 
+## Controle HTTPS reel sur boucle locale (test automatise)
+
+`scripts/test-real-local-https-cookie-proxy.mjs` demarre le vrai serveur Express (`integration-test`, lie uniquement a `127.0.0.1:3001`) avec des identifiants **fictifs**. Un proxy HTTPS ephemere ecoute sur un port local aleatoire, cree un certificat autosigne temporaire (`openssl`), puis le client de test **verifie** ce certificat via l'autorite locale propre au test : il n'utilise pas `rejectUnauthorized: false` et ne desactive jamais la verification TLS globale.
+
+Le proxy autorise uniquement `/api/`, transmet a une destination locale fixe, supprime les en-tetes `X-Forwarded-*` du client et les reconstruit. Le test exige :
+- 403 pour une connexion HTTP directe sans proxy TLS ;
+- 401 pour les appels cliniques anonymes sur le proxy HTTPS ;
+- 403 pour une origine etrangere ou un CSRF manquant ;
+- 204 et cookie `__Host-medifollow_session` `HttpOnly; Secure; SameSite=Strict` au login ;
+- 400 (validation des vrais handlers) pour les trois appels cliniques **fictifs** apres authentification et CSRF valides ;
+- 204 pour la deconnexion, puis 401 pour toute tentative de reutiliser le cookie revoque.
+
+Le certificat et sa cle ne sont **jamais commits** : ils sont generes dans un dossier temporaire et effaces apres le test. Aucune cle API, aucun dossier patient, aucune connexion Internet ni hebergement distant. Le workflow GitHub Actions execute le test avec OpenSSL deja fourni par les runners Ubuntu.
+
+**Ce test ne valide pas Chrome Android, les cookies sur mobile, une infrastructure publique, un certificat d'autorite reconnue ni l'hebergement de donnees medicales.** Le mode de test reste uniquement local et ne doit pas etre expose a Internet.
+
 ## Avant tout branchement dans le serveur clinique
 1. Provisionner un identifiant et un hash scrypt forts **cote serveur**, hors Git ; ne jamais exposer les secrets au frontend.
 2. Configurer et verifier HTTPS de bout en bout, `PUBLIC_ORIGIN`, un reverse proxy dont la confiance est restreinte a des adresses/IP precises. Ne jamais faire `app.set('trust proxy', true)` pour l'ensemble d'Internet.
