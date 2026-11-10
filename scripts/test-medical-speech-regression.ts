@@ -174,4 +174,22 @@ assert.equal(runtime.chooseMedicalSpeechAlternative(stableInput), firstChoice);
 assert.equal(JSON.stringify(stableInput), stableSnapshot);
 assertions += 3;
 
+// Une proposition alternative ne peut pas inventer ou supprimer des
+// informations critiques, même si elle contient davantage de termes médicaux.
+const criticalOmissions = [
+  ['SpO₂ 98 % et dyspnée', 'dyspnée'],
+  ['absence de dyspnée', 'dyspnée'],
+  ['allergie au latex avec dyspnée', 'dyspnée'],
+  ['grossesse avec dyspnée', 'dyspnée'],
+  ['voie intraveineuse avec dyspnée', 'dyspnée'],
+];
+for (const [initial, omitted] of criticalOmissions) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: omitted },
+  }), initial, 'Information clinique supprimée : ' + omitted);
+  assertions++;
+}
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
