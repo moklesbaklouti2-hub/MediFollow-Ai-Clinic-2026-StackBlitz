@@ -72,6 +72,8 @@ jobs:
           node-version: '22'
       - name: Verifier les proprietaires et les conflits de fichiers
         run: node scripts/validate-agent-coordination.mjs
+      - name: Preparer les taches independantes pour la prochaine session
+        run: node scripts/plan-agent-tasks.mjs
 
   relay:
     name: Bilan des controles
