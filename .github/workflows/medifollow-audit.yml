@@ -172,6 +172,8 @@ jobs:
         run: node scripts/test-doctor-auth-client.mjs
       - name: Tester session cookie HTTPS origine CSRF et API cliniques (fixture)
         run: npx --no-install tsx scripts/test-doctor-cookie-auth.mts
+      - name: Tester le transport clinique React avec CSRF et erreur de session (fixture)
+        run: npx --no-install tsx scripts/test-doctor-clinical-transport.mts
 
   relay:
     name: Bilan des controles
