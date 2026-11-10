@@ -112,6 +112,9 @@ function frenchPhoneticKey(value: string): string {
 function findClosestMedicalTerm(word: string): string | null {
   const normalizedWord = normalizeSpeechCandidate(word);
   if (normalizedWord.length < 5) return null;
+  // Les mots ordinaires et les adjectifs anatomiques ne doivent pas devenir
+  // un diagnostic par simple ressemblance phonétique.
+  if (['amical', 'amicale', 'amicales', 'amicaux', 'amygdalien', 'amygdalienne', 'amygdaliens', 'amygdaliennes'].includes(normalizedWord)) return null;
   // Un terme médical déjà reconnu est correct : ne jamais le remplacer par
   // un autre terme voisin (ex. odynophagie/dysphagie) ni changer son nombre.
   if (medicalSpeechTerms.some(term => normalizeSpeechCandidate(term) === normalizedWord)) return null;
