@@ -302,3 +302,12 @@
 - **Contrôle 2 :** essai JavaScript isolé sur cinq entrées fictives (valide, libellé vide, justification vide, justification numérique, null) : une hypothèse valide conservée. Ce n'est ni un test de la route HTTP ni un test médical.
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** exécuter `npm run test:complete` et vérifier la CI sur la branche ; aucun succès de build/CI attesté ici.
 - **Prochaine tâche indépendante :** examiner les accès aux routes API et les refus d'accès sans activer d'authentification risquant de casser l'application ; préserver la validation médecin et ne jamais déployer.
+
+### 2026-11-10 20 h — Contrat fictif : assignations de patients malformées
+- **Module :** tests de sécurité / contrat documentaire ; **branche :** `audit-stabilisation-2026-11-10`.
+- **Commit code :** `074ffe015ed02fac457715963e44812e3fd61722` ; fichier `scripts/test-access-decision-contract.mjs`.
+- **Changement :** refuser par défaut une liste d'assignations absente ou non-tableau et un identifiant patient vide ; trois scénarios fictifs supplémentaires (15 cas au total). Aucune authentification Express ajoutée : ce contrat reste une simulation, pas une protection effective.
+- **Contrôle 1 :** inspection du diff logique, comptage statique des 15 scénarios ; pas d'exécution locale Node.
+- **Contrôle 2 :** relecture indépendante du fichier distant après commit : garde `Array.isArray` présent, branche inchangée, CI du nouveau commit initialement en attente (`42881792524`). Ne pas considérer la CI réussie tant que le résultat final n'est pas constaté.
+- **Statut :** code versionné, **validation CI en attente** ; aucune validation médicale, aucun test de navigateur ni données réelles.
+- **Suite :** contrôler le résultat de la CI du commit, puis auditer l'authentification réellement appliquée aux routes cliniques sans activer de middleware de production.
