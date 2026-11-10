@@ -7,8 +7,8 @@ type Props = {
   error?: string;
 };
 
-// Preparatory UI component only: not mounted into App until secure backend
-// sessions and real clinical route protection are available.
+// Used only by the opt-in DoctorAppGate; normal local App remains unchanged.
+// Do not enable this test preview for real patients or public hosting.
 export default function DoctorLogin({ onLogin, busy = false, error = '' }: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
