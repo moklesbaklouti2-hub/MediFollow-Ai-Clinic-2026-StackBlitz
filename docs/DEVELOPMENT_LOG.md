@@ -101,3 +101,12 @@
 - **Contrôle 2 :** nouvelle inspection indépendante des deux fichiers distants et cinq invariants JavaScript ciblés : 5/5 conformes. **Aucun test npm, HTTP, navigateur ou clinique exécuté.**
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** environnement local incapable de résoudre `github.com`, connecteur GitHub sans exécution npm. Dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run build && npm run test:all-offline` ; résultat attendu : exit code 0. Corriger tout échec avant fusion.
 - **Statut :** correctif versionné, contrôles statiques conformes ; validation intégrée non réalisée. Suite : tester réponses cliniques fictives invalides/valides via HTTP hors ligne.
+
+### 2026-11-10 — Garde de régression des contrats cliniques (session 12 h)
+- **Objectif :** renforcer les contrôles hors ligne existants concernant limite du contexte, priorité autorisée, options structurées, quota 429 et message d'erreur générique.
+- **Fichier :** `server/ai/test-clinical-regression.ts` ; **commit code :** `ffea5dd7c85ee73e1630ba95303b43404fbb71f3`.
+- **Contrôle 1 :** lecture du code serveur et ajout de cinq assertions statiques correspondant à des gardes réellement présentes. Aucune modification du comportement clinique ni des données.
+- **Contrôle 2 :** nouvelle lecture distante indépendante des deux fichiers après commit ; correspondance exacte des cinq gardes dans le serveur et dans les assertions (5/5). Ce contrôle n'exécute pas le script TypeScript.
+- **Non exécutés :** `npm run build`, `npm run test:all-offline`, tests HTTP, tests Android et validation médicale. **EN ATTENTE — BLOCAGE TECHNIQUE** : le connecteur GitHub permet de lire/écrire, pas d'exécuter npm sur le dépôt ; le clonage local réseau n'est pas disponible dans cet environnement.
+- **Prochaine étape :** dans Codespaces, sur `audit-stabilisation-2026-11-10`, lancer `npm install && npm run build && npm run test:all-offline` ; résultat attendu : codes de sortie 0. En cas d'échec, transmettre la sortie et corriger avant fusion. Aucun test IA payant requis.
+- **Statut :** garde statique versionnée ; validation intégrée non réalisée.
