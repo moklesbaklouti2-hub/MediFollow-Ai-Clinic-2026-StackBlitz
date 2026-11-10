@@ -395,8 +395,8 @@ const [isListening, setIsListening] = useState(false);
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
         // Ne pas relancer indéfiniment le microphone après un refus d'accès
-        // ou une panne réseau : attendre une nouvelle action explicite du médecin.
-        if (['not-allowed', 'service-not-allowed', 'audio-capture', 'network'].includes(event.error)) {
+        // ou une panne réseau, ni boucler en silence si aucune parole n'est détectée.
+        if (['not-allowed', 'service-not-allowed', 'audio-capture', 'network', 'no-speech'].includes(event.error)) {
           commandListeningEnabledRef.current = false;
         }
         if (event.error !== 'aborted') {
