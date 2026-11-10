@@ -151,3 +151,11 @@
 - **Sécurité :** ne pas accepter les anciennes suggestions affichées ; ne pas inférer automatiquement « exsudat » depuis des mots ordinaires sans correspondance fiable.
 - **EN ATTENTE — intervention utilisateur :** sur branche audit, `git pull origin audit-stabilisation-2026-11-10`, puis `npm run test:complete`, redémarrer l'application et dicter la phrase fictive. Vérifier absence des deux fausses suggestions. Réexaminer séparément la reconnaissance de « exsudat amygdalien ».
 - **Limites :** commit non compilé/testé sur Android à cette étape. Ne pas fusionner avant validation.
+
+
+### 2026-11-10 — Correction des majuscules après confirmation vocale
+- **Observation Android :** « Disney » corrigé en « Dyspnée » au milieu d'une phrase ; « des adénopathie cervicale » conserve un accord incorrect issu de la reconnaissance.
+- **Correctif :** `db95ef93888a076278f37662e0edf670abdb0dd2` (`src/components/OrbAssistant.tsx`) : majuscule conservée uniquement si le mot corrigé se trouve au début de la phrase, et non sur toute entrée reconnue avec majuscule.
+- **Choix de sécurité :** aucune correction automatique des accords grammaticaux cliniques ; relire et éditer manuellement « des adénopathie cervicale » si nécessaire.
+- **EN ATTENTE — intervention utilisateur :** sur la branche audit, récupérer les commits, exécuter `npm run test:complete`, redémarrer le serveur et vérifier sur Android que « Disney » devient « dyspnée » au milieu de la phrase.
+- **Limites :** tests npm et Android de ce commit non exécutés ici. Ne pas fusionner sans vérification.
