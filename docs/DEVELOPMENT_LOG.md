@@ -10,3 +10,12 @@
 - **Limites :** tests JavaScript ciblés uniquement ; compilation TypeScript, suite `npm run test:all-offline`, interface Chrome Android et scénarios vocaux réels **non exécutés**. Aucune validation médicale.
 - **Statut :** correctif versionné, validation complète en attente.
 - **Prochaine étape :** lancer `npm run build && npm run test:all-offline`, puis vérifier la dictée sur Android et les confirmations proposées.
+
+## 2026-11-10 — HELIOS : arrêt des relances du microphone après erreur terminale
+
+- **Objectif :** éviter une boucle de réactivation de la reconnaissance vocale après refus de permission, interdiction du service ou absence de microphone sur Chrome Android.
+- **Fichier modifié :** `src/components/OrbAssistant.tsx` ; **commit :** `18e00c3da2f5017a24331f5923f8c4add53059c6`.
+- **Contrôle 1 :** vérification du flux `onerror` → `onend` : désactivation de l'écoute automatique pour `not-allowed`, `service-not-allowed`, `audio-capture` ; les erreurs récupérables ne changent pas de comportement.
+- **Contrôle 2 :** relecture indépendante du fichier distant après commit et simulation Node.js de six codes d'erreur : les trois erreurs terminales empêchent une relance, les trois autres conservent le comportement existant (6/6 conformes à la logique testée).
+- **Limites :** simulation ciblée de la logique seulement ; compilation TypeScript, tests d'intégration et essai Chrome Android **non exécutés**. L'erreur réseau peut encore entraîner des relances ; elle sera à traiter avec temporisation/limite de tentatives.
+- **Statut :** correctif versionné, validation intégrée en attente. **Suite :** `npm run build && npm run test:all-offline`, puis test des permissions sur Android.
