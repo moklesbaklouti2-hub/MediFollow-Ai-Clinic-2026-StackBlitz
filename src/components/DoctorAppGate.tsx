@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import App from '../App';
 import DoctorLogin from './DoctorLogin';
 import { DoctorAuthError, getDoctorCsrfToken, loginDoctor, logoutDoctor } from '../services/doctorAuthClient';
-import { doctorAuthPreviewEnabled, subscribeDoctorSessionInvalid } from '../services/doctorAuthMode';
+import { broadcastDoctorSessionEvent, doctorAuthPreviewEnabled, subscribeDoctorCrossTab, subscribeDoctorSessionInvalid } from '../services/doctorAuthMode';
 import { nextDoctorGatePhase, type DoctorGatePhase } from '../services/doctorGateTransitions';
 import './DoctorAppGate.css';
 
@@ -15,10 +15,25 @@ export default function DoctorAppGate() {
 
   useEffect(() => {
     if (!doctorAuthPreviewEnabled || !secure) return;
-    return subscribeDoctorSessionInvalid(() => {
+    const onSessionRejected = () => {
       setError('Session expirée ou accès refusé. Reconnectez-vous.');
       setPhase(previous => nextDoctorGatePhase(previous, 'session-rejected'));
+    };
+    const unsubscribeLocal = subscribeDoctorSessionInvalid(onSessionRejected);
+    const unsubscribeCrossTab = subscribeDoctorCrossTab(event => {
+      if (event === 'logout-start') {
+        setError('Déconnexion lancée dans un autre onglet. Vérifiez la révocation.');
+        setPhase(previous => nextDoctorGatePhase(previous, 'logout-start'));
+      } else if (event === 'logout-success') {
+        setError('');
+        setPhase(previous => previous === 'logout-pending'
+          ? nextDoctorGatePhase(previous, 'logout-success')
+          : nextDoctorGatePhase(previous, 'session-rejected'));
+      } else {
+        onSessionRejected();
+      }
     });
+    return () => { unsubscribeLocal(); unsubscribeCrossTab(); };
   }, [secure]);
 
   useEffect(() => {
@@ -97,15 +112,18 @@ export default function DoctorAppGate() {
     if (busy || (phase !== 'authenticated' && phase !== 'logout-pending')) return;
     // Unmount App first; a network failure must never restore the clinical UI.
     setPhase(previous => nextDoctorGatePhase(previous, 'logout-start'));
+    broadcastDoctorSessionEvent('logout-start');
     setBusy(true);
     setError('');
     try {
       await logoutDoctor();
       setPhase(previous => nextDoctorGatePhase(previous, 'logout-success'));
+      broadcastDoctorSessionEvent('logout-success');
     } catch (reason) {
       if (reason instanceof DoctorAuthError && reason.status === 401) {
         // A missing/expired server session is already effectively logged out.
         setPhase(previous => nextDoctorGatePhase(previous, 'logout-success'));
+        broadcastDoctorSessionEvent('logout-success');
       } else {
         setError('La révocation distante n’est pas confirmée. Réessayez la déconnexion.');
         setPhase(previous => nextDoctorGatePhase(previous, 'logout-failure'));
