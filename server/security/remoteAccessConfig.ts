@@ -30,3 +30,22 @@ export function originMatches(requestOrigin: unknown, configuredOrigin: string):
   if (typeof requestOrigin !== 'string' || requestOrigin.length > 2048) return false;
   return requestOrigin === configuredOrigin;
 }
+
+/**
+ * Opt-in startup preflight. It does NOT authenticate requests or enable deployment.
+ * Explicit REMOTE_ACCESS_MODE=enabled requires a verified public HTTPS origin.
+ * Any other nonempty value is rejected to avoid silently ignoring typos.
+ */
+export function validateRemoteStartup(env: Record<string, string | undefined>): RemoteAccessConfig | null {
+  const mode = env.REMOTE_ACCESS_MODE;
+  if (mode === undefined || mode === '') return null;
+  if (mode !== 'enabled') throw new Error('Invalid REMOTE_ACCESS_MODE; expected enabled or unset');
+  if (env.NODE_ENV !== 'production') {
+    throw new Error('Remote access requires NODE_ENV=production');
+  }
+  return validateRemoteAccessConfig({
+    publicOrigin: env.PUBLIC_ORIGIN,
+    trustProxy: env.REMOTE_TRUST_PROXY === 'verified',
+    production: true,
+  });
+}
