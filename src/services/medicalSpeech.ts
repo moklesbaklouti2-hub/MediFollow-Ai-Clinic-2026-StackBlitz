@@ -245,7 +245,7 @@ export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string
     // Favoriser une expression ORL complète uniquement lorsqu'elle est
     // effectivement proposée par Chrome, sans fabriquer de mots.
     // Ce bonus ne s'applique pas à des termes isolés ni à d'autres contextes.
-    const orlPhraseBonus = /\\bexsudat\\s+amygdalien(?:ne|s|nes)?\\b/u.test(normalized) ? 7 : 0;
+    const orlPhraseBonus = /\bexsudat\s+amygdalien(?:ne|s|nes)?\b/u.test(normalized) ? 7 : 0;
     return { transcript, score: score + orlPhraseBonus, index };
   });
 
