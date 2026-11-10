@@ -58,7 +58,8 @@ export async function getDoctorCsrfToken(signal?: AbortSignal): Promise<string> 
       cache: 'no-store',
       redirect: 'error',
     });
-  } catch {
+  } catch (error) {
+    if (signal?.aborted) throw error;
     throw new DoctorAuthError(0, 'Connexion au serveur impossible.');
   }
   if (response.status === 401) throw new DoctorAuthError(401, 'Session expirée.');
