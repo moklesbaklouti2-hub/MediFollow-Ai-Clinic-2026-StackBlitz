@@ -135,3 +135,11 @@
 - **Limites :** aucun `npm run build`, `npm run test:complete`, test navigateur ni validation clinique exécuté ici. La commande `test:clinical-live` reste disponible séparément et ne doit être lancée qu'avec autorisation explicite.
 - **EN ATTENTE — BLOCAGE TECHNIQUE :** dans Codespaces sur `audit-stabilisation-2026-11-10`, exécuter `npm install && npm run test:complete` ; résultat attendu : code de sortie 0. Rapporter toute erreur. Aucun dossier réel ou secret touché.
 - **Statut :** configuration corrigée et contrôlée statiquement ; intégration npm non validée. **Suite :** corriger toute erreur de compilation ou de test révélée.
+
+
+### 2026-11-10 — Retour test Android : dictée ORL
+- **Observation réelle (capture utilisateur) :** « audenophagie » au lieu d'« odynophagie », « annexeda » au lieu d'« exsudat » ; suggestion erronée « amygdalien » → « amygdalite ».
+- **Correctif :** `be63c039ba7e63bcbe302db4c8058331265390c` dans `src/components/OrbAssistant.tsx` : ajout de deux variantes observées à la liste de suggestions soumises à confirmation ; exclusion de « amygdalien/amygdalienne » du rapprochement phonétique automatique vers un diagnostic.
+- **Sécurité :** aucune correction automatique appliquée sans confirmation du médecin ; les mots cliniques non reconnus restent à relire.
+- **EN ATTENTE — intervention utilisateur :** dans Codespaces, sur `audit-stabilisation-2026-11-10`, arrêter le serveur si nécessaire, exécuter `git pull origin audit-stabilisation-2026-11-10` puis `npm run test:complete` ; relancer `npm run dev:full` et répéter la phrase fictive sur Android. Vérifier la suggestion « annexeda » → « exsudat », « audenophagie » → « odynophagie » et l'absence de suggestion « amygdalien » → « amygdalite ».
+- **Limites :** aucune compilation, test automatisé ou retest Android de ce nouveau commit n'a été effectué au moment de l'écriture. Ne pas fusionner avant validation.
