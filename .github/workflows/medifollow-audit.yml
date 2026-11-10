@@ -158,6 +158,8 @@ jobs:
         run: npx --no-install tsx scripts/test-remote-access-config.mts
       - name: Tester le routeur clinique protege isole (trois routes)
         run: npx --no-install tsx scripts/test-protected-clinical-router.mts
+      - name: Verifier le refus des vraies routes en mode distant incomplet
+        run: node scripts/test-remote-clinical-fail-closed.mjs
 
   relay:
     name: Bilan des controles
