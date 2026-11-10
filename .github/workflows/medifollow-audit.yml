@@ -160,6 +160,8 @@ jobs:
         run: npx --no-install tsx scripts/test-protected-clinical-router.mts
       - name: Verifier le refus des vraies routes en mode distant incomplet
         run: node scripts/test-remote-clinical-fail-closed.mjs
+      - name: Tester le refus HTTP des vraies API cliniques en mode distant
+        run: node scripts/test-real-remote-http-gate.mjs
 
   relay:
     name: Bilan des controles
