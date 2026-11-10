@@ -246,7 +246,9 @@ function criticalSpeechTokens(value: string): string {
   // La fréquence et le moment d'administration sont des informations
   // thérapeutiques critiques, indépendamment du nombre dicté.
   const administration = Array.from(normalized.matchAll(/\b(?:matin|midi|soir|nuit|quotidien|quotidienne|quotidiens|quotidiennes|hebdomadaire|hebdomadaires|mensuel|mensuelle|mensuels|mensuelles|unique|uniques|fois|jour|jours|semaine|semaines|heure|heures)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration });
+  // Voie d'administration : une confusion orale/IV/IM/SC peut être dangereuse.
+  const routes = Array.from(normalized.matchAll(/\b(?:orale|oral|orales|oraux|intraveineuse|intraveineux|intramusculaire|intramusculaires|souscutanee|souscutanees|cutanee|cutanees|rectale|rectales|sublinguale|sublinguales|inhalation|inhalations|iv|im|sc)\b/gu), match => match[0]);
+  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration, routes });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
