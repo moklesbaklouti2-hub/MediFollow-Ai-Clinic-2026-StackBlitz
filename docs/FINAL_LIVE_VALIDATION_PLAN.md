@@ -45,7 +45,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F18 | Android/Windows, HTTPS fictif isolé si disponible | Tester connexion médecin, refus 401/403, expiration, déconnexion et retour d'onglet | Interface verrouillée en absence de session ; aucune requête clinique non authentifiée | ☐ |
 | F19 | Windows + Android | Vérifier lisibilité mode sombre, clavier, focus, tailles de texte et affichage des alertes | Contrastes lisibles, commandes accessibles et pas d'information coupée | ☐ |
 | F20 | Windows + Android | Programmer un contrôle HELIOS fictif, le retrouver sur le tableau de bord et la liste, puis le marquer effectué après confirmation ; tester aussi l’annulation | Échéance cohérente, dossier confirmé, aucune clôture sans confirmation, contrôle effectué retiré des échéances | ☐ |
-| F21 | Windows + Android | Renseigner des allergies, traitements déclarés et diagnostics fictifs dans deux dossiers patients distincts ; ouvrir HELIOS Clinical Memory | Contenus strictement séparés par patient ; provenance datée des diagnostics ; champs absents affichés « Non renseigné » ; aucune modification automatique ni appel IA | ☐ |
+| F21 | Windows + Android | Renseigner allergies, traitements, antécédents médicaux/chirurgicaux/familiaux et diagnostics fictifs dans deux dossiers distincts ; ouvrir HELIOS Clinical Memory | Contenus séparés par patient et rubrique ; dates d'antécédents étiquetées « déclarées » ; provenance des diagnostics ; champs vides « Non renseigné » ; aucune modification automatique ni appel IA | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 

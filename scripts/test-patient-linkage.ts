@@ -211,6 +211,7 @@ assert.equal(clinicalMemory.documentedDiagnoses[0]?.date, '2026-11-11');
 assert.equal(clinicalMemory.documentedDiagnoses.some(x => x.label === 'NE PAS AFFICHER'), false);
 assert.deepEqual(buildClinicalMemory({ id: 'sans-données' }, []), {
   allergies: [], declaredTreatments: [], documentedDiagnoses: [],
+  documentedHistory: { medical: [], surgical: [], family: [] },
 });
 assert.deepEqual(buildClinicalMemory({ id: 'sans-données' }, memoryVisits).documentedDiagnoses, []);
 assert.deepEqual(buildClinicalMemory({ id: 'patient-fictif', clinicalHistory: {
@@ -228,5 +229,53 @@ assert.ok(patientPageSource.includes('HELIOS Clinical Memory · aperçu document
   patientPageSource.includes('clinicalMemory.documentedDiagnoses.map('),
   'Le composant Patients doit afficher la mémoire locale et sa provenance, sans conclusion automatique.');
 console.log('PASS QW-035: 11 tests fictifs de mémoire documentaire et de liaison UI.');
+
+
+// QW-036 — historical memory is documentary, separated by group, and safe
+// for incomplete or malformed imported entries. No inference or patient mixing.
+const datedHistoryPatient = {
+  id: 'patient-fictif',
+  clinicalHistory: {
+    medical: [
+      { id: 'mh1', label: ' HTA fictive ', date: ' vers 2020 ', details: ' à confirmer ' },
+      { id: 'mh2', label: '   ' },
+      null,
+    ],
+    surgical: [{ id: 'sh1', label: ' Appendicectomie fictive ', date: '2011' }],
+    family: [
+      { id: 'fh1', label: ' Diabète familial fictif ', details: ' parent déclaré ' },
+      { id: 'fh2', label: 47 },
+    ],
+  },
+};
+const documentedHistory = buildClinicalMemory(datedHistoryPatient as never, memoryVisits);
+assert.deepEqual(documentedHistory.documentedHistory.medical,
+  ['HTA fictive · Date déclarée : vers 2020 · Précision : à confirmer']);
+assert.deepEqual(documentedHistory.documentedHistory.surgical,
+  ['Appendicectomie fictive · Date déclarée : 2011']);
+assert.deepEqual(documentedHistory.documentedHistory.family,
+  ['Diabète familial fictif · Précision : parent déclaré']);
+assert.deepEqual(documentedHistory.allergies, []);
+assert.deepEqual(documentedHistory.declaredTreatments, []);
+assert.equal(documentedHistory.documentedDiagnoses.length, 3);
+assert.deepEqual(buildClinicalMemory({ id: 'sans-antécédents' }, []).documentedHistory,
+  { medical: [], surgical: [], family: [] });
+assert.deepEqual(buildClinicalMemory({
+  id: 'malformé',
+  clinicalHistory: { medical: [42, null, [], { label: '' }] as never },
+}, []).documentedHistory.medical, []);
+assert.deepEqual(buildClinicalMemory({
+  id: 'malformé',
+  clinicalHistory: { family: { label: 'not-an-array' } as never },
+}, []).documentedHistory.family, []);
+assert.equal(datedHistoryPatient.clinicalHistory.medical[0]?.label, ' HTA fictive ',
+  'Reading memory must not mutate source notes.');
+assert.ok(patientPageSource.includes('clinicalMemory.documentedHistory[group.key].map(') &&
+  patientPageSource.includes('Antécédents médicaux déclarés') &&
+  patientPageSource.includes('Antécédents chirurgicaux déclarés') &&
+  patientPageSource.includes('Antécédents familiaux déclarés') &&
+  patientPageSource.includes('Non renseigné'),
+  'HELIOS Clinical Memory must present all three original history groups without inventing negatives.');
+console.log('PASS QW-036: 10 fictional history group and UI regression checks.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

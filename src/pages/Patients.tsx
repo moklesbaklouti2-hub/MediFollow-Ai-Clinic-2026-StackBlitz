@@ -496,6 +496,25 @@ export default function Patients() {
                   ) : <strong>Non renseigné</strong>}
                 </div>
               </div>
+              <h4 className="patient-section-title">Antécédents documentés dans ce dossier</h4>
+              <div className="patient-summary-grid">
+                {([
+                  { key: 'medical', label: 'Antécédents médicaux déclarés' },
+                  { key: 'surgical', label: 'Antécédents chirurgicaux déclarés' },
+                  { key: 'family', label: 'Antécédents familiaux déclarés' },
+                ] as const).map(group => (
+                  <div className="patient-summary-item" key={group.key}>
+                    <span>{group.label}</span>
+                    {clinicalMemory.documentedHistory[group.key].length ? (
+                      <ul className="patient-medication-list">
+                        {clinicalMemory.documentedHistory[group.key].map((entry, index) => (
+                          <li key={index}>{entry}</li>
+                        ))}
+                      </ul>
+                    ) : <strong>Non renseigné</strong>}
+                  </div>
+                ))}
+              </div>
               <div className="patient-summary-item">
                 <span>Trois derniers diagnostics consignés dans les consultations (non revalidés)</span>
                 {clinicalMemory.documentedDiagnoses.length ? (

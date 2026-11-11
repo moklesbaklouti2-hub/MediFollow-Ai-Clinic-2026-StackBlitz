@@ -10,7 +10,31 @@ export type ClinicalMemoryPreview = {
   allergies: string[];
   declaredTreatments: string[];
   documentedDiagnoses: DocumentedDiagnosis[];
+  documentedHistory: {
+    medical: string[];
+    surgical: string[];
+    family: string[];
+  };
 };
+
+// Source-only formatting: unverified free-text dates are labelled as declared
+// rather than silently interpreted as verified chronology or medical facts.
+function describedHistoryEntries(value: unknown): string[] {
+  const entries: unknown[] = Array.isArray(value) ? value : [];
+  return entries.flatMap(entry => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return [];
+    const item = entry as Record<string, unknown>;
+    if (typeof item.label !== 'string' || !item.label.trim()) return [];
+    const label = item.label.trim();
+    const date = typeof item.date === 'string' ? item.date.trim() : '';
+    const details = typeof item.details === 'string' ? item.details.trim() : '';
+    return [[
+      label,
+      date ? 'Date déclarée : ' + date : '',
+      details ? 'Précision : ' + details : '',
+    ].filter(Boolean).join(' · ')];
+  });
+}
 
 export function buildClinicalMemory(
   patient: ClinicalMemoryPatient,
@@ -51,5 +75,11 @@ export function buildClinicalMemory(
     })
     .slice(0, 3);
 
-  return { allergies, declaredTreatments, documentedDiagnoses };
+  const documentedHistory = {
+    medical: describedHistoryEntries(patient.clinicalHistory?.medical),
+    surgical: describedHistoryEntries(patient.clinicalHistory?.surgical),
+    family: describedHistoryEntries(patient.clinicalHistory?.family),
+  };
+
+  return { allergies, declaredTreatments, documentedDiagnoses, documentedHistory };
 }

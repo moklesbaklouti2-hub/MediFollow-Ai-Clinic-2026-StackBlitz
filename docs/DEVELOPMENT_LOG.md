@@ -781,3 +781,10 @@
 - **Sécurité clinique :** les notes ne sont jamais transformées en diagnostics actifs ou recommandations ; « Non renseigné » ne signifie pas absence d'allergie ou de traitement. La sélection unique du patient de QW-033 et le filtrage strict par `patientId` empêchent de mélanger les dossiers ; aucune écriture ni requête fournisseur.
 - **Tests :** 11 vérifications synthétiques de provenance/tri, séparation des patients, champs absents/malformés et présence du composant ; intégrées au `test:patient-linkage` existant dans la CI.
 - **Validation manuelle :** F21 ajouté au protocole final. Ne pas annoncer cette vue comme une mémoire IA persistante ou une synthèse cliniquement validée : c'est un aperçu des données enregistrées.
+
+### 2026-11-11 — QW-036 : compléter Clinical Memory par les antécédents documentés
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte, sans fusion, déploiement, dépense ou données réelles.
+- **Fonction :** l'aperçu local de HELIOS Clinical Memory distingue les antécédents médicaux, chirurgicaux et familiaux saisis. Les libellés, précisions et dates sont transcrits comme informations déclarées, sans normalisation clinique ni inférence.
+- **Garde-fous :** les listes vides sont étiquetées « Non renseigné », jamais « aucun antécédent ». Les entrées d'import mal formées sont ignorées sans altérer la source ; lecture locale uniquement et dossier patient déjà vérifié unique.
+- **Tests fictifs :** dix vérifications dédiées (trois rubriques, dates libres, champs vides, formats invalides, immutabilité et contrat UI) ajoutées à `test:patient-linkage` exécuté en CI.
+- **Validation humaine :** scénario F21 existant enrichi pour la phase finale, non exécuté. La vue n'est ni une synthèse médicale vérifiée ni un moteur de décisions.
