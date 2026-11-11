@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 
 // All fixtures are fictional, without external calls.
@@ -91,6 +91,19 @@ assert.deepEqual(selectDueFollowUps(
 assert.deepEqual(selectDueFollowUps(restored, '2026-11-11').map(item => item.id),
   ['consultation-fictive-1']);
 
+const originalPlan = f('2026-11-11').followUp;
+const complete = completedFollowUpPlan(originalPlan);
+assert.deepEqual(complete, {
+  dueDate: '2026-11-11', objective: 'Contrôle fictif', status: 'completed',
+});
+assert.equal(originalPlan.status, 'planned', 'La validation ne doit pas modifier l’objet original.');
+assert.equal(completedFollowUpPlan(f('2026-11-11', 'completed').followUp), null);
+assert.equal(completedFollowUpPlan(f('2026-02-30').followUp), null);
+assert.equal(completedFollowUpPlan(undefined), null);
+assert.equal(completedFollowUpPlan({
+  dueDate: '2026-11-11', objective: 99 as unknown as string, status: 'planned',
+}), null);
+
 const consultationUI = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
 const dashboardUI = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
 assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjective, followUpCompleted)') &&
@@ -109,4 +122,16 @@ assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpTod
   consultationUI.includes('onClick={() => startEditing(item)}') &&
   consultationUI.includes('Dossier patient non relié — identité à confirmer'),
   'The worklist must order follow-ups, open confirmed records and flag unlinked identities.');
-console.log('PASS HELIOS Follow-up: date windows, clinician worklist, storage and UI, without data migration.');
+const completionCode = consultationUI.split('function completeFollowUp(')[1]?.split('function saveConsultation()')[0] ?? '';
+assert.ok(completionCode.includes('getConsultations().find(') &&
+  completionCode.includes('current.patientId !== item.patientId') &&
+  completionCode.includes('patients.some(') &&
+  completionCode.includes('completedFollowUpPlan(current.followUp)') &&
+  completionCode.includes('window.confirm(') &&
+  completionCode.includes('if (!updateConsultation('),
+  'La clôture rapide doit revérifier le patient, confirmer explicitement et vérifier l’enregistrement.');
+assert.ok(consultationUI.includes('onClick={() => completeFollowUp(item)}') &&
+  consultationUI.includes('Marquer le contrôle effectué') &&
+  consultationUI.includes('linkedPatient ? ('),
+  'L’action de clôture n’est offerte qu’aux dossiers patients confirmés.');
+console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');

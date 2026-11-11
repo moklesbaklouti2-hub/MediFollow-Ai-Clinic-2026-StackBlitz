@@ -41,7 +41,8 @@
 | QW-026 | S | Empêcher la suppression d'un article référencé par un mouvement ou une ordonnance | `5e33a6c` | [43067615083](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43067615083) : 11/11 réussis | VALIDÉ |
 | QW-027 | S | Préparer une validation finale unique et séparer le travail automatisable des tests utilisateur | `2bc52a2` | [43068444582](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43068444582) : 11/11 réussis | VALIDÉ |
 | QW-028 | M | HELIOS Follow-up : suivi saisi, enregistré et échéances sur le Dashboard | `c3d8005` | [43070138253](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43070138253) : 11/11 réussis | VALIDÉ |
-| QW-029 | S | HELIOS Follow-up : liste des contrôles à revoir, triée, sans confondre les patients | SHA à confirmer | Tests fictifs de tri, de calendrier et de liens patients + CI 11/11 | EN VALIDATION |
+| QW-029 | S | HELIOS Follow-up : liste des contrôles à revoir, triée, sans confondre les patients | `ec4c87c` | [43070798343](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43070798343) : 11/11 réussis | VALIDÉ |
+| QW-030 | S | HELIOS Follow-up : clôture confirmée et sécurisée d'un contrôle depuis la liste | SHA à confirmer | Tests d'état et contrats UI, CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

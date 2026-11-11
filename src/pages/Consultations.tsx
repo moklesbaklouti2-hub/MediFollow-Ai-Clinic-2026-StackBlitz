@@ -4,7 +4,8 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, completedFollowUpPlan } from '../clinical/followUp';
+import { getConsultations } from '../services/storage';
 
 
 const specialtyGroups = [
@@ -347,6 +348,32 @@ export default function Consultations({
     setFollowUpDate('');
     setFollowUpObjective('');
     setFollowUpCompleted(false);
+    setSaved(false);
+  }
+
+  function completeFollowUp(item: (typeof consultations)[number]) {
+    if (editingId === item.id) {
+      window.alert('Enregistrez ou annulez d’abord la modification de cette consultation.');
+      return;
+    }
+    // Re-read the current record before proposing the change. Never trust a
+    // stale list row or a patient name to establish clinical identity.
+    const current = getConsultations().find(record => record.id === item.id);
+    if (!current || current.patientId !== item.patientId ||
+        !patients.some(patient => patient.id === current.patientId)) {
+      window.alert('Impossible de confirmer le dossier patient. Vérifiez le lien avant tout changement.');
+      return;
+    }
+    const completedPlan = completedFollowUpPlan(current.followUp);
+    if (!completedPlan) {
+      window.alert('Ce plan de suivi n’est plus ouvert ou sa date est invalide. Actualisez la liste.');
+      return;
+    }
+    if (!window.confirm('Confirmer que ce contrôle de suivi a effectivement été réalisé ?')) return;
+    if (!updateConsultation(current.id, { followUp: completedPlan })) {
+      window.alert('Enregistrement non confirmé : le contrôle reste à vérifier dans la liste.');
+      return;
+    }
     setSaved(false);
   }
 
@@ -1151,11 +1178,18 @@ export default function Consultations({
                 <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
                 {linkedPatient ? (
-                  <button type="button" className="consultation-save"
-                    onClick={() => startEditing(item)}
-                    style={{ justifySelf: 'start', padding: '9px 13px' }}>
-                    Ouvrir ce plan de suivi
-                  </button>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button type="button" className="consultation-save"
+                      onClick={() => startEditing(item)}
+                      style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                      Ouvrir ce plan de suivi
+                    </button>
+                    <button type="button" className="consultation-save"
+                      onClick={() => completeFollowUp(item)}
+                      style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                      Marquer le contrôle effectué
+                    </button>
+                  </div>
                 ) : (
                   <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
                 )}

@@ -44,6 +44,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F17 | Windows | Tester interruption et reprise réseau, rafraîchissement navigateur, échec simulé de sauvegarde | Aucun faux message de succès ; données déjà sauvegardées retrouvées | ☐ |
 | F18 | Android/Windows, HTTPS fictif isolé si disponible | Tester connexion médecin, refus 401/403, expiration, déconnexion et retour d'onglet | Interface verrouillée en absence de session ; aucune requête clinique non authentifiée | ☐ |
 | F19 | Windows + Android | Vérifier lisibilité mode sombre, clavier, focus, tailles de texte et affichage des alertes | Contrastes lisibles, commandes accessibles et pas d'information coupée | ☐ |
+| F20 | Windows + Android | Programmer un contrôle HELIOS fictif, le retrouver sur le tableau de bord et la liste, puis le marquer effectué après confirmation ; tester aussi l’annulation | Échéance cohérente, dossier confirmé, aucune clôture sans confirmation, contrôle effectué retiré des échéances | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 
@@ -57,6 +58,6 @@ La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non 
 
 ## Décision de sortie
 
-**Ne pas déclarer « application validée en direct » tant que F01–F19 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
+**Ne pas déclarer « application validée en direct » tant que F01–F20 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
 
-À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F19, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
+À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F20, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.

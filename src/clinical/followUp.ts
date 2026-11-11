@@ -62,3 +62,12 @@ export function selectDueFollowUps(
       return aDate.localeCompare(bDate) || a.id.localeCompare(b.id);
     });
 }
+
+/** Explicit clinician completion, never called automatically by a date change. */
+export function completedFollowUpPlan(
+  plan: ConsultationFollowUp | undefined,
+): ConsultationFollowUp | null {
+  if (!plan || plan.status !== 'planned' || !isValidFollowUpDate(plan.dueDate) ||
+      typeof plan.objective !== 'string') return null;
+  return { ...plan, status: 'completed' };
+}

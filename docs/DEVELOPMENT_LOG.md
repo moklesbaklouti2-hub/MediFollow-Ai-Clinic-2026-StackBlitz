@@ -739,3 +739,10 @@
 - **Contrats :** statut terminé et date invalide exclus ; dates triées de façon déterministe, historique inchangé ; aucun rappel automatique envoyé au patient.
 - **Tests :** exemples fictifs de tri, homonymes non rapprochés, année civile, suivi terminé ; liaison aux véritables composants React vérifiée dans la CI existante.
 - **Limites :** aucun agenda externe ni confirmation de présence du patient. Tous les scénarios manuels sont reportés à la validation finale.
+
+### 2026-11-11 — QW-030 : validation explicite d'un suivi HELIOS
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 en brouillon, `main` intacte, sans déploiement ni données réelles.
+- **Fonction :** bouton « Marquer le contrôle effectué » dans la liste HELIOS, uniquement pour les consultations liées à un dossier patient présent. La consultation est relue depuis le stockage avant toute action, puis le médecin doit confirmer le contrôle ; un échec de sauvegarde déclenche un message d'erreur.
+- **Garde-fous :** aucun passage automatique à l'état terminé ; impossible si édition non sauvegardée en cours, dossier incertain, plan déjà terminé ou date invalide. Les données conservées ne sont pas mutées par le helper.
+- **Tests :** états ouverts/fermés/invalides, immutabilité, vérifications structurelles de confirmation, identité et persistance. Ajout du scénario humain F20 à `docs/FINAL_LIVE_VALIDATION_PLAN.md`, à exécuter uniquement à la phase finale.
+- **Limites :** ne remplace ni un rendez-vous réel ni une preuve d'exécution médicale ; authentification réelle et confidentialité fournisseurs encore bloquantes.
