@@ -37,7 +37,8 @@
 | QW-022 | S | Refuser les historiques de chat mal typés au lieu de les ignorer | `aa05e29` | [43063926576](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43063926576) : 11/11 réussis | VALIDÉ |
 | QW-023 | S | Refuser les messages mal formés à l'intérieur d'un historique de chat | `905e686` | [43064903608](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43064903608) : 11/11 réussis | VALIDÉ |
 | QW-024 | S | Ne jamais associer automatiquement un ancien document au premier patient homonyme | `0fbf120` | [43066257633](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43066257633) : 11/11 réussis | VALIDÉ |
-| QW-025 | S | Afficher sur le Dashboard le nombre de documents non reliés à un patient confirmé | SHA à confirmer | 10 documents fictifs signalés + vérifications, CI 11/11 | EN VALIDATION |
+| QW-025 | S | Afficher sur le Dashboard le nombre de documents non reliés à un patient confirmé | `ef6b280` | [43066907748](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43066907748) : 11/11 réussis | VALIDÉ |
+| QW-026 | S | Empêcher la suppression d'un article référencé par un mouvement ou une ordonnance | SHA à confirmer | 10 scénarios fictifs + contrat UI, CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

@@ -711,3 +711,10 @@
 - **Correctif :** `countUnlinkedClinicalRecords` compare les identifiants patients existants aux documents restitués par les vraies fonctions de stockage. Le Dashboard affiche une alerte avec le nombre de consultations et ordonnances non reliées, sans afficher de noms ni assigner automatiquement un patient. La vérification d'identité doit rester manuelle.
 - **Tests automatiques :** 10 documents anciens fictifs non reliés parmi 14 lectures, exemples d'identifiants inconnus et liste vide, et vérification de la présence de l'alerte accessible `role="alert"`. Intégration à `test:patient-linkage` et à la CI existante.
 - **Limites :** l'alerte ne répare ni ne migre les documents, ne remplace pas un rapprochement validé par le médecin ni une architecture de stockage médical sécurisé. Validation humaine réservée à la fin comme demandé.
+
+### 2026-11-11 — QW-026 : bloquer la suppression des articles d'inventaire référencés
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 brouillon, `main` intacte, aucun déploiement, dépenses ou données patients réelles.
+- **Défaut :** l'interface `Inventory` autorisait la suppression d'un article ayant des mouvements de stock ou présent dans une ordonnance, ce qui pouvait briser la traçabilité des délivrances et des retours.
+- **Correction :** `canDeleteInventoryItem` refuse les identifiants invalides, les articles liés à des mouvements historiques et ceux associés à une ordonnance (médication ou item). Les articles entièrement non référencés restent supprimables après confirmation. Aucun mouvement ni dossier modifié lors du refus.
+- **Tests :** dix scénarios fictifs, dont réception/délivrance, ordonnances anciennes et nouvelles, identifiants invalides, et un contrat vérifiant que le garde s'exécute avant `window.confirm` et `persist`. Tests intégrés à la suite existante d'inventaire exécutée en CI.
+- **Limite :** le lot ne fournit pas d'archivage ni de migration des anciennes traces ; conformité et contrôles Android restent à valider. Essais manuels regroupés à la fin.

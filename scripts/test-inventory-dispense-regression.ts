@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { canDeleteInventoryItem } from '../src/services/inventoryDeletionGuard.ts';
 import { dispenseInventoryItems, getInventoryData, returnDispensedStock, cancelDispensedPrescriptionStock } from '../src/services/storage.ts';
 import type { InventoryData, InventoryItem } from '../src/types/medical.ts';
 
@@ -448,5 +450,41 @@ for (const [name, invalidRequest] of invalidCancellationRequests) {
   unchanged(before, 'annulation ' + name);
   assertions += 3;
 }
+
+
+// QW-026 — jamais de suppression d'un lot déjà référencé par une ordonnance
+// ou un mouvement de stock, même si l'ordonnance n'a pas été délivrée.
+const inventoryDeletionCases: Array<{
+  name: string;
+  itemId: unknown;
+  movements: Array<{ itemId: string }>;
+  prescriptions: Array<{ medications?: Array<{ inventoryItemId?: string }>; items?: Array<{ inventoryItemId?: string }> }>;
+  allowed: boolean;
+}> = [
+  { name: 'lot neuf', itemId: 'lot-a', movements: [], prescriptions: [], allowed: true },
+  { name: 'autre lot seulement', itemId: 'lot-a', movements: [{ itemId: 'lot-b' }], prescriptions: [], allowed: true },
+  { name: 'réception', itemId: 'lot-a', movements: [{ itemId: 'lot-a' }], prescriptions: [], allowed: false },
+  { name: 'délivrance', itemId: 'lot-a', movements: [{ itemId: 'lot-a' }], prescriptions: [{ items: [] }], allowed: false },
+  { name: 'traitement ancien', itemId: 'lot-a', movements: [], prescriptions: [{ medications: [{ inventoryItemId: 'lot-a' }] }], allowed: false },
+  { name: 'nouvel item ordonnance', itemId: 'lot-a', movements: [], prescriptions: [{ items: [{ inventoryItemId: 'lot-a' }] }], allowed: false },
+  { name: 'ordonnance autre lot', itemId: 'lot-a', movements: [], prescriptions: [{ items: [{ inventoryItemId: 'lot-b' }] }], allowed: true },
+  { name: 'traitement non lié', itemId: 'lot-a', movements: [], prescriptions: [{ medications: [{ inventoryItemId: undefined }] }], allowed: true },
+  { name: 'identifiant vide', itemId: '', movements: [], prescriptions: [], allowed: false },
+  { name: 'identifiant numérique', itemId: 27, movements: [], prescriptions: [], allowed: false },
+];
+for (const scenario of inventoryDeletionCases) {
+  assert.equal(canDeleteInventoryItem(scenario.itemId, scenario.movements, scenario.prescriptions),
+    scenario.allowed, 'Traçabilité non protégée : ' + scenario.name);
+}
+const inventoryPage = readFileSync(new URL('../src/pages/Inventory.tsx', import.meta.url), 'utf8');
+const deleteStart = inventoryPage.indexOf('function deleteItem(item: InventoryItem)');
+const deleteEnd = inventoryPage.indexOf('function addItem(', deleteStart);
+assert.ok(deleteStart >= 0 && deleteEnd > deleteStart, 'Fonction de suppression introuvable.');
+const deleteCode = inventoryPage.slice(deleteStart, deleteEnd);
+assert.ok(deleteCode.includes('canDeleteInventoryItem(item.id, data.movements, getPrescriptions())') &&
+  deleteCode.indexOf('canDeleteInventoryItem(') < deleteCode.indexOf('window.confirm(') &&
+  deleteCode.indexOf('canDeleteInventoryItem(') < deleteCode.indexOf('persist('),
+  'Le refus de suppression doit précéder confirmation et persistance.');
+console.log('OK — QW-026 : 10 cas fictifs de suppression et contrat UI de protection de traçabilité.');
 
 console.log('OK — ' + assertions + ' assertions sur les replays et la délivrance atomique (données fictives).');
