@@ -456,3 +456,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` protège le triplet (molécule reconnue, fréquence, période jour/semaine) dans les formules directement adjacentes « N fois/prises par jour/semaine », avec dose facultative. Les autres formulations restent hors périmètre et la transcription originale prévaut en cas de divergence.
 - **Tests :** trois scénarios de permutation refusée et trois scénarios d'amélioration lexicale acceptée, données fictives, dans `scripts/test-medical-speech-regression.ts`. Aucune ordonnance ou donnée patient réelle modifiée.
 - **Validation :** vérifier compilation, tests et 11 jobs GitHub Actions du SHA final ; les essais microphone Android et l'évaluation clinique réelle restent nécessaires.
+
+### 2026-11-11 — Déclencheurs cliniques : corriger la normalisation des accents français
+- **Branche :** `audit-stabilisation-2026-11-10`, sans fusionner la PR #2, modifier `main` ni déployer.
+- **Défaut :** `src/clinical/clinicalTriggers.ts` remplaçait chaque accent Unicode décomposé par un espace après normalisation NFD ; « précordiale » devenait « pre cordiale », « prénatal » devenait « pre natal » et « obstétrique » devenait « obste trique ». Le système d'alertes locales pouvait donc manquer certains motifs explicitement renseignés.
+- **Correction :** supprimer les signes diacritiques plutôt que les remplacer par des espaces ; préserver les mots entiers et leurs frontières lors de la comparaison des motifs. Aucun diagnostic n'est posé automatiquement.
+- **Tests :** `server/ai/test-clinical-regression.ts` appelle maintenant `detectClinicalSuggestions` directement : douleur précordiale accentuée et décomposée, douleur thoracique témoin, suivi prénatal, consultation obstétrique, deux motifs sans fausse alerte. Sept assertions fonctionnelles nouvelles, données fictives uniquement.
+- **Validation :** vérifier le job clinique, la compilation et les 11 jobs GitHub Actions sur le SHA final, ainsi que le commentaire de relais. La pertinence clinique de toutes les alertes et les usages réels doivent encore être évalués.

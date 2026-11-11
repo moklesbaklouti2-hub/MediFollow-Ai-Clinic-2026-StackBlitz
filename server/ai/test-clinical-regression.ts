@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
 
 const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
 const clinical = source.split("app.post('/api/clinical/analyze'")[1]?.split("app.post('/api/")[0] ?? '';
@@ -36,5 +37,31 @@ for (const scenario of cases) {
   assert.ok(scenario.text.length > 20);
   console.log('SCÉNARIO FICTIF PRÊT —', scenario.name, scenario.danger ? '(alerte attendue)' : '');
 }
+// Tests fonctionnels du détecteur : ne jamais couper les mots accentués.
+const blankVitals = {
+  systolic: '', diastolic: '', heartRate: '', spo2: '',
+  temperature: '', respiratoryRate: '', weight: '', height: '', glycemia: '',
+};
+const detectMotif = (motif: string, specialty = 'Médecine de famille') =>
+  detectClinicalSuggestions({ specialty, motif, symptoms: '', history: '', vitals: { ...blankVitals } });
+for (const [motif, expectedId] of [
+  ['douleur précordiale récente', 'chest-pain'],
+  ['douleur pre\u0301cordiale récente', 'chest-pain'],
+  ['douleur thoracique récente', 'chest-pain'],
+  ['suivi prénatal', 'pregnancy'],
+  ['consultation obstétrique', 'pregnancy'],
+] as const) {
+  assert.ok(
+    detectMotif(motif).some(suggestion => suggestion.id === expectedId),
+    'Déclencheur clinique absent après normalisation du motif : ' + motif,
+  );
+}
+for (const motif of ['céphalée isolée', 'consultation dermatologique']) {
+  const suggestions = detectMotif(motif);
+  assert.ok(!suggestions.some(suggestion => ['chest-pain', 'pregnancy'].includes(suggestion.id)),
+    'Alerte thoracique ou obstétricale non justifiée : ' + motif);
+}
+console.log('OK — 7 tests de déclencheurs cliniques (accents, formes décomposées et contrôles négatifs).');
+
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');
