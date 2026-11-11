@@ -351,6 +351,11 @@ export default function Consultations({
     setExpressFeedback('Note transférée dans les champs existants. Relisez-la avant toute sauvegarde.');
   }
 
+  function resetExpressConsultation() {
+    if (!window.confirm('Effacer toute la consultation non enregistrée et recommencer avec un dossier vierge ?')) return;
+    cancelEditing();
+  }
+
   function startEditing(item: (typeof consultations)[number]) {
     setExpressDraft('');
     setExpressFeedback('');
@@ -513,8 +518,10 @@ export default function Consultations({
   const followUpToday = new Date().toLocaleDateString('sv-SE');
   const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
 
-  const selectedPatient = patients.find((patient) => patient.id === patientId);
-  const clinicalSuggestions = detectClinicalSuggestions({
+  const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
+  const selectedPatient = !expressPatientMismatch
+    ? patients.find((patient) => patient.id === patientId) : undefined;
+  const clinicalSuggestions = (expressPatientMismatch ? [] : detectClinicalSuggestions({
     patient: selectedPatient,
     specialty,
     motif,
@@ -522,12 +529,12 @@ export default function Consultations({
     history,
     targetedInterview,
     vitals,
-  })
+  }))
     .filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`))
     .sort((a, b) => (a.priority === 'high' ? -1 : 0) - (b.priority === 'high' ? -1 : 0));
 
   const clinicalReasoning = useClinicalReasoning({
-    enabled: smartCopilotEnabled,
+    enabled: smartCopilotEnabled && !expressPatientMismatch,
     patient: selectedPatient,
     specialty,
     motif,
@@ -543,13 +550,13 @@ export default function Consultations({
 
   useEffect(() => {
     onClinicalReasoningChange?.({
-      enabled: smartCopilotEnabled,
-      status: clinicalReasoning.status,
-      analysis: clinicalReasoning.analysis,
-      error: clinicalReasoning.error,
-      updatedAt: clinicalReasoning.updatedAt,
+      enabled: smartCopilotEnabled && !expressPatientMismatch,
+      status: expressPatientMismatch ? 'idle' : clinicalReasoning.status,
+      analysis: expressPatientMismatch ? null : clinicalReasoning.analysis,
+      error: expressPatientMismatch ? '' : clinicalReasoning.error,
+      updatedAt: expressPatientMismatch ? '' : clinicalReasoning.updatedAt,
     });
-  }, [smartCopilotEnabled, clinicalReasoning.status, clinicalReasoning.analysis, clinicalReasoning.error, clinicalReasoning.updatedAt, onClinicalReasoningChange]);
+  }, [smartCopilotEnabled, expressPatientMismatch, clinicalReasoning.status, clinicalReasoning.analysis, clinicalReasoning.error, clinicalReasoning.updatedAt, onClinicalReasoningChange]);
 
 
   return (
@@ -814,6 +821,21 @@ export default function Consultations({
             {expressOpen ? 'Fermer la saisie express' : 'Ouvrir la saisie express'}
           </button>
         </div>
+        {expressPatientId && (
+          <div style={{ display: 'grid', gap: 8 }}>
+            {expressPatientMismatch && (
+              <p role="alert" className="patient-hint">
+                Patient changé après saisie express : sauvegarde et analyse IA suspendues.
+                Reprenez le dossier initial ou réinitialisez entièrement la consultation non enregistrée.
+              </p>
+            )}
+            <button type="button" className="consultation-save" onClick={resetExpressConsultation}
+              style={{ justifySelf: 'start', background: 'transparent',
+                border: '1px solid var(--border,#dce4e8)', color: 'inherit' }}>
+              Réinitialiser la consultation non enregistrée
+            </button>
+          </div>
+        )}
         {expressOpen && (
           <div className="consultation-field">
             <label htmlFor="helios-express-draft">Note fictive à répartir dans les champs existants</label>
@@ -831,9 +853,6 @@ export default function Consultations({
               disabled={Boolean(editingId) || !expressDraft.trim()}>
               Préremplir les champs — sans enregistrer
             </button>
-            {expressPatientId && expressPatientId !== patientId && (
-              <p role="alert">Le patient a changé après préremplissage : sauvegarde bloquée pour éviter un mélange de dossiers.</p>
-            )}
             {expressFeedback && <p role="status" className="patient-hint">{expressFeedback}</p>}
           </div>
         )}

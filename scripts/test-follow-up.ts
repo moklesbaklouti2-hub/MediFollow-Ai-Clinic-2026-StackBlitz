@@ -207,4 +207,29 @@ assert.ok(consultationUI.includes('parseExpressDraft(expressDraft)') &&
   'Express UI must verify identity, avoid overwrite, and use existing manual save.');
 console.log('PASS QW-042: fictional labelled-note parsing, conflict and UI guard checks.');
 
+
+// QW-043 — a changed patient must not receive Express data through a save
+// or an automatic clinical-analysis call; an explicit confirmed full reset
+// restores the original blank-consultation workflow.
+const resetSource = consultationUI.split('function resetExpressConsultation()')[1]
+  ?.split('function startEditing(')[0] ?? '';
+assert.ok(resetSource.includes('window.confirm(') &&
+  resetSource.includes('cancelEditing();') &&
+  resetSource.indexOf('window.confirm(') < resetSource.indexOf('cancelEditing();'),
+  'Reset must explicitly confirm before clearing the unsaved consultation.');
+const safeExpressUi = consultationUI.split('HELIOS Consultation Express · saisie rapide')[1]
+  ?.split('Copilote clinique intelligent')[0] ?? '';
+assert.ok(safeExpressUi.includes('onClick={resetExpressConsultation}') &&
+  safeExpressUi.includes('Réinitialiser la consultation non enregistrée') &&
+  safeExpressUi.includes('expressPatientMismatch &&') &&
+  safeExpressUi.includes('role="alert"'),
+  'The reset and mismatch notice must be visible even when Express input is collapsed.');
+assert.ok(consultationUI.includes('enabled: smartCopilotEnabled && !expressPatientMismatch') &&
+  consultationUI.includes('expressPatientMismatch ? null : clinicalReasoning.analysis') &&
+  consultationUI.includes('expressPatientMismatch ? [] : detectClinicalSuggestions(') &&
+  consultationUI.includes('const selectedPatient = !expressPatientMismatch') &&
+  consultationUI.includes("if (expressPatientId && expressPatientId !== patientId)"),
+  'A patient mismatch must suppress both clinical suggestions and AI analysis, and block saving.');
+console.log('PASS QW-043: confirmed reset plus fail-closed AI, UI and save contracts.');
+
 console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');

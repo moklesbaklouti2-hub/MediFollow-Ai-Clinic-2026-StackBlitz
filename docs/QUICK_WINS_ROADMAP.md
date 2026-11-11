@@ -54,7 +54,8 @@
 | QW-039 | S | HELIOS Referral : aperçu documentaire de la dernière consultation datée, sans décision ni transmission | `6c88021` | [43080135951](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43080135951) : 11/11 réussis | VALIDÉ |
 | QW-040 | S | HELIOS Document Reader : texte fictif collé, aperçu local temporaire, sans analyse ni sauvegarde | `56fac16` | [43080614809](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43080614809) : 11/11 réussis | VALIDÉ |
 | QW-041 | S | HELIOS Medical Academy : répertoire de liens institutionnels sans synthèse clinique | `0fa50a0` | [43081138047](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43081138047) : 11/11 réussis | VALIDÉ |
-| QW-042 | S | HELIOS Consultation Express : répartir une note fictive strictement étiquetée vers le formulaire existant, sans sauvegarde auto | SHA à confirmer | Tests d'extraction, conflits, liaison UI et 11/11 CI requis | EN VALIDATION |
+| QW-042 | S | HELIOS Consultation Express : répartir une note fictive strictement étiquetée vers le formulaire existant, sans sauvegarde auto | `09774f5` | [43082144977](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43082144977) : 11/11 réussis | VALIDÉ |
+| QW-043 | S | Consultation Express : réinitialisation confirmée et désactivation IA lors d'un changement de patient | SHA à confirmer | Tests de garde et CI 11/11 requise | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
