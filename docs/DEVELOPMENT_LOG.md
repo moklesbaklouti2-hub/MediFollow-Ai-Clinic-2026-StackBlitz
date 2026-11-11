@@ -922,3 +922,8 @@
 - Compteur descriptif des dates invalides/absentes, des spécialités non consignées et des statuts d'ordonnance absents/inconnus du seul dossier sélectionné.
 - Aucun diagnostic, résultat ni validité d'ordonnance déduit de ces valeurs. Test synthétique de cinq événements, immutabilité et contrat UI. F40 à la phase finale.
 - **Statut :** préparé non validé, sans test d'exécution sur cette branche.
+
+### 2026-11-12 — QW-057 : indicateur de filtres actifs (préparation)
+- Affichage local du nombre de restrictions de vue (type, recherche, bornes de date, spécialité ou statut selon le type) sans compter la pagination comme un filtre.
+- Aucun dossier ni ordonnance modifié ; compteur purement descriptif, réinitialisé par les contrôles QW-055.
+- Contrat synthétique `node scripts/test-timeline-active-filter-contract.mjs` préparé ; compilation, exécution et essai UI fictif restent à effectuer dans Codespaces. **Non validé**.

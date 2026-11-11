@@ -107,6 +107,15 @@ export default function Patients() {
     : dateFilteredMedicalTimeline;
   const pagedMedicalTimeline = limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit);
   const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
+  // Display-only indicator: count active view restrictions, not hidden records.
+  const activeTimelineFilterCount = [
+    timelineFilter !== 'all',
+    timelineSearch.trim().length > 0,
+    timelineFromDate !== '',
+    timelineToDate !== '',
+    timelineFilter === 'consultation' && timelineSpecialtyFilter !== 'all',
+    timelineFilter === 'prescription' && prescriptionStatusFilter !== 'all',
+  ].filter(Boolean).length;
 
   const lastVisitByPatient = useMemo(() => {
     // Prototype-free map: imported patient IDs cannot shadow object keys.
@@ -728,6 +737,11 @@ export default function Patients() {
           </section>
 
           <h3 className="patient-section-title">Chronologie médicale ({pagedMedicalTimeline.length} affichés / {specialtyFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total)</h3>
+          <p className="patient-empty-history" aria-label="Filtres actifs de la chronologie">
+            {activeTimelineFilterCount === 0
+              ? 'Aucun filtre de recherche actif.'
+              : `${activeTimelineFilterCount} filtre(s) actif(s) sur la vue. Les documents originaux restent inchangés.`}
+          </p>
           {timelineDocumentation.total > 0 && (
             <p className="patient-empty-history" aria-label="Qualité documentaire de la chronologie">
               Données consignées à vérifier : {timelineDocumentation.datesUnspecified} date(s) non exploitable(s),
