@@ -9,6 +9,7 @@ import { compareRecentVitals } from '../src/clinical/trends.ts';
 import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
 import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
+import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -469,5 +470,46 @@ assert.ok(patientPageSource.includes('summarizeDocumentedSpecialties(selected.id
   patientPageSource.includes('Dernière date enregistrée :'),
   'Specialty group UI must show only documented visits with limits and provenance.');
 console.log('PASS QW-044: synthetic specialty grouping, isolation and UI checks.');
+
+
+// QW-045 — recorded-only activity counts. Exclude records with missing or
+// duplicated patient IDs; no diagnosis derivation or field mutations.
+const activityPatients = [{ id: 'a' }, { id: 'b' }, { id: 'dupe' }, { id: 'dupe' }];
+const activityVisits = [
+  { patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
+  { patientId: 'b', specialty: ' Cardiologie ', motif: 'Vertiges fictifs' },
+  { patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
+  { patientId: 'dupe', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
+  { patientId: 'absent', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
+  { patientId: 'b', specialty: '', motif: '  ' },
+];
+const activityOriginal = JSON.stringify(activityVisits);
+const activity = summarizeRecordedActivity(activityPatients, activityVisits);
+assert.equal(activity.included, 4);
+assert.equal(activity.excluded, 2);
+assert.deepEqual(activity.specialties, [
+  { label: 'Médecine de famille', count: 2 },
+  { label: 'Cardiologie', count: 1 },
+  { label: 'Non renseigné', count: 1 },
+]);
+assert.deepEqual(activity.motifs, [
+  { label: 'Consultation fictive', count: 2 },
+  { label: 'Non renseigné', count: 1 },
+  { label: 'Vertiges fictifs', count: 1 },
+]);
+assert.equal(JSON.stringify(activityVisits), activityOriginal);
+assert.deepEqual(summarizeRecordedActivity([], []), {
+  included: 0, excluded: 0, specialties: [], motifs: [],
+});
+assert.equal(summarizeRecordedActivity([], activityVisits).excluded, activityVisits.length);
+const dashboardActivitySource = readFileSync('src/pages/Dashboard.tsx', 'utf8');
+assert.ok(dashboardActivitySource.includes('summarizeRecordedActivity(clinicalPatients, clinicalConsultations)') &&
+  dashboardActivitySource.includes('HELIOS Activité — statistiques descriptives') &&
+  dashboardActivitySource.includes('data.clinicalActivity.excluded') &&
+  dashboardActivitySource.includes('group.items.slice(0, 5).map(') &&
+  dashboardActivitySource.includes('pas des diagnostics validés') &&
+  dashboardActivitySource.includes('Aucun envoi à une IA externe'),
+  'Dashboard must present linked-only, descriptive activity and exclusion notice.');
+console.log('PASS QW-045: verified-patient activity counts, malformed links and UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

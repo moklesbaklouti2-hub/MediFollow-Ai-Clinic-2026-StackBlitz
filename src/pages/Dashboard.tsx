@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
 import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
 import { summarizeFollowUps } from '../clinical/followUp';
+import { summarizeRecordedActivity, type ClinicalActivitySummary } from '../clinical/activityStats';
 import type { InventoryData } from '../types/medical';
 
 type DashboardProps = {
@@ -45,6 +46,7 @@ type DashboardData = {
   unlinkedConsultations: number;
   unlinkedPrescriptions: number;
   followUpConsultations: ReturnType<typeof summarizeFollowUps>;
+  clinicalActivity: ClinicalActivitySummary;
 };
 
 function readArray<T>(key: string): T[] {
@@ -63,11 +65,14 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   const consultations = readArray<ConsultationRecord>('medifollow-consultations');
   const prescriptions = readArray<PrescriptionRecord>('medifollow-prescriptions');
   // Use the same legacy-linkage rules as the patient services, not raw names.
-  const unlinked = countUnlinkedClinicalRecords(getPatients(), getConsultations(), getPrescriptions());
+  const clinicalPatients = getPatients();
+  const clinicalConsultations = getConsultations();
+  const unlinked = countUnlinkedClinicalRecords(clinicalPatients, clinicalConsultations, getPrescriptions());
   return {
     unlinkedConsultations: unlinked.consultations,
     unlinkedPrescriptions: unlinked.prescriptions,
-    followUpConsultations: summarizeFollowUps(getConsultations(), new Date().toLocaleDateString('sv-SE')),
+    followUpConsultations: summarizeFollowUps(clinicalConsultations, new Date().toLocaleDateString('sv-SE')),
+    clinicalActivity: summarizeRecordedActivity(clinicalPatients, clinicalConsultations),
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
     prescriptions,
@@ -354,6 +359,48 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             </p>
           </section>
         )}
+
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 18, display: 'grid', gap: 12 }}
+          aria-label="HELIOS Activité — statistiques descriptives">
+          <div className="mf-panel-heading">
+            <div>
+              <span className="mf-panel-overline">HELIOS ACTIVITÉ</span>
+              <h3>Consultations par spécialité et motif</h3>
+            </div>
+          </div>
+          <p style={{ margin: 0, fontSize: 12 }}>
+            Statistiques descriptives des informations saisies :
+            {data.clinicalActivity.included} consultation(s) avec dossier patient confirmé.
+            {data.clinicalActivity.excluded > 0 && (
+              <> {data.clinicalActivity.excluded} document(s) sans identité confirmée exclu(s) des calculs.</>
+            )}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12 }}>
+            {([
+              { title: 'Par spécialité', items: data.clinicalActivity.specialties },
+              { title: 'Par motif enregistré', items: data.clinicalActivity.motifs },
+            ] as const).map((group) => (
+              <div key={group.title} style={{ padding: 12, borderRadius: 10,
+                border: '1px solid var(--color-border)' }}>
+                <strong>{group.title}</strong>
+                {group.items.length === 0 ? <p>Aucune consultation reliée.</p> : (
+                  <ul style={{ margin: '8px 0 0', paddingLeft: 18, display: 'grid', gap: 6 }}>
+                    {group.items.slice(0, 5).map((item) => (
+                      <li key={item.label}>
+                        {item.label} : <strong>{item.count}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {group.items.length > 5 && <small>Cinq catégories les plus fréquentes affichées.</small>}
+              </div>
+            ))}
+          </div>
+          <p style={{ margin: 0, fontSize: 11 }}>
+            Ces chiffres représentent des saisies administratives, pas des diagnostics validés ni une prévalence médicale.
+            Les données non renseignées restent visibles comme telles. Aucun envoi à une IA externe.
+          </p>
+        </section>
 
         <section className="mf-panel" style={{ marginBottom: 18, padding: 20, display: 'grid', gap: 16 }}>
           <div className="mf-panel-heading">

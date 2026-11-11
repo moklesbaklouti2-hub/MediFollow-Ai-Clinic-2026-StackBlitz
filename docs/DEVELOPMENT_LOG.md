@@ -844,3 +844,10 @@
 - **Sécurité :** dossier patient confirmé unique (garde préexistante) puis vérification complémentaire de `patientId` dans le helper. Dates non analysables explicitement non renseignées ; aucune interprétation d'un diagnostic, statut de suivi ou protocole recommandé. Aucune écriture, aucun appel IA ni transfert.
 - **Tests :** données fictives multi-patients, regroupement déterministe, dates invalides, spécialité manquante, immutabilité et liaison de la vraie interface inclus dans `test:patient-linkage` de la CI.
 - **Validation humaine :** F28 préparé pour la fin, non exécuté. Parcours cliniques spécialisés (grossesse, diabète, gériatrie, etc.) et règles de soin restent des modules distincts à développer puis faire valider.
+
+### 2026-11-11 — QW-045 : HELIOS Activité, comptage des spécialités et motifs
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte, sans fusion, déploiement, dépense ni patient réel.
+- **Fonction :** affichage sur Dashboard des cinq catégories les plus fréquentes de spécialités de consultation et motifs effectivement saisis, avec nombres bruts ; compte inclus/exclus. Aucun modèle clinique, fréquence de maladies ou diagnostic calculé.
+- **Sécurité :** résumés uniquement à partir de consultations existantes avec `patientId` unique confirmé par `hasConfirmedPatientSelection`. Les dossiers manquants/dupliqués sont exclus et leur nombre signalé. Les libellés vides, malformés ou trop longs sont affichés comme « Non renseigné ». Aucun nom ni contenu patient envoyé à un fournisseur.
+- **Tests :** fixtures synthétiques avec documents liés, orphelins et identifiants dupliqués, catégories vides, tri, absence de mutation et contrat de la vraie interface ; réutilisation de `test:patient-linkage` en CI.
+- **Limites :** affichage top 5 uniquement, sans filtres temporels ni export ; statistiques descriptives locales non adaptées à une interprétation épidémiologique. Scénario humain F29 réservé à la phase finale.
