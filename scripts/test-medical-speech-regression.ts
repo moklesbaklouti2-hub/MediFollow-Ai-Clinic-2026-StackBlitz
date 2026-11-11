@@ -38,6 +38,19 @@ expectNoReplacement('un excédent budgétaire', 'exsudat amygdalien');
 expectNoReplacement('des adénopathies cervicales bilatérales', 'des adénopathies cervicales bilatérales');
 expectNoReplacement('odynophagie', 'dysphagie');
 expectNoReplacement('ex soudain départ', 'exsudat');
+// Un mot ORL dans la phrase suivante ou éloigné du mot suspect
+// ne constitue pas un indice suffisant de dictée « exsudat ».
+expectNoReplacement('Ex soudain. Examen des amygdales.', 'exsudat');
+expectNoReplacement('ex soudain accompagné de toux puis examen des amygdales.', 'exsudat');
+expectSuggestion('Présence d’un ex soudain sur les amygdales.', 'ex soudain', 'exsudat');
+const mixedFragment = 'Expression ex soudain rapportée. Présence d’un ex soudain amygdalien.';
+const mixedFragmentSuggestion = suggestions(mixedFragment).find(item =>
+  item.original === 'ex soudain' && item.replacement === 'exsudat'
+);
+assert.ok(mixedFragmentSuggestion, 'Occurrence ORL de ex soudain non repérée.');
+assert.equal(runtime.applyMedicalSpeechCorrection(mixedFragment, mixedFragmentSuggestion!),
+  'Expression ex soudain rapportée. Présence d’un exsudat amygdalien.');
+assertions += 2;
 
 // « excellent » ne doit pas être corrigé parce que la même dictée contient
 // une autre phrase ORL. Seule l'occurrence clairement localisée est suggérée.

@@ -548,3 +548,10 @@
 - **Livrable :** `docs/QUICK_WINS_ROADMAP.md`, liste des deux corrections distinctes déjà confirmées par onze jobs CI chacune, des petits lots à privilégier, des prérequis Android et des travaux de sécurité complexes différés.
 - **Objectif :** ne pas répéter un lot déjà validé, choisir d'abord un lot simple vérifiable, conserver le SHA exact et visualiser la productivité.
 - **Limites :** planification documentaire uniquement ; aucune exécution automatique en arrière-plan et aucune autorisation de données réelles.
+
+### 2026-11-11 — QW-003 : proposition vocale « ex soudain » limitée à son contexte ORL
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 en brouillon, aucune fusion sur `main`, aucun déploiement ou donnée réelle.
+- **Défaut nouveau :** la proximité d'un site anatomique dans la phrase suivante pouvait suggérer « exsudat » pour un « ex soudain » non médical. Après confirmation, la substitution pouvait également modifier une occurrence identique dans une autre phrase.
+- **Correctif :** `src/services/medicalSpeech.ts` limite la suggestion à un site ORL situé juste après l'occurrence, dans la même proposition, et vérifie ce critère pour chaque remplacement approuvé.
+- **Tests fictifs :** `scripts/test-medical-speech-regression.ts` ajoute 2 contrôles négatifs de contexte, un contrôle positif « sur les amygdales » et 2 assertions sur une note mixte (5 nouveaux contrôles).
+- **Limites :** suggestion uniquement, sans correction automatique ; aucun test de microphone Android ni évaluation clinique réelle. Le SHA final et les 11 jobs GitHub Actions doivent être vérifiés.

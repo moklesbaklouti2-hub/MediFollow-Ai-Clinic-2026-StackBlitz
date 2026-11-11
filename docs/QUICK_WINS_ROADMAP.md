@@ -16,6 +16,7 @@
 | --- | --- | --- | --- | --- | --- |
 | QW-001 | S | Éviter le rappel d'histoire lorsque l'interrogatoire ciblé contient des réponses | `7d5b656` | [43029297289](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43029297289) : 11/11 réussis | VALIDÉ |
 | QW-002 | S | Interpréter la tension au format numérique avec `mmHg` / `mm Hg` | `cd920dc` | [43029745419](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43029745419) : 11/11 réussis | VALIDÉ |
+| QW-003 | S | Limiter « ex soudain » à l'occurrence ORL et préserver les autres phrases | SHA du lot à vérifier | Contrôle des 11 jobs requis sur HEAD | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
@@ -23,8 +24,7 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 
 | Priorité | ID | Taille estimative | Objectif précis | Critère de clôture |
 | --- | --- | --- | --- | --- |
-| 1 | QW-003 | S | Vérifier et réduire les faux positifs de suggestion du dictionnaire médical vocal, sans substitution automatique | Nouveaux cas fictifs ciblés + CI verte |
-| 2 | QW-004 | S | Vérifier les formulaires de consultation pour les rappels redondants restants, hors QW-001 | Nouveau défaut reproduit puis test de régression |
+| 1 | QW-004 | S | Vérifier les formulaires de consultation pour les rappels redondants restants, hors QW-001 | Nouveau défaut reproduit puis test de régression |
 | 3 | QW-005 | M | Contrôler l'accessibilité et le parcours de lecture vocale ponctuelle | UI fonctionnelle, tests et accord explicite pour données sensibles |
 | 4 | QW-006 | M — intervention utilisateur | Tester permissions microphone, reprise et interruption sur Chrome Android | Essais manuels documentés avec données fictives |
 | 5 | QW-007 | L — bloquant production | Revoir les contrôles d'authentification/autorisation des vraies routes cliniques et l'exposition réseau | Tests d'intégration 401/403 réels + revue de sécurité |

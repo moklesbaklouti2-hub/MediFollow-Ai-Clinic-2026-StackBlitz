@@ -157,6 +157,16 @@ function hasExsudatContextAt(value: string, index: number, length: number): bool
 }
 
 // Certains moteurs vocaux découpent « exsudat » en « ex soudain ».
+// Le site anatomique doit immédiatement suivre la même occurrence et
+// rester dans la même proposition, sans s'appuyer sur une phrase voisine.
+function hasFragmentedExsudatContextAt(value: string, index: number, length: number): boolean {
+  const following = value.slice(index + length);
+  const boundary = following.search(/[.!?;\n]/u);
+  const local = normalizeSpeechCandidate(following.slice(
+    0, boundary < 0 ? 80 : Math.min(80, boundary),
+  ));
+  return /^\s*(?:(?:amygdalien|amygdalienne|amygdales?|tonsilles?|pharynge|pharynx)\b|(?:sur|dans)\s+(?:(?:les?|des?|la)\s+)?(?:amygdales?|tonsilles?|pharynx|gorge)\b|au niveau (?:de|des|du)\s+(?:amygdales?|tonsilles?|pharynx|gorge)\b)/u.test(local);
+}
 // Une suggestion est affichée, jamais appliquée sans confirmation du médecin.
 const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: string }> = [
   { pattern: /\bex\s+soudain\b/giu, replacement: 'exsudat' },
@@ -190,10 +200,9 @@ export function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrec
   for (const { pattern, replacement } of fragmentedMedicalSpeechCorrections) {
     for (const match of value.matchAll(pattern)) {
       const original = match[0];
-      // Éviter de transformer l'expression française « ex soudain » hors
-      // contexte ORL : exiger un site anatomique adjacent.
-      const nearby = normalizeSpeechCandidate(value.slice(match.index ?? 0, (match.index ?? 0) + original.length + 35));
-      if (!/\b(amygdalien|amygdalienne|amygdales|tonsilles|pharynge|pharynx)\b/u.test(nearby)) continue;
+      // Ne pas récupérer un mot ORL d'une autre phrase ni d'un contexte
+      // plus éloigné que l'occurrence suspecte.
+      if (!hasFragmentedExsudatContextAt(value, match.index ?? 0, original.length)) continue;
       if (!found.has(normalizeSpeechCandidate(original))) {
         found.set(normalizeSpeechCandidate(original), { original, replacement });
       }
@@ -236,6 +245,10 @@ export function applyMedicalSpeechCorrection(value: string, correction: MedicalS
     const phrasePattern = new RegExp('(?<![\\p{L}])' + escaped + '(?![\\p{L}])', 'giu');
     return value.replace(phrasePattern, (phrase, offset: number) => {
       if (normalizeSpeechCandidate(phrase).replace(/\s+/g, ' ') !== target.replace(/\s+/g, ' ')) return phrase;
+      // Une validation d'un « ex soudain » clairement ORL ne doit pas
+      // corriger les occurrences ordinaires identiques ailleurs dans la note.
+      if (target === 'ex soudain' && correction.replacement === 'exsudat' &&
+          !hasFragmentedExsudatContextAt(value, offset, phrase.length)) return phrase;
       const before = value.slice(0, offset).trimEnd();
       const startsSentence = before.length === 0 || /[.!?]\s*$/.test(before);
       return startsSentence && phrase[0] === phrase[0].toLocaleUpperCase('fr')
