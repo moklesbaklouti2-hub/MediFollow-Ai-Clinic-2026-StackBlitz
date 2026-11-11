@@ -306,7 +306,11 @@ function criticalSpeechTokens(value: string): string {
   return JSON.stringify({ numbers, measuredValues, medicationDoses, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
-// Conserver tous les termes médicaux déjà reconnus dans la première
+// Conserver les occurrences de chaque terme médical reconnu dans la
+// première hypothèse, y compris les expressions composées. Un simple
+// contrôle de présence permettrait de supprimer une mention répétée.
+const medicalSpeechProtectedPatterns = Array.from(medicalSpeechNormalizedTerms, term => {
+  const escaped = term.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\// Conserver tous les termes médicaux déjà reconnus dans la première
 // hypothèse vocale. Une alternative mieux notée ne doit pas effacer un
 // symptôme ou remplacer un diagnostic déjà lisible.
 // La vérification inclut aussi les expressions composées du dictionnaire.
@@ -321,6 +325,18 @@ function preservesRecognizedMedicalTerms(initial: string, alternative: string): 
   return medicalSpeechProtectedPatterns.every(pattern =>
     !pattern.test(original) || pattern.test(proposed)
   );
+}');
+  return new RegExp('(^|[^\\p{L}])' + escaped + '(?=$|[^\\p{L}])', 'gu');
+});
+
+function preservesRecognizedMedicalTerms(initial: string, alternative: string): boolean {
+  const original = normalizeSpeechCandidate(initial);
+  const proposed = normalizeSpeechCandidate(alternative);
+  return medicalSpeechProtectedPatterns.every(pattern => {
+    const initialCount = Array.from(original.matchAll(pattern)).length;
+    if (initialCount === 0) return true;
+    return Array.from(proposed.matchAll(pattern)).length >= initialCount;
+  });
 }
 
 // Conserver la cible médicale COMPLETE après une négation.

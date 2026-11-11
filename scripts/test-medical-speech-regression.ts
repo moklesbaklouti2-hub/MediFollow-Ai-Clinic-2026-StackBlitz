@@ -294,6 +294,37 @@ for (const [initial, alternative] of missingMedicalTerms) {
   }), initial, 'Terme médical déjà reconnu supprimé ou remplacé : ' + alternative);
   assertions++;
 }
+// Une mention clinique répétée n'est pas préservée par sa seule présence.
+// Les alternatives riches en vocabulaire ne doivent pas en faire disparaître
+// une occurrence, même si les deux phrases restent sans chiffres ni négations.
+const lostRepeatedTerms = [
+  ['toux et toux avec disney', 'toux avec dyspnée et exsudat'],
+  ['insuffisance cardiaque, insuffisance cardiaque avec disney', 'insuffisance cardiaque avec dyspnée et exsudat'],
+  ['douleur thoracique et douleur thoracique avec disney', 'douleur thoracique avec dyspnée et exsudat'],
+];
+for (const [initial, unsafe] of lostRepeatedTerms) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: unsafe },
+  }), initial, 'Terme médical répété supprimé : ' + unsafe);
+  assertions++;
+}
+// Une alternative plus précise conserve le droit d'enrichir le texte tant
+// que toutes les occurrences reconnues et leur nombre sont préservés.
+const safeRepeatedTerms = [
+  ['toux et toux avec disney', 'toux et toux avec dyspnée'],
+  ['insuffisance cardiaque, insuffisance cardiaque avec disney', 'insuffisance cardiaque, insuffisance cardiaque avec dyspnée'],
+];
+for (const [initial, corrected] of safeRepeatedTerms) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: corrected },
+  }), corrected, 'Alternative avec occurrences intactes refusée : ' + corrected);
+  assertions++;
+}
+
 // La correction d'une erreur non médicale, elle, doit rester possible.
 for (const [initial, corrected] of [
   ['toux avec disney', 'toux avec dyspnée'],

@@ -421,3 +421,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` préserve la séquence des triplets (nom, quantité, unité) quand une des quatre molécules explicitement listées est suivie d'une dose. L'identification se limite à ces molécules reconnues par le dictionnaire ; aucune règle universelle de prescription n'est revendiquée.
 - **Tests :** trois inversions de doses refusées et une amélioration lexicale sûre acceptée dans `scripts/test-medical-speech-regression.ts` avec données fictives. Aucun traitement ni donnée patient modifiés ; les propositions restent sous contrôle médical.
 - **Validation attendue :** vérifier le workflow GitHub Actions pour le commit atomique et sa couleur calculée ; absence de tests microphone Android, de validation clinique en conditions réelles et de déploiement.
+
+### 2026-11-11 — HELIOS : préserver le nombre de mentions médicales dictées
+- **Branche :** `audit-stabilisation-2026-11-10`, sans toucher à `main`, sans fusion ni déploiement.
+- **Défaut :** le classement des hypothèses vocales vérifiait seulement la présence d'un terme clinique. Deux occurrences de « toux », « insuffisance cardiaque » ou « douleur thoracique » pouvaient devenir une seule occurrence, même quand une alternative semblait lexicalement plus riche.
+- **Correctif :** `src/services/medicalSpeech.ts` compare le nombre d'occurrences de chaque terme médical déjà reconnu, y compris les expressions du dictionnaire. Une alternative reste admissible si elle conserve toutes les occurrences ; aucune donnée clinique n'est générée automatiquement.
+- **Tests :** trois régressions négatives et deux positives sur données fictives dans `scripts/test-medical-speech-regression.ts`.
+- **Validation :** vérifier la compilation, les tests et la couleur réelle de la CI du commit. La dictée vocale sur Android et la validation clinique en conditions réelles ne sont pas couvertes.
