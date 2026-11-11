@@ -133,7 +133,7 @@ for (const targetedInterview of [
   assert.ok(!result.some(s => s.id === 'missing-symptom-history'),
     'Une réponse ciblée déjà documentée ne doit pas redemander la même histoire.');
 }
-for (const targetedInterview of ['', '   ', '\\t']) {
+for (const targetedInterview of ['', '   ', '\t']) {
   const result = detectClinicalSuggestions({
     specialty: 'Médecine de famille', motif: 'Toux', symptoms: '',
     history: '', targetedInterview, vitals: { ...blankVitals },
