@@ -542,3 +542,9 @@
 - **Correction :** `src/clinical/clinicalTriggers.ts` accepte les chiffres avec virgule ou point, suivis facultativement de `mmHg` ou `mm Hg` ; les textes non entièrement numériques et les valeurs combinées comme « 140/90 » dans un seul champ ne sont pas interprétés.
 - **Tests :** huit cas fictifs ajoutés à `server/ai/test-clinical-regression.ts` : seuils avec unités, décimales, valeurs sous seuil, formats invalides et champs vides.
 - **Limites :** alerte indicative sur un seuil déjà existant, pas de diagnostic automatisé. Tests de compilation et 11 jobs CI à confirmer sur ce SHA, puis essais cliniques réels nécessaires.
+
+### 2026-11-11 — Coordination : tableau de productivité et lots sans doublons
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 conservée en brouillon ; aucun changement de `main` ni déploiement.
+- **Livrable :** `docs/QUICK_WINS_ROADMAP.md`, liste des deux corrections distinctes déjà confirmées par onze jobs CI chacune, des petits lots à privilégier, des prérequis Android et des travaux de sécurité complexes différés.
+- **Objectif :** ne pas répéter un lot déjà validé, choisir d'abord un lot simple vérifiable, conserver le SHA exact et visualiser la productivité.
+- **Limites :** planification documentaire uniquement ; aucune exécution automatique en arrière-plan et aucune autorisation de données réelles.
