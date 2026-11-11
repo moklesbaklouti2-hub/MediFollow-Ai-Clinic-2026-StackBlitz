@@ -138,6 +138,38 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'SpO₂ 97 % avec dyspnée');
 assertions++;
 
+// Deux doses peuvent conserver les mêmes valeurs, unités et molécules,
+// mais être attribuées au mauvais traitement par une alternative vocale.
+const swappedMedicationDoses = [
+  [
+    'paracétamol 500 mg et amoxicilline 1000 mg avec disney',
+    'amoxicilline 500 mg et paracétamol 1000 mg avec dyspnée',
+  ],
+  [
+    'amoxicilline 500 mg et ibuprofène 200 mg avec disney',
+    'ibuprofène 500 mg et amoxicilline 200 mg avec dyspnée',
+  ],
+  [
+    'paracétamol 500 mg et acide clavulanique 125 mg avec disney',
+    'acide clavulanique 500 mg et paracétamol 125 mg avec dyspnée',
+  ],
+];
+for (const [initial, swapped] of swappedMedicationDoses) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: swapped },
+  }), initial, 'Dose attribuée au mauvais médicament : ' + swapped);
+  assertions++;
+}
+// Les fautes de vocabulaire corrigées n'altèrent pas les doses prescrites.
+assert.equal(runtime.chooseMedicalSpeechAlternative({
+  length: 2,
+  0: { transcript: 'paracétamol 500 mg et amoxicilline 1000 mg avec disney' },
+  1: { transcript: 'paracétamol 500 mg et amoxicilline 1000 mg avec dyspnée' },
+}), 'paracétamol 500 mg et amoxicilline 1000 mg avec dyspnée');
+assertions++;
+
 // La conservation de la liste de nombres et des unités n'assure pas
 // qu'un chiffre reste associé à la bonne mesure clinique.
 const reassignedClinicalMeasurements = [

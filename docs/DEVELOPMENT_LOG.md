@@ -414,3 +414,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` conserve les associations (libellé clinique reconnu, valeur numérique) pour SpO₂, saturation, glycémie, température, pression systolique/diastolique, fréquence cardiaque et pouls. Une alternative divergente conserve la transcription initiale ; aucune valeur n'est recalculée.
 - **Tests :** `scripts/test-medical-speech-regression.ts` ajoute trois régressions de permutation de mesures et un contrôle positif de meilleure dictée, sur cas fictifs uniquement.
 - **Validation :** compilation et tests GitHub Actions à vérifier sur le nouveau SHA, et publication du commentaire de relais seulement après confirmation réelle des jobs. Aucun essai de microphone Chrome Android ni validation clinique en conditions réelles.
+
+### 2026-11-11 — HELIOS : préserver les associations médicament–dose–unité en dictée
+- **Branche :** `audit-stabilisation-2026-11-10` ; `main` inchangée, aucune fusion ni déploiement.
+- **Risque :** les valeurs numériques, unités et noms de médicaments peuvent être conservés tout en échangeant les doses entre molécules dans une alternative vocale mieux notée (paracétamol/amoxicilline, amoxicilline/ibuprofène, paracétamol/acide clavulanique).
+- **Correctif :** `src/services/medicalSpeech.ts` préserve la séquence des triplets (nom, quantité, unité) quand une des quatre molécules explicitement listées est suivie d'une dose. L'identification se limite à ces molécules reconnues par le dictionnaire ; aucune règle universelle de prescription n'est revendiquée.
+- **Tests :** trois inversions de doses refusées et une amélioration lexicale sûre acceptée dans `scripts/test-medical-speech-regression.ts` avec données fictives. Aucun traitement ni donnée patient modifiés ; les propositions restent sous contrôle médical.
+- **Validation attendue :** vérifier le workflow GitHub Actions pour le commit atomique et sa couleur calculée ; absence de tests microphone Android, de validation clinique en conditions réelles et de déploiement.
