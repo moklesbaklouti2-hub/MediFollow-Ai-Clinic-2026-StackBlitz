@@ -338,12 +338,18 @@ export function dispenseInventoryItems(input: {
   );
   if (existingDispense) return { success: true, alreadyDispensed: true };
 
-  const requested = input.items.filter(
-    (line) => line.inventoryItemId && Number.isFinite(line.quantity) && line.quantity > 0
-  );
-  if (requested.length === 0) {
+  // Une seule ligne invalide bloque toute la délivrance : ne jamais déduire
+  // silencieusement les autres articles d'une demande partiellement erronée.
+  if (!Array.isArray(input.items) || input.items.length === 0) {
     return { success: false, error: 'Aucun article de stock valide à délivrer.' };
   }
+  if (input.items.some((line) =>
+    !line || typeof line.inventoryItemId !== 'string' || !line.inventoryItemId.trim() ||
+    typeof line.quantity !== 'number' || !Number.isFinite(line.quantity) || line.quantity <= 0
+  )) {
+    return { success: false, error: 'Délivrance refusée : identifiant ou quantité invalide pour un article. Aucun stock modifié.' };
+  }
+  const requested = input.items;
 
   const currentDate = new Date();
   const today = [

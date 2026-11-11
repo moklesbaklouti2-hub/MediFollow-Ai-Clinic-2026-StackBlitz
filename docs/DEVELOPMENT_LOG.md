@@ -491,3 +491,11 @@
 - **Correctif :** `src/services/clinicalRequestGuard.ts` exige désormais la concordance entre instantané clinique initial et instantané courant, ainsi que le maintien de l'activation. `src/hooks/useClinicalReasoning.ts` invalide, annule et vide les réponses en cours sur modification du contexte ; les contrôles sont répétés juste après lecture de la réponse et dans le bloc d'erreur.
 - **Tests :** `server/ai/test-clinical-regression.ts` passe à 13 assertions de garde, d'annulation et d'intégration du hook, incluant une modification de l'histoire fictive pendant la requête et une désactivation du copilote.
 - **Limites :** tests hors ligne et CI à confirmer sur le commit exact ; aucun test réseau Android, validation clinique, donnée patient réelle ou déploiement.
+
+### 2026-11-11 — Inventaire : refuser intégralement une délivrance avec une ligne invalide
+- **Branche :** `audit-stabilisation-2026-11-10` ; aucune fusion, modification de `main`, donnée réelle ni déploiement.
+- **Problème :** `dispenseInventoryItems` filtrait les lignes invalides sans bloquer les autres, permettant une déduction partielle de stock avec un succès apparent.
+- **Correction :** la délivrance est rejetée entièrement si une seule ligne manque d'identifiant ou comporte une quantité non numérique, nulle, négative ou non finie. Une validation réussie conserve l'allocation par lots FEFO et la détection des doubles délivrances. Aucun mouvement n'est enregistré en cas d'erreur de validation.
+- **Régression :** `scripts/test-inventory-dispense-regression.ts` exécute 47 assertions sur le service réel, avec stockage navigateur simulé : onze lignes invalides, demandes vide/insuffisante, allocation entre lots, traçabilité et idempotence.
+- **CI :** commande `npm run test:inventory-dispense` intégrée aux tests hors ligne et au job existant « Tests / clinique », sans création de job supplémentaire.
+- **Limites :** tests fictifs hors ligne, essais Android, revue des flux de stock et contrôle clinique réel encore nécessaires.

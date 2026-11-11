@@ -62,6 +62,9 @@ jobs:
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Executer les tests fictifs
         run: npm run ${{ matrix.command }}
+      - name: Verifier delivrance de stock atomique (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:inventory-dispense
 
   coordination:
     name: Verifier le registre des modules
