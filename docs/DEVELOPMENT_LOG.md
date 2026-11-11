@@ -585,3 +585,5 @@
 - **Correctif :** `OrbAssistant.tsx` suit l'ouverture/fermeture via un ref synchronisé immédiatement, capture la génération vocale au départ des requêtes et refuse toute lecture tardive si le panneau est fermé ou si la génération a été invalidée par un arrêt/une fermeture. Les lectures ponctuelles explicites restent disponibles.
 - **Tests :** six vérifications de contrat du composant réel dans `scripts/test-medical-speech-regression.ts` ; pas de simulateur Chrome ou Android, ni de données patients réelles.
 - **Validation :** CI GitHub Actions à vérifier (11 jobs, commit exact) ; test fonctionnel sur Android à réaliser dans QW-006B.
+
+- **Réparation du test QW-006C avant validation :** le premier run de `12fc188` a signalé une assertion de contrat obsolète (la condition de lecture manuelle est restée identique mais l'instruction `if` est désormais précédée du contrôle de panneau). L'assertion recherche la condition fonctionnelle sans dépendre de sa position. Le code produit n'est pas modifié ; réexécuter les 11 jobs sur ce nouveau SHA, ignorer le run rouge antérieur.

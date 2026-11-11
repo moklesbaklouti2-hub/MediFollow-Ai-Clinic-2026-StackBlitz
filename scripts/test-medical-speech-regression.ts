@@ -607,7 +607,7 @@ assert.ok(orbSource.includes('if (!window.confirm(') &&
   orbSource.includes('informations confidentielles'),
   'La lecture ponctuelle doit demander une confirmation explicite de confidentialité.');
 assertions++;
-assert.ok(orbSource.includes('if ((!manual && !voiceRepliesRef.current)') &&
+assert.ok(orbSource.includes('(!manual && !voiceRepliesRef.current)') &&
   orbSource.includes('speakReply(reply, true);'),
   'La lecture ponctuelle doit fonctionner sans activer les réponses automatiques.');
 assertions++;
