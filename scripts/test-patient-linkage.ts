@@ -12,6 +12,7 @@ import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathway
 import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../src/clinical/prescriptionTimeline.ts';
+import { filterRecordedEvents } from '../src/clinical/timelineFilter.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -608,5 +609,26 @@ assert.ok(patientPageSource.includes('Statut documentaire :') &&
   patientPageSource.includes('documentedSupplementalOrders(entry.prescription)'),
   'Patient timeline must label prescription status without hiding historical orders.');
 console.log('PASS QW-048: synthetic cancelled/draft/dispensed prescription statuses and timeline contract.');
+
+// QW-049 — Patient timeline filters do not mutate or reorder dated records.
+const timelineFixture = [
+  { id: 'c2', type: 'consultation' as const },
+  { id: 'p1', type: 'prescription' as const },
+  { id: 'c1', type: 'consultation' as const },
+];
+const timelineBefore = JSON.stringify(timelineFixture);
+assert.deepEqual(filterRecordedEvents(timelineFixture, 'all').map(item => item.id), ['c2', 'p1', 'c1']);
+assert.deepEqual(filterRecordedEvents(timelineFixture, 'consultation').map(item => item.id), ['c2', 'c1']);
+assert.deepEqual(filterRecordedEvents(timelineFixture, 'prescription').map(item => item.id), ['p1']);
+assert.deepEqual(filterRecordedEvents([], 'prescription'), []);
+assert.equal(JSON.stringify(timelineFixture), timelineBefore, 'Filtering must never modify clinical records.');
+assert.ok(patientPageSource.includes('const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter)') &&
+  patientPageSource.includes('visibleMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('id="patient-timeline-filter"') &&
+  patientPageSource.includes('Consultations uniquement') &&
+  patientPageSource.includes('Ordonnances uniquement') &&
+  patientPageSource.includes('Aucun événement de ce type enregistré pour ce patient.'),
+  'Patient view must offer read-only filters with accurate empty states.');
+console.log('PASS QW-049: synthetic medical timeline event filters and patient UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

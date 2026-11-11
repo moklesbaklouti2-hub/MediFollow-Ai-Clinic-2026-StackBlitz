@@ -876,3 +876,8 @@
 - **Modification :** affichage informatif du statut documentaire avec distinction « Annulée — ne pas considérer comme active » et « Brouillon — non validée » ; statut inconnu signalé et jamais interprété comme actif.
 - **Protection :** lecture seule du statut déjà enregistré ; aucun changement de médicament, ordonnance ou stock ; aucune confirmation automatique d'une délivrance réelle.
 - **Validation :** fixtures fictives de tous les statuts, ancien format et données malformées, contrat de la page Patients ; F32 réservé à la phase humaine finale. CI V2 11/11 à confirmer sur le commit final.
+
+### 2026-11-11 — QW-049 : filtre local de la chronologie (préparé, non validé)
+- **Préparation :** commit Git indépendant construit sur QW-048 et non poussé sur la branche d'audit tant que la CI exacte de QW-048 n'est pas VERT 11/11.
+- **Fonction :** sélection de tous les événements, des consultations seulement, ou des ordonnances seulement dans la chronologie du patient déjà sélectionné ; affiche le nombre visible et un état vide informatif.
+- **Garanties :** fonction pure conservant l'ordre chronologique et les données originales ; aucune suppression, aucun appel IA, aucun effet sur les stocks, aucun chargement de dossier ambigu ; exercices synthétiques et contrat UI à vérifier. F33 à la phase finale.
