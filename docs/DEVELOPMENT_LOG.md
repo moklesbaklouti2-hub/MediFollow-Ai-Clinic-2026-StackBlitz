@@ -837,3 +837,10 @@
 - **Correction :** en cas de patient différent, cacher les suggestions locales, suspendre le raisonnement IA et transmettre une analyse vide à l'Orb ; la sauvegarde reste refusée. Ajout d'un bouton toujours visible « Réinitialiser la consultation non enregistrée » : confirmation requise avant effacement intégral du brouillon via le chemin déjà existant. Le bouton n'efface aucune consultation enregistrée.
 - **Tests :** contrats statiques intégrés à `test:follow-up` pour vérifier la confirmation, l'effacement, le garde patient et l'absence de relance IA dans ce contexte. Scénario F27 enrichi, sans solliciter l'utilisateur avant la phase finale.
 - **Limites :** les essais Android/Windows et le comportement en présence de connexions réseau réelles restent à valider. Le module n'assure pas une confidentialité réglementaire de production.
+
+### 2026-11-11 — QW-044 : HELIOS Parcours spécialisés, regroupement documentaire
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; `main` intacte, aucune fusion, déploiement, dépense ni donnée réelle.
+- **Fonction :** ajout sur la fiche Patients d'un index des spécialités réellement saisies dans les consultations, avec nombre de consultations et dernière date enregistrée par spécialité. Les anciennes consultations sans spécialité sont classées « Spécialité non renseignée ». Il utilise la chronologie déjà enregistrée, sans créer de seconde source de données.
+- **Sécurité :** dossier patient confirmé unique (garde préexistante) puis vérification complémentaire de `patientId` dans le helper. Dates non analysables explicitement non renseignées ; aucune interprétation d'un diagnostic, statut de suivi ou protocole recommandé. Aucune écriture, aucun appel IA ni transfert.
+- **Tests :** données fictives multi-patients, regroupement déterministe, dates invalides, spécialité manquante, immutabilité et liaison de la vraie interface inclus dans `test:patient-linkage` de la CI.
+- **Validation humaine :** F28 préparé pour la fin, non exécuté. Parcours cliniques spécialisés (grossesse, diabète, gériatrie, etc.) et règles de soin restent des modules distincts à développer puis faire valider.

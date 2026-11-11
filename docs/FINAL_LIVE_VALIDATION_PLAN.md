@@ -52,6 +52,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F25 | Windows + Android | Coller un court texte fictif et un texte trop long dans HELIOS Document Reader, puis changer de dossier et revenir | Texte affiché littéralement, longueur limitée, effacement effectif, aucun brouillon reporté sur l'autre patient ni persistance après fermeture | ☐ |
 | F26 | Windows + Android | Ouvrir Protocoles puis HELIOS Medical Academy, consulter les quatre références institutionnelles en navigation externe | Liens sécurisés accessibles ou erreur clairement visible, aucune donnée patient envoyée, fiches de démonstration non présentées comme validées | ☐ |
 | F27 | Windows + Android | Ouvrir HELIOS Consultation Express, sélectionner un dossier fictif unique et une spécialité ; coller une note balisée ; essayer de remplacer un champ rempli, changer de patient avant sauvegarde, puis confirmer/annuler la remise à zéro | Préremplissage correct, aucun écrasement ni sauvegarde automatique, aucune analyse IA pendant discordance patient, sauvegarde refusée ; annulation conserve les champs, confirmation efface seulement la consultation non enregistrée | ☐ |
+| F28 | Windows + Android | Enregistrer trois consultations fictives de spécialités variées dans un dossier, et une autre consultation dans un deuxième dossier ; ouvrir HELIOS Parcours spécialisés | Spécialités, nombre de visites et dernières dates corrects par dossier ; spécialité absente signalée, aucune donnée interpatient ni diagnostic ou parcours inventé | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 
@@ -65,6 +66,6 @@ La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non 
 
 ## Décision de sortie
 
-**Ne pas déclarer « application validée en direct » tant que F01–F27 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
+**Ne pas déclarer « application validée en direct » tant que F01–F28 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
 
-À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F27, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
+À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F28, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.

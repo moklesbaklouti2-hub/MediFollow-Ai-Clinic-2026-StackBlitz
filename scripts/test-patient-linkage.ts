@@ -8,6 +8,7 @@ import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
 import { compareRecentVitals } from '../src/clinical/trends.ts';
 import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
+import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -431,5 +432,42 @@ assert.ok(protocolPageSource.includes('HELIOS Medical Academy · sources institu
   protocolPageSource.includes('sans recommandations médicales validées'),
   'Academy should display official outbound sources only, with no patient data or claimed guideline validation.');
 console.log('PASS QW-041: 4 official source links, HTTPS allowlist and UI safety contract.');
+
+
+// QW-044 — documented specialty groups, strictly scoped to a confirmed
+// patient's ID. No generated diagnoses, pathways or implied clinical status.
+const specialtyVisits = [
+  { id: 'c1', patientId: 'fictif-a', specialty: 'Médecine de famille', date: '2026-09-01' },
+  { id: 'c2', patientId: 'fictif-a', specialty: ' Cardiologie ', date: '2026-10-15' },
+  { id: 'c3', patientId: 'fictif-a', specialty: 'Médecine de famille', date: '2026-11-11' },
+  { id: 'c4', patientId: 'fictif-b', specialty: 'Médecine de famille', date: '2026-12-01' },
+  { id: 'c5', patientId: 'fictif-a', specialty: 'Cardiologie', date: 'date inconnue' },
+  { id: 'c6', patientId: 'fictif-a', specialty: '', date: '2026-11-10' },
+];
+const originalSpecialtyVisits = JSON.stringify(specialtyVisits);
+const specialtySummary = summarizeDocumentedSpecialties('fictif-a', specialtyVisits);
+assert.equal(specialtySummary.length, 3);
+assert.deepEqual(specialtySummary[0], {
+  specialty: 'Cardiologie', count: 2, lastConsultationDate: '2026-10-15',
+});
+assert.deepEqual(specialtySummary[1], {
+  specialty: 'Médecine de famille', count: 2, lastConsultationDate: '2026-11-11',
+});
+assert.deepEqual(specialtySummary[2], {
+  specialty: 'Spécialité non renseignée', count: 1, lastConsultationDate: '2026-11-10',
+});
+assert.deepEqual(summarizeDocumentedSpecialties('', specialtyVisits), []);
+assert.deepEqual(summarizeDocumentedSpecialties('absent', specialtyVisits), []);
+assert.deepEqual(summarizeDocumentedSpecialties('fictif-a', [
+  { id: 'c7', patientId: 'fictif-a', specialty: null as never, date: 'inconnue' },
+]), [{ specialty: 'Spécialité non renseignée', count: 1, lastConsultationDate: null }]);
+assert.equal(JSON.stringify(specialtyVisits), originalSpecialtyVisits);
+assert.ok(patientPageSource.includes('summarizeDocumentedSpecialties(selected.id, patientConsultations)') &&
+  patientPageSource.includes('HELIOS Parcours spécialisés · consultations documentées') &&
+  patientPageSource.includes('documentedSpecialties.map(') &&
+  patientPageSource.includes('ne confirme ni une maladie') &&
+  patientPageSource.includes('Dernière date enregistrée :'),
+  'Specialty group UI must show only documented visits with limits and provenance.');
+console.log('PASS QW-044: synthetic specialty grouping, isolation and UI checks.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

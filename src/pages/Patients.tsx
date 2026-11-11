@@ -8,6 +8,7 @@ import { buildClinicalMemory } from '../clinical/clinicalMemory';
 import { compareRecentVitals } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
+import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
@@ -83,6 +84,7 @@ export default function Patients() {
   const recordedVitalComparisons = selected ? compareRecentVitals(patientConsultations) : [];
   const preventionReview = selected ? buildPreventionReview(selected, patientConsultations) : null;
   const referralSource = selected ? buildReferralSource(selected.id, patientConsultations) : null;
+  const documentedSpecialties = selected ? summarizeDocumentedSpecialties(selected.id, patientConsultations) : [];
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -601,6 +603,29 @@ export default function Patients() {
           </section>
 
           <LocalDocumentReader key={selected.id} />
+
+          <section aria-label="HELIOS Parcours spécialisés — consultations consignées">
+            <h3 className="patient-section-title">HELIOS Parcours spécialisés · consultations documentées</h3>
+            <p className="patient-empty-history">
+              Regroupement des consultations enregistrées dans ce seul dossier par spécialité saisie.
+              Le nombre de visites ne confirme ni une maladie, ni un suivi spécialisé actif, ni une prise en charge recommandée.
+            </p>
+            {documentedSpecialties.length === 0 ? (
+              <p className="patient-empty-history">Aucune consultation à regrouper.</p>
+            ) : (
+              <div className="patient-summary-grid">
+                {documentedSpecialties.map((path) => (
+                  <div className="patient-summary-item" key={path.specialty}>
+                    <span>Spécialité déclarée</span>
+                    <strong>{path.specialty}</strong>
+                    <p>{path.count} consultation(s) consignée(s)</p>
+                    <small>Dernière date enregistrée : {path.lastConsultationDate
+                      ? displayDate(path.lastConsultationDate) : 'Non renseignée'}</small>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">
