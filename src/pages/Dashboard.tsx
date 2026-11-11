@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
 import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
+import { summarizeFollowUps } from '../clinical/followUp';
 import type { InventoryData } from '../types/medical';
 
 type DashboardProps = {
@@ -43,6 +44,7 @@ type DashboardData = {
   prescriptions: PrescriptionRecord[];
   unlinkedConsultations: number;
   unlinkedPrescriptions: number;
+  followUpConsultations: ReturnType<typeof summarizeFollowUps>;
 };
 
 function readArray<T>(key: string): T[] {
@@ -65,6 +67,7 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   return {
     unlinkedConsultations: unlinked.consultations,
     unlinkedPrescriptions: unlinked.prescriptions,
+    followUpConsultations: summarizeFollowUps(getConsultations(), new Date().toLocaleDateString('sv-SE')),
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
     prescriptions,
@@ -316,6 +319,23 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <span className="mf-stat-label">Suivi des patients</span>
             <div className="mf-stat-foot"><span>Dossiers actifs ou en suivi</span><i>●</i></div>
           </article>
+        </section>
+
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="HELIOS Follow-up : échéances de suivi">
+          <div className="mf-panel-heading">
+            <div><span className="mf-panel-overline">HELIOS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
+          </div>
+          <p style={{ margin: 0 }}>
+            <strong>{data.followUpConsultations.overdue}</strong> en retard ·{' '}
+            <strong>{data.followUpConsultations.today}</strong> aujourd’hui ·{' '}
+            <strong>{data.followUpConsultations.nextSevenDays}</strong> dans les 7 jours
+          </p>
+          <p style={{ fontSize: 12, margin: '8px 0 0' }}>
+            Contrôles effectués exclus des échéances. Aucun message automatique aux patients.
+          </p>
+          <button type="button" onClick={onStartConsultation} style={{ marginTop: 10 }}>
+            Ouvrir les consultations
+          </button>
         </section>
 
         {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (

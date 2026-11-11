@@ -725,3 +725,10 @@
 - **Livrables :** `docs/FINAL_LIVE_VALIDATION_PLAN.md` (19 scénarios fictifs F01–F19 sur Android, Windows, consultations, dictée, ordonnances, inventaire, export/import et sécurité) et `docs/ROADMAP_TO_COMPLETION.md` (distinction automatisable/complexe/bloquant/humain).
 - **État des scénarios :** tous NON EXÉCUTÉS ; aucune validation matérielle ou clinique n'est affirmée.
 - **Portée :** documentaire et de coordination, soumis à la même CI que le code. Le document ne signifie pas que les autres modules HELIOS, l'authentification de production ou la confidentialité sont terminés.
+
+### 2026-11-11 — QW-028 : HELIOS Follow-up (premier module fonctionnel)
+- **Branche :** `audit-stabilisation-2026-11-10`; PR #2 en brouillon ; `main` inchangée, sans fusion, déploiement, dépense ou donnée réelle.
+- **Fonction :** date de contrôle et objectif optionnels dans le formulaire de consultation ; état « prévu/terminé » choisi par le médecin, réédition, sauvegarde et affichage dans l'historique. Sur Dashboard, compteurs locaux en retard, aujourd'hui et à venir dans sept jours.
+- **Sécurité :** dates civiles strictes, texte d'objectif limité, aucune décision clinique générée, aucun envoi de message, aucun rappel automatique aux patients. Compatibilité des anciennes consultations sans suivi.
+- **Validation automatisée :** contrôles de dates (dont années bissextiles), préparation d'un plan, calcul de fenêtres et chargement depuis le véritable service de stockage sur localStorage fictif. Contrats d'interface vérifiés ; nouveau test raccordé à la CI existante.
+- **Limites :** pas de calendrier multi-utilisateur, de notifications ou de synchronisation distante ; essais Android/Windows réservés à la phase finale. Sécurité et conformité production restent ouvertes.

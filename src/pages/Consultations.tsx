@@ -4,6 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
+import { prepareFollowUp } from '../clinical/followUp';
 
 
 const specialtyGroups = [
@@ -166,6 +167,9 @@ export default function Consultations({
   const [physicalExamination, setPhysicalExamination] = useState<PhysicalExamination>({});
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [followUpObjective, setFollowUpObjective] = useState('');
+  const [followUpCompleted, setFollowUpCompleted] = useState(false);
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -320,6 +324,9 @@ export default function Consultations({
     setPhysicalExamination(item.physicalExamination ?? {});
     setDiagnosis(item.diagnosis);
     setPlan(item.plan);
+    setFollowUpDate(item.followUp?.dueDate ?? '');
+    setFollowUpObjective(item.followUp?.objective ?? '');
+    setFollowUpCompleted(item.followUp?.status === 'completed');
     setSaved(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -337,12 +344,21 @@ export default function Consultations({
     setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
+    setFollowUpDate('');
+    setFollowUpObjective('');
+    setFollowUpCompleted(false);
     setSaved(false);
   }
 
   function saveConsultation() {
     if (!patientId || !motif.trim() || (!editingId && !specialty)) {
       alert('Veuillez sélectionner un patient, choisir une spécialité et renseigner le motif.');
+      return;
+    }
+
+    const followUpPlan = prepareFollowUp(followUpDate, followUpObjective, followUpCompleted);
+    if (!followUpPlan.valid) {
+      window.alert('Suivi HELIOS : date de contrôle invalide, ou objectif de plus de 500 caractères.');
       return;
     }
 
@@ -358,6 +374,7 @@ export default function Consultations({
       physicalExamination: { ...physicalExamination },
       diagnosis: diagnosis.trim(),
       plan: plan.trim(),
+      followUp: followUpPlan.followUp,
     };
 
     const saved = editingId
@@ -384,6 +401,9 @@ export default function Consultations({
     setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
+    setFollowUpDate('');
+    setFollowUpObjective('');
+    setFollowUpCompleted(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -1071,6 +1091,29 @@ export default function Consultations({
         </div>
       </div>
 
+      <div className="consultation-section">
+        <h3>06 · HELIOS Follow-up — contrôle programmé</h3>
+        <p className="patient-hint">Suivi décidé par le médecin. Aucun rappel envoyé automatiquement au patient.</p>
+        <div className="consultation-grid">
+          <div className="consultation-field">
+            <label htmlFor="follow-up-date">Date de contrôle prévue (facultative)</label>
+            <input id="follow-up-date" type="date" value={followUpDate}
+              onChange={(e) => { setFollowUpDate(e.target.value); setSaved(false); }} />
+          </div>
+          <div className="consultation-field">
+            <label htmlFor="follow-up-objective">Objectif du contrôle</label>
+            <textarea id="follow-up-objective" maxLength={500} value={followUpObjective}
+              onChange={(e) => { setFollowUpObjective(e.target.value); setSaved(false); }}
+              placeholder="Exemple : réévaluer les constantes et les symptômes fictifs" />
+          </div>
+        </div>
+        <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 10 }}>
+          <input type="checkbox" checked={followUpCompleted}
+            onChange={(e) => { setFollowUpCompleted(e.target.checked); setSaved(false); }} />
+          Contrôle effectué (confirmation manuelle)
+        </label>
+      </div>
+
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <button className="consultation-save" onClick={saveConsultation} disabled={patients.length === 0}>
           {editingId ? 'Enregistrer les modifications' : 'Enregistrer la consultation'}
@@ -1103,6 +1146,10 @@ export default function Consultations({
                 <p><b>Spécialité :</b> {item.specialty || 'Non précisée'}</p>
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
+                {item.followUp && (
+                  <p><b>HELIOS Follow-up :</b> {item.followUp.dueDate} · {item.followUp.status === 'completed' ? 'Contrôle effectué' : 'Contrôle prévu'}
+                    {item.followUp.objective ? ` · ${item.followUp.objective}` : ''}</p>
+                )}
                 <button
                   type="button"
                   className="consultation-save"

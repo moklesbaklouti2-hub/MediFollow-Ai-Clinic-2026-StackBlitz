@@ -68,6 +68,9 @@ jobs:
       - name: Verifier les liens anciens patients/consultations/ordonnances (fictif)
         if: matrix.module == 'clinique'
         run: npm run test:patient-linkage
+      - name: Verifier HELIOS Follow-up et ses echeances (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:follow-up
 
   coordination:
     name: Verifier le registre des modules

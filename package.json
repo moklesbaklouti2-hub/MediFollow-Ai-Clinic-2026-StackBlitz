@@ -11,14 +11,15 @@
     "test:ai-providers": "tsx server/ai/test-providers.ts",
     "test:ai-resilience": "tsx server/ai/test-resilience.ts",
     "test:clinical-regression": "tsx server/ai/test-clinical-regression.ts",
-    "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression && npm run test:medical-dictionary && npm run test:medical-speech && npm run test:inventory-dispense && npm run test:patient-linkage",
+    "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression && npm run test:medical-dictionary && npm run test:medical-speech && npm run test:inventory-dispense && npm run test:patient-linkage && npm run test:follow-up",
     "test:clinical-live": "tsx server/ai/test-clinical-live.ts",
     "test:complete": "npm run build && npm run test:all-offline",
     "test:medical-dictionary": "tsx scripts/test-medical-dictionary.ts",
     "test:medical-speech": "tsx scripts/test-medical-speech-regression.ts",
     "test:access-decision": "node scripts/test-access-decision-contract.mjs",
     "test:inventory-dispense": "tsx scripts/test-inventory-dispense-regression.ts",
-    "test:patient-linkage": "tsx scripts/test-patient-linkage.ts"
+    "test:patient-linkage": "tsx scripts/test-patient-linkage.ts",
+    "test:follow-up": "tsx scripts/test-follow-up.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
