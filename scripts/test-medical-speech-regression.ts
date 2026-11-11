@@ -209,6 +209,45 @@ for (const [initial, corrected] of [
   assertions++;
 }
 
+// Des moments de prise peuvent être conservés globalement tout en
+// étant réattribués à d'autres médicaments dans une transcription candidate.
+const swappedMedicationTimes = [
+  [
+    'paracétamol le matin et amoxicilline le soir avec disney',
+    'amoxicilline le matin et paracétamol le soir avec dyspnée',
+  ],
+  [
+    'ibuprofène chaque soir et paracétamol chaque matin avec disney',
+    'paracétamol chaque soir et ibuprofène chaque matin avec dyspnée',
+  ],
+  [
+    'acide clavulanique midi et paracétamol nuit avec disney',
+    'paracétamol midi et acide clavulanique nuit avec dyspnée',
+  ],
+];
+for (const [initial, swapped] of swappedMedicationTimes) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: swapped },
+  }), initial, 'Moment de prise attribué au mauvais médicament : ' + swapped);
+  assertions++;
+}
+// La simple correction de vocabulaire reste possible si les médicaments,
+// les moments et les autres données critiques sont inchangés.
+for (const [initial, corrected] of [
+  ['paracétamol le matin et amoxicilline le soir avec disney', 'paracétamol le matin et amoxicilline le soir avec dyspnée'],
+  ['ibuprofène chaque soir et paracétamol chaque matin avec disney', 'ibuprofène chaque soir et paracétamol chaque matin avec dyspnée'],
+  ['paracétamol 500 mg le matin et amoxicilline 500 mg le soir avec disney', 'paracétamol 500 mg le matin et amoxicilline 500 mg le soir avec dyspnée'],
+]) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: corrected },
+  }), corrected, 'Correction lexicale sûre bloquée : ' + corrected);
+  assertions++;
+}
+
 // La conservation de la liste de nombres et des unités n'assure pas
 // qu'un chiffre reste associé à la bonne mesure clinique.
 const reassignedClinicalMeasurements = [

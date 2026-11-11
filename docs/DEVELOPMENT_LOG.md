@@ -442,3 +442,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` conserve les associations (médicament reconnu, voie) pour les expressions immédiatement voisines « voie »/« par voie » et les formes avec dose immédiate. Les autres formulations non reconnues restent hors périmètre ; aucune recommandation thérapeutique n'est ajoutée.
 - **Tests :** trois cas inversant l'association médicament–voie sont refusés ; trois corrections lexicales conservant les voies sont acceptées (`scripts/test-medical-speech-regression.ts`). Exemples fictifs, pas de données patient.
 - **Validation :** compilation et 11 jobs GitHub Actions à vérifier pour le SHA final. Tests microphone Android et validation clinique réelle non réalisés.
+
+### 2026-11-11 — HELIOS : associer le moment de prise au bon médicament dicté
+- **Branche :** `audit-stabilisation-2026-11-10`. `main` inchangée ; pas de fusion ni de déploiement.
+- **Risque ciblé :** la comparaison globale des mots « matin », « midi », « soir », « nuit » préservait l'ordre des moments sans garantir leur rattachement aux molécules. Une hypothèse pouvait échanger paracétamol/amoxicilline ou ibuprofène/paracétamol à moments identiques.
+- **Correctif :** `src/services/medicalSpeech.ts` préserve les couples (molécule connue, moment de prise dicté) pour les expressions immédiatement voisines `le/chaque matin|midi|soir|nuit`, avec ou sans dose adjacente. Toute divergence conserve la première hypothèse vocale. Pas de prescription automatisée.
+- **Tests :** trois inversions refusées et trois améliorations lexicales sûres acceptées sur données fictives (`scripts/test-medical-speech-regression.ts`).
+- **Limites :** seuls les quatre noms de médicaments et les formats explicitement reconnus sont couverts ; aucune validation clinique réelle ni essai microphone Android. Vérifier les onze jobs et le relais GitHub sur le SHA final.
