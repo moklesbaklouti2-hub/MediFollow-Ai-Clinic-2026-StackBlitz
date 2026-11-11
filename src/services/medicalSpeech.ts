@@ -287,6 +287,13 @@ function criticalSpeechTokens(value: string): string {
   const medicationDoses = Array.from(normalized.matchAll(
     /(?<![\p{L}\p{N}])(amoxicilline|acide clavulanique|paracetamol|ibuprofene)(?![\p{L}\p{N}])\s*(?:(?:a|de)\s+)?(\d+(?:[,.]\d+)?)\s*(mg|g|mcg|ug|µg)(?![\p{L}\p{N}])/gu,
   ), match => [match[1], match[2].replace(',', '.'), match[3]]);
+  // Une alternative peut conserver toutes les voies dans le même ordre
+  // mais les associer à d'autres médicaments lorsqu'aucune dose n'est
+  // dictée. Préserver chaque paire (molécule reconnue, voie déclarée).
+  // La capture inclut les formes « voie », « par voie » et « 500 mg voie ».
+  const medicationRoutes = Array.from(normalized.matchAll(
+    /(?<![\p{L}\p{N}])(amoxicilline|acide clavulanique|paracetamol|ibuprofene)(?![\p{L}\p{N}])\s+(?:\d+(?:[,.]\d+)?\s*(?:mg|g|mcg|ug|µg)\s+)?(?:(?:par\s+)?voie\s+)?(orale?|intraveineuse|intramusculaire|souscutanee|rectale|sublinguale|iv|im|sc)(?![\p{L}\p{N}])/gu,
+  ), match => [match[1], match[2]]);
   // Même liste de négations dans une autre position peut inverser le sens.
   const negationWordPositions = Array.from(normalized.matchAll(/[\p{L}\p{N}]+/gu))
     .flatMap((match, index) => /^(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)$/u.test(match[0]) ? [index] : []);
@@ -309,7 +316,7 @@ function criticalSpeechTokens(value: string): string {
   // ces éléments dans une transcription alternative sélectionnée.
   const obstetrics = Array.from(normalized.matchAll(/\b(?:enceinte|grossesse|grossesses|gestante|gestantes|allaitement|allaite|menopause|menopausee|menopausees)\b/gu), match => match[0]);
   const history = Array.from(normalized.matchAll(/\b(?:antecedent|antecedents|chirurgie|chirurgical|chirurgicale|chirurgicaux|diabete|diabetique|hypertension|hta|asthme|epilepsie|infarctus|avc)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, measuredValues, bloodPressurePairs, medicationDoses, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
+  return JSON.stringify({ numbers, measuredValues, bloodPressurePairs, medicationDoses, medicationRoutes, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
 // Conserver le nombre d'occurrences de chaque terme clinique déjà reconnu,

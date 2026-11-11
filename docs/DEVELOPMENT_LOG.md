@@ -435,3 +435,10 @@
 - **Correction :** reconnaissance du lien libellé–valeur avec « à », « de », « est à/de » ; protection des couples pression artérielle/tension artérielle/TA/PA avec la paire systolique–diastolique séparée par « / » ou « sur ». Toute divergence conserve l'hypothèse initiale. Pas de saisie de mesure automatique.
 - **Tests :** quatre inversions bloquées et deux corrections lexicales acceptées sur données fictives dans `scripts/test-medical-speech-regression.ts`.
 - **Limites :** protections limitées aux formes reconnues, sans microphone Android ni validation clinique réelle. Contrôle CI sur le SHA final requis.
+
+### 2026-11-11 — HELIOS : préserver la voie attachée à chaque médicament reconnu
+- **Branche :** `audit-stabilisation-2026-11-10`, sans modification de `main`, fusion de PR ou déploiement.
+- **Défaut ciblé :** les voies orale/IV/rectale/sublinguale pouvaient rester présentes dans le même ordre, malgré leur rattachement à d'autres médicaments (paracétamol, amoxicilline, ibuprofène, acide clavulanique), particulièrement lorsque la dose n'était pas dictée.
+- **Correctif :** `src/services/medicalSpeech.ts` conserve les associations (médicament reconnu, voie) pour les expressions immédiatement voisines « voie »/« par voie » et les formes avec dose immédiate. Les autres formulations non reconnues restent hors périmètre ; aucune recommandation thérapeutique n'est ajoutée.
+- **Tests :** trois cas inversant l'association médicament–voie sont refusés ; trois corrections lexicales conservant les voies sont acceptées (`scripts/test-medical-speech-regression.ts`). Exemples fictifs, pas de données patient.
+- **Validation :** compilation et 11 jobs GitHub Actions à vérifier pour le SHA final. Tests microphone Android et validation clinique réelle non réalisés.

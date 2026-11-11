@@ -170,6 +170,45 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'paracétamol 500 mg et amoxicilline 1000 mg avec dyspnée');
 assertions++;
 
+// Une hypothèse peut intervertir les voies entre deux molécules sans
+// changer ni l'ordre global des voies ni la liste des médicaments.
+const swappedMedicationRoutes = [
+  [
+    'paracétamol oral et amoxicilline IV avec disney',
+    'amoxicilline oral et paracétamol IV avec dyspnée',
+  ],
+  [
+    'ibuprofène par voie orale et paracétamol par voie rectale avec disney',
+    'paracétamol par voie orale et ibuprofène par voie rectale avec dyspnée',
+  ],
+  [
+    'paracétamol voie sublinguale et acide clavulanique voie orale avec disney',
+    'acide clavulanique voie sublinguale et paracétamol voie orale avec dyspnée',
+  ],
+];
+for (const [initial, swapped] of swappedMedicationRoutes) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: swapped },
+  }), initial, 'Voie attribuée au mauvais médicament : ' + swapped);
+  assertions++;
+}
+// La reconnaissance d'une voie ne doit pas empêcher une amélioration
+// purement lexicale lorsque médicaments, doses et voies sont inchangés.
+for (const [initial, corrected] of [
+  ['paracétamol oral et amoxicilline IV avec disney', 'paracétamol oral et amoxicilline IV avec dyspnée'],
+  ['ibuprofène par voie orale et paracétamol par voie rectale avec disney', 'ibuprofène par voie orale et paracétamol par voie rectale avec dyspnée'],
+  ['paracétamol 500 mg voie orale et amoxicilline 500 mg voie IV avec disney', 'paracétamol 500 mg voie orale et amoxicilline 500 mg voie IV avec dyspnée'],
+]) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: corrected },
+  }), corrected, 'Amélioration sans changement thérapeutique refusée : ' + corrected);
+  assertions++;
+}
+
 // La conservation de la liste de nombres et des unités n'assure pas
 // qu'un chiffre reste associé à la bonne mesure clinique.
 const reassignedClinicalMeasurements = [
