@@ -155,6 +155,31 @@ for (const [initial, unsafe] of negationMeaningChanges) {
   assertions++;
 }
 
+// La négation doit conserver sa cible clinique : retrouver le mot ailleurs
+// dans l'alternative ne suffit pas si la cible sous « pas de » disparaît.
+// Une cible mal reconnue dans la seconde hypothèse reste non fiable.
+const lostNegationTargets = [
+  ['pas de toux et disney', 'pas de display et toux avec dyspnée'],
+  ['absence de dyspnée et display', 'absence de disney et dyspnée avec exsudat'],
+  ['aucune fièvre avec display', 'aucune disney avec fièvre et exsudat'],
+];
+for (const [initial, unsafe] of lostNegationTargets) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: unsafe },
+  }), initial, 'Cible de négation connue effacée : ' + unsafe);
+  assertions++;
+}
+// Une transcription initiale erronée (« disney ») peut en revanche être
+// améliorée lorsque les autres termes et la position de négation sont conservés.
+assert.equal(runtime.chooseMedicalSpeechAlternative({
+  length: 2,
+  0: { transcript: 'pas de disney avec toux' },
+  1: { transcript: 'pas de dyspnée avec toux' },
+}), 'pas de dyspnée avec toux');
+assertions++;
+
 // Protéger les symptômes et expressions médicales déjà correctement
 // reconnus, même si une seconde hypothèse a un score lexical supérieur.
 const missingMedicalTerms = [

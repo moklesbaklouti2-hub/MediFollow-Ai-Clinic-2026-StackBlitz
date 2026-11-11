@@ -393,3 +393,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` protège les termes simples et expressions médicales exactes présents dans la première hypothèse. Il ne transforme pas de texte brut et ne supprime pas la validation du médecin.
 - **Tests :** `scripts/test-medical-speech-regression.ts` ajoute cinq régressions négatives (disparition/substitution de termes médicaux) et deux cas positifs de meilleure dictée, sur données fictives uniquement.
 - **Validation :** à confirmer par GitHub Actions après le commit. Les tests de microphone Chrome Android et la validation médicale en situation clinique restent à faire.
+
+### 2026-11-11 — HELIOS : cible connue de négation non remplaçable par mot inconnu
+- **Branche :** `audit-stabilisation-2026-11-10`, sans fusion sur `main` ni déploiement.
+- **Défaut :** une hypothèse vocale plus riche pouvait remplacer la cible reconnue après « pas de », « absence de » ou « aucune » par un terme inconnu, tout en réintroduisant le symptôme connu ailleurs dans la phrase. Cela pouvait inverser le sens clinique malgré les protections antérieures.
+- **Correctif :** dans `src/services/medicalSpeech.ts`, une cible médicale connue après négation doit rester identique au même rang de négation dans l'hypothèse proposée, même si cette dernière cible est inconnue. Une première cible inconnue garde la possibilité d'être corrigée par un meilleur résultat navigateur.
+- **Régression :** trois exemples de refus et un exemple d'amélioration sûre dans `scripts/test-medical-speech-regression.ts`. Textes fictifs uniquement ; aucune correction automatique des mots dictés, aucune modification de prescriptions ou de données patients.
+- **Validation :** commit atomique code/tests/journal sur la branche audit ; résultat réel GitHub Actions à vérifier sur ce SHA. Tests microphone Chrome Android et évaluation clinique en consultation non réalisés.

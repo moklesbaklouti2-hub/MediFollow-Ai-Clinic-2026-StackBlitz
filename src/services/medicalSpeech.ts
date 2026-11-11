@@ -353,10 +353,12 @@ export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string
     if (criticalSpeechTokens(candidate.transcript) !== initialCriticalTokens) return false;
     if (!preservesRecognizedMedicalTerms(candidates[0], candidate.transcript)) return false;
     const proposedTargets = negatedMedicalTargets(candidate.transcript);
-    // Deux noms médicaux connus différents, derrière la même négation,
-    // ne sont pas de simples variantes d'orthographe.
+    // Ne jamais déplacer un symptôme connu hors d'une négation :
+    // « pas de toux ... » ne doit pas devenir « pas de display ... toux ».
+    // Une cible inconnue en alternative n'est pas une preuve d'équivalence.
+    // Si la première cible était inconnue, une hypothèse corrigée reste possible.
     return !initialNegationTargets.some((target, index) =>
-      target !== null && proposedTargets[index] !== null && proposedTargets[index] !== target
+      target !== null && proposedTargets[index] !== target
     );
   });
   const best = safeCandidates.reduce((current, candidate) =>
