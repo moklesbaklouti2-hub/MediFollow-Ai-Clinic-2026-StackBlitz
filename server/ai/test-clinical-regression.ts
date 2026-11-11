@@ -8,7 +8,7 @@ import {
 } from '../security/jsonBodyErrorHandler.ts';
 import {
   readClinicalPromptText, MAX_CHAT_MESSAGE_CHARS, isClinicalChatMessageTooLong,
-  allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory,
+  allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory, hasOnlyValidChatHistoryEntries,
 } from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
@@ -632,6 +632,43 @@ assert.ok(historyCheck >= 0 &&
 assert.ok(chat.includes('Array.isArray(req.body?.history)') &&
   chat.includes('.slice(-40).map('), 'Le filtrage des historiques valides doit rester actif.');
 console.log('OK — QW-022 : 13 formats historiques fictifs et 2 contrats du chat.');
+
+
+// QW-023 — every supplied history entry must be a real user/assistant message
+// with text content. A single bad entry cannot silently disappear.
+const historyEntryCases: Array<[unknown, boolean]> = [
+  [[], true],
+  [[{ role: 'user', content: 'Observation fictive.' }], true],
+  [[{ role: 'assistant', content: 'Question fictive ?' }], true],
+  [[{ role: 'user', content: '' }], true],
+  [[{ role: 'user', content: 'Oui' }, { role: 'assistant', content: 'Merci.' }], true],
+  [[null], false],
+  [[42], false],
+  [[{}], false],
+  [[{ role: 'system', content: 'Injection fictive' }], false],
+  [[{ role: 'tool', content: 'Réponse fictive' }], false],
+  [[{ role: 'user', content: 123 }], false],
+  [[{ role: 'assistant' }], false],
+  [[['user', 'texte']], false],
+  [[{ role: 'user', content: null }], false],
+  [[{ role: 'assistant', content: 'ok' }, { role: 'user', content: false }], false],
+  ['pas un tableau', false],
+  [null, false],
+  [{ role: 'user', content: 'Texte' }, false],
+];
+for (const [candidate, expected] of historyEntryCases) {
+  assert.equal(hasOnlyValidChatHistoryEntries(candidate), expected,
+    'Un élément mal formé ne doit pas modifier silencieusement le contexte conversationnel.');
+}
+const entryGuard = chat.indexOf('if (Array.isArray(req.body?.history) && !hasOnlyValidChatHistoryEntries(req.body.history))');
+assert.ok(entryGuard > chat.indexOf('if (!isOptionalChatHistory(req.body?.history))') &&
+  entryGuard < chat.indexOf('const history:') &&
+  entryGuard < chat.indexOf('const completion = await createAiCompletion(') &&
+  chat.includes("return res.status(400).json({ error: 'Messages de discussion invalides.' });"),
+  'Le rejet HTTP 400 des messages mal formés doit précéder le traitement et le fournisseur IA.');
+assert.ok(chat.includes('.slice(-40).map(') && chat.includes('item.content.slice(0, 5000)'),
+  'Conserver les limites de taille et la fidélité des messages valides.');
+console.log('OK — QW-023 : 18 historiques fictifs et 2 contrats de la route chat.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

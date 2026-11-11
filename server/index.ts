@@ -7,7 +7,7 @@ import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
 import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
 import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
-import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory } from './security/clinicalPromptInput.ts';
+import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory, hasOnlyValidChatHistoryEntries } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -724,6 +724,9 @@ app.post('/api/chat', async (req, res) => {
 
     if (!isOptionalChatHistory(req.body?.history)) {
       return res.status(400).json({ error: 'Historique de discussion invalide.' });
+    }
+    if (Array.isArray(req.body?.history) && !hasOnlyValidChatHistoryEntries(req.body.history)) {
+      return res.status(400).json({ error: 'Messages de discussion invalides.' });
     }
     const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(req.body?.history)
       ? req.body.history.filter((item: any) => item && (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string')

@@ -690,3 +690,10 @@
 - Correction : refuser par HTTP 400 les historiques non-array, tout en autorisant absence/null et listes valides. Le filtrage existant des messages et la limite de 40 tours/5 000 caractères sont conservés.
 - Tests : 13 entrées fictives et deux vérifications de contrat de la route réelle. CI des 11 jobs requise avant validation.
 - Limites : aucune validation médicale, clinique réelle ou audit de confidentialité ; QW-006B, QW-007 et QW-008 restent ouverts.
+
+### 2026-11-11 — QW-023 : refuser les messages d'historique mal formés
+- **Branche :** `audit-stabilisation-2026-11-10`. PR #2 brouillon, `main` inchangée ; aucun déploiement, données réelles, fusion ou dépense.
+- **Défaut distinct de QW-022 :** un historique de type tableau était accepté même s'il contenait un élément mal formé : null, rôle non autorisé (ex. system), contenu non textuel. Le `.filter` supprimait silencieusement ces éléments, risquant d'omettre des réponses utiles à l'interrogatoire clinique.
+- **Correction :** `hasOnlyValidChatHistoryEntries` exige pour chaque message un objet non tableau avec rôle `user` ou `assistant` et contenu texte ; si un message est invalide, la vraie route renvoie HTTP 400 avant la construction de mémoire et l'appel IA. Les tableaux valides conservent la limite des 40 derniers messages et des 5 000 caractères par élément. Les historiques absents/null restent autorisés.
+- **Tests :** 18 exemples synthétiques et 2 assertions vérifiant le refus et le maintien des plafonds dans la vraie route.
+- **Limite :** cette validation de structure n'établit pas l'authenticité des messages ni leur exactitude clinique. L'authentification et la conformité fournisseurs QW-007/QW-008 ainsi que les tests Android restent ouverts. CI complète sur SHA exact requise.

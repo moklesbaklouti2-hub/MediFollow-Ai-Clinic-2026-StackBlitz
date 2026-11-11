@@ -32,3 +32,14 @@ export function isOptionalChatContext(value: unknown): boolean {
 export function isOptionalChatHistory(value: unknown): boolean {
   return value == null || Array.isArray(value);
 }
+
+// The chat history is clinical conversation context. Invalid entries must not
+// be silently discarded, because doing so can alter follow-up reasoning.
+// This checks shape only; it does not authenticate or trust the contents.
+export function hasOnlyValidChatHistoryEntries(value: unknown): boolean {
+  return Array.isArray(value) && value.every(entry => {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return false;
+    const item = entry as { role?: unknown; content?: unknown };
+    return (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string';
+  });
+}
