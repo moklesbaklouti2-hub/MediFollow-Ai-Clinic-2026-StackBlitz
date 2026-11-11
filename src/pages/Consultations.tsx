@@ -332,7 +332,7 @@ export default function Consultations({
       return;
     }
     const result = parseExpressDraft(expressDraft);
-    if (!result.valid) {
+    if (result.valid === false) {
       setExpressFeedback(result.reason);
       return;
     }
