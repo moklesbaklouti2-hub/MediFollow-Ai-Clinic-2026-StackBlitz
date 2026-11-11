@@ -660,3 +660,11 @@
 - **Tests :** six requêtes HTTP fictives (3 routes × deux erreurs) avec une sentinelle sensible fictive, vérification qu'aucune donnée/syntaxe interne n'est reflétée, et 8 contrôles de classification et de positionnement du middleware. Test sans vraie donnée ni clé IA.
 - **Limites :** ce correctif ne constitue ni un filtre de données personnelles avant appel IA, ni une authentification. QW-007/QW-008 et essais Chrome Android encore ouverts.
 - **Validation :** contrôle des 11 jobs Actions sur le SHA exact obligatoire.
+
+### 2026-11-11 — QW-019 : ne pas écrire les erreurs fournisseurs IA brutes dans les journaux
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` inchangée, aucune donnée patient réelle, fusion ou dépense.
+- **Risque distinct :** les réponses HTTP avaient été assainies, mais `/api/chat`, `/api/commands/interpret` et la vérification de qualité de l'interrogatoire utilisaient encore `console.error(..., error)` / `console.warn(..., error)`. Certains fournisseurs peuvent joindre à leurs exceptions des fragments de requête, clés, corps et contexte clinique ; ces objets ne doivent pas être consignés.
+- **Correction :** helper `logSafeAiFailure` n'émet qu'un type d'opération fixe (`commands`, `chat`, `interview-quality`) et un statut HTTP numérique dans 400–599 (sinon « inconnu »). Il ne sérialise jamais l'objet erreur. Les chemins de repli et statuts HTTP retournés aux clients ne changent pas.
+- **Tests :** 9 erreurs fictives, dont une erreur avec getter déclenchant une exception, × 3 types d'opération ; sentinelle ne devant jamais apparaître dans les logs ; vérification contractuelle de la liaison des trois blocs `catch` réels.
+- **Limites :** aucun usage sur patients réels ni certification de conformité. Les autres flux de journalisation ou de télémétrie nécessitent un audit séparé ; QW-007/QW-008 restent ouverts.
+- **Validation :** attendre 11/11 jobs GitHub Actions sur le SHA exact avant VERT.

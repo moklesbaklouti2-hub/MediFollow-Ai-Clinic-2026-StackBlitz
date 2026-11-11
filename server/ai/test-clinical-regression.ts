@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import express from 'express';
 import { CLINICAL_PATHS } from '../security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from '../security/noStoreClinicalResponses.ts';
+import { safeAiFailureStatus, logSafeAiFailure } from '../security/safeAiFailureLog.ts';
 import {
   classifyJsonBodyError, handleJsonBodyError,
 } from '../security/jsonBodyErrorHandler.ts';
@@ -521,6 +522,45 @@ assert.ok(chat.includes('if (isClinicalChatMessageTooLong(message))') &&
   chat.indexOf('if (isClinicalChatMessageTooLong(message))') < chat.indexOf('const completion = await createAiCompletion('),
   'Le rejet HTTP 413 doit se produire dans la vraie route avant l’appel IA.');
 console.log('OK — 12 contrôles fictifs de la limite de longueur chat et du garde HTTP 413.');
+
+
+// QW-019 — aucune erreur fournisseur brute ni fragment de requête dans
+// les logs. Tests avec sentinelle fictive, sans fournisseur et sans patient.
+const logCanary = 'SECRET_PROMPT_CLINIQUE_FICTIF_A_NE_JAMAIS_LOGGER';
+const logFixtures: Array<{ error: unknown; status: number | null }> = [
+  { error: Object.assign(new Error(logCanary), { status: 429 }), status: 429 },
+  { error: { status: 503, prompt: logCanary, response: { body: logCanary } }, status: 503 },
+  { error: { status: 400, apiKey: logCanary }, status: 400 },
+  { error: { status: 599, metadata: logCanary }, status: 599 },
+  { error: { status: 200, prompt: logCanary }, status: null },
+  { error: { status: '429', prompt: logCanary }, status: null },
+  { error: null, status: null },
+  { error: new Error(logCanary), status: null },
+  { error: { get status() { throw new Error(logCanary); } }, status: null },
+];
+for (const item of logFixtures) {
+  assert.equal(safeAiFailureStatus(item.error), item.status);
+  for (const operation of ['commands', 'chat', 'interview-quality'] as const) {
+    const captured: string[] = [];
+    logSafeAiFailure(operation, item.error, message => captured.push(message));
+    assert.equal(captured.length, 1);
+    assert.match(captured[0], /^MediFollow AI: (?:commands|chat|interview-quality) indisponible \(statut HTTP (?:inconnu|[4-5][0-9]{2})\)\.$/);
+    assert.ok(!captured[0].includes(logCanary) && !captured[0].includes('Error:'),
+      'Le journal ne doit jamais contenir la requête fournisseur ni sa pile.');
+  }
+}
+assert.ok(source.includes("logSafeAiFailure('commands', error);") &&
+  source.includes("logSafeAiFailure('chat', error);") &&
+  source.includes("logSafeAiFailure('interview-quality', error);"),
+  'Les trois traitements de défaut IA doivent utiliser la journalisation filtrée.');
+for (const unsafeLog of [
+  "console.error('Erreur interprétation commande vocale:', error)",
+  "console.error('Erreur du routeur IA:', error)",
+  "console.warn('Contrôle de qualité de l’interrogatoire indisponible:', error)",
+]) {
+  assert.ok(!source.includes(unsafeLog), 'Journal brut encore présent : ' + unsafeLog);
+}
+console.log('OK — 9 erreurs fictives × 3 opérations IA sans fuite dans les logs, et 4 vérifications de liaison.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

@@ -6,6 +6,7 @@ import { createSessionStore } from './security/sessionStore.ts';
 import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
 import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
+import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
 import { readClinicalPromptText, isClinicalChatMessageTooLong } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
@@ -571,7 +572,7 @@ Retourne exclusivement le JSON conforme au schéma.`,
       message: parsed.message.slice(0, 500),
     });
   } catch (error) {
-    console.error('Erreur interprétation commande vocale:', error);
+    logSafeAiFailure('commands', error);
     // Do not return upstream exception text to the browser: it may contain
     // provider metadata, request fragments or other sensitive details.
     const status = isPlainObject(error) && typeof error.status === 'number'
@@ -772,7 +773,7 @@ app.post('/api/chat', async (req, res) => {
           if (typeof revised === 'string' && revised.trim() &&
               !interviewQuestionIssues(revised, facts, history).length) reply = revised;
         } catch (error) {
-          console.warn('Contrôle de qualité de l’interrogatoire indisponible:', error);
+          logSafeAiFailure('interview-quality', error);
         }
       }
     }
@@ -808,7 +809,7 @@ app.post('/api/chat', async (req, res) => {
     }
     return res.json({ reply });
   } catch (error) {
-    console.error('Erreur du routeur IA:', error);
+    logSafeAiFailure('chat', error);
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;

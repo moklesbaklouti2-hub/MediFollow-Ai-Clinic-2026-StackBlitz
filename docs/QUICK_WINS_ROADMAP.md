@@ -30,7 +30,8 @@
 | QW-015 | S | Empêcher tout démarrage du serveur en production sans mode d'accès distant explicitement validé | `95f0568` | [43046896275](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43046896275) : 11/11 réussis | VALIDÉ |
 | QW-016 | S | Refuser les messages chat de plus de 12 000 caractères avant fournisseur IA | `af94893` | [43047596054](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43047596054) : 11/11 réussis | VALIDÉ |
 | QW-017 | S | Appliquer les en-têtes anti-cache même aux erreurs de parsing JSON 400/413 | `3287db6` | [43049245293](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43049245293) : 11/11 réussis | VALIDÉ |
-| QW-018 | S | Ne pas exposer les fragments de corps JSON ni les détails de parseur dans les erreurs 400/413 | SHA à vérifier | 6 requêtes HTTP fictives enrichies + 8 vérifications de classification/liaison, CI 11/11 | EN VALIDATION |
+| QW-018 | S | Ne pas exposer les fragments de corps JSON ni les détails de parseur dans les erreurs 400/413 | `574f54f` | [43049887780](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43049887780) : 11/11 réussis | VALIDÉ |
+| QW-019 | S | Journaliser uniquement opération et statut des erreurs IA, jamais le contenu brut | SHA à confirmer | 9 erreurs fictives × 3 chemins + CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
