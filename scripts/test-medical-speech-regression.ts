@@ -39,6 +39,22 @@ expectNoReplacement('des adénopathies cervicales bilatérales', 'des adénopath
 expectNoReplacement('odynophagie', 'dysphagie');
 expectNoReplacement('ex soudain départ', 'exsudat');
 
+// « excellent » ne doit pas être corrigé parce que la même dictée contient
+// une autre phrase ORL. Seule l'occurrence clairement localisée est suggérée.
+expectNoReplacement('Le résultat est excellent. Présence de plaques sur les amygdales.', 'exsudat');
+expectNoReplacement('Examen excellent. Des plaques sont visibles sur les amygdales.', 'exsudat');
+expectNoReplacement('Présence d’un excellent résultat sur les amygdales.', 'exsudat');
+expectNoReplacement('Un excellent travail de rééducation.', 'exsudat');
+const localizedExsudat = 'Le patient a un état excellent. Présence d’un excellent sur les amygdales.';
+const localizedCorrection = suggestions(localizedExsudat).find(item => item.original === 'excellent' && item.replacement === 'exsudat');
+assert.ok(localizedCorrection, 'La suggestion ORL localisée doit rester disponible');
+const localizedResult = runtime.applyMedicalSpeechCorrection(localizedExsudat, localizedCorrection!);
+assert.equal(localizedResult, 'Le patient a un état excellent. Présence d’un exsudat sur les amygdales.');
+assertions += 2;
+expectSuggestion('Présence d’un excellent au niveau des amygdales.', 'excellent', 'exsudat');
+expectSuggestion('Présence d’un excellent dans la gorge.', 'excellent', 'exsudat');
+
+
 const original = 'SpO₂ 87 %, température 38,5 degrés : absence de dyspnée';
 const corrections = suggestions(original);
 for (const correction of corrections) {

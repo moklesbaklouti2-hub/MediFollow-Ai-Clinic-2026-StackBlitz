@@ -130,3 +130,11 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Contrôle 2 :** revue des diffs, `git diff --check`, `npm run build` : PASS. Avertissement Vite existant sur bundle >500 kB. Aucun test Android ni certification médicale ; aucun mode de sécurité activé ou déploiement.
 - **Commit :** code, tests et journaux regroupés dans le commit contenant cette entrée. CI de ce nouveau commit à confirmer au prochain événement.
 - **Reprise :** examiner les refus/expirations dans les parcours intégrés et poursuivre la stabilisation du périmètre existant. Le fichier package-lock généré pour l'installation locale n'est pas inclus.
+
+### 2026-11-11 — HELIOS : correction de dictée ORL limitée au contexte
+- **Problème :** le mot français « excellent » pouvait être proposé comme « exsudat » sur la base d'indices ORL présents dans une autre phrase. L'approbation d'une proposition risquait ensuite de remplacer plusieurs occurrences dans le compte rendu.
+- **Correctif :** `src/services/medicalSpeech.ts` vérifie maintenant la phrase contenant chaque occurrence et une localisation anatomique immédiatement après « excellent ». Même lorsqu'une suggestion est approuvée, les autres occurrences non cliniques restent inchangées. Aucune correction vocale n'est appliquée sans validation du médecin.
+- **Régression :** `scripts/test-medical-speech-regression.ts` couvre les phrases multiples, les adjectifs ordinaires, les localisations ORL et la substitution ciblée. Essais uniquement sur texte fictif.
+- **Validation :** compilation et tests automatiques GitHub Actions à confirmer pour le nouveau SHA ; aucun test clinique réel, Android ou microphone revendiqué.
+- **Coordination :** après publication et résultat CI réel, alerter l'utilisateur. Attendre son message « OK » avant un nouveau lot interactif, sans fusion sur main ni déploiement.
+

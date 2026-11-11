@@ -127,6 +127,33 @@ function isLikelyExsudatContext(value: string): boolean {
   return hasClinicalCue && hasAnatomicalSite && hasLocationLink;
 }
 
+// « excellent » est aussi un mot français courant. Ne suggérer « exsudat »
+// que lorsqu'il occupe l'emplacement d'un nom dans UNE phrase ORL précise.
+// Une autre phrase sur les amygdales ne doit pas contaminer un « excellent »
+// décrivant l'état général, un bilan ou une conversation ordinaire.
+function hasExsudatContextAt(value: string, index: number, length: number): boolean {
+  const before = value.slice(0, index);
+  const previousBoundary = Math.max(
+    before.lastIndexOf('.'),
+    before.lastIndexOf('!'),
+    before.lastIndexOf('?'),
+    before.lastIndexOf(';'),
+    before.lastIndexOf('\n'),
+  );
+  const following = value.slice(index + length);
+  const nextBoundaryOffset = following.search(/[.!?;\n]/u);
+  const nextBoundary = nextBoundaryOffset === -1
+    ? value.length
+    : index + length + nextBoundaryOffset;
+  const clause = value.slice(previousBoundary + 1, nextBoundary);
+  if (!isLikelyExsudatContext(clause)) return false;
+
+  // Exiger « excellent sur les amygdales » (ou une localisation analogue)
+  // immédiatement après le terme. « excellent résultat sur ... » n'en est pas un.
+  const local = normalizeSpeechCandidate(value.slice(index + length, Math.min(nextBoundary, index + length + 65)));
+  return /^\s*(?:sur|dans|au niveau (?:de|des|du))\b(?:\s+[\p{L}-]+){0,3}\s+(?:amygdales?|tonsilles?|pharynx|gorge)\b/u.test(local);
+}
+
 // Certains moteurs vocaux découpent « exsudat » en « ex soudain ».
 // Une suggestion est affichée, jamais appliquée sans confirmation du médecin.
 const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: string }> = [
@@ -135,7 +162,6 @@ const fragmentedMedicalSpeechCorrections: Array<{ pattern: RegExp; replacement: 
 
 export function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
   const found = new Map<string, MedicalSpeechCorrection>();
-  const exsudatContext = isLikelyExsudatContext(value);
   // Corrections contextuelles : l'expression complète, jamais un diagnostic
   // inféré d'un mot isolé. Chaque suggestion exige un clic du médecin.
   const contextualPhrases: Array<{ pattern: RegExp; replacement: string }> = [
@@ -171,11 +197,12 @@ export function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrec
       }
     }
   }
-  for (const original of value.match(/[\p{L}]+/gu) || []) {
+  for (const match of value.matchAll(/[\p{L}]+/gu)) {
+    const original = match[0];
     const normalized = normalizeSpeechCandidate(original);
     // « excellent » est un mot français valide : ne le rapprocher d'« exsudat »
     // que dans une phrase ORL décrivant un dépôt ou une plaque sur une zone compatible.
-    const contextualReplacement = normalized === 'excellent' && exsudatContext
+    const contextualReplacement = normalized === 'excellent' && hasExsudatContextAt(value, match.index, original.length)
       ? 'exsudat'
       : null;
     const explicitReplacement = observedMedicalSpeechCorrections[normalized];
@@ -216,6 +243,10 @@ export function applyMedicalSpeechCorrection(value: string, correction: MedicalS
   }
   return value.replace(/[\p{L}]+/gu, (word, offset: number) => {
     if (normalizeSpeechCandidate(word) !== target) return word;
+    // La suggestion « excellent » concerne uniquement l'occurrence ORL.
+    // Un même compte rendu peut également contenir « excellent état général ».
+    if (target === 'excellent' && correction.replacement === 'exsudat'
+      && !hasExsudatContextAt(value, offset, word.length)) return word;
     // Une majuscule de reconnaissance (« Disney ») ne doit pas contaminer
     // un terme médical au milieu d'une phrase. La conserver en début de phrase.
     const before = value.slice(0, offset).trimEnd();
