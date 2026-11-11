@@ -6,6 +6,7 @@ import { selectUniquePatient } from '../services/uniquePatientSelection';
 import { latestVitalReadings } from '../clinical/patientVitals';
 import { buildClinicalMemory } from '../clinical/clinicalMemory';
 import { compareRecentVitals } from '../clinical/trends';
+import { buildPreventionReview } from '../clinical/prevention';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -78,6 +79,7 @@ export default function Patients() {
   const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;
   const clinicalMemory = selected ? buildClinicalMemory(selected, patientConsultations) : null;
   const recordedVitalComparisons = selected ? compareRecentVitals(patientConsultations) : [];
+  const preventionReview = selected ? buildPreventionReview(selected, patientConsultations) : null;
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -529,6 +531,36 @@ export default function Patients() {
                   </ul>
                 ) : <strong>Non renseigné</strong>}
               </div>
+            </section>
+          )}
+
+          {preventionReview && (
+            <section aria-label="HELIOS Prevention — entretien documentaire">
+              <h3 className="patient-section-title">HELIOS Prevention · préparation documentaire</h3>
+              <p className="patient-empty-history">
+                Repères de discussion non personnalisés. Les informations du dossier restent déclaratives :
+                cette rubrique ne vérifie ni l'éligibilité ni la réalisation d'un acte préventif.
+              </p>
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Âge enregistré (à confirmer)</span>
+                  <strong>{preventionReview.recordedAge === null ? 'Non renseigné' : `${preventionReview.recordedAge} ans`}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Dernière consultation datée dans ce dossier</span>
+                  <strong>{preventionReview.lastDatedConsultation
+                    ? displayDate(preventionReview.lastDatedConsultation) : 'Non renseignée'}</strong>
+                </div>
+              </div>
+              <ul className="patient-medication-list">
+                {preventionReview.discussionTopics.map((topic) => (
+                  <li key={topic.id}><strong>{topic.label}</strong> — À vérifier avec le patient et à documenter par le médecin.</li>
+                ))}
+              </ul>
+              <p className="patient-empty-history">
+                Aucune vaccination, aucun dépistage ni autre acte n'est présumé effectué ou manquant.
+                Aucune échéance, alerte, décision clinique ou transmission à une IA externe n'est générée.
+              </p>
             </section>
           )}
 

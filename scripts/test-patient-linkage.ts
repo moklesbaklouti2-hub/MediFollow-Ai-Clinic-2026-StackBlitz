@@ -6,6 +6,7 @@ import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
 import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
 import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
 import { compareRecentVitals } from '../src/clinical/trends.ts';
+import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -320,5 +321,36 @@ assert.ok(patientPageSource.includes('compareRecentVitals(patientConsultations)'
   patientPageSource.includes('Deux mesures numériques datées sont nécessaires'),
   'The patient UI must show source dates and avoid a clinical interpretation.');
 console.log('PASS QW-037: 12 numerical trend checks, immutable fixtures and UI contract.');
+
+
+// QW-038 — Prevention is an immutable documentary discussion checklist,
+// not a preventive-care score or decision. All dates must belong to the
+// selected, uniquely identified patient and be parseable.
+const preventionVisits = [
+  { patientId: 'fictif-a', date: '2026-09-01' },
+  { patientId: 'fictif-b', date: '2026-12-01' },
+  { patientId: 'fictif-a', date: 'date inconnue' },
+  { patientId: 'fictif-a', date: '2026-11-01' },
+];
+const preventionFixtureBefore = JSON.stringify(preventionVisits);
+const prevention = buildPreventionReview({ id: 'fictif-a', age: 47 } as never, preventionVisits);
+assert.equal(prevention.recordedAge, 47);
+assert.equal(prevention.lastDatedConsultation, '2026-11-01');
+assert.equal(prevention.discussionTopics.length, 4);
+assert.deepEqual(prevention.discussionTopics.map(item => item.id),
+  ['vaccins', 'depistages', 'habitudes', 'objectifs']);
+assert.equal(JSON.stringify(preventionVisits), preventionFixtureBefore);
+assert.equal(buildPreventionReview({ id: 'sans-visite', age: 21 } as never, preventionVisits)
+  .lastDatedConsultation, null);
+assert.equal(buildPreventionReview({ id: 'fictif-a', age: -1 } as never, []).recordedAge, null);
+assert.equal(buildPreventionReview({ id: 'fictif-a', age: 'inconnu' } as never, []).recordedAge, null);
+assert.equal(buildPreventionReview({ id: 'fictif-a', age: 0 } as never, []).recordedAge, 0);
+assert.ok(patientPageSource.includes('buildPreventionReview(selected, patientConsultations)') &&
+  patientPageSource.includes('HELIOS Prevention · préparation documentaire') &&
+  patientPageSource.includes('preventionReview.discussionTopics.map(') &&
+  patientPageSource.includes('Aucune vaccination, aucun dépistage') &&
+  patientPageSource.includes('Aucune échéance, alerte, décision clinique'),
+  'Patient view must show documentary prompts with explicit no-inference safeguards.');
+console.log('PASS QW-038: 10 synthetic prevention-document checks and UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

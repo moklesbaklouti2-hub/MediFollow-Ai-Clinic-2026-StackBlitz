@@ -47,6 +47,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F20 | Windows + Android | Programmer un contrôle HELIOS fictif, le retrouver sur le tableau de bord et la liste, puis le marquer effectué après confirmation ; tester aussi l’annulation | Échéance cohérente, dossier confirmé, aucune clôture sans confirmation, contrôle effectué retiré des échéances | ☐ |
 | F21 | Windows + Android | Renseigner allergies, traitements, antécédents médicaux/chirurgicaux/familiaux et diagnostics fictifs dans deux dossiers distincts ; ouvrir HELIOS Clinical Memory | Contenus séparés par patient et rubrique ; dates d'antécédents étiquetées « déclarées » ; provenance des diagnostics ; champs vides « Non renseigné » ; aucune modification automatique ni appel IA | ☐ |
 | F22 | Windows + Android | Enregistrer trois consultations fictives datées avec poids, PAS et glycémie ; comparer HELIOS Trends, puis saisir une mesure textuelle invalide | Les deux dernières valeurs numériques par constante sont comparées dans l'ordre des dates ; l'écart et l'unité sont affichés sans interprétation ; les saisies non numériques sont exclues | ☐ |
+| F23 | Windows + Android | Ouvrir deux dossiers fictifs avec dates de consultation distinctes ; examiner HELIOS Prevention, puis un dossier sans consultation | Repères de discussion présents mais aucune éligibilité, vaccination manquante, échéance ou acte réalisé déduit ; date limitée au dossier sélectionné ; aucune requête IA | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 
@@ -60,6 +61,6 @@ La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non 
 
 ## Décision de sortie
 
-**Ne pas déclarer « application validée en direct » tant que F01–F22 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
+**Ne pas déclarer « application validée en direct » tant que F01–F23 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
 
-À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F22, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
+À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F23, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.

@@ -795,3 +795,10 @@
 - **Garde-fous :** nombres textuels complets uniquement (virgule ou point), dates analysables, mesures invalides ignorées, aucune fusion de constantes distinctes. Le calcul ne modifie pas les consultations et reste limité au dossier patient déjà confirmé unique.
 - **Tests fictifs :** douze contrôles de tri, différence, virgule, valeurs manquantes ou invalides, immutabilité et contrat d'interface, ajoutés à la CI existante.
 - **Validation humaine :** scénario F22 ajouté au protocole final, non exécuté. Une variation de deux valeurs n'est pas une tendance clinique validée.
+
+### 2026-11-11 — QW-038 : HELIOS Prevention, préparation documentaire
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; aucun déploiement, dépense ou patient réel.
+- **Fonction :** premier aide-mémoire non prescriptif dans la fiche patient : historique vaccinal, dépistages, habitudes de vie/expositions et objectifs de prévention à discuter, tous **à vérifier**. Seuls l'âge enregistré et la dernière consultation datée du patient sélectionné sont présentés en contexte.
+- **Garde-fous :** aucune inférence de vaccination manquante/réalisée, éligibilité au dépistage, délai, rappel ou recommandation. Identifiants stricts ; dates invalides ignorées ; lecture locale, sans envoi à un fournisseur IA, stockage ni écriture.
+- **Tests fictifs :** 10 contrôles de séparation interpatient, ordre des dates, champs invalides, absence de mutation et contrat UI via `test:patient-linkage` dans la CI existante.
+- **Validation :** F23 ajouté au protocole final, sans demande d'essai manuel avant la fin. Ce n'est pas un système de prévention clinique validé ; recommandations locales et statuts vaccinaux restent à concevoir et faire vérifier.
