@@ -38,7 +38,15 @@ export function originMatches(requestOrigin: unknown, configuredOrigin: string):
  */
 export function validateRemoteStartup(env: Record<string, string | undefined>): RemoteAccessConfig | null {
   const mode = env.REMOTE_ACCESS_MODE;
-  if (mode === undefined || mode === '') return null;
+  if (mode === undefined || mode === '') {
+    // NODE_ENV=production must never expose the unguarded development
+    // handlers on 0.0.0.0 just because REMOTE_ACCESS_MODE was omitted.
+    // Development remains available with fictional test data only.
+    if (env.NODE_ENV === 'production') {
+      throw new Error('Production startup requires explicit REMOTE_ACCESS_MODE and verified clinical access configuration');
+    }
+    return null;
+  }
   if (mode !== 'enabled') throw new Error('Invalid REMOTE_ACCESS_MODE; expected enabled or unset');
   if (env.NODE_ENV !== 'production') {
     throw new Error('Remote access requires NODE_ENV=production');

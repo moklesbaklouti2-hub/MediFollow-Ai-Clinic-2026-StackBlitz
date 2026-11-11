@@ -629,3 +629,11 @@
 - **Correction :** `readClinicalPromptText` accepte uniquement les chaînes, en supprimant leurs espaces périphériques ; les autres types sont traités comme entrée vide et rejetés par les gardes HTTP 400 déjà en place. Aucun changement des messages valides ni des fournisseurs IA.
 - **Tests fictifs :** 13 scénarios d'entrée, plus 2 assertions vérifiant la liaison aux vraies routes et le refus avant appels IA.
 - **Limite :** ce garde ne constitue ni une authentification, ni une validation clinique, ni une certification de confidentialité. CI complète des 11 jobs sur commit final requise.
+
+### 2026-11-11 — QW-015 : refuser un serveur de production sans mode d'accès distant
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 en brouillon, `main` inchangée, aucune fusion, aucun déploiement et aucune donnée clinique réelle.
+- **Défaut distinct :** le démarrage avec `NODE_ENV=production` et `REMOTE_ACCESS_MODE` absent/vide revenait au chemin de développement non authentifié, puis `app.listen(..., '0.0.0.0')` pouvait exposer les trois routes cliniques.
+- **Correctif :** `validateRemoteStartup` rejette explicitement cette configuration avant création du serveur. Les modes de développement/test sans accès distant sont conservés ; le mode distant activé conserve la configuration HTTPS obligatoire et les contrôles déjà en place.
+- **Tests :** 4 assertions de configuration supplémentaires et essai de démarrage réel d'un serveur de production fictif, attendu en échec avec une erreur de préflight précise avant toute ouverture de port.
+- **Limites :** cette mesure ne remplace pas une authentification ni une vérification réseau, ne bloque pas l'exposition volontaire d'un serveur de développement, et n'autorise pas de déploiement. QW-007/QW-008 et les essais Android restent ouverts.
+- **Validation :** attendre la CI des 11 jobs sur le commit final avant de déclarer VERT.
