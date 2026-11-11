@@ -249,5 +249,21 @@ assert.ok(reasoningHook.includes('if (isCurrentClinicalRequest(controller, activ
   'Une erreur tardive ne doit pas écraser une nouvelle consultation.');
 console.log('OK — 13 assertions pour le refus des réponses cliniques IA périmées.');
 
+
+const consultationPageSource = readFileSync(new URL('../../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+const saveConsultationSource = consultationPageSource
+  .split('function saveConsultation() {')[1]?.split('const vitalFields')[0] ?? '';
+const successReset = saveConsultationSource.split('setSaved(true);')[1] ?? '';
+assert.ok(saveConsultationSource.includes("if (!saved) {") && successReset.length > 0,
+  'La réinitialisation doit rester conditionnée à la réussite de la sauvegarde.');
+assert.ok(successReset.includes("setTargetedInterview('');"),
+  'Après une sauvegarde réussie, les réponses ciblées doivent être effacées du brouillon.');
+assert.ok(successReset.indexOf("setTargetedInterview('');") > successReset.indexOf("setHistory('');") &&
+  successReset.indexOf("setTargetedInterview('');") < successReset.indexOf("setVitals({ ...emptyVitals });"),
+  'Les réponses ciblées doivent être vidées en même temps que les autres champs du brouillon.');
+assert.ok(!saveConsultationSource.split('setSaved(true);')[0].includes("setTargetedInterview('');"),
+  'Une sauvegarde en échec ne doit pas effacer les réponses avant confirmation.');
+console.log('OK — 4 contrôles contractuels : absence de transfert du brouillon ciblé après sauvegarde.');
+
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

@@ -555,3 +555,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` limite la suggestion à un site ORL situé juste après l'occurrence, dans la même proposition, et vérifie ce critère pour chaque remplacement approuvé.
 - **Tests fictifs :** `scripts/test-medical-speech-regression.ts` ajoute 2 contrôles négatifs de contexte, un contrôle positif « sur les amygdales » et 2 assertions sur une note mixte (5 nouveaux contrôles).
 - **Limites :** suggestion uniquement, sans correction automatique ; aucun test de microphone Android ni évaluation clinique réelle. Le SHA final et les 11 jobs GitHub Actions doivent être vérifiés.
+
+### 2026-11-11 — QW-004 : vider les réponses ciblées après sauvegarde de consultation
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 brouillon conservée, `main` intacte, aucune donnée patient réelle ni mise en production.
+- **Risque distinct :** `src/pages/Consultations.tsx` vidait le patient, le motif, les symptômes et les antécédents après enregistrement, mais conservait `targetedInterview`, exposant à la réutilisation involontaire des réponses de la consultation précédente.
+- **Correction :** effacer `targetedInterview` uniquement après `saveConsultation` réussi, avec les autres champs ; conserver le brouillon en cas d'échec de sauvegarde.
+- **Tests :** quatre contrôles structurels ajoutés aux tests cliniques hors ligne (position de l'effacement, succès obligatoire, absence d'effacement avant succès). À compléter par essai manuel de deux patients fictifs dans le navigateur et sur Android.
+- **Validation :** vérifier compilation et les onze jobs Actions pour le SHA final ; la réussite CI ne prouve pas la confidentialité en conditions réelles.

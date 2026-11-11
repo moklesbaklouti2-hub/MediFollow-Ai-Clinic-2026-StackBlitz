@@ -377,6 +377,8 @@ export default function Consultations({
     setMotif('');
     setSymptoms('');
     setHistory('');
+    // Ne jamais réutiliser les réponses ciblées du patient précédent.
+    setTargetedInterview('');
     setVitals({ ...emptyVitals });
     setExamination('');
     setPhysicalExamination({});
