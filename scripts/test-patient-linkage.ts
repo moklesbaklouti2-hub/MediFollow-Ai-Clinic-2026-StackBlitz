@@ -755,4 +755,21 @@ assert.ok(patientPageSource.includes('limitTimelineEvents(specialtyFilteredMedic
   'Clinical history must remain fully accessible with a truthful display counter.');
 console.log('PASS QW-054: long timeline display limit, full-history option and no mutation.');
 
+// QW-055 — Filters are cleared on every patient switch and by an explicit
+// control, preventing stale search criteria from being inherited by another
+// fictitious patient dossier.
+assert.ok(patientPageSource.includes('function resetTimelineControls()') &&
+  patientPageSource.includes('function changeSelectedPatient(nextPatientId: string | null)') &&
+  patientPageSource.includes('setTimelineFromDate(\'\')') &&
+  patientPageSource.includes('setTimelineToDate(\'\')') &&
+  patientPageSource.includes('setTimelineDisplayLimit(\'10\')') &&
+  patientPageSource.includes('setTimelineSpecialtyFilter(\'all\')') &&
+  patientPageSource.includes('setPrescriptionStatusFilter(\'all\')') &&
+  patientPageSource.includes('changeSelectedPatient(patient.id)') &&
+  patientPageSource.includes('changeSelectedPatient(newPatient.id)') &&
+  patientPageSource.includes('onClick={resetTimelineControls}') &&
+  patientPageSource.includes('Réinitialiser les filtres'),
+  'All patient navigation and reset actions must clear the local timeline controls.');
+console.log('PASS QW-055: explicit reset of timeline controls and safe patient switching.');
+
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

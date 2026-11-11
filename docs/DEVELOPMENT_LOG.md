@@ -912,3 +912,8 @@
 - Afficher les 10, 25 ou 50 premiers événements chronologiques ou tous les événements. Compteur distinguant les événements affichés, correspondants et totaux.
 - Aucun événement supprimé, données de stockage intactes ; tests synthétiques de 64 événements et contrat UI. F38 à tester ultérieurement.
 - **Statut :** préparé non validé sur branche distincte.
+
+### 2026-11-11 — QW-055 : remise à zéro de la chronologie (préparation)
+- Un bouton restaure les valeurs par défaut des filtres de type, statut, recherche, dates, spécialité et limite d'affichage.
+- Toutes les ouvertures et fermetures de dossiers sont redirigées par un seul contrôle de changement de patient, qui réinitialise les filtres locaux. Aucun dossier n'est modifié, aucun mouvement de stock ou appel IA.
+- Contrats UI synthétiques, F39 réservé aux essais humains ultérieurs. **Non validé** avant les tests locaux et CI.

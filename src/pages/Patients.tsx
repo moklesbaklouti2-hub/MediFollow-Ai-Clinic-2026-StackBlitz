@@ -45,6 +45,22 @@ export default function Patients() {
   const [editPhone, setEditPhone] = useState('');
   const [editStatus, setEditStatus] = useState('');
 
+  function resetTimelineControls() {
+    setTimelineFilter('all');
+    setTimelineSearch('');
+    setPrescriptionStatusFilter('all');
+    setTimelineFromDate('');
+    setTimelineToDate('');
+    setTimelineSpecialtyFilter('all');
+    setTimelineDisplayLimit('10');
+  }
+
+  function changeSelectedPatient(nextPatientId: string | null) {
+    // Clear all context-sensitive filters before changing the patient.
+    resetTimelineControls();
+    setSelectedId(nextPatientId);
+  }
+
   const selected = selectUniquePatient(patients, selectedId);
 
   const filtered = useMemo(
@@ -140,7 +156,7 @@ export default function Patients() {
     setAge('');
     setPhone('');
     setShowForm(false);
-    setSelectedId(newPatient.id);
+    changeSelectedPatient(newPatient.id);
   }
 
   function beginEditPatient() {
@@ -195,7 +211,7 @@ export default function Patients() {
       return;
     }
 
-    setSelectedId(null);
+    changeSelectedPatient(null);
     setShowEditForm(false);
     window.alert('Le dossier patient a été supprimé.');
   }
@@ -427,7 +443,7 @@ export default function Patients() {
               </div>
             </div>
             <span className="patient-status">{patient.status}</span>
-            <button className="patient-view" onClick={() => setSelectedId(patient.id)}>Ouvrir le dossier</button>
+            <button className="patient-view" onClick={() => changeSelectedPatient(patient.id)}>Ouvrir le dossier</button>
           </article>
         ))}
         {filtered.length === 0 && <p>Aucun patient trouvé.</p>}
@@ -461,7 +477,7 @@ export default function Patients() {
         <p role="alert" className="patient-empty-history">
           Dossier patient introuvable ou identifiant dupliqué. Vérifiez les données importées
           avant d’accéder à l’historique médical.
-          <button type="button" className="patient-view" onClick={() => setSelectedId(null)}>
+          <button type="button" className="patient-view" onClick={() => changeSelectedPatient(null)}>
             Fermer la sélection
           </button>
         </p>
@@ -473,7 +489,7 @@ export default function Patients() {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button className="patient-view" onClick={beginEditPatient}>Modifier le patient</button>
               <button className="patient-delete" onClick={handleDeletePatient}>Supprimer le dossier</button>
-              <button className="patient-view" onClick={() => setSelectedId(null)}>Fermer</button>
+              <button className="patient-view" onClick={() => changeSelectedPatient(null)}>Fermer</button>
             </div>
           </div>
 
@@ -774,6 +790,11 @@ export default function Patients() {
               <option value="50">50 événements</option>
               <option value="all">Tous les événements</option>
             </select>
+          </div>
+          <div className="patient-timeline-filter">
+            <button type="button" className="patient-view" onClick={resetTimelineControls}>
+              Réinitialiser les filtres
+            </button>
           </div>
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>

@@ -63,6 +63,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F36 | Windows + Android | Dans un dossier fictif contenant des événements datés et non datés, saisir les dates de début et de fin dans la chronologie | Bornes inclusives, dates invalides/non datées signalées et exclues du filtre actif, aucun événement modifié | ☐ |
 | F37 | Windows + Android | Avec deux dossiers fictifs comportant des spécialités différentes et une consultation ancienne sans spécialité, appliquer les filtres puis changer de patient | Spécialités dérivées uniquement du dossier confirmé, catégorie « non renseignée » exacte, aucun mélange entre patients ni altération des événements | ☐ |
 | F38 | Windows + Android | Dossier fictif contenant 60 événements : choisir 10, 25, 50, puis tous dans la chronologie | Ordre de date conservé, compteurs exacts, événements non affichés toujours disponibles, pas de mutation de stockage | ☐ |
+| F39 | Windows + Android | Appliquer plusieurs filtres dans un dossier fictif, utiliser « Réinitialiser », puis ouvrir un autre dossier fictif | Tous les filtres reviennent aux valeurs neutres, aucun critère de recherche du dossier précédent n'est hérité et aucune donnée n'est modifiée | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 
@@ -76,6 +77,6 @@ La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non 
 
 ## Décision de sortie
 
-**Ne pas déclarer « application validée en direct » tant que F01–F38 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
+**Ne pas déclarer « application validée en direct » tant que F01–F39 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
 
-À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F38, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
+À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F39, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
