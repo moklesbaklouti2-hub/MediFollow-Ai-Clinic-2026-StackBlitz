@@ -296,8 +296,7 @@ function criticalSpeechTokens(value: string): string {
 // symptôme ou remplacer un diagnostic déjà lisible.
 // La vérification inclut aussi les expressions composées du dictionnaire.
 const medicalSpeechProtectedPatterns = Array.from(medicalSpeechNormalizedTerms, term => {
-  const escaped = term.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\// Si le médecin a dicté un terme médical connu après une négation,
-// ne pas lui substituer un autre terme connu via le classement automatique.');
+  const escaped = term.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\$&');
   return new RegExp('(^|[^\\p{L}])' + escaped + '(?=$|[^\\p{L}])', 'u');
 });
 
