@@ -5,7 +5,11 @@ import { isValidFollowUpDate } from './followUp';
 export function recordedDateTimestamp(value: unknown): number | null {
   if (typeof value !== 'string') return null;
   const text = value.trim();
-  if (isValidFollowUpDate(text)) return Date.parse(text + 'T00:00:00Z');
+  // The validator is a TypeScript type guard: do not narrow the already-string
+  // `text` to `never` when checking timestamp formats below.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    return isValidFollowUpDate(text) ? Date.parse(text + 'T00:00:00Z') : null;
+  }
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(text)) return null;
   if (!isValidFollowUpDate(text.slice(0, 10))) return null;
   const timestamp = Date.parse(text);
