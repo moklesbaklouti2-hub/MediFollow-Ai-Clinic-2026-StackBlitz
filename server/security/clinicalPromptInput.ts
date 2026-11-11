@@ -27,3 +27,8 @@ export function allowedVoiceCommandPage(
 export function isOptionalChatContext(value: unknown): boolean {
   return value == null || (typeof value === 'object' && !Array.isArray(value));
 }
+
+// An absent history is a first turn. A supplied non-array must not be silently discarded.
+export function isOptionalChatHistory(value: unknown): boolean {
+  return value == null || Array.isArray(value);
+}

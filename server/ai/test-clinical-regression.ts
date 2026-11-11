@@ -8,7 +8,7 @@ import {
 } from '../security/jsonBodyErrorHandler.ts';
 import {
   readClinicalPromptText, MAX_CHAT_MESSAGE_CHARS, isClinicalChatMessageTooLong,
-  allowedVoiceCommandPage, isOptionalChatContext,
+  allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory,
 } from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
@@ -609,6 +609,29 @@ assert.ok(chat.includes('if (context != null) {') &&
   !chat.includes("if (context && typeof context === 'object' && !Array.isArray(context))"),
   'Les contextes valides doivent toujours être transmis.');
 console.log('OK — QW-021 : 14 entrées fictives et 2 contrôles des routes du chat.');
+
+
+// QW-022 — reject malformed top-level chat history rather than silently erasing it.
+const historyTypeCases: Array<[unknown, boolean]> = [
+  [undefined, true], [null, true], [[], true],
+  [[{ role: 'user', content: 'Fictif.' }], true],
+  [[{ role: 'assistant', content: 'Question fictive ?' }], true],
+  [{ role: 'user', content: 'Fictif.' }, false],
+  ['Fictif.', false], ['', false], [42, false], [0, false],
+  [true, false], [false, false], [{ 0: 'message', length: 1 }, false],
+];
+for (const [value, expected] of historyTypeCases) {
+  assert.equal(isOptionalChatHistory(value), expected, 'Historique mal forme ou rejete a tort');
+}
+const historyCheck = chat.indexOf('if (!isOptionalChatHistory(req.body?.history))');
+assert.ok(historyCheck >= 0 &&
+  chat.indexOf("return res.status(400).json({ error: 'Historique de discussion invalide.' });") > historyCheck &&
+  historyCheck < chat.indexOf('const history:') &&
+  historyCheck < chat.indexOf('const completion = await createAiCompletion('),
+  'Le chat doit rejeter les historiques mal formes avant le fournisseur IA.');
+assert.ok(chat.includes('Array.isArray(req.body?.history)') &&
+  chat.includes('.slice(-40).map('), 'Le filtrage des historiques valides doit rester actif.');
+console.log('OK — QW-022 : 13 formats historiques fictifs et 2 contrats du chat.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

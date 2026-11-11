@@ -683,3 +683,10 @@
 - **Correctif :** `isOptionalChatContext` accepte uniquement les objets JSON, `null` ou `undefined` (contexte volontairement absent). Les entrées erronées produisent HTTP 400 avant l'historique et l'appel au fournisseur IA. Les objets valides et leur limite de 48 000 caractères conservent le fonctionnement existant.
 - **Vérification :** 14 fixtures fictives et 2 tests structurels du véritable handler. Aucun fournisseur, clé, ni patient réel utilisé.
 - **Limites :** validation de forme seulement ; ni validation de la fiabilité clinique ni authentification. QW-006B, QW-007 et QW-008 restent ouverts. État CI à vérifier sur le SHA exact.
+
+### 2026-11-11 — QW-022 : historiques de chat mal typés
+- Branche audit, PR #2 brouillon, main intacte ; aucune donnée réelle, fusion, dépense ou déploiement.
+- Défaut distinct de QW-021 : un historique non-tableau était silencieusement remplacé par une liste vide, ce qui pouvait fausser la continuité clinique.
+- Correction : refuser par HTTP 400 les historiques non-array, tout en autorisant absence/null et listes valides. Le filtrage existant des messages et la limite de 40 tours/5 000 caractères sont conservés.
+- Tests : 13 entrées fictives et deux vérifications de contrat de la route réelle. CI des 11 jobs requise avant validation.
+- Limites : aucune validation médicale, clinique réelle ou audit de confidentialité ; QW-006B, QW-007 et QW-008 restent ouverts.
