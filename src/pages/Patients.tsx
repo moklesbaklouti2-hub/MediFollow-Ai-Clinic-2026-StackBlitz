@@ -10,6 +10,7 @@ import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
 import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
 import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
+import { documentedSupplementalOrders } from '../clinical/prescriptionTimeline';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
@@ -700,8 +701,9 @@ export default function Patients() {
                     <span className="patient-timeline-kind">Ordonnance</span>
                     <strong>Ordonnance médicale</strong>
                     <span>{displayRecordedDate(entry.date)}</span>
-                    <span>{entry.prescription.medications.length} médicament(s)</span>
-                    {entry.prescription.medications.length > 0 && (
+                    <span>{Array.isArray(entry.prescription.medications)
+                      ? entry.prescription.medications.length : 0} médicament(s) consigné(s)</span>
+                    {Array.isArray(entry.prescription.medications) && entry.prescription.medications.length > 0 && (
                       <ul className="patient-medication-list">
                         {entry.prescription.medications.map((medication) => (
                           <li key={medication.id}>
@@ -709,6 +711,18 @@ export default function Patients() {
                           </li>
                         ))}
                       </ul>
+                    )}
+                    {documentedSupplementalOrders(entry.prescription).length > 0 && (
+                      <div>
+                        <strong>Examens et autres éléments prescrits (non présumés réalisés)</strong>
+                        <ul className="patient-medication-list">
+                          {documentedSupplementalOrders(entry.prescription).map((item, index) => (
+                            <li key={item.id + '-' + index}>
+                              <b>{item.label} :</b> {item.name}{item.details ? ' — ' + item.details : ''}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                     {entry.prescription.advice && <p><b>Conseils :</b> {entry.prescription.advice}</p>}
                   </>

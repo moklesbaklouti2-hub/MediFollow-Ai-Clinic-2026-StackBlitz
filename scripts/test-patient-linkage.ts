@@ -11,6 +11,7 @@ import { buildReferralSource } from '../src/clinical/referral.ts';
 import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
 import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
+import { documentedSupplementalOrders } from '../src/clinical/prescriptionTimeline.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -548,5 +549,44 @@ assert.ok(patientPageSource.includes('orderRecordedNewest(consultations.filter('
   patientPageSource.includes('displayRecordedDate(entry.date)'),
   'Unified timeline must sort safely, display specialties and reject invalid last-visit dates.');
 console.log('PASS QW-046: fictional timeline date ordering, unknown dates, specialty and patient UI contracts.');
+
+
+// QW-047 — existing prescriptions may contain laboratory, radiology and
+// other items in addition to medications; preserve their original meaning.
+const syntheticOrders = {
+  items: [
+    { id: 'lab', category: 'laboratory', name: 'NFS fictive', details: 'à réaliser selon décision médicale' },
+    { id: 'rx', category: 'radiology', name: 'Radio fictive' },
+    { id: 'treatment', category: 'treatment', name: 'Médicament fictif' },
+    { id: 'other', category: 'other', name: 'Courrier fictif' },
+    { id: 'blank', category: 'radiology', name: '  ' },
+    null,
+  ],
+};
+const ordersBefore = JSON.stringify(syntheticOrders);
+assert.deepEqual(documentedSupplementalOrders(syntheticOrders as never), [
+  { id: 'lab', category: 'laboratory', label: 'Analyse biologique prescrite',
+    name: 'NFS fictive', details: 'à réaliser selon décision médicale' },
+  { id: 'rx', category: 'radiology', label: 'Imagerie prescrite',
+    name: 'Radio fictive', details: null },
+  { id: 'other', category: 'other', label: 'Autre élément prescrit',
+    name: 'Courrier fictif', details: null },
+]);
+assert.equal(JSON.stringify(syntheticOrders), ordersBefore, 'Read-only preview must not mutate prescriptions.');
+assert.deepEqual(documentedSupplementalOrders({ items: undefined }), []);
+assert.deepEqual(documentedSupplementalOrders({ items: 'incorrect' as never }), []);
+assert.deepEqual(documentedSupplementalOrders({ items: [
+  { category: 'laboratory', name: '  Bilan fictif  ', details: '  demandé  ' },
+] as never }), [
+  { id: 'élément-0', category: 'laboratory', label: 'Analyse biologique prescrite',
+    name: 'Bilan fictif', details: 'demandé' },
+]);
+assert.ok(patientPageSource.includes('documentedSupplementalOrders(entry.prescription)') &&
+  patientPageSource.includes('Examens et autres éléments prescrits (non présumés réalisés)') &&
+  patientPageSource.includes('Array.isArray(entry.prescription.medications)') &&
+  patientPageSource.includes('item.label') &&
+  patientPageSource.includes('item.details'),
+  'Timeline must expose recorded non-drug orders without claiming that tests were performed.');
+console.log('PASS QW-047: synthetic laboratory/radiology/other order provenance and UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

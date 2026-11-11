@@ -25,7 +25,7 @@ Un nouveau fichier autonome `.github/workflows/medifollow-audit-v2.yml` reprend 
 10. Tests HTTP d'accès simulés et de sessions ;
 11. Relais récapitulatif vers PR #2.
 
-La V1 est laissée inchangée temporairement comme filet de sécurité. La désactiver sur la seule branche d'audit **après** validation effective de V2 pour éviter deux ensembles de tests sur les prochains commits.
+La V2 a obtenu 11/11 sur le SHA `737c4f3`, puis 11/11 sur le SHA `bfca4c5` lors du contrôle de consolidation. V1 a été passée en déclenchement manuel seulement sur la branche d'audit, donc aucun second ensemble de jobs n'est lancé automatiquement.
 
 Si la V2 reste aussi bloquée sans job, il faut considérer une indisponibilité d'ordonnancement GitHub Actions ou un état anormal du dépôt : lancer les tests en local sous Codespaces avec données fictives et ouvrir un ticket GitHub Support muni des identifiants de run. Les tests locaux doivent être signalés comme tels et ne remplacent pas la CI GitHub.
 

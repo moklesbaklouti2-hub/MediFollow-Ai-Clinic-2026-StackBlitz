@@ -858,3 +858,15 @@
 - **Garde-fous :** validation des jours calendaires (dont 29 février) et des horodatages ISO avec fuseau, affichage « Date non renseignée » dans la chronologie ; calcul des dernières visites à partir de seules dates valides ; dictionnaire sans prototype pour les identifiants de patients importés. Pas d'écriture, de modification de `main`, d'appel IA, ni de données réelles.
 - **Tests :** scénarios fictifs incluant plusieurs patients, dates absurdes ou ambiguës, ordre déterministe, conservation des données et contrat du composant patient. F30 ajouté à la validation humaine finale, non exécuté.
 - **Statut :** préparé en attente du VERT QW-045 ; vérifier la CI sur le commit final avant toute annonce de validation.
+
+### 2026-11-11 — QW-047 : chronologie des analyses et examens prescrits (préparé, non validé)
+- **Branche visée :** `audit-stabilisation-2026-11-10` ; commit préparé en chaîne sur QW-046, sans modification de la branche active ni de `main`.
+- **Fonction :** affichage dans la chronologie patient des catégories `laboratory`, `radiology`, `other` déjà consignées sous `prescription.items`. Les médicaments du format historique `medications` restent présentés séparément ; aucun traitement n'est dupliqué par ce nouveau volet.
+- **Sécurité :** source documentaire locale filtrée sur le dossier confirmé par les gardes existants ; les examens sont explicitement « prescrits », non « réalisés ». Les données malformées ou absentes sont ignorées sans interprétation ; aucune ordonnance, donnée ni mouvement de stock n'est créé ou modifié.
+- **Tests :** plusieurs catégories fictives, valeurs invalides, absence de champs, immutabilité et contrat UI ; test manuel F31 prévu à la fin.
+- **Statut :** préparé seulement. Les lots QW-045 et QW-046 ne sont pas encore clôturés par leurs CI exactes ; ne pas fusionner ni annoncer VERT.
+
+### 2026-11-11 — consolidation GitHub Actions et reprise documentée
+- Après l'annulation forcée sans effet immédiat, le workflow indépendant V2 a démarré. Le commit `737c4f3` a obtenu 11/11 succès V1 et V2, plus `npm run test:complete` local terminé code 0.
+- Le workflow V1 a ensuite été passé en déclenchement manuel uniquement ; le commit `bfca4c5` a obtenu **V2 11/11 completed/success**, sans duplication de workflow lors du push.
+- QW-046 validé par les tests et le SHA exact `737c4f3`. QW-047 est désormais intégré au fil des commits de la branche d'audit mais reste **en attente de CI V2 sur son SHA final**, et de F31 sur données fictives à la phase humaine finale. Ne jamais annoncer de résultat VERT avant confirmation 11/11 sur le HEAD courant.
