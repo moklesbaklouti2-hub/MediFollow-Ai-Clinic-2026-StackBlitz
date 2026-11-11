@@ -323,7 +323,7 @@ const alteredHistory: Array<[string, (d: InventoryData) => void]> = [
   ['quantité historique différente', d => { d.movements[0].quantity = 2; }],
   ['lot historique absent', d => { d.movements[0].itemId = 'lot-inconnu'; }],
   ['lot historique dupliqué', d => { d.items.push({ ...d.items[0] }); }],
-  ['produit historique renommé', d => { d.items[0].name = 'Autre produit test'; }],
+  ['produit historique différent', d => { d.movements[0].itemId = 'lot-c'; }],
 ];
 for (const [name, alter] of alteredHistory) {
   const d = fixture();
