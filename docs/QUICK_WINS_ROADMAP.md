@@ -23,7 +23,8 @@
 | QW-006C | S | Empêcher la lecture d'une réponse IA arrivée après fermeture ou réouverture de l'Orb | `513d9dc` | [43035037173](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43035037173) : 11/11 réussis | VALIDÉ |
 | QW-009 | S | Reconnaître les pluriels de douleur thoracique et leurs négations | `b826fa3` | [43036062298](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43036062298) : 11/11 réussis | VALIDÉ |
 | QW-010 | S | Ne pas masquer les antécédents manquants par des rubriques vides et intégrer le contexte gynéco-obstétrical | `d87032e` | [43036660236](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43036660236) : 11/11 réussis | VALIDÉ |
-| QW-011 | S | Refuser retour/annulation sur identifiant de lot ambigu après import | SHA à vérifier | 27 contrôles fictifs + CI 11/11 exigée | EN VALIDATION |
+| QW-011 | S | Refuser retour/annulation sur identifiant de lot ambigu après import | `52eed62` | [43038818380](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43038818380) : 11/11 réussis | VALIDÉ |
+| QW-012 | S | Rejeter sans exception les requêtes de retour/annulation mal formées | SHA à confirmer | 42 contrôles fictifs + CI 11/11 exigée | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

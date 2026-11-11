@@ -406,4 +406,47 @@ for (const [name, mutate, selectedLot] of duplicateLotLedgers) {
   assertions += 3;
 }
 
+
+// QW-012 — l'entrée d'une opération de retour ou d'annulation peut venir
+// d'un import ancien ou d'un appel non typé : refuser sans exception et
+// sans modifier le stock si l'identité/quantité est mal formée.
+const invalidReturnRequests: Array<[string, unknown]> = [
+  ['requête nulle', null],
+  ['requête indéfinie', undefined],
+  ['objet vide', {}],
+  ['identifiant vide', { dispenseMovementId: '', quantity: 1 }],
+  ['identifiant espaces', { dispenseMovementId: '   ', quantity: 1 }],
+  ['identifiant numérique', { dispenseMovementId: 12, quantity: 1 }],
+  ['quantité absente', { dispenseMovementId: 'disp-valid' }],
+  ['quantité texte', { dispenseMovementId: 'disp-valid', quantity: '1' }],
+];
+for (const [name, invalidRequest] of invalidReturnRequests) {
+  const data = fixture();
+  data.movements = [issued('disp-valid', 'lot-a', 2)];
+  seedLedger(data);
+  const before = JSON.stringify(getInventoryData());
+  const result = returnDispensedStock(invalidRequest as Parameters<typeof returnDispensedStock>[0]);
+  assert.equal(result.success, false, 'Retour mal formé accepté : ' + name);
+  unchanged(before, 'retour ' + name);
+  assertions += 3;
+}
+const invalidCancellationRequests: Array<[string, unknown]> = [
+  ['requête nulle', null],
+  ['requête indéfinie', undefined],
+  ['objet vide', {}],
+  ['ordonnance vide', { prescriptionId: '' }],
+  ['ordonnance espaces', { prescriptionId: '   ' }],
+  ['ordonnance numérique', { prescriptionId: 42 }],
+];
+for (const [name, invalidRequest] of invalidCancellationRequests) {
+  const data = fixture();
+  data.movements = [issued('disp-valid', 'lot-a', 2)];
+  seedLedger(data);
+  const before = JSON.stringify(getInventoryData());
+  const result = cancelDispensedPrescriptionStock(invalidRequest as Parameters<typeof cancelDispensedPrescriptionStock>[0]);
+  assert.equal(result.success, false, 'Annulation mal formée acceptée : ' + name);
+  unchanged(before, 'annulation ' + name);
+  assertions += 3;
+}
+
 console.log('OK — ' + assertions + ' assertions sur les replays et la délivrance atomique (données fictives).');

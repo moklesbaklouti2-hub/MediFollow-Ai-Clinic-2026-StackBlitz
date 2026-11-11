@@ -608,3 +608,10 @@
 - **Correction :** pour chaque mouvement à réintégrer, retrouver **exactement un** lot portant l'identifiant d'origine ; refuser en cas d'absence ou de doublon, y compris si un reliquat a déjà été totalement retourné. Vérifier tous les lots avant l'écriture de l'annulation.
 - **Tests :** 27 assertions fictives complémentaires dans `scripts/test-inventory-dispense-regression.ts` (doublons identiques, noms/catégories divergents, multi-lots, annulation déjà remboursée, aucune écriture en échec).
 - **Limites :** ces contrôles ne certifient pas la sécurité clinique ni la validité d'un inventaire réel. Vérifier la CI GitHub Actions sur le SHA exact avant de marquer VALIDÉ.
+
+### 2026-11-11 — QW-012 : entrées de retour et annulation non typées refusées sans plantage
+- **Branche :** `audit-stabilisation-2026-11-10`. PR #2 brouillon, `main` intacte, aucune fusion ni donnée réelle, déploiement ou dépense.
+- **Défaut distinct :** `returnDispensedStock` accédait directement à `input.quantity` et `cancelDispensedPrescriptionStock` à `input.prescriptionId` ; un appel mal formé (ex. import ou JavaScript sans types) pouvait provoquer une exception au lieu de refuser proprement la demande.
+- **Correction :** validation préalable d'un identifiant texte non vide, d'une quantité numérique finie et strictement positive au retour, et d'une ordonnance identifiée à l'annulation. Refus avant lecture et toute modification de stock.
+- **Tests :** 42 assertions fictives supplémentaires sur 14 variantes d'entrée (valeurs nulles/indéfinies, chaînes vides, mauvais types et quantités absentes).
+- **Limites :** validation des entrées du service uniquement, sans confirmer de comportement clinique sur Android. CI complète de onze jobs à vérifier sur commit final.

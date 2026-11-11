@@ -539,7 +539,10 @@ export function returnDispensedStock(input: {
   quantity: number;
   reason?: string;
 }): { success: boolean; error?: string } {
-  if (!Number.isFinite(input.quantity) || input.quantity <= 0) {
+  if (!input || typeof input.dispenseMovementId !== 'string' || !input.dispenseMovementId.trim()) {
+    return { success: false, error: 'Retour refusé : mouvement de délivrance non identifié.' };
+  }
+  if (typeof input.quantity !== 'number' || !Number.isFinite(input.quantity) || input.quantity <= 0) {
     return { success: false, error: 'Quantité de retour invalide.' };
   }
 
@@ -615,6 +618,9 @@ export function returnDispensedStock(input: {
 export function cancelDispensedPrescriptionStock(input: {
   prescriptionId: string;
 }): { success: boolean; error?: string; alreadyReturned?: boolean } {
+  if (!input || typeof input.prescriptionId !== 'string' || !input.prescriptionId.trim()) {
+    return { success: false, error: 'Annulation refusée : ordonnance non identifiée.' };
+  }
   const data = getInventoryData();
   const originalMovements = data.movements.filter((movement) =>
     movement.type === 'dispense' && movement.prescriptionId === input.prescriptionId
