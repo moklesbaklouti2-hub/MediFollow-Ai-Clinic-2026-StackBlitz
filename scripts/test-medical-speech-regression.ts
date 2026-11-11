@@ -138,6 +138,23 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'SpO₂ 97 % avec dyspnée');
 assertions++;
 
+// Une hypothèse mieux notée ne doit pas déplacer une négation ni
+// en changer la cible clinique connue (toux / dyspnée).
+const negationMeaningChanges = [
+  ['pas de disney avec toux', 'toux avec pas de dyspnée'],
+  ['absence de display avec toux', 'toux avec absence de dyspnée'],
+  ['pas de toux et disney', 'pas de dyspnée et toux'],
+  ['absence de toux avec display', 'absence de dyspnée avec toux'],
+];
+for (const [initial, unsafe] of negationMeaningChanges) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: unsafe },
+  }), initial, 'Sens de la négation modifié : ' + unsafe);
+  assertions++;
+}
+
 // La suggestion médicale ne doit jamais être appliquée sans clic du médecin.
 const dictatedRaw = 'le patient présente une disney';
 const suggested = suggestions(dictatedRaw).find(item => item.replacement === 'dyspnée');

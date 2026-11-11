@@ -8,6 +8,8 @@ export type SpeechResultLike = { isFinal: boolean; length: number; [index: numbe
 // Le vocabulaire de reconnaissance provient du référentiel médical structuré.
 // Les synonymes sont également pris en compte pour départager les alternatives vocales.
 const medicalSpeechTerms = MEDICAL_DICTIONARY.flatMap(entry => [entry.term, ...(entry.synonyms || [])]);
+// Ensemble pré-normalisé pour les garde-fous de négation ; aucune correction automatique.
+const medicalSpeechNormalizedTerms = new Set(medicalSpeechTerms.map(normalizeSpeechCandidate));
 
 export function normalizeSpeechCandidate(value: string): string {
   return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
@@ -264,6 +266,9 @@ function criticalSpeechTokens(value: string): string {
   const normalized = normalizeSpeechCandidate(value);
   const numbers = Array.from(normalized.matchAll(/\b\d+(?:[,.]\d+)?\b/gu), match => match[0].replace(',', '.'));
   const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)\b/gu), match => match[0]);
+  // Même liste de négations dans une autre position peut inverser le sens.
+  const negationWordPositions = Array.from(normalized.matchAll(/[\p{L}\p{N}]+/gu))
+    .flatMap((match, index) => /^(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)$/u.test(match[0]) ? [index] : []);
   // Même valeur chiffrée avec une unité différente = risque de dose erronée.
   const units = Array.from(normalized.matchAll(/\b(?:mg|mcg|µg|ug|g|kg|ml|l|mmhg|bpm)\b|%/gu), match => match[0]);
   // La latéralité et la polarité d'un examen ne doivent pas être changées
@@ -283,7 +288,21 @@ function criticalSpeechTokens(value: string): string {
   // ces éléments dans une transcription alternative sélectionnée.
   const obstetrics = Array.from(normalized.matchAll(/\b(?:enceinte|grossesse|grossesses|gestante|gestantes|allaitement|allaite|menopause|menopausee|menopausees)\b/gu), match => match[0]);
   const history = Array.from(normalized.matchAll(/\b(?:antecedent|antecedents|chirurgie|chirurgical|chirurgicale|chirurgicaux|diabete|diabetique|hypertension|hta|asthme|epilepsie|infarctus|avc)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
+  return JSON.stringify({ numbers, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
+}
+
+// Si le médecin a dicté un terme médical connu après une négation,
+// ne pas lui substituer un autre terme connu via le classement automatique.
+// Un mot mal reconnu (« disney ») reste éligible à une hypothèse plus claire.
+function negatedMedicalTargets(value: string): Array<string | null> {
+  const words = normalizeSpeechCandidate(value).match(/[\p{L}\p{N}]+/gu) ?? [];
+  const isNegation = /^(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)$/u;
+  const isLinker = /^(?:de|du|des|d|le|la|les|un|une|l|au|aux)$/u;
+  return words.flatMap((word, index) => {
+    if (!isNegation.test(word)) return [];
+    const nextTerm = words.slice(index + 1, index + 6).find(token => !isLinker.test(token));
+    return [nextTerm && medicalSpeechNormalizedTerms.has(nextTerm) ? nextTerm : null];
+  });
 }
 
 export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
@@ -312,9 +331,16 @@ export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string
   // Ne choisit une alternative que si elle contient un terme médical reconnu
   // que la première proposition ne contient pas. En cas d'égalité, garde l'original.
   const initialCriticalTokens = criticalSpeechTokens(candidates[0]);
-  const safeCandidates = scored.filter(candidate =>
-    criticalSpeechTokens(candidate.transcript) === initialCriticalTokens
-  );
+  const initialNegationTargets = negatedMedicalTargets(candidates[0]);
+  const safeCandidates = scored.filter(candidate => {
+    if (criticalSpeechTokens(candidate.transcript) !== initialCriticalTokens) return false;
+    const proposedTargets = negatedMedicalTargets(candidate.transcript);
+    // Deux noms médicaux connus différents, derrière la même négation,
+    // ne sont pas de simples variantes d'orthographe.
+    return !initialNegationTargets.some((target, index) =>
+      target !== null && proposedTargets[index] !== null && proposedTargets[index] !== target
+    );
+  });
   const best = safeCandidates.reduce((current, candidate) =>
     candidate.score > current.score ? candidate : current
   );

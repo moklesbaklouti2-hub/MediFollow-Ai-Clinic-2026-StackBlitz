@@ -379,3 +379,10 @@
 - **Validation :** compilation et tests automatiques GitHub Actions à confirmer pour le nouveau SHA ; aucun test clinique réel, Android ou microphone revendiqué.
 - **Coordination :** après publication et résultat CI réel, alerter l'utilisateur. Attendre son message « OK » avant un nouveau lot interactif, sans fusion sur main ni déploiement.
 
+
+### 2026-11-11 — HELIOS : préserver la position et la cible des négations
+- **Branche :** `audit-stabilisation-2026-11-10` uniquement ; `main` inchangée.
+- **Objectif :** empêcher le classement des alternatives du navigateur de déplacer « pas de », « absence de » ou de remplacer une cible clinique connue sous négation (ex. toux ↔ dyspnée).
+- **Code :** `src/services/medicalSpeech.ts` ; tests : `scripts/test-medical-speech-regression.ts` avec quatre cas fictifs supplémentaires.
+- **Sécurité :** une alternative qui améliore la graphie d'un mot inconnu à position de négation inchangée reste autorisée ; aucune auto-correction médicale ajoutée.
+- **Validation :** CI GitHub Actions à contrôler après commit ; le navigateur Android et la précision clinique réelle demeurent non validés.
