@@ -266,6 +266,13 @@ function criticalSpeechTokens(value: string): string {
   const normalized = normalizeSpeechCandidate(value);
   const numbers = Array.from(normalized.matchAll(/\b\d+(?:[,.]\d+)?\b/gu), match => match[0].replace(',', '.'));
   const negations = Array.from(normalized.matchAll(/\b(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)\b/gu), match => match[0]);
+  // Les chiffres et unités inchangés ne suffisent pas : l'alternative
+  // pourrait attribuer 1,2 g/L à la saturation et 97 % à une autre mesure,
+  // ou permuter deux valeurs entre leurs libellés.
+  // Conserver le couple (mesure reconnue, valeur) tel qu'il a été dicté.
+  const measuredValues = Array.from(normalized.matchAll(
+    /(?<![\p{L}\p{N}])(spo[2₂]|saturation(?: en oxygene)?|glycemie|temperature|pression systolique|pression diastolique|frequence cardiaque|pouls|fc)(?![\p{L}\p{N}])\s*(?::|=)?\s*(\d+(?:[,.]\d+)?)/gu,
+  ), match => [match[1], match[2].replace(',', '.')]);
   // Même liste de négations dans une autre position peut inverser le sens.
   const negationWordPositions = Array.from(normalized.matchAll(/[\p{L}\p{N}]+/gu))
     .flatMap((match, index) => /^(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)$/u.test(match[0]) ? [index] : []);
@@ -288,7 +295,7 @@ function criticalSpeechTokens(value: string): string {
   // ces éléments dans une transcription alternative sélectionnée.
   const obstetrics = Array.from(normalized.matchAll(/\b(?:enceinte|grossesse|grossesses|gestante|gestantes|allaitement|allaite|menopause|menopausee|menopausees)\b/gu), match => match[0]);
   const history = Array.from(normalized.matchAll(/\b(?:antecedent|antecedents|chirurgie|chirurgical|chirurgicale|chirurgicaux|diabete|diabetique|hypertension|hta|asthme|epilepsie|infarctus|avc)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
+  return JSON.stringify({ numbers, measuredValues, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
 // Conserver tous les termes médicaux déjà reconnus dans la première

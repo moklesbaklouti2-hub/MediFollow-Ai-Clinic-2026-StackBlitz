@@ -407,3 +407,10 @@
 - **Correctif :** identifier la plus longue expression médicale du dictionnaire juste après chaque négation ; refuser de remplacer une expression reconnue par une autre à cette position. Une amélioration de « disney » vers « dyspnée » reste autorisée si la cible niée ne change pas.
 - **Tests :** trois contre-exemples de négation inversée et un exemple positif, sur données fictives. Aucune substitution médicale automatique, aucune ordonnance ni donnée patient réelle modifiée.
 - **Vérification :** lancer GitHub Actions sur le SHA de ce commit, contrôler chaque job et la publication du relais `MEDIFOLLOW_CI_RESULT_V1`. Les essais microphone sur Android et la validation clinique réelle restent à effectuer.
+
+### 2026-11-11 — HELIOS : préserver la valeur associée à chaque mesure dictée
+- **Branche :** `audit-stabilisation-2026-11-10` ; ni fusion ni déploiement.
+- **Défaut ciblé :** la liste des chiffres et unités pouvait rester identique alors que le navigateur proposait une alternative attribuant une valeur à une autre mesure (ex. glycémie 1,2 vs 2,5 g/L ; SpO₂ 97 vs 88 %). Une meilleure note lexicale risquait de favoriser cette permutation.
+- **Correctif :** `src/services/medicalSpeech.ts` conserve les associations (libellé clinique reconnu, valeur numérique) pour SpO₂, saturation, glycémie, température, pression systolique/diastolique, fréquence cardiaque et pouls. Une alternative divergente conserve la transcription initiale ; aucune valeur n'est recalculée.
+- **Tests :** `scripts/test-medical-speech-regression.ts` ajoute trois régressions de permutation de mesures et un contrôle positif de meilleure dictée, sur cas fictifs uniquement.
+- **Validation :** compilation et tests GitHub Actions à vérifier sur le nouveau SHA, et publication du commentaire de relais seulement après confirmation réelle des jobs. Aucun essai de microphone Chrome Android ni validation clinique en conditions réelles.

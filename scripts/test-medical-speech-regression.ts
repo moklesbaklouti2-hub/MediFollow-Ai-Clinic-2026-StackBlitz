@@ -138,6 +138,38 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'SpO₂ 97 % avec dyspnée');
 assertions++;
 
+// La conservation de la liste de nombres et des unités n'assure pas
+// qu'un chiffre reste associé à la bonne mesure clinique.
+const reassignedClinicalMeasurements = [
+  [
+    'glycémie 1,2 g/L et lactates 2,5 g/L avec disney',
+    'lactates 1,2 g/L et glycémie 2,5 g/L avec dyspnée',
+  ],
+  [
+    'SpO₂ 97 % et saturation 88 % avec disney',
+    'saturation 97 % et SpO₂ 88 % avec dyspnée',
+  ],
+  [
+    'température 38,5 degrés et pouls 96 bpm avec disney',
+    'pouls 38,5 degrés et température 96 bpm avec dyspnée',
+  ],
+];
+for (const [initial, reassigned] of reassignedClinicalMeasurements) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: reassigned },
+  }), initial, 'Association mesure/valeur modifiée : ' + reassigned);
+  assertions++;
+}
+// Une amélioration lexicale réelle reste possible sans changer les mesures.
+assert.equal(runtime.chooseMedicalSpeechAlternative({
+  length: 2,
+  0: { transcript: 'SpO₂ 97 % et glycémie 1,2 g/L avec disney' },
+  1: { transcript: 'SpO₂ 97 % et glycémie 1,2 g/L avec dyspnée' },
+}), 'SpO₂ 97 % et glycémie 1,2 g/L avec dyspnée');
+assertions++;
+
 // Une hypothèse mieux notée ne doit pas déplacer une négation ni
 // en changer la cible clinique connue (toux / dyspnée).
 const negationMeaningChanges = [
