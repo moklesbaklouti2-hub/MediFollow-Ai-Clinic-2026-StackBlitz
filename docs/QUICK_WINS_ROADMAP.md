@@ -46,7 +46,8 @@
 | QW-031 | S | Refuser la sauvegarde des consultations/ordonnances sans identifiant patient unique et existant | `945ddb5` | [43072162714](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43072162714) : 11/11 réussis | VALIDÉ |
 | QW-032 | S | HELIOS Follow-up : bloquer les actions rapides si l'identifiant patient n'est pas unique | `8900254` | [43074071020](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43074071020) : 11/11 réussis | VALIDÉ |
 | QW-033 | S | Refuser l'ouverture du dossier patient détaillé si identifiant absent ou dupliqué | `1e7fbbb` | [43074639442](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43074639442) : 11/11 réussis | VALIDÉ |
-| QW-034 | S | Associer chaque dernière constante à la date de sa propre consultation | SHA à confirmer | 9 vérifications fictives + contrat UI, CI 11/11 | EN VALIDATION |
+| QW-034 | S | Associer chaque dernière constante à la date de sa propre consultation | `4b2c254` | [43075351256](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43075351256) : 11/11 réussis | VALIDÉ |
+| QW-035 | M | HELIOS Clinical Memory : aperçu local des allergies, traitements déclarés et diagnostics documentés | SHA à confirmer | 11 tests fictifs, CI 11/11 requise | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

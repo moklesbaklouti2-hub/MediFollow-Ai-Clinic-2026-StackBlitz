@@ -4,6 +4,7 @@ import type { Patient } from '../types/medical';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
 import { selectUniquePatient } from '../services/uniquePatientSelection';
 import { latestVitalReadings } from '../clinical/patientVitals';
+import { buildClinicalMemory } from '../clinical/clinicalMemory';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -74,6 +75,7 @@ export default function Patients() {
 
   // Each latest reading keeps the date of its own consultation.
   const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;
+  const clinicalMemory = selected ? buildClinicalMemory(selected, patientConsultations) : null;
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -468,6 +470,46 @@ export default function Patients() {
             patient={selected}
             onSave={(changes) => updatePatient(selected.id, changes)}
           />
+
+          {clinicalMemory && (
+            <section aria-label="HELIOS Clinical Memory — mémoire documentaire">
+              <h3 className="patient-section-title">HELIOS Clinical Memory · aperçu documentaire</h3>
+              <p className="patient-empty-history">
+                Extraits des données enregistrées pour ce dossier. À vérifier lors de la consultation :
+                aucune information manquante n'est interprétée comme une absence d'allergie, de traitement ou de diagnostic.
+              </p>
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Allergies déclarées</span>
+                  {clinicalMemory.allergies.length ? (
+                    <ul className="patient-medication-list">
+                      {clinicalMemory.allergies.map((entry, index) => <li key={index}>{entry}</li>)}
+                    </ul>
+                  ) : <strong>Non renseigné</strong>}
+                </div>
+                <div className="patient-summary-item">
+                  <span>Traitements déclarés dans le dossier (à confirmer)</span>
+                  {clinicalMemory.declaredTreatments.length ? (
+                    <ul className="patient-medication-list">
+                      {clinicalMemory.declaredTreatments.map((entry, index) => <li key={index}>{entry}</li>)}
+                    </ul>
+                  ) : <strong>Non renseigné</strong>}
+                </div>
+              </div>
+              <div className="patient-summary-item">
+                <span>Trois derniers diagnostics consignés dans les consultations (non revalidés)</span>
+                {clinicalMemory.documentedDiagnoses.length ? (
+                  <ul className="patient-medication-list">
+                    {clinicalMemory.documentedDiagnoses.map((entry) => (
+                      <li key={entry.consultationId}>
+                        {entry.label} · {displayDate(entry.date)}
+                      </li>
+                    ))}
+                  </ul>
+                ) : <strong>Non renseigné</strong>}
+              </div>
+            </section>
+          )}
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">

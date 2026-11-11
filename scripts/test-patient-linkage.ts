@@ -4,6 +4,7 @@ import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
 import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
+import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -178,5 +179,54 @@ assert.ok(latestReadingsPage.includes('latestVitalReadings(patientConsultations)
   latestReadingsPage.includes('Object.keys(latestVitals).length === 0'),
   'Patient UI must show the date of each reading and indicate missing data.');
 console.log('PASS QW-034: nine synthetic vital provenance checks and actual Patient UI contract.');
+
+
+// QW-035 — Clinical Memory must only display explicitly recorded data of the
+// selected patient; no diagnosis/treatment inferred from a missing value.
+const patientMemory = {
+  id: 'patient-fictif',
+  clinicalHistory: { allergies: [
+    { id: 'a', label: ' Pénicilline ', details: ' éruption fictive ' },
+    { id: 'b', label: '  ' },
+  ] },
+  currentMedications: [
+    { id: 'm1', name: ' Traitement fictif ', dosage: ' 5 mg ' },
+    { id: 'm2', name: '' },
+  ],
+};
+const memoryVisits = [
+  { id: 'newest', patientId: 'patient-fictif', date: '2026-11-11', diagnosis: 'Diagnostic fictif 1' },
+  { id: 'other', patientId: 'autre-patient', date: '2026-11-12', diagnosis: 'NE PAS AFFICHER' },
+  { id: 'blank', patientId: 'patient-fictif', date: '2026-11-10', diagnosis: '' },
+  { id: 'older', patientId: 'patient-fictif', date: '2026-10-05', diagnosis: 'Diagnostic fictif 2' },
+  { id: 'oldest', patientId: 'patient-fictif', date: '2026-09-01', diagnosis: 'Diagnostic fictif 3' },
+  { id: 'historical', patientId: 'patient-fictif', date: '2026-01-01', diagnosis: 'Diagnostic fictif 4' },
+];
+const clinicalMemory = buildClinicalMemory(patientMemory, memoryVisits);
+assert.deepEqual(clinicalMemory.allergies, ['Pénicilline — éruption fictive']);
+assert.deepEqual(clinicalMemory.declaredTreatments, ['Traitement fictif — 5 mg']);
+assert.deepEqual(clinicalMemory.documentedDiagnoses.map(x => x.consultationId),
+  ['newest', 'older', 'oldest']);
+assert.equal(clinicalMemory.documentedDiagnoses[0]?.date, '2026-11-11');
+assert.equal(clinicalMemory.documentedDiagnoses.some(x => x.label === 'NE PAS AFFICHER'), false);
+assert.deepEqual(buildClinicalMemory({ id: 'sans-données' }, []), {
+  allergies: [], declaredTreatments: [], documentedDiagnoses: [],
+});
+assert.deepEqual(buildClinicalMemory({ id: 'sans-données' }, memoryVisits).documentedDiagnoses, []);
+assert.deepEqual(buildClinicalMemory({ id: 'patient-fictif', clinicalHistory: {
+  allergies: [null, { id: 'a', label: 42 }] as never,
+}, currentMedications: [null] as never }, []).allergies, []);
+const missingDate = buildClinicalMemory({ id: 'patient-fictif' }, [
+  { id: 'bad-date', patientId: 'patient-fictif', date: 'incorrect', diagnosis: 'Note fictive' },
+]);
+assert.equal(missingDate.documentedDiagnoses[0]?.date, 'Date non renseignée');
+assert.equal(patientPageSource.includes('buildClinicalMemory(selected, patientConsultations)'), true);
+assert.ok(patientPageSource.includes('HELIOS Clinical Memory · aperçu documentaire') &&
+  patientPageSource.includes('Allergies déclarées') &&
+  patientPageSource.includes('Traitements déclarés dans le dossier (à confirmer)') &&
+  patientPageSource.includes('Non renseigné') &&
+  patientPageSource.includes('clinicalMemory.documentedDiagnoses.map('),
+  'Le composant Patients doit afficher la mémoire locale et sa provenance, sans conclusion automatique.');
+console.log('PASS QW-035: 11 tests fictifs de mémoire documentaire et de liaison UI.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

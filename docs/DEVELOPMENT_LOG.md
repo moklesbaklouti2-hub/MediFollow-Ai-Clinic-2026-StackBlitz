@@ -774,3 +774,10 @@
 - **Correction :** helper pur `latestVitalReadings` qui retourne chaque valeur et sa date source. La fiche patient affiche « Mesurée le » pour chaque constante. Si aucune mesure n'existe, une mention explicite remplace la grille vide. Aucun calcul, diagnostic ni changement de stockage.
 - **Tests fictifs :** neuf vérifications de provenance, valeurs manquantes/espaces et un contrôle structurel de la vraie interface Patients, intégré au test existant exécuté par la CI.
 - **Limites :** les valeurs ne sont ni certifiées ni interprétées médicalement, les unités doivent être vérifiées par le médecin. Les essais manuels restent à la phase finale.
+
+### 2026-11-11 — QW-035 : HELIOS Clinical Memory (premier aperçu local)
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; `main` intacte, sans fusion, déploiement, dépense ni données réelles.
+- **Fonction :** première synthèse **documentaire et non générative** dans le dossier patient : allergies saisies avec détails, traitements déclarés (à confirmer) et trois derniers diagnostics explicitement consignés, associés à leur consultation et date source.
+- **Sécurité clinique :** les notes ne sont jamais transformées en diagnostics actifs ou recommandations ; « Non renseigné » ne signifie pas absence d'allergie ou de traitement. La sélection unique du patient de QW-033 et le filtrage strict par `patientId` empêchent de mélanger les dossiers ; aucune écriture ni requête fournisseur.
+- **Tests :** 11 vérifications synthétiques de provenance/tri, séparation des patients, champs absents/malformés et présence du composant ; intégrées au `test:patient-linkage` existant dans la CI.
+- **Validation manuelle :** F21 ajouté au protocole final. Ne pas annoncer cette vue comme une mémoire IA persistante ou une synthèse cliniquement validée : c'est un aperçu des données enregistrées.
