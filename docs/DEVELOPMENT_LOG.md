@@ -767,3 +767,10 @@
 - **Correction :** `selectUniquePatient` refuse les sélections vides, inconnues ou dupliquées ; aucun détail ni chronologie clinique n'est ouvert dans ces cas. Une alerte explicite signale l'identifiant ambigu et propose de fermer la sélection.
 - **Tests automatiques :** neuf identités synthétiques et un contrat de liaison à la vraie page Patient dans `test:patient-linkage` déjà raccordé à la CI.
 - **Limites :** ne résout pas les doublons, ne migre pas les données et ne remplace ni contrôle d'accès serveur ni revue clinique. Les essais Android/Windows restent pour la phase finale.
+
+### 2026-11-11 — QW-034 : provenance datée des dernières constantes patient
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 brouillon, `main` intacte, aucune fusion, aucun déploiement, dépense ou donnée réelle.
+- **Défaut :** la fiche patient composait les dernières constantes en prenant indépendamment chaque valeur dans des consultations différentes, mais les affichait sans date par mesure. Les pressions systolique et diastolique voisines pouvaient provenir de deux consultations distinctes sans indication.
+- **Correction :** helper pur `latestVitalReadings` qui retourne chaque valeur et sa date source. La fiche patient affiche « Mesurée le » pour chaque constante. Si aucune mesure n'existe, une mention explicite remplace la grille vide. Aucun calcul, diagnostic ni changement de stockage.
+- **Tests fictifs :** neuf vérifications de provenance, valeurs manquantes/espaces et un contrôle structurel de la vraie interface Patients, intégré au test existant exécuté par la CI.
+- **Limites :** les valeurs ne sont ni certifiées ni interprétées médicalement, les unités doivent être vérifiées par le médecin. Les essais manuels restent à la phase finale.

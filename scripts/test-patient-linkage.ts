@@ -3,6 +3,8 @@ import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
+import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
+import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
 
@@ -145,5 +147,36 @@ assert.ok(patientPageSource.includes('const selected = selectUniquePatient(patie
   patientPageSource.includes('{selected && ('),
   'Patient detail must be closed and a warning shown if an imported ID is ambiguous.');
 console.log('PASS: QW-033 nine synthetic patient selections and visible fail-closed UI contract.');
+
+
+// QW-034 — vital readings must keep per-measurement provenance.
+const v = (date: string, values: Partial<Consultation['vitals']>) => ({
+  date, vitals: {
+    systolic: '', diastolic: '', heartRate: '', spo2: '',
+    temperature: '', respiratoryRate: '', weight: '', height: '', glycemia: '',
+    ...values,
+  },
+});
+const readings = latestVitalReadings([
+  v('2026-11-11T15:00:00Z', { systolic: '140', heartRate: '88' }),
+  v('2026-11-10T09:00:00Z', { diastolic: '80', systolic: '125', weight: '70' }),
+  v('2026-11-08T11:00:00Z', { weight: '69', glycemia: '1,1' }),
+]);
+assert.deepEqual(readings.systolic, { value: '140', date: '2026-11-11T15:00:00Z' });
+assert.deepEqual(readings.diastolic, { value: '80', date: '2026-11-10T09:00:00Z' });
+assert.deepEqual(readings.heartRate, { value: '88', date: '2026-11-11T15:00:00Z' });
+assert.deepEqual(readings.weight, { value: '70', date: '2026-11-10T09:00:00Z' });
+assert.deepEqual(readings.glycemia, { value: '1,1', date: '2026-11-08T11:00:00Z' });
+assert.equal(readings.spo2, undefined);
+assert.deepEqual(latestVitalReadings([]), {});
+assert.deepEqual(latestVitalReadings([v('2026-11-11', { systolic: '   ' })]), {});
+assert.deepEqual(latestVitalReadings([v('2026-11-11', { temperature: ' 37.5 ' })]).temperature,
+  { value: '37.5', date: '2026-11-11' });
+const latestReadingsPage = readFileSync(new URL('../src/pages/Patients.tsx', import.meta.url), 'utf8');
+assert.ok(latestReadingsPage.includes('latestVitalReadings(patientConsultations)') &&
+  latestReadingsPage.includes('Mesurée le {displayDate(latestVitals[field.key]?.date') &&
+  latestReadingsPage.includes('Object.keys(latestVitals).length === 0'),
+  'Patient UI must show the date of each reading and indicate missing data.');
+console.log('PASS QW-034: nine synthetic vital provenance checks and actual Patient UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

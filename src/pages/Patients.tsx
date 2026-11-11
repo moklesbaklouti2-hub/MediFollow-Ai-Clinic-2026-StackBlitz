@@ -3,6 +3,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
 import { selectUniquePatient } from '../services/uniquePatientSelection';
+import { latestVitalReadings } from '../clinical/patientVitals';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -71,30 +72,8 @@ export default function Patients() {
     return result;
   }, [consultations]);
 
-  const latestVitals = selected
-    ? patientConsultations.reduce(
-        (latest, consultation) => {
-          (Object.keys(latest) as (keyof typeof latest)[]).forEach((key) => {
-            const currentValue = String(consultation.vitals[key] ?? '').trim();
-            if (!String(latest[key] ?? '').trim() && currentValue) {
-              latest[key] = currentValue;
-            }
-          });
-          return latest;
-        },
-        {
-          systolic: '',
-          diastolic: '',
-          heartRate: '',
-          spo2: '',
-          temperature: '',
-          respiratoryRate: '',
-          weight: '',
-          height: '',
-          glycemia: '',
-        }
-      )
-    : null;
+  // Each latest reading keeps the date of its own consultation.
+  const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -499,14 +478,15 @@ export default function Patients() {
           </div>
 
           <h3 className="patient-section-title">Dernières constantes disponibles</h3>
-          {!latestVitals ? (
+          {!latestVitals || Object.keys(latestVitals).length === 0 ? (
             <p className="patient-empty-history">Aucune constante vitale enregistrée.</p>
           ) : (
             <div className="patient-vitals-grid">
-              {vitalLabels.filter((field) => String(latestVitals[field.key] ?? '').trim() !== '').map((field) => (
+              {vitalLabels.filter((field) => Boolean(latestVitals[field.key]?.value)).map((field) => (
                 <div className="patient-vital" key={field.key}>
                   <span>{field.label}</span>
-                  <strong>{latestVitals[field.key]} {field.unit}</strong>
+                  <strong>{latestVitals[field.key]?.value} {field.unit}</strong>
+                  <small>Mesurée le {displayDate(latestVitals[field.key]?.date ?? 'Date non renseignée')}</small>
                 </div>
               ))}
             </div>
