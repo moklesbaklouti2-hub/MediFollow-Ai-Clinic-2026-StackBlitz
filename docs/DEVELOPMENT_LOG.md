@@ -499,3 +499,11 @@
 - **Régression :** `scripts/test-inventory-dispense-regression.ts` exécute 47 assertions sur le service réel, avec stockage navigateur simulé : onze lignes invalides, demandes vide/insuffisante, allocation entre lots, traçabilité et idempotence.
 - **CI :** commande `npm run test:inventory-dispense` intégrée aux tests hors ligne et au job existant « Tests / clinique », sans création de job supplémentaire.
 - **Limites :** tests fictifs hors ligne, essais Android, revue des flux de stock et contrôle clinique réel encore nécessaires.
+
+### 2026-11-11 — Inventaire : intégrité des retours et annulations de délivrance
+- **Branche :** `audit-stabilisation-2026-11-10` ; `main` inchangée, sans fusion, déploiement ni données patients réelles.
+- **Défaut :** le calcul de reliquat avec `Math.max(0, délivré - retourné)` acceptait des mouvements de quantités non finies, négatives ou des retours cumulés supérieurs à la quantité délivrée, pouvant masquer un historique incohérent. L'annulation n'écartait pas non plus les équipements durables enregistrés par erreur comme délivrés.
+- **Correction :** `returnDispensedStock` et `cancelDispensedPrescriptionStock` vérifient les quantités de chaque délivrance et de ses retours, ainsi que le cumul, avant toute réintégration. Sur anomalie, refus sans écriture ; l'annulation rejette également les équipements durables.
+- **Tests :** dans `scripts/test-inventory-dispense-regression.ts`, sept historiques corrompus testés sur retour et annulation, blocage équipement et multi-lots, plus flux positif retour partiel / annulation / idempotence, pour 56 assertions nouvelles (103 au total). Tests du vrai service avec stockage navigateur fictif.
+- **CI :** les tests demeurent intégrés au job « Tests / clinique » ; les onze jobs et le relais PR #2 doivent être vérifiés pour le SHA publié.
+- **Limites :** la validation des journaux n'est pas une réparation automatique des stocks historiques. Revue et contrôles en conditions réelles requis avant usage médical.

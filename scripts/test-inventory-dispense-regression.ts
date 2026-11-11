@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { dispenseInventoryItems, getInventoryData } from '../src/services/storage.ts';
+import { dispenseInventoryItems, getInventoryData, returnDispensedStock, cancelDispensedPrescriptionStock } from '../src/services/storage.ts';
 import type { InventoryData, InventoryItem } from '../src/types/medical.ts';
 
 // Exerce le vrai service, avec stockage local fictif et aucune API externe.
@@ -92,4 +92,87 @@ assert.deepEqual(dispenseInventoryItems(valid), { success: true, alreadyDispense
 assert.equal(JSON.stringify(getInventoryData()), after);
 assert.equal(writes, 0);
 assertions += 8;
+
+// Retours et annulations : refuser une comptabilité de lot incohérente,
+// plutôt que créer des mouvements positifs sur des traces corrompues.
+const issued = (id: string, itemId: string, quantity: number) => ({
+  id, itemId, itemName: 'Produit test', type: 'dispense' as const,
+  quantity, date: '2025-01-01', prescriptionId: 'ord-retour', patientId: 'patient-fictif',
+});
+const returned = (id: string, reversal: string, quantity: number) => ({
+  id, itemId: 'lot-a', itemName: 'Compresses test', type: 'return' as const,
+  quantity, date: '2025-01-02', reversesMovementId: reversal,
+  prescriptionId: 'ord-retour', patientId: 'patient-fictif',
+});
+function seedLedger(d: InventoryData) {
+  records.set('medifollow-inventory', JSON.stringify(d));
+  writes = 0;
+}
+const corruptLedgers = [
+  {name: 'délivrance de quantité nulle', original: 0, prior: undefined},
+  {name: 'délivrance négative', original: -2, prior: undefined},
+  {name: 'délivrance non finie', original: NaN, prior: undefined},
+  {name: 'retour nul', original: 3, prior: 0},
+  {name: 'retour négatif', original: 3, prior: -1},
+  {name: 'retour non fini', original: 3, prior: Infinity},
+  {name: 'retour supérieur à la quantité délivrée', original: 3, prior: 4},
+];
+for (const scenario of corruptLedgers) {
+  const d = fixture();
+  d.movements = [issued('disp-1', 'lot-a', scenario.original)];
+  if (scenario.prior !== undefined) d.movements.unshift(returned('ret-1', 'disp-1', scenario.prior));
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(returnDispensedStock({dispenseMovementId: 'disp-1', quantity: 1}).success, false, scenario.name);
+  unchanged(before, scenario.name + ' retour');
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, false, scenario.name);
+  unchanged(before, scenario.name + ' annulation');
+  assertions += 6;
+}
+
+// Une annulation ne doit pas accepter un équipement enregistré par erreur
+// comme « délivré » dans un ancien journal importé.
+{
+  const d = fixture();
+  d.movements = [issued('disp-equipment', 'lot-e', 1)];
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, false);
+  unchanged(before, 'équipement dans un journal de délivrance');
+  assertions += 3;
+}
+
+// Plusieurs lots : détecter une anomalie avant toute réintégration, même
+// si la première ligne pourrait à elle seule être retournée.
+{
+  const d = fixture();
+  d.movements = [issued('disp-valid', 'lot-a', 2), issued('disp-invalid', 'lot-c', 0)];
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, false);
+  unchanged(before, 'annulation multilots incohérente');
+  assertions += 3;
+}
+
+// Flux valide : retour partiel, annulation du reliquat puis seconde
+// annulation idempotente sans mouvement ou écriture supplémentaire.
+{
+  const d = fixture();
+  d.items.find(x => x.id === 'lot-a')!.quantity = 4;
+  d.movements = [issued('disp-valid', 'lot-a', 3)];
+  seedLedger(d);
+  assert.equal(returnDispensedStock({dispenseMovementId: 'disp-valid', quantity: 1}).success, true);
+  assert.equal(getInventoryData().items.find(x => x.id === 'lot-a')?.quantity, 5);
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, true);
+  const afterCancel = getInventoryData();
+  assert.equal(afterCancel.items.find(x => x.id === 'lot-a')?.quantity, 7);
+  assert.equal(afterCancel.movements.filter(x => x.type === 'return').length, 2);
+  const snapshot = JSON.stringify(afterCancel);
+  writes = 0;
+  assert.deepEqual(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}), {success: true, alreadyReturned: true});
+  assert.equal(JSON.stringify(getInventoryData()), snapshot);
+  assert.equal(writes, 0);
+  assertions += 8;
+}
+
 console.log('OK — ' + assertions + ' assertions sur la délivrance atomique (données fictives).');

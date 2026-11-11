@@ -458,10 +458,21 @@ export function returnDispensedStock(input: {
   );
   if (!original) return { success: false, error: 'Mouvement de délivrance introuvable.' };
 
-  const alreadyReturned = data.movements
-    .filter((movement) => movement.type === 'return' && movement.reversesMovementId === original.id)
-    .reduce((sum, movement) => sum + movement.quantity, 0);
-  const remaining = Math.max(0, original.quantity - alreadyReturned);
+  // Une trace incomplète ou corrompue ne doit jamais gonfler le stock.
+  if (!Number.isFinite(original.quantity) || original.quantity <= 0) {
+    return { success: false, error: 'Délivrance d’origine incohérente : vérifiez l’historique du lot.' };
+  }
+  const previousReturns = data.movements.filter((movement) =>
+    movement.type === 'return' && movement.reversesMovementId === original.id
+  );
+  if (previousReturns.some((movement) => !Number.isFinite(movement.quantity) || movement.quantity <= 0)) {
+    return { success: false, error: 'Historique des retours incohérent : correction manuelle nécessaire.' };
+  }
+  const alreadyReturned = previousReturns.reduce((sum, movement) => sum + movement.quantity, 0);
+  if (!Number.isFinite(alreadyReturned) || alreadyReturned > original.quantity) {
+    return { success: false, error: 'Retours enregistrés supérieurs à la délivrance d’origine.' };
+  }
+  const remaining = original.quantity - alreadyReturned;
   if (input.quantity > remaining) {
     return { success: false, error: `Retour supérieur au reliquat : ${remaining} unité(s) peuvent encore être réintégrées pour ce lot.` };
   }
@@ -512,13 +523,26 @@ export function cancelDispensedPrescriptionStock(input: {
 
   const allocations: Array<{ movement: StockMovement; item: InventoryItem; quantity: number }> = [];
   for (const movement of originalMovements) {
-    const returned = data.movements
-      .filter((entry) => entry.type === 'return' && entry.reversesMovementId === movement.id)
-      .reduce((sum, entry) => sum + entry.quantity, 0);
-    const remaining = Math.max(0, movement.quantity - returned);
+    if (!Number.isFinite(movement.quantity) || movement.quantity <= 0) {
+      return { success: false, error: 'Annulation refusée : quantité d’une délivrance incohérente.' };
+    }
+    const previousReturns = data.movements.filter((entry) =>
+      entry.type === 'return' && entry.reversesMovementId === movement.id
+    );
+    if (previousReturns.some((entry) => !Number.isFinite(entry.quantity) || entry.quantity <= 0)) {
+      return { success: false, error: 'Annulation refusée : historique des retours incohérent.' };
+    }
+    const returned = previousReturns.reduce((sum, entry) => sum + entry.quantity, 0);
+    if (!Number.isFinite(returned) || returned > movement.quantity) {
+      return { success: false, error: 'Annulation refusée : retours supérieurs à la délivrance d’origine.' };
+    }
+    const remaining = movement.quantity - returned;
     if (remaining === 0) continue;
     const item = data.items.find((entry) => entry.id === movement.itemId);
     if (!item) return { success: false, error: `Lot d’origine introuvable : ${movement.itemName}.` };
+    if (item.category === 'equipment') {
+      return { success: false, error: 'Annulation refusée : un équipement durable ne peut pas être réintégré comme une délivrance.' };
+    }
     const returnDate = new Date();
     const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
     if (item.expiryDate && item.expiryDate < today) {
