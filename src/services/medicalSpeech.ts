@@ -308,17 +308,33 @@ function preservesRecognizedMedicalTerms(initial: string, alternative: string): 
   );
 }
 
-// Si le médecin a dicté un terme médical connu après une négation,
-// ne pas lui substituer un autre terme connu via le classement automatique.
-// Un mot mal reconnu (« disney ») reste éligible à une hypothèse plus claire.
+// Conserver la cible médicale COMPLETE après une négation.
+// La comparaison d'un seul mot (« insuffisance ») ne distingue pas
+// « insuffisance cardiaque » d'« insuffisance respiratoire ».
+const medicalSpeechNegationTerms = Array.from(medicalSpeechNormalizedTerms, term => ({
+  term,
+  words: term.match(/[\p{L}\p{N}]+/gu) ?? [],
+}))
+  .filter(entry => entry.words.length > 0)
+  .sort((left, right) => right.words.length - left.words.length);
+
+// Si le médecin a dicté un terme connu après une négation, une hypothèse
+// alternative ne doit pas changer cette cible. Les premiers mots inconnus
+// (« disney ») peuvent en revanche être améliorés par le moteur vocal.
 function negatedMedicalTargets(value: string): Array<string | null> {
   const words = normalizeSpeechCandidate(value).match(/[\p{L}\p{N}]+/gu) ?? [];
   const isNegation = /^(?:pas|sans|aucun|aucune|absence|nie|negatif|negative|non|jamais|ni)$/u;
   const isLinker = /^(?:de|du|des|d|le|la|les|un|une|l|au|aux)$/u;
   return words.flatMap((word, index) => {
     if (!isNegation.test(word)) return [];
-    const nextTerm = words.slice(index + 1, index + 6).find(token => !isLinker.test(token));
-    return [nextTerm && medicalSpeechNormalizedTerms.has(nextTerm) ? nextTerm : null];
+    const following = words.slice(index + 1, index + 12);
+    const firstClinicalWord = following.findIndex(token => !isLinker.test(token));
+    if (firstClinicalWord === -1) return [null];
+    const candidate = following.slice(firstClinicalWord);
+    const longestKnownTerm = medicalSpeechNegationTerms.find(entry =>
+      entry.words.every((termWord, offset) => candidate[offset] === termWord)
+    );
+    return [longestKnownTerm?.term ?? null];
   });
 }
 

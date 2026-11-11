@@ -400,3 +400,10 @@
 - **Correctif :** dans `src/services/medicalSpeech.ts`, une cible médicale connue après négation doit rester identique au même rang de négation dans l'hypothèse proposée, même si cette dernière cible est inconnue. Une première cible inconnue garde la possibilité d'être corrigée par un meilleur résultat navigateur.
 - **Régression :** trois exemples de refus et un exemple d'amélioration sûre dans `scripts/test-medical-speech-regression.ts`. Textes fictifs uniquement ; aucune correction automatique des mots dictés, aucune modification de prescriptions ou de données patients.
 - **Validation :** commit atomique code/tests/journal sur la branche audit ; résultat réel GitHub Actions à vérifier sur ce SHA. Tests microphone Chrome Android et évaluation clinique en consultation non réalisés.
+
+### 2026-11-11 — HELIOS : préserver les expressions composées après négation
+- **Branche :** `audit-stabilisation-2026-11-10`. Périmètre : sélection des hypothèses de dictée, tests fictifs et journal.
+- **Défaut ciblé :** la protection des cibles niées reconnaissait seulement un mot. Les expressions composées `insuffisance cardiaque` / `insuffisance respiratoire`, `infection bactérienne` / `infection virale` et `syndrome coronarien aigu` / `syndrome cérébelleux` pouvaient être interverties malgré leur présence ailleurs dans la transcription.
+- **Correctif :** identifier la plus longue expression médicale du dictionnaire juste après chaque négation ; refuser de remplacer une expression reconnue par une autre à cette position. Une amélioration de « disney » vers « dyspnée » reste autorisée si la cible niée ne change pas.
+- **Tests :** trois contre-exemples de négation inversée et un exemple positif, sur données fictives. Aucune substitution médicale automatique, aucune ordonnance ni donnée patient réelle modifiée.
+- **Vérification :** lancer GitHub Actions sur le SHA de ce commit, contrôler chaque job et la publication du relais `MEDIFOLLOW_CI_RESULT_V1`. Les essais microphone sur Android et la validation clinique réelle restent à effectuer.

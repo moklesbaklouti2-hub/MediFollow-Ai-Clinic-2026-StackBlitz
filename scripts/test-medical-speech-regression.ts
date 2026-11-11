@@ -180,6 +180,39 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'pas de dyspnée avec toux');
 assertions++;
 
+// Une négation portant sur plusieurs mots doit conserver le terme complet.
+// Les deux expressions restent ailleurs dans la dictée : la seule présence
+// lexicale ne suffit donc pas à préserver le sens de la phrase.
+const negatedCompoundTargets = [
+  [
+    "absence d'insuffisance cardiaque avec insuffisance respiratoire et disney",
+    "absence d'insuffisance respiratoire avec insuffisance cardiaque et dyspnée",
+  ],
+  [
+    "pas d'infection bactérienne avec infection virale et disney",
+    "pas d'infection virale avec infection bactérienne et dyspnée",
+  ],
+  [
+    "absence de syndrome coronarien aigu avec syndrome cérébelleux et disney",
+    "absence de syndrome cérébelleux avec syndrome coronarien aigu et dyspnée",
+  ],
+];
+for (const [initial, alternative] of negatedCompoundTargets) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: alternative },
+  }), initial, 'Cible composée sous négation remplacée : ' + alternative);
+  assertions++;
+}
+// Même expression niée, seule une erreur de vocabulaire est améliorée.
+assert.equal(runtime.chooseMedicalSpeechAlternative({
+  length: 2,
+  0: { transcript: "absence d'insuffisance cardiaque avec disney" },
+  1: { transcript: "absence d'insuffisance cardiaque avec dyspnée" },
+}), "absence d'insuffisance cardiaque avec dyspnée");
+assertions++;
+
 // Protéger les symptômes et expressions médicales déjà correctement
 // reconnus, même si une seconde hypothèse a un score lexical supérieur.
 const missingMedicalTerms = [
