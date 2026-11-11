@@ -760,3 +760,10 @@
 - **Correction :** `hasConfirmedPatientSelection` s'applique à l'affichage des actions de suivi et à la vérification de la clôture ; les suivis d'identité ambiguë restent visibles comme à vérifier mais non modifiables par ces boutons. Le contrôle précède confirmation et persistance.
 - **Tests automatisés :** 8 identités fictives et 2 contrats d'interface vérifiant le même garde avant affichage de l'action et mise à jour ; essais Android/Windows regroupés dans le protocole final.
 - **Limites :** ne migre pas les données, ne résout pas les doublons ni ne remplace une authentification/validation clinique réelle.
+
+### 2026-11-11 — QW-033 : accès au dossier patient détaillé uniquement sur identifiant unique
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; aucune fusion, déploiement, dépense ni donnée réelle.
+- **Défaut :** dans Patients, `patients.find` sélectionnait le premier patient portant un identifiant dupliqué après un import. La chronologie, les constantes et les prescriptions étaient ensuite groupées par ce même identifiant, pouvant mélanger deux dossiers fictifs.
+- **Correction :** `selectUniquePatient` refuse les sélections vides, inconnues ou dupliquées ; aucun détail ni chronologie clinique n'est ouvert dans ces cas. Une alerte explicite signale l'identifiant ambigu et propose de fermer la sélection.
+- **Tests automatiques :** neuf identités synthétiques et un contrat de liaison à la vraie page Patient dans `test:patient-linkage` déjà raccordé à la CI.
+- **Limites :** ne résout pas les doublons, ne migre pas les données et ne remplace ni contrôle d'accès serveur ni revue clinique. Les essais Android/Windows restent pour la phase finale.

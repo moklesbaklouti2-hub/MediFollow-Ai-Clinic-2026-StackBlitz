@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
+import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
 
@@ -118,5 +119,31 @@ assert.ok(consultationSave.includes('hasConfirmedPatientSelection(patientId, pat
 assert.ok(prescriptionValidation.includes('hasConfirmedPatientSelection(patientId, patients)') &&
   prescriptionValidation.includes('return false;'), 'Ordonnances ne refuse pas le patient incertain.');
 console.log('PASS : sélection patient confirmée pour consultations et ordonnances (données fictives).');
+
+
+// QW-033 — duplicated imported patient IDs cannot open a combined medical file.
+const uniquePatients = [
+  { id: 'a', name: 'Patient A fictif' },
+  { id: 'b', name: 'Patient B fictif' },
+  { id: 'a', name: 'Patient C fictif' },
+];
+assert.equal(selectUniquePatient(uniquePatients, 'a'), null,
+  'Two imported patients with the same ID must never share one detail view.');
+assert.equal(selectUniquePatient(uniquePatients, 'b')?.name, 'Patient B fictif');
+assert.equal(selectUniquePatient(uniquePatients, 'missing'), null);
+assert.equal(selectUniquePatient(uniquePatients, ''), null);
+assert.equal(selectUniquePatient(uniquePatients, '  '), null);
+assert.equal(selectUniquePatient(uniquePatients, null), null);
+assert.equal(selectUniquePatient(uniquePatients, 1), null);
+assert.equal(selectUniquePatient([], 'b'), null);
+assert.equal(selectUniquePatient([{ id: 'x', name: 'Seul' }], 'x')?.name, 'Seul');
+const patientPageSource = readFileSync(new URL('../src/pages/Patients.tsx', import.meta.url), 'utf8');
+assert.ok(patientPageSource.includes('const selected = selectUniquePatient(patients, selectedId);') &&
+  patientPageSource.includes('selectedId !== null && !selected') &&
+  patientPageSource.includes('role="alert"') &&
+  patientPageSource.includes('identifiant dupliqué') &&
+  patientPageSource.includes('{selected && ('),
+  'Patient detail must be closed and a warning shown if an imported ID is ambiguous.');
+console.log('PASS: QW-033 nine synthetic patient selections and visible fail-closed UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

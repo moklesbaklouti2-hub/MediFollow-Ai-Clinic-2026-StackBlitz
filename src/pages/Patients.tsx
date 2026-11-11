@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
+import { selectUniquePatient } from '../services/uniquePatientSelection';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -19,7 +20,7 @@ export default function Patients() {
   const [editPhone, setEditPhone] = useState('');
   const [editStatus, setEditStatus] = useState('');
 
-  const selected = patients.find((patient) => patient.id === selectedId) ?? null;
+  const selected = selectUniquePatient(patients, selectedId);
 
   const filtered = useMemo(
     () => patients.filter((patient) =>
@@ -440,6 +441,15 @@ export default function Patients() {
         )}
       </section>
 
+      {selectedId !== null && !selected && (
+        <p role="alert" className="patient-empty-history">
+          Dossier patient introuvable ou identifiant dupliqué. Vérifiez les données importées
+          avant d’accéder à l’historique médical.
+          <button type="button" className="patient-view" onClick={() => setSelectedId(null)}>
+            Fermer la sélection
+          </button>
+        </p>
+      )}
       {selected && (
         <div className="patient-detail">
           <div className="patient-detail-heading">
