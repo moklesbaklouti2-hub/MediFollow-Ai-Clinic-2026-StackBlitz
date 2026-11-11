@@ -753,3 +753,10 @@
 - **Correction :** helper commun `hasConfirmedPatientSelection` qui exige exactement une correspondance par identifiant. Les deux vrais formulaires refusent le réenregistrement lorsque l'identifiant est manquant, absent du registre ou dupliqué ; aucune recherche par nom.
 - **Tests :** dix scénarios fictifs (unique, absent, doublon, invalide), plus deux contrôles de liaison UI, exécutés dans `test:patient-linkage` déjà inclus à la CI. Le scénario manuel F06 est enrichi pour la phase finale uniquement.
 - **Limites :** aucune migration ou réconciliation automatique ; sécurité multi-utilisateur et confidentialité réelles restent ouvertes.
+
+### 2026-11-11 — QW-032 : contrôles Follow-up seulement sur identité patient unique
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; aucune fusion, déploiement, dépense ou donnée réelle.
+- **Défaut :** la sauvegarde Consultation/Ordonnance (QW-031) exigeait un identifiant patient unique et existant, mais la liste HELIOS Follow-up et sa clôture rapide autorisaient une correspondance `find`/`some` même si deux patients importés partageaient le même `id`.
+- **Correction :** `hasConfirmedPatientSelection` s'applique à l'affichage des actions de suivi et à la vérification de la clôture ; les suivis d'identité ambiguë restent visibles comme à vérifier mais non modifiables par ces boutons. Le contrôle précède confirmation et persistance.
+- **Tests automatisés :** 8 identités fictives et 2 contrats d'interface vérifiant le même garde avant affichage de l'action et mise à jour ; essais Android/Windows regroupés dans le protocole final.
+- **Limites :** ne migre pas les données, ne résout pas les doublons ni ne remplace une authentification/validation clinique réelle.

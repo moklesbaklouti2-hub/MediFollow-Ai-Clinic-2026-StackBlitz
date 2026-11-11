@@ -43,7 +43,8 @@
 | QW-028 | M | HELIOS Follow-up : suivi saisi, enregistré et échéances sur le Dashboard | `c3d8005` | [43070138253](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43070138253) : 11/11 réussis | VALIDÉ |
 | QW-029 | S | HELIOS Follow-up : liste des contrôles à revoir, triée, sans confondre les patients | `ec4c87c` | [43070798343](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43070798343) : 11/11 réussis | VALIDÉ |
 | QW-030 | S | HELIOS Follow-up : clôture confirmée et sécurisée d'un contrôle depuis la liste | `980fb01` | [43071549570](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43071549570) : 11/11 réussis | VALIDÉ |
-| QW-031 | S | Refuser la sauvegarde des consultations/ordonnances sans identifiant patient unique et existant | SHA à confirmer | Dix cas fictifs + deux contrats UI, CI 11/11 | EN VALIDATION |
+| QW-031 | S | Refuser la sauvegarde des consultations/ordonnances sans identifiant patient unique et existant | `945ddb5` | [43072162714](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43072162714) : 11/11 réussis | VALIDÉ |
+| QW-032 | S | HELIOS Follow-up : bloquer les actions rapides si l'identifiant patient n'est pas unique | SHA à confirmer | 8 identités fictives + 2 contrats UI, CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

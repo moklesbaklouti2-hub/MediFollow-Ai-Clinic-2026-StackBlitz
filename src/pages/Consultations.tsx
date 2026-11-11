@@ -361,7 +361,7 @@ export default function Consultations({
     // stale list row or a patient name to establish clinical identity.
     const current = getConsultations().find(record => record.id === item.id);
     if (!current || current.patientId !== item.patientId ||
-        !patients.some(patient => patient.id === current.patientId)) {
+        !hasConfirmedPatientSelection(current.patientId, patients)) {
       window.alert('Impossible de confirmer le dossier patient. Vérifiez le lien avant tout changement.');
       return;
     }
@@ -1175,7 +1175,9 @@ export default function Consultations({
           <p>Aucun contrôle de suivi à revoir dans cette période.</p>
         ) : (
           dueFollowUps.map((item) => {
-            const linkedPatient = patients.find(patient => patient.id === item.patientId);
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find(patient => patient.id === item.patientId)
+              : undefined;
             const overdue = (item.followUp?.dueDate ?? '') < followUpToday;
             return (
               <div className="saved-consultation" key={'follow-up-' + item.id}>

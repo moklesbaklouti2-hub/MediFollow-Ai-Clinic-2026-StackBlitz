@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
+import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 
 // All fixtures are fictional, without external calls.
 for (const date of ['2026-11-11', '2024-02-29', '2027-01-01', '2000-02-29']) {
@@ -125,7 +126,7 @@ assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpTod
 const completionCode = consultationUI.split('function completeFollowUp(')[1]?.split('function saveConsultation()')[0] ?? '';
 assert.ok(completionCode.includes('getConsultations().find(') &&
   completionCode.includes('current.patientId !== item.patientId') &&
-  completionCode.includes('patients.some(') &&
+  completionCode.includes('hasConfirmedPatientSelection(current.patientId, patients)') &&
   completionCode.includes('completedFollowUpPlan(current.followUp)') &&
   completionCode.includes('window.confirm(') &&
   completionCode.includes('if (!updateConsultation('),
@@ -134,4 +135,38 @@ assert.ok(consultationUI.includes('onClick={() => completeFollowUp(item)}') &&
   consultationUI.includes('Marquer le contrôle effectué') &&
   consultationUI.includes('linkedPatient ? ('),
   'L’action de clôture n’est offerte qu’aux dossiers patients confirmés.');
+
+// QW-032 — all rapid follow-up actions must refuse duplicate imported IDs.
+// This uses the same pure patient-selection guard as consultation save.
+const followUpSelectionCases: Array<{
+  patientId: unknown;
+  patients: Array<{ id: string }>;
+  allowed: boolean;
+}> = [
+  { patientId: 'alpha', patients: [{ id: 'alpha' }], allowed: true },
+  { patientId: 'alpha', patients: [{ id: 'alpha' }, { id: 'beta' }], allowed: true },
+  { patientId: 'alpha', patients: [{ id: 'alpha' }, { id: 'alpha' }], allowed: false },
+  { patientId: 'missing', patients: [{ id: 'alpha' }], allowed: false },
+  { patientId: '', patients: [{ id: '' }], allowed: false },
+  { patientId: null, patients: [{ id: 'alpha' }], allowed: false },
+  { patientId: 9, patients: [{ id: '9' }], allowed: false },
+  { patientId: 'alpha', patients: [], allowed: false },
+];
+for (const scenario of followUpSelectionCases) {
+  assert.equal(hasConfirmedPatientSelection(scenario.patientId, scenario.patients),
+    scenario.allowed, 'Unsafe follow-up patient identity.');
+}
+const followUpListCode = consultationUI.split('dueFollowUps.map((item) => {')[1]
+  ?.split("key={'follow-up-' + item.id}")[0] ?? '';
+assert.ok(followUpListCode.includes('hasConfirmedPatientSelection(item.patientId, patients)') &&
+  followUpListCode.includes('patients.find(patient => patient.id === item.patientId)'),
+  'A follow-up action must be hidden unless the patient ID is unique.');
+assert.ok(completionCode.includes('hasConfirmedPatientSelection(current.patientId, patients)') &&
+  completionCode.indexOf('hasConfirmedPatientSelection(') <
+    completionCode.indexOf('window.confirm(') &&
+  completionCode.indexOf('hasConfirmedPatientSelection(') <
+    completionCode.indexOf('updateConsultation('),
+  'The real follow-up completion must reject ambiguous patient IDs before confirming or saving.');
+console.log('PASS HELIOS Follow-up QW-032: 8 synthetic identities and 2 actual UI contracts.');
+
 console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');
