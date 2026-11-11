@@ -67,6 +67,7 @@
 
 | QW-052 | S | Filtre de chronologie par date début/fin, bornes inclusives et dates invalides explicites | branche de préparation | Tests locaux QW-048–055 requis, CI sur intégration audit | PRÉPARÉ NON VALIDÉ |
 | QW-053 | S | Filtrer les consultations par spécialité réellement consignée, y compris « non renseignée » | branche de préparation | Test du tri, des dossiers confirmés et du reset de filtre | PRÉPARÉ NON VALIDÉ |
+| QW-054 | S | Afficher 10/25/50 événements ou la totalité de la chronologie, sans perte de données | branche de préparation | Tests de limites, compteurs et non-mutation | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

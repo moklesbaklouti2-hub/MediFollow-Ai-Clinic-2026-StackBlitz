@@ -17,6 +17,7 @@ import { searchRecordedEvents } from '../src/clinical/timelineSearch.ts';
 import { filterDocumentedPrescriptionStatus } from '../src/clinical/timelineStatusFilter.ts';
 import { filterTimelineByDateRange } from '../src/clinical/timelineDateRange.ts';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../src/clinical/timelineSpecialty.ts';
+import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -627,7 +628,7 @@ assert.deepEqual(filterRecordedEvents(timelineFixture, 'prescription').map(item 
 assert.deepEqual(filterRecordedEvents([], 'prescription'), []);
 assert.equal(JSON.stringify(timelineFixture), timelineBefore, 'Filtering must never modify clinical records.');
 assert.ok(patientPageSource.includes('const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter)') &&
-  patientPageSource.includes('specialtyFilteredMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
   patientPageSource.includes('id="patient-timeline-filter"') &&
   patientPageSource.includes('Consultations uniquement') &&
   patientPageSource.includes('Ordonnances uniquement') &&
@@ -655,7 +656,7 @@ assert.deepEqual(searchRecordedEvents(searchFixture, 'absence').map(x => x.id), 
 assert.equal(JSON.stringify(searchFixture), searchOriginal, 'Local search must not mutate records.');
 assert.ok(patientPageSource.includes('searchRecordedEvents(visibleMedicalTimeline, timelineSearch)') &&
   patientPageSource.includes('id="patient-timeline-search"') &&
-  patientPageSource.includes('specialtyFilteredMedicalTimeline.map((entry)'),
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)'),
   'Patient timeline must search only the already selected and type-filtered events.');
 console.log('PASS QW-050: accent-insensitive local timeline search and UI contracts.');
 
@@ -680,7 +681,7 @@ assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'u
 assert.equal(JSON.stringify(documentedStatusFixtures), statusOriginal, 'Status filter may not alter records.');
 assert.ok(patientPageSource.includes("timelineFilter === 'prescription'") &&
   patientPageSource.includes('filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)') &&
-  patientPageSource.includes('specialtyFilteredMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
   patientPageSource.includes('id="patient-timeline-status"') &&
   patientPageSource.includes("setPrescriptionStatusFilter('all')"),
   'Status select must be offered only for prescriptions, reset on type change and filter events without writing.');
@@ -706,7 +707,7 @@ assert.equal(JSON.stringify(rangeFixtures), rangeOriginal, 'Date filtering must 
 assert.ok(patientPageSource.includes('filterTimelineByDateRange(') &&
   patientPageSource.includes('id="patient-timeline-from"') &&
   patientPageSource.includes('id="patient-timeline-to"') &&
-  patientPageSource.includes('specialtyFilteredMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
   patientPageSource.includes('Les événements sans date valide ne figurent pas'),
   'Date filters must be read-only, inclusive and explicit about unknown dates.');
 console.log('PASS QW-052: inclusive UTC civil-date timeline filters and UI contract.');
@@ -732,9 +733,26 @@ assert.equal(JSON.stringify(specialtyFixtures), specialtyBefore, 'Specialty filt
 assert.ok(patientPageSource.includes('documentedSpecialtyOptions(patientConsultations)') &&
   patientPageSource.includes('filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)') &&
   patientPageSource.includes('id="patient-timeline-specialty"') &&
-  patientPageSource.includes('specialtyFilteredMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
   patientPageSource.includes("setTimelineSpecialtyFilter('all')"),
   'Specialty filter must be patient-scoped and reset when event type changes.');
 console.log('PASS QW-053: documented specialty-only patient timeline filtering and UI contract.');
+
+// QW-054 — Limit long timelines without deleting, reordering or persisting
+// changes to any recorded events.
+const manyTimelineEvents = Array.from({ length: 64 }, (_, index) => ({ id: 'event-' + index }));
+const manyBefore = JSON.stringify(manyTimelineEvents);
+assert.equal(limitTimelineEvents(manyTimelineEvents, '10').length, 10);
+assert.equal(limitTimelineEvents(manyTimelineEvents, '25').length, 25);
+assert.equal(limitTimelineEvents(manyTimelineEvents, '50').length, 50);
+assert.equal(limitTimelineEvents(manyTimelineEvents, 'all').length, 64);
+assert.equal(limitTimelineEvents(manyTimelineEvents, '10')[0].id, 'event-0');
+assert.equal(JSON.stringify(manyTimelineEvents), manyBefore, 'Limiting must never modify storage events.');
+assert.ok(patientPageSource.includes('limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit)') &&
+  patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('id="patient-timeline-limit"') &&
+  patientPageSource.includes('Tous les événements'),
+  'Clinical history must remain fully accessible with a truthful display counter.');
+console.log('PASS QW-054: long timeline display limit, full-history option and no mutation.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

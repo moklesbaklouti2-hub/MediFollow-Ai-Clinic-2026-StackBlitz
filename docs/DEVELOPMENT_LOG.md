@@ -907,3 +907,8 @@
 - Choix des spécialités seulement à partir des consultations du patient confirmé ; sélection « non renseignée » pour les anciennes consultations, sans inférence ni modification des documents.
 - Filtre réinitialisé au changement de type d'événement. Tests synthétiques de spécialités, filtres, absence de mutation et contrats de l'interface.
 - **Statut :** préparé non validé sur branche distincte ; F37 prévu à la phase finale.
+
+### 2026-11-11 — QW-054 : chronologie longue, limite d'affichage (préparation)
+- Afficher les 10, 25 ou 50 premiers événements chronologiques ou tous les événements. Compteur distinguant les événements affichés, correspondants et totaux.
+- Aucun événement supprimé, données de stockage intactes ; tests synthétiques de 64 événements et contrat UI. F38 à tester ultérieurement.
+- **Statut :** préparé non validé sur branche distincte.
