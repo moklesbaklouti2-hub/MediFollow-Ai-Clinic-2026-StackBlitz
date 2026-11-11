@@ -571,8 +571,13 @@ export function returnDispensedStock(input: {
     return { success: false, error: `Retour supérieur au reliquat : ${remaining} unité(s) peuvent encore être réintégrées pour ce lot.` };
   }
 
-  const item = data.items.find((entry) => entry.id === original.itemId);
-  if (!item) return { success: false, error: 'Lot d’origine introuvable dans l’inventaire.' };
+  // Un identifiant de lot doit désigner exactement un article, y compris
+  // dans les historiques importés. Ne jamais créditer le premier doublon.
+  const sourceLots = data.items.filter((entry) => entry.id === original.itemId);
+  if (sourceLots.length !== 1) {
+    return { success: false, error: 'Retour refusé : lot d’origine absent ou identifiant dupliqué.' };
+  }
+  const item = sourceLots[0];
   if (item.category === 'equipment') {
     return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
   }
@@ -637,9 +642,14 @@ export function cancelDispensedPrescriptionStock(input: {
       return { success: false, error: 'Annulation refusée : retours supérieurs à la délivrance d’origine.' };
     }
     const remaining = movement.quantity - returned;
+    // Contrôler l'unicité avant le cas « déjà retourné » : un journal
+    // ambigu ne doit jamais être confirmé comme une annulation valide.
+    const sourceLots = data.items.filter((entry) => entry.id === movement.itemId);
+    if (sourceLots.length !== 1) {
+      return { success: false, error: 'Annulation refusée : lot d’origine absent ou identifiant dupliqué.' };
+    }
+    const item = sourceLots[0];
     if (remaining === 0) continue;
-    const item = data.items.find((entry) => entry.id === movement.itemId);
-    if (!item) return { success: false, error: `Lot d’origine introuvable : ${movement.itemName}.` };
     if (item.category === 'equipment') {
       return { success: false, error: 'Annulation refusée : un équipement durable ne peut pas être réintégré comme une délivrance.' };
     }

@@ -361,4 +361,49 @@ for (const [name, alter] of alteredHistory) {
   assertions += 3;
 }
 
+
+// QW-011 — un historique importé avec deux lots partageant le même ID
+// n'autorise ni retour partiel, ni annulation (aucune écriture de stock).
+const duplicateLotLedgers: Array<[string, (data: InventoryData) => void, string]> = [
+  ['doublon identique', data => {
+    data.items.push({ ...data.items[0] });
+  }, 'lot-a'],
+  ['même ID, autre produit', data => {
+    data.items.push({ ...data.items[0], name: 'Autre produit test' });
+  }, 'lot-a'],
+  ['même ID, autre catégorie', data => {
+    data.items.push({ ...data.items[0], category: 'equipment' });
+  }, 'lot-a'],
+  ['annulation multi-lots, doublon sur second article', data => {
+    data.items.push({ ...data.items[2], name: 'Produit ambigu' });
+    data.movements.push(issued('disp-safe', 'lot-a', 2));
+  }, 'lot-c'],
+];
+for (const [name, mutate, selectedLot] of duplicateLotLedgers) {
+  const d = fixture();
+  d.movements = [issued('disp-duplicate', selectedLot, 2)];
+  mutate(d);
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  const returnedResult = returnDispensedStock({ dispenseMovementId: 'disp-duplicate', quantity: 1 });
+  assert.equal(returnedResult.success, false, 'Retour accepté malgré lot dupliqué : ' + name);
+  unchanged(before, name + ' retour');
+  const cancelledResult = cancelDispensedPrescriptionStock({ prescriptionId: 'ord-retour' });
+  assert.equal(cancelledResult.success, false, 'Annulation acceptée malgré lot dupliqué : ' + name);
+  unchanged(before, name + ' annulation');
+  assertions += 6;
+}
+// Une annulation déjà totalement retournée ne doit pas ignorer un ID de lot
+// devenu ambigu après import. Refuser plutôt qu'afficher un faux succès.
+{
+  const d = fixture();
+  d.movements = [issued('disp-fully-returned', 'lot-a', 2), returned('ret-fully', 'disp-fully-returned', 2)];
+  d.items.push({ ...d.items[0] });
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(cancelDispensedPrescriptionStock({ prescriptionId: 'ord-retour' }).success, false);
+  unchanged(before, 'annulation déjà retournée avec ID dupliqué');
+  assertions += 3;
+}
+
 console.log('OK — ' + assertions + ' assertions sur les replays et la délivrance atomique (données fictives).');

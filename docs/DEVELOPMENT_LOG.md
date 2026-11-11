@@ -601,3 +601,10 @@
 - **Correction :** seules les étiquettes/détails non vides des éléments structurés, les noms non vides des traitements, les textes libres et les rubriques gynéco-obstétricales effectivement renseignées comptent comme informations présentes. Pas de changement de stockage.
 - **Tests :** 9 cas fictifs dans `server/ai/test-clinical-regression.ts` (dossier vide, lignes blanches, contexte gynéco documenté, traitements nommés ou non, champ consultation).
 - **Limite :** correction de cohérence d'interface, non-validation clinique réelle ; compilation et 11 jobs GitHub Actions à vérifier sur le SHA final.
+
+### 2026-11-11 — QW-011 : retours et annulations sécurisés lorsque l'identifiant de lot est dupliqué
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; aucune fusion vers `main`, aucun déploiement, dépenses ou données patients réelles.
+- **Différence des lots antérieurs :** les nouvelles délivrances et leurs replays refusaient déjà un identifiant de lot dupliqué ; le retour partiel et l'annulation utilisaient encore `.find()`, risquant de créditer un article arbitraire dans un inventaire importé.
+- **Correction :** pour chaque mouvement à réintégrer, retrouver **exactement un** lot portant l'identifiant d'origine ; refuser en cas d'absence ou de doublon, y compris si un reliquat a déjà été totalement retourné. Vérifier tous les lots avant l'écriture de l'annulation.
+- **Tests :** 27 assertions fictives complémentaires dans `scripts/test-inventory-dispense-regression.ts` (doublons identiques, noms/catégories divergents, multi-lots, annulation déjà remboursée, aucune écriture en échec).
+- **Limites :** ces contrôles ne certifient pas la sécurité clinique ni la validité d'un inventaire réel. Vérifier la CI GitHub Actions sur le SHA exact avant de marquer VALIDÉ.
