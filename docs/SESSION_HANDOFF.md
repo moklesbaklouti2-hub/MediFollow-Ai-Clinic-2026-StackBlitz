@@ -112,3 +112,12 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Réalisé :** régression concurrente sur huit sondes loopback fictives ; tests Node isolés exécutés deux fois et réussis ; code distant relu.
 - **Dernier CI confirmé avant changement :** run `42926489358` sur `bccc2ecb0486ea5a1c9410050122a35e18d3aae3`, dix jobs `completed/success`. **CI du nouveau HEAD non encore confirmée.**
 - **Reprise :** vérifier le SHA actuel de la PR #2, puis les jobs du run correspondant exactement à ce SHA. Si rouge, consulter les logs ; si vert, poursuivre le contrôle des routes cliniques. Pas de déploiement, ni fusion, ni données réelles. Tests Android/microphone toujours EN ATTENTE — intervention utilisateur.
+
+### 2026-11-11 — Relais CI : ignorer les contrôles incomplets et SHA obsolètes
+- **Point de départ :** `0c1197b9f9c8d2cd146485151fd3f6689189c7ec`, run `42927687305`, tentative 1 : completed/success et 11 jobs réussis vérifiés directement par API GitHub. Événement `6782718864` traité ; événement `6782702837` ignoré (run `42927664076`, contrôles annulés et SHA ancien).
+- **Correctif :** `.github/workflows/medifollow-audit.yml` ne publie plus de commentaire VERT/ROUGE si un contrôle est annulé, ignoré ou inconnu ; vérifie le HEAD distant avant publication. Une erreur API refuse la publication. Le consommateur doit toujours revérifier le run terminé et le HEAD, car cette vérification préalable ne supprime pas toute course concurrente.
+- **Test :** `scripts/test-ci-relay.mjs` exécute le vrai bloc Bash du workflow avec un faux `gh` sans réseau ni secrets : 53 cas réussis (vert, échecs, états incomplets, SHA obsolète, erreur API). Test ajouté au job de régression CI existant.
+- **Contrôle 1 :** les 53 cas passent après correction d'une interpolation JavaScript dans le test ; inventaire sécurité API, repli clinique 429 et coordination exécutés avec succès.
+- **Contrôle 2 :** revue du diff, `git diff --check` et vérification des branches success/failure/incomplètes. Aucune modification du code clinique. Pas de build application ni de test navigateur dans ce lot CI ; la CI du nouveau commit reste à vérifier.
+- **Commit :** cette entrée, le test et le workflow sont livrés ensemble ; utiliser le SHA du commit contenant cette entrée, sans commit documentaire supplémentaire.
+- **Reprise :** attendre le résultat CI de ce commit puis poursuivre l'audit des accès cliniques. Ne pas déployer, fusionner ou utiliser des données réelles. Les tests Android/microphone restent en attente.

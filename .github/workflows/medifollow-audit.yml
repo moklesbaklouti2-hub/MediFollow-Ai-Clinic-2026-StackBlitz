@@ -106,6 +106,8 @@ jobs:
           node-version: '22'
       - name: Verifier alertes et routes sensibles
         run: node scripts/test-api-security-inventory.mjs
+      - name: Verifier les filtres du relais CI (GitHub simule)
+        run: node scripts/test-ci-relay.mjs
       - name: Verifier le repli clinique sur erreur 429
         run: node scripts/test-clinical-429-fallback.mjs
 
@@ -249,6 +251,19 @@ jobs:
           SECURITY_REGRESSION_RESULT: ${{ needs.api-security-regression.result }}
         run: |
           set -euo pipefail
+          # An incomplete run must never wake development as a red/green result.
+          for RESULT in "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"; do
+            case "$RESULT" in
+              success|failure) ;;
+              *) echo "Relais ignore : controle incomplet ($RESULT)."; exit 0 ;;
+            esac
+          done
+          CURRENT_HEAD=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/audit-stabilisation-2026-11-10" --jq '.object.sha')
+          if [ "$CURRENT_HEAD" != "$COMMIT_SHA" ]; then
+            echo "Relais ignore : commit obsolete."
+            exit 0
+          fi
+          # Work still verifies the completed run and HEAD after receiving the event.
           COLOR=VERT
           for RESULT in "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"; do
             if [ "$RESULT" != success ]; then
