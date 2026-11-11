@@ -180,7 +180,7 @@ export function detectClinicalSuggestions(input: {
   // Les constantes peuvent être dictées ou collées avec l'unité mmHg.
   // Ne retenir que la forme numérique complète (pas « 140/90 » ni « 140 ? »).
   const parseBloodPressure = (value: string): number | null => {
-    const parsed = String(value ?? '').trim().match(/^(\\d+(?:[,.]\\d+)?)\\s*(?:mm\\s*hg)?$/iu);
+    const parsed = String(value ?? '').trim().match(/^(\d+(?:[,.]\d+)?)\s*(?:mm\s*hg)?$/iu);
     if (!parsed) return null;
     const number = Number(parsed[1].replace(',', '.'));
     return Number.isFinite(number) ? number : null;
