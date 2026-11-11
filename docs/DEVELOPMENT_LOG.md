@@ -704,3 +704,10 @@
 - **Correction :** helper pur `resolveLegacyPatientId` qui conserve tout identifiant explicite de type texte et associe les anciennes données *uniquement si un seul nom correspond*. Les homonymes, noms inconnus et formats invalides restent non liés pour vérification médicale ultérieure, sans suppression d'aucun dossier.
 - **Tests automatiques :** 12 cas de résolution et 14 lectures via les véritables fonctions de stockage (7 consultations, 7 ordonnances) avec `localStorage` fictif. Confirme qu'aucune écriture/migration n'intervient. Exécution ajoutée à `test:all-offline` et au job CI « Tests / clinique » existant.
 - **Limites :** les documents anciens ambigus demandent une réconciliation explicite par le médecin ; aucun patient réel et aucun scénario navigateur manuel exécutés. L'autorisation clinique/sécurité de production demeure bloquée.
+
+### 2026-11-11 — QW-025 : alerte visible des consultations et ordonnances sans lien patient
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` inchangée ; pas de fusion, déploiement, dépense ni donnée patient réelle.
+- **Risque :** QW-024 empêchait le rattachement arbitraire d'un ancien document à un homonyme, mais l'interface Dashboard ne signalait pas explicitement que des documents restaient non reliés.
+- **Correctif :** `countUnlinkedClinicalRecords` compare les identifiants patients existants aux documents restitués par les vraies fonctions de stockage. Le Dashboard affiche une alerte avec le nombre de consultations et ordonnances non reliées, sans afficher de noms ni assigner automatiquement un patient. La vérification d'identité doit rester manuelle.
+- **Tests automatiques :** 10 documents anciens fictifs non reliés parmi 14 lectures, exemples d'identifiants inconnus et liste vide, et vérification de la présence de l'alerte accessible `role="alert"`. Intégration à `test:patient-linkage` et à la CI existante.
+- **Limites :** l'alerte ne répare ni ne migre les documents, ne remplace pas un rapprochement validé par le médecin ni une architecture de stockage médical sécurisé. Validation humaine réservée à la fin comme demandé.

@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
+import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
+import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
 
 // Real storage deserialization with a fully synthetic in-memory localStorage.
@@ -74,5 +76,19 @@ for (const [type, restored] of [
       type + ': incorrect patient association for ' + entry.id);
   }
 }
+const integrity = countUnlinkedClinicalRecords(getPatients(), getConsultations(), getPrescriptions());
+assert.deepEqual(integrity, { consultations: 5, prescriptions: 5 },
+  'Les documents ambigus, sans identifiant ou orphelins doivent être signalés.');
+assert.deepEqual(countUnlinkedClinicalRecords(
+  [{ id: 'ok' }],
+  [{ patientId: 'ok' }, { patientId: '' }, { patientId: 'ghost' }],
+  [{ patientId: 'ghost' }, { patientId: 'ok' }],
+), { consultations: 2, prescriptions: 1 });
+assert.deepEqual(countUnlinkedClinicalRecords([], [], []), { consultations: 0, prescriptions: 0 });
+const dashboardSource = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
+assert.ok(dashboardSource.includes('countUnlinkedClinicalRecords(getPatients(), getConsultations(), getPrescriptions())') &&
+  dashboardSource.includes('role="alert"') &&
+  dashboardSource.includes('Documents sans dossier patient confirmé'),
+  'Le tableau de bord doit afficher un avertissement sans divulguer les noms.');
 assert.equal(writes, 0, 'Reading legacy data must never rewrite or migrate stored records.');
-console.log('PASS: 12 legacy lookup fixtures, 14 actual consultation/prescription loads and zero storage mutations.');
+console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

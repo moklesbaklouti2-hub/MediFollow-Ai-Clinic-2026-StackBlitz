@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getInventoryData } from '../services/storage';
+import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
+import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
 import type { InventoryData } from '../types/medical';
 
 type DashboardProps = {
@@ -40,6 +41,8 @@ type DashboardData = {
   patients: PatientRecord[];
   consultations: ConsultationRecord[];
   prescriptions: PrescriptionRecord[];
+  unlinkedConsultations: number;
+  unlinkedPrescriptions: number;
 };
 
 function readArray<T>(key: string): T[] {
@@ -57,7 +60,11 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   const patients = readArray<PatientRecord>('medifollow-patients');
   const consultations = readArray<ConsultationRecord>('medifollow-consultations');
   const prescriptions = readArray<PrescriptionRecord>('medifollow-prescriptions');
+  // Use the same legacy-linkage rules as the patient services, not raw names.
+  const unlinked = countUnlinkedClinicalRecords(getPatients(), getConsultations(), getPrescriptions());
   return {
+    unlinkedConsultations: unlinked.consultations,
+    unlinkedPrescriptions: unlinked.prescriptions,
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
     prescriptions,
@@ -310,6 +317,23 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <div className="mf-stat-foot"><span>Dossiers actifs ou en suivi</span><i>●</i></div>
           </article>
         </section>
+
+        {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
+          <section className="mf-panel" role="alert" aria-label="Documents sans dossier patient confirmé"
+            style={{ marginBottom: 18, padding: 18, borderColor: '#bd7c13' }}>
+            <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
+              Attention — documents cliniques sans dossier patient confirmé
+            </strong>
+            <p style={{ margin: 0 }}>
+              {data.unlinkedConsultations} consultation(s) et {data.unlinkedPrescriptions} ordonnance(s)
+              nécessitent une vérification de l’identité du patient.
+            </p>
+            <p style={{ fontSize: 13, margin: '8px 0 0' }}>
+              Aucun rapprochement automatique n’est effectué pour les homonymes.
+              Vérifiez les documents dans Consultations et Ordonnances avant toute décision clinique.
+            </p>
+          </section>
+        )}
 
         <section className="mf-panel" style={{ marginBottom: 18, padding: 20, display: 'grid', gap: 16 }}>
           <div className="mf-panel-heading">
