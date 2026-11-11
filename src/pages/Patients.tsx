@@ -17,6 +17,7 @@ import { filterDocumentedPrescriptionStatus } from '../clinical/timelineStatusFi
 import { filterTimelineByDateRange } from '../clinical/timelineDateRange';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../clinical/timelineSpecialty';
 import { limitTimelineEvents } from '../clinical/timelineLimit';
+import { summarizeTimelineDocumentation } from '../clinical/timelineQuality';
 import type { TimelineDisplayLimit } from '../clinical/timelineLimit';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
@@ -105,6 +106,7 @@ export default function Patients() {
     ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
     : dateFilteredMedicalTimeline;
   const pagedMedicalTimeline = limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit);
+  const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
 
   const lastVisitByPatient = useMemo(() => {
     // Prototype-free map: imported patient IDs cannot shadow object keys.
@@ -726,6 +728,14 @@ export default function Patients() {
           </section>
 
           <h3 className="patient-section-title">Chronologie médicale ({pagedMedicalTimeline.length} affichés / {specialtyFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total)</h3>
+          {timelineDocumentation.total > 0 && (
+            <p className="patient-empty-history" aria-label="Qualité documentaire de la chronologie">
+              Données consignées à vérifier : {timelineDocumentation.datesUnspecified} date(s) non exploitable(s),
+              {' '}{timelineDocumentation.specialtiesUnspecified} spécialité(s) non renseignée(s),
+              {' '}{timelineDocumentation.prescriptionStatusesUnspecified} statut(s) d'ordonnance inconnu(s).
+              Ces nombres décrivent les documents enregistrés, sans interprétation médicale.
+            </p>
+          )}
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-filter">Filtrer la chronologie :</label>
             <select id="patient-timeline-filter" value={timelineFilter}

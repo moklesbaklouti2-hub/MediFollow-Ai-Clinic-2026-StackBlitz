@@ -18,6 +18,7 @@ import { filterDocumentedPrescriptionStatus } from '../src/clinical/timelineStat
 import { filterTimelineByDateRange } from '../src/clinical/timelineDateRange.ts';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../src/clinical/timelineSpecialty.ts';
 import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
+import { summarizeTimelineDocumentation } from '../src/clinical/timelineQuality.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -771,5 +772,28 @@ assert.ok(patientPageSource.includes('function resetTimelineControls()') &&
   patientPageSource.includes('Réinitialiser les filtres'),
   'All patient navigation and reset actions must clear the local timeline controls.');
 console.log('PASS QW-055: explicit reset of timeline controls and safe patient switching.');
+
+// QW-056 — Documentary counters are patient-local, read-only and do not
+// transform missing clinical information into asserted findings.
+const qualityFixtures = [
+  { type: 'consultation' as const, date: '2026-11-11', consultation: { specialty: 'ORL' } },
+  { type: 'consultation' as const, date: 'date invalide', consultation: { specialty: ' ' } },
+  { type: 'prescription' as const, date: '2026-11-10T08:00:00Z', prescription: { status: 'cancelled' } },
+  { type: 'prescription' as const, date: '2026-02-30', prescription: { status: 'unknown' } },
+  { type: 'prescription' as const, date: '2026-11-09', prescription: {} },
+];
+const qualityBefore = JSON.stringify(qualityFixtures);
+assert.deepEqual(summarizeTimelineDocumentation(qualityFixtures), {
+  total: 5, datesUnspecified: 2, specialtiesUnspecified: 1, prescriptionStatusesUnspecified: 2,
+});
+assert.deepEqual(summarizeTimelineDocumentation([]), {
+  total: 0, datesUnspecified: 0, specialtiesUnspecified: 0, prescriptionStatusesUnspecified: 0,
+});
+assert.equal(JSON.stringify(qualityFixtures), qualityBefore, 'Document quality counters cannot change records.');
+assert.ok(patientPageSource.includes('summarizeTimelineDocumentation(medicalTimeline)') &&
+  patientPageSource.includes('aria-label="Qualité documentaire de la chronologie"') &&
+  patientPageSource.includes('Ces nombres décrivent les documents enregistrés, sans interprétation médicale.'),
+  'Patient timeline quality counters must be descriptive and based on the selected dossier.');
+console.log('PASS QW-056: patient timeline documentation completeness counters and no mutation.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

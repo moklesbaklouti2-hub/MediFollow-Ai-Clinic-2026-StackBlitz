@@ -69,6 +69,7 @@
 | QW-053 | S | Filtrer les consultations par spécialité réellement consignée, y compris « non renseignée » | branche de préparation | Test du tri, des dossiers confirmés et du reset de filtre | PRÉPARÉ NON VALIDÉ |
 | QW-054 | S | Afficher 10/25/50 événements ou la totalité de la chronologie, sans perte de données | branche de préparation | Tests de limites, compteurs et non-mutation | PRÉPARÉ NON VALIDÉ |
 | QW-055 | S | Réinitialiser tous les filtres de chronologie au changement de patient ou par bouton | branche de préparation | Tests UI de remise à zéro, dossiers fictifs croisés | PRÉPARÉ NON VALIDÉ |
+| QW-056 | S | Compteurs de complétude documentaire de la chronologie (dates, spécialités, statuts) | branche de préparation | Test de source par dossier, non-inférence et immutabilité | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

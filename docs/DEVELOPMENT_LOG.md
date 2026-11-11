@@ -917,3 +917,8 @@
 - Un bouton restaure les valeurs par défaut des filtres de type, statut, recherche, dates, spécialité et limite d'affichage.
 - Toutes les ouvertures et fermetures de dossiers sont redirigées par un seul contrôle de changement de patient, qui réinitialise les filtres locaux. Aucun dossier n'est modifié, aucun mouvement de stock ou appel IA.
 - Contrats UI synthétiques, F39 réservé aux essais humains ultérieurs. **Non validé** avant les tests locaux et CI.
+
+### 2026-11-11 — QW-056 : qualité documentaire de la chronologie (préparation)
+- Compteur descriptif des dates invalides/absentes, des spécialités non consignées et des statuts d'ordonnance absents/inconnus du seul dossier sélectionné.
+- Aucun diagnostic, résultat ni validité d'ordonnance déduit de ces valeurs. Test synthétique de cinq événements, immutabilité et contrat UI. F40 à la phase finale.
+- **Statut :** préparé non validé, sans test d'exécution sur cette branche.
