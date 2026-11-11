@@ -816,3 +816,10 @@
 - **Sécurité :** aucun appel réseau, stockage, extraction PDF/OCR ni analyse médicale ; aucun texte collé n'est associé au dossier. Le composant React est isolé par `key={selected.id}` afin de perdre le brouillon lors du changement de patient ; plus aucun contenu lors de la fermeture du dossier.
 - **Tests :** 11 vérifications synthétiques (texte vide/malformé, HTML traité comme texte, coupure à la limite, métriques, contrôle d'intégration UI) intégrées à `test:patient-linkage`.
 - **Limites :** ne pas utiliser de vrais documents ; ni lecteur PDF ni OCR, ni assistance à l'interprétation. Scénario manuel F25 réservé à la fin.
+
+### 2026-11-11 — QW-041 : HELIOS Medical Academy, répertoire institutionnel
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; `main` intacte, aucune fusion, déploiement, dépense ni donnée réelle.
+- **Fonction :** premier espace « Academy » dans la page Protocoles : liens vers portail INEAS, notice INEAS diabète type 2 mise à jour juillet 2026, lignes directrices OMS et méthodologie HAS. Liens vérifiés sur les domaines institutionnels le 11/11/2026 ; aucune collecte ni résumé clinique.
+- **Prudence :** les fiches de protocoles existantes restent des démonstrations. Liens externes avec `noopener noreferrer` ; toute recommandation doit être relue à la source pour date, version, applicabilité et adaptation au contexte tunisien. Aucun contenu patient n'est transféré par la page.
+- **Tests :** liste des quatre domaines officiels HTTPS, unicité des identifiants, métadonnées et contrat UI intégrés à `test:patient-linkage` en CI.
+- **Validation :** scénario F26 préparé pour Windows/Android à la phase finale. Pas de formation certifiante, base de connaissances médicale validée ou intégration automatique des recommandations à ce stade.

@@ -1,5 +1,6 @@
 
 import { useMemo, useState } from 'react';
+import { academySources } from '../clinical/academySources';
 
 const protocols = [
   {
@@ -237,6 +238,32 @@ export default function Protocols() {
           {protocols.length} fiches de démonstration
         </span>
       </header>
+
+      <section className="protocol-detail" aria-label="HELIOS Medical Academy — sources institutionnelles">
+        <h3>HELIOS Medical Academy · sources institutionnelles</h3>
+        <p>
+          Portails et notices documentaires à consulter dans leur version officielle.
+          Ce répertoire ne certifie pas l'actualité ou l'applicabilité tunisienne de chaque recommandation,
+          et ne fournit aucune décision médicale automatisée.
+        </p>
+        <div className="protocols-grid">
+          {academySources.map((source) => (
+            <article className="protocol-card" key={source.id}>
+              <span className="protocol-category">{source.institution}</span>
+              <h3>{source.title}</h3>
+              <p>{source.description}</p>
+              <a className="protocol-open" href={source.url} target="_blank" rel="noopener noreferrer">
+                Ouvrir la source officielle
+              </a>
+              <small>Lien consulté le {source.checkedOn} · mise à jour à revérifier</small>
+            </article>
+          ))}
+        </div>
+        <p>
+          Les six fiches de protocoles ci-dessous restent des démonstrations,
+          sans recommandations médicales validées. Aucun lien n'envoie de données patient.
+        </p>
+      </section>
 
       <div className="protocols-search">
         <input

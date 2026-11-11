@@ -52,7 +52,8 @@
 | QW-037 | M | HELIOS Trends : comparaison brute des deux dernières valeurs datées, par constante | `f77660c` | [43078179664](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43078179664) : 11/11 réussis | VALIDÉ |
 | QW-038 | S | HELIOS Prevention : aide-mémoire documentaire non prescriptif, limité au dossier confirmé | `9a8d09a` | [43079491902](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43079491902) : 11/11 réussis | VALIDÉ |
 | QW-039 | S | HELIOS Referral : aperçu documentaire de la dernière consultation datée, sans décision ni transmission | `6c88021` | [43080135951](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43080135951) : 11/11 réussis | VALIDÉ |
-| QW-040 | S | HELIOS Document Reader : texte fictif collé, aperçu local temporaire, sans analyse ni sauvegarde | SHA à confirmer | 11 tests fictifs + CI 11/11 requise | EN VALIDATION |
+| QW-040 | S | HELIOS Document Reader : texte fictif collé, aperçu local temporaire, sans analyse ni sauvegarde | `56fac16` | [43080614809](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43080614809) : 11/11 réussis | VALIDÉ |
+| QW-041 | S | HELIOS Medical Academy : répertoire de liens institutionnels sans synthèse clinique | SHA à confirmer | Liens officiels + test offline + CI 11/11 requise | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

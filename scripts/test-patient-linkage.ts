@@ -9,6 +9,7 @@ import { compareRecentVitals } from '../src/clinical/trends.ts';
 import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
+import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -408,5 +409,27 @@ assert.ok(patientPageSource.includes('<LocalDocumentReader key={selected.id} />'
   !readerSource.includes('localStorage') && !readerSource.includes('fetch('),
   'Reader must stay transient, patient-keyed and without API calls or storage.');
 console.log('PASS QW-040: 11 fictional local-document and UI checks.');
+
+
+// QW-041 — institutional link directory, without medical synthesis or
+// patient identifiers. Only hard-coded HTTPS destinations are permitted.
+assert.equal(academySources.length, 4);
+assert.equal(new Set(academySources.map(item => item.id)).size, academySources.length);
+const allowedAcademyHosts = new Set(['portail.ineas.tn', 'www.who.int', 'www.has-sante.fr']);
+for (const source of academySources) {
+  const address = new URL(source.url);
+  assert.equal(address.protocol, 'https:');
+  assert.equal(allowedAcademyHosts.has(address.hostname), true);
+  assert.equal(source.checkedOn, '2026-11-11');
+  assert.ok(source.institution.trim() && source.title.trim() && source.description.trim());
+}
+const protocolPageSource = readFileSync('src/pages/Protocols.tsx', 'utf8');
+assert.ok(protocolPageSource.includes('HELIOS Medical Academy · sources institutionnelles') &&
+  protocolPageSource.includes('academySources.map(') &&
+  protocolPageSource.includes('rel="noopener noreferrer"') &&
+  protocolPageSource.includes('Aucun lien n\'envoie de données patient') &&
+  protocolPageSource.includes('sans recommandations médicales validées'),
+  'Academy should display official outbound sources only, with no patient data or claimed guideline validation.');
+console.log('PASS QW-041: 4 official source links, HTTPS allowlist and UI safety contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
