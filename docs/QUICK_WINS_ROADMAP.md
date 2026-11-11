@@ -20,7 +20,8 @@
 | QW-004 | S | Vider l'interrogatoire ciblé après la sauvegarde, sans perdre les réponses si échec | `5599f56` | [43031944830](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43031944830) : 11/11 réussis | VALIDÉ |
 | QW-005 | M | Lecture ponctuelle confirmée et fermeture silencieuse de l'Orb | `b4805ab` | [43032937029](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43032937029) : 11/11 réussis | VALIDÉ |
 | QW-006A | S | Bloquer toute commande vocale résiduelle après erreur de reconnaissance | `d9a7c52` | [43033964358](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43033964358) : 11/11 réussis | VALIDÉ |
-| QW-006C | S | Empêcher la lecture d'une réponse IA arrivée après fermeture ou réouverture de l'Orb | SHA à vérifier | Contrôles hors ligne + 11 jobs à confirmer | EN VALIDATION |
+| QW-006C | S | Empêcher la lecture d'une réponse IA arrivée après fermeture ou réouverture de l'Orb | `513d9dc` | [43035037173](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43035037173) : 11/11 réussis | VALIDÉ |
+| QW-009 | S | Reconnaître les pluriels de douleur thoracique et leurs négations | SHA à confirmer | 11 tests fictifs + CI 11/11 exigés | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
@@ -37,7 +38,7 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 
 ## Bilan de la session
 
-- Deux petites corrections fonctionnelles **validées** : QW-001 et QW-002.
-- **14 nouveaux cas de tests fonctionnels** (6 + 8) dans le moteur clinique.
+- Historique des lots confirmés dans la table ci-dessus. Prochain lot : QW-009, formes plurielles thoraciques.
+- Pour les totaux de tests, compter chaque lot indépendamment ; n'inclure que les jobs et SHA vérifiés.
 - Aucun nouveau fournisseur, abonnement, endpoint réseau ou déploiement.
 - Le présent tableau de suivi est un lot documentaire distinct, à valider par sa propre CI.

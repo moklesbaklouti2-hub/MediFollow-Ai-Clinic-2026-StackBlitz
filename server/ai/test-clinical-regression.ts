@@ -211,6 +211,45 @@ for (const bp of bloodPressureCases) {
 }
 console.log('OK — 8 tests de lecture tensionnelle avec ou sans mmHg.');
 
+
+// QW-009 — les pluriels de douleur thoracique doivent rester détectés,
+// sans inventer de douleur présente lorsqu'ils sont explicitement niés.
+for (const words of [
+  'douleurs thoraciques à l’effort',
+  'douleurs précordiales depuis 20 minutes',
+  'oppressions thoraciques intermittentes',
+  'thoracalgies nocturnes',
+  'angors à l’effort',
+]) {
+  const result = detectMotif(words);
+  assert.ok(result.some(item => item.id === 'chest-pain' && item.priority === 'high'),
+    'Alerte prioritaire absente pour un pluriel : ' + words);
+}
+for (const words of [
+  'pas de douleurs thoraciques',
+  'absence de douleurs précordiales',
+  'sans oppressions thoraciques',
+  'aucunes douleurs thoraciques',
+  'ni thoracalgies',
+]) {
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'toux', symptoms: words,
+    history: '', vitals: { ...blankVitals },
+  });
+  assert.ok(!result.some(item => item.id === 'chest-pain' || item.id === 'missing-chest-pain-details'),
+    'Alerte thoracique créée à partir d’une négation au pluriel : ' + words);
+}
+{
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'toux',
+    symptoms: 'Pas de douleurs thoraciques. Puis douleurs précordiales ce matin.',
+    history: '', vitals: { ...blankVitals },
+  });
+  assert.ok(result.some(item => item.id === 'chest-pain' && item.priority === 'high'),
+    'Une mention positive indépendante doit conserver l’alerte prioritaire.');
+}
+console.log('OK — 11 scénarios de douleur thoracique au pluriel, négations et mention positive indépendante.');
+
 // Réponse tardive d'une requête IA : ne pas réafficher une analyse
 // attachée à un dossier précédent ou à une consultation fermée.
 const firstClinicalRequest = new AbortController();

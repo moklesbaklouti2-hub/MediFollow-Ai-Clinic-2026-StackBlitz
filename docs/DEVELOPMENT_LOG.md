@@ -587,3 +587,10 @@
 - **Validation :** CI GitHub Actions à vérifier (11 jobs, commit exact) ; test fonctionnel sur Android à réaliser dans QW-006B.
 
 - **Réparation du test QW-006C avant validation :** le premier run de `12fc188` a signalé une assertion de contrat obsolète (la condition de lecture manuelle est restée identique mais l'instruction `if` est désormais précédée du contrôle de panneau). L'assertion recherche la condition fonctionnelle sans dépendre de sa position. Le code produit n'est pas modifié ; réexécuter les 11 jobs sur ce nouveau SHA, ignorer le run rouge antérieur.
+
+### 2026-11-11 — QW-009 : ne pas manquer les douleurs thoraciques au pluriel
+- **Branche :** `audit-stabilisation-2026-11-10`. PR #2 en brouillon, aucun changement sur `main`, aucune donnée réelle ni déploiement.
+- **Défaut distinct :** l'alerte prioritaire locale reconnaissait les formes thoraciques singulières mais pas toutes les formes plurielles (« douleurs thoraciques », « douleurs précordiales », « oppressions thoraciques », « thoracalgies »).
+- **Correction :** élargissement ciblé de l'expression de recherche des symptômes, avec prise en compte de « aucuns » / « aucunes » dans les négations explicites. Les négations restent non déclenchantes et une mention positive indépendante reste prioritaire.
+- **Tests :** 11 scénarios fictifs dans `server/ai/test-clinical-regression.ts` (5 mentions positives, 5 négations, 1 mention indépendante) ; les tests historiques doivent rester réussis.
+- **Limite :** détection textuelle indicative seulement, sans certification de sécurité clinique, test Android ou usage sur patient réel ; vérifier les 11 jobs Actions sur SHA final.

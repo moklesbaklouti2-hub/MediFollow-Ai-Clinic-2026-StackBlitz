@@ -20,8 +20,8 @@ function normalize(value: string): string {
 // pas déclencher à elle seule une alerte de douleur présente. Une mention
 // positive indépendante conserve toujours l'alerte prioritaire.
 // Détection volontairement prudente : une formulation ambiguë reste signalée.
-const chestPainTerm = /\b(?:douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/gu;
-const explicitChestPainNegation = /\b(?:pas|sans|aucun|aucune|absence|ni|nie|nient)\s+(?:(?:de|d|du|des|la|le|les|une?|toute?)\s+){0,2}$/u;
+const chestPainTerm = /\b(?:douleurs? thoraciques?|douleurs? precordiales?|oppressions? thoraciques?|angors?|thoracalgies?)\b/gu;
+const explicitChestPainNegation = /\b(?:pas|sans|aucun|aucune|aucuns|aucunes|absence|ni|nie|nient)\s+(?:(?:de|d|du|des|la|le|les|une?|toute?)\s+){0,2}$/u;
 
 function hasReportedChestPain(value: string): boolean {
   const normalized = normalize(value);
