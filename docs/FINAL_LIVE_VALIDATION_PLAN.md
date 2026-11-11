@@ -30,7 +30,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F03 | Windows + Android | Créer deux patients fictifs homonymes avec identifiants distincts | Deux dossiers distincts ; aucune consultation ou ordonnance fusionnée par nom | ☐ |
 | F04 | Windows | Ajouter, modifier et retrouver une consultation sur le bon patient ; enregistrer spécialité, motif, histoire et constantes | Données conservées, spécialité correcte, graphiques pertinents | ☐ |
 | F05 | Windows | Tester examen structuré « non examiné », « anormal » et « normal » | Aucune donnée absente ne devient « normale » automatiquement | ☐ |
-| F06 | Windows | Charger un ancien document fictif ambigu (homonymes) | Alerte Dashboard visible ; document NON rattaché arbitrairement | ☐ |
+| F06 | Windows | Charger un ancien document fictif ambigu (homonymes), essayer de le sauvegarder sans sélectionner de dossier confirmé | Alerte Dashboard visible ; aucune attribution arbitraire et sauvegarde refusée tant que l’identité reste incertaine | ☐ |
 | F07 | Windows | Ajouter une ordonnance fictive avec traitements, analyses, imagerie et autres | Les quatre catégories et les éléments prescrits sont conservés | ☐ |
 | F08 | Windows | Ajouter deux lots fictifs d'un même produit, délivrer une quantité, tenter retour/annulation | Quantités exactes, traçabilité et refus des opérations dangereuses | ☐ |
 | F09 | Windows | Essayer de supprimer un article fictif lié à un mouvement/une ordonnance, puis un article neuf | Article tracé protégé ; article neuf supprimable après confirmation | ☐ |

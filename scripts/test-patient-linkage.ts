@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
+import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
 
@@ -91,4 +92,31 @@ assert.ok(dashboardSource.includes('countUnlinkedClinicalRecords(getPatients(), 
   dashboardSource.includes('Documents sans dossier patient confirmé'),
   'Le tableau de bord doit afficher un avertissement sans divulguer les noms.');
 assert.equal(writes, 0, 'Reading legacy data must never rewrite or migrate stored records.');
+
+const patientSelectionCases: Array<[unknown, Array<{ id: string }>, boolean]> = [
+  ['p1', [{ id: 'p1' }], true],
+  ['p1', [{ id: 'p1' }, { id: 'p2' }], true],
+  ['p1', [{ id: 'p1' }, { id: 'p1' }], false],
+  ['missing', [{ id: 'p1' }], false],
+  ['', [{ id: '' }], false],
+  ['  ', [{ id: '  ' }], false],
+  [0, [{ id: '0' }], false],
+  [null, [{ id: 'p1' }], false],
+  ['p1', [], false],
+  [' p1 ', [{ id: 'p1' }], false],
+];
+for (const [patientId, patients, expected] of patientSelectionCases) {
+  assert.equal(hasConfirmedPatientSelection(patientId, patients), expected,
+    'Association documentaire au patient non confirmé.');
+}
+const consultationSource = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+const prescriptionSource = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+const consultationSave = consultationSource.split('function saveConsultation()')[1]?.split('const changes =')[0] ?? '';
+const prescriptionValidation = prescriptionSource.split('function validatePrescription()')[1]?.split('function previewPrescription()')[0] ?? '';
+assert.ok(consultationSave.includes('hasConfirmedPatientSelection(patientId, patients)') &&
+  consultationSave.includes('window.alert('), 'Consultations ne protège pas les identités incertaines avant la sauvegarde.');
+assert.ok(prescriptionValidation.includes('hasConfirmedPatientSelection(patientId, patients)') &&
+  prescriptionValidation.includes('return false;'), 'Ordonnances ne refuse pas le patient incertain.');
+console.log('PASS : sélection patient confirmée pour consultations et ordonnances (données fictives).');
+
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

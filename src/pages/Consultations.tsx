@@ -6,6 +6,7 @@ import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
+import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 
 const specialtyGroups = [
@@ -380,6 +381,10 @@ export default function Consultations({
   function saveConsultation() {
     if (!patientId || !motif.trim() || (!editingId && !specialty)) {
       alert('Veuillez sélectionner un patient, choisir une spécialité et renseigner le motif.');
+      return;
+    }
+    if (!hasConfirmedPatientSelection(patientId, patients)) {
+      window.alert('Dossier patient introuvable ou identifiant ambigu. Sélectionnez un patient enregistré avant la sauvegarde.');
       return;
     }
 

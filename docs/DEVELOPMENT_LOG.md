@@ -746,3 +746,10 @@
 - **Garde-fous :** aucun passage automatique à l'état terminé ; impossible si édition non sauvegardée en cours, dossier incertain, plan déjà terminé ou date invalide. Les données conservées ne sont pas mutées par le helper.
 - **Tests :** états ouverts/fermés/invalides, immutabilité, vérifications structurelles de confirmation, identité et persistance. Ajout du scénario humain F20 à `docs/FINAL_LIVE_VALIDATION_PLAN.md`, à exécuter uniquement à la phase finale.
 - **Limites :** ne remplace ni un rendez-vous réel ni une preuve d'exécution médicale ; authentification réelle et confidentialité fournisseurs encore bloquantes.
+
+### 2026-11-11 — QW-031 : sélectionner uniquement un dossier patient confirmé à la sauvegarde
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 en brouillon, `main` intacte, aucun déploiement/dépense/donnée réelle.
+- **Risque :** les formulaires de consultation et d'ordonnance pouvaient enregistrer des documents avec un `patientId` non vide mais inexistant, ancien ou dupliqué après import, alors que QW-024/QW-025 signalent justement les dossiers sans association certaine.
+- **Correction :** helper commun `hasConfirmedPatientSelection` qui exige exactement une correspondance par identifiant. Les deux vrais formulaires refusent le réenregistrement lorsque l'identifiant est manquant, absent du registre ou dupliqué ; aucune recherche par nom.
+- **Tests :** dix scénarios fictifs (unique, absent, doublon, invalide), plus deux contrôles de liaison UI, exécutés dans `test:patient-linkage` déjà inclus à la CI. Le scénario manuel F06 est enrichi pour la phase finale uniquement.
+- **Limites :** aucune migration ou réconciliation automatique ; sécurité multi-utilisateur et confidentialité réelles restent ouvertes.
