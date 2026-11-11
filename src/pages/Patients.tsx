@@ -14,6 +14,7 @@ import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../c
 import { filterRecordedEvents } from '../clinical/timelineFilter';
 import { searchRecordedEvents } from '../clinical/timelineSearch';
 import { filterDocumentedPrescriptionStatus } from '../clinical/timelineStatusFilter';
+import { filterTimelineByDateRange } from '../clinical/timelineDateRange';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
 import LocalDocumentReader from '../components/LocalDocumentReader';
@@ -25,6 +26,8 @@ export default function Patients() {
   const [timelineFilter, setTimelineFilter] = useState<MedicalTimelineFilter>('all');
   const [timelineSearch, setTimelineSearch] = useState('');
   const [prescriptionStatusFilter, setPrescriptionStatusFilter] = useState<TimelinePrescriptionStatusFilter>('all');
+  const [timelineFromDate, setTimelineFromDate] = useState('');
+  const [timelineToDate, setTimelineToDate] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -73,6 +76,9 @@ export default function Patients() {
   const statusFilteredMedicalTimeline = timelineFilter === 'prescription'
     ? filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)
     : searchedMedicalTimeline;
+  const dateFilteredMedicalTimeline = filterTimelineByDateRange(
+    statusFilteredMedicalTimeline, timelineFromDate, timelineToDate
+  );
 
   const lastVisitByPatient = useMemo(() => {
     // Prototype-free map: imported patient IDs cannot shadow object keys.
@@ -693,7 +699,7 @@ export default function Patients() {
             )}
           </section>
 
-          <h3 className="patient-section-title">Chronologie médicale ({statusFilteredMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
+          <h3 className="patient-section-title">Chronologie médicale ({dateFilteredMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-filter">Filtrer la chronologie :</label>
             <select id="patient-timeline-filter" value={timelineFilter}
@@ -726,12 +732,21 @@ export default function Patients() {
               placeholder="Motif, spécialité, médicament, examen…"
               value={timelineSearch} onChange={(event) => setTimelineSearch(event.target.value)} />
           </div>
+          <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-from">Date début :</label>
+            <input id="patient-timeline-from" type="date" value={timelineFromDate}
+              onChange={(event) => setTimelineFromDate(event.target.value)} />
+            <label htmlFor="patient-timeline-to">Date fin :</label>
+            <input id="patient-timeline-to" type="date" value={timelineToDate}
+              onChange={(event) => setTimelineToDate(event.target.value)} />
+            <span>Les événements sans date valide ne figurent pas dans une période filtrée.</span>
+          </div>
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
-          ) : statusFilteredMedicalTimeline.length === 0 ? (
+          ) : dateFilteredMedicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucun événement correspondant à la recherche ou au filtre pour ce patient.</p>
           ) : (
-            statusFilteredMedicalTimeline.map((entry) => (
+            dateFilteredMedicalTimeline.map((entry) => (
               <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
                 {entry.type === 'consultation' ? (
                   <>

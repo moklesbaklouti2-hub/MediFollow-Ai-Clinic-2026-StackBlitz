@@ -897,3 +897,8 @@
 - Les données de recherche restent dans la page du patient confirmé ; pas d'appel IA/API, les filtres sont purs et les tests utilisent des fixtures fictives.
 - QW-048 sur `7d8dcdd` n'a pas atteint 11/11 : sept jobs annulés, un bilan final en attente. Les tests groupés vérifieront la non-régression, mais ne transfèrent pas un ancien statut de CI.
 - **Statut :** tests groupés Codespaces et GitHub V2 requis avant de poursuivre. `main` inchangée ; PR #2 brouillon ; pas de données réelles.
+
+### 2026-11-11 — QW-052 : bornes de dates dans la chronologie (préparation)
+- Filtre local par dates civiles UTC inclusives ; les dates malformées/absentes ne sont pas classées arbitrairement lors d'un filtrage actif. L'ordre et les originaux sont conservés.
+- Tests fictifs de début/fin, intervalles inversés, années/jours invalides, non-mutation et contrat UI.
+- **Statut :** préparé sur branche séparée, sans test local/CI à ce stade ; F36 réservé à la validation humaine finale.
