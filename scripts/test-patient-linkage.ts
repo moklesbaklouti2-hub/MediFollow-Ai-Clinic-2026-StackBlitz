@@ -98,7 +98,9 @@ assert.deepEqual(countUnlinkedClinicalRecords(
 ), { consultations: 2, prescriptions: 1 });
 assert.deepEqual(countUnlinkedClinicalRecords([], [], []), { consultations: 0, prescriptions: 0 });
 const dashboardSource = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
-assert.ok(dashboardSource.includes('countUnlinkedClinicalRecords(getPatients(), getConsultations(), getPrescriptions())') &&
+assert.ok(dashboardSource.includes('countUnlinkedClinicalRecords(clinicalPatients, clinicalConsultations, getPrescriptions())') &&
+  dashboardSource.includes('const clinicalPatients = getPatients();') &&
+  dashboardSource.includes('const clinicalConsultations = getConsultations();') &&
   dashboardSource.includes('role="alert"') &&
   dashboardSource.includes('Documents sans dossier patient confirmé'),
   'Le tableau de bord doit afficher un avertissement sans divulguer les noms.');
