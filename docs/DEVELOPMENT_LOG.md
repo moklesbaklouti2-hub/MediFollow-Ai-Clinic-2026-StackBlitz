@@ -637,3 +637,10 @@
 - **Tests :** 4 assertions de configuration supplémentaires et essai de démarrage réel d'un serveur de production fictif, attendu en échec avec une erreur de préflight précise avant toute ouverture de port.
 - **Limites :** cette mesure ne remplace pas une authentification ni une vérification réseau, ne bloque pas l'exposition volontaire d'un serveur de développement, et n'autorise pas de déploiement. QW-007/QW-008 et les essais Android restent ouverts.
 - **Validation :** attendre la CI des 11 jobs sur le commit final avant de déclarer VERT.
+
+### 2026-11-11 — QW-016 : plafond d'entrée du chat clinique avant fournisseur IA
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; aucune donnée réelle, dépense ou mise en production.
+- **Défaut distinct de QW-014 :** QW-014 rejetait les JSON non textuels, mais la route de chat autorisait encore un message texte jusqu'à la limite de l'enveloppe JSON de 64 Ko, sans plafond autonome, avant d'ajouter l'historique et le contexte au prompt externe.
+- **Correction :** limite explicite de 12 000 caractères JavaScript (UTF-16) pour un message après suppression des espaces périphériques. En cas de dépassement, réponse HTTP 413 avec erreur générique avant toute construction de contexte ou appel IA. Les commandes vocales conservent leur propre seuil de 5 000 caractères.
+- **Tests :** seuil exact et sous/sur le seuil, entrées nettoyées et inspection contractuelle de la route réelle (12 vérifications) dans `server/ai/test-clinical-regression.ts`.
+- **Limite :** plafond de taille uniquement, non-authentification ni conformité des flux de données. QW-007/QW-008 restent ouverts. Validation CI 11 jobs requise sur SHA final.

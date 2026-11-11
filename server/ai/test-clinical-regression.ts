@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import express from 'express';
 import { CLINICAL_PATHS } from '../security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from '../security/noStoreClinicalResponses.ts';
-import { readClinicalPromptText } from '../security/clinicalPromptInput.ts';
+import {
+  readClinicalPromptText, MAX_CHAT_MESSAGE_CHARS, isClinicalChatMessageTooLong,
+} from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
 import type { Patient } from '../../src/types/medical.ts';
@@ -438,6 +440,27 @@ assert.ok(chat.includes('const message = readClinicalPromptText(req.body?.messag
   chat.includes("if (!message) return res.status(400)"),
   'La route Discussion IA doit refuser le JSON non textuel avant tout appel IA.');
 console.log('OK — 13 cas de validation de prompts et 2 contrats de routes IA sans coercition.');
+
+
+// QW-016 — limiter un message de chat avant la construction du contexte et
+// l'appel à un fournisseur IA. Le maximum vaut 12 000 caractères UTF-16.
+assert.equal(MAX_CHAT_MESSAGE_CHARS, 12_000);
+for (const [length, expectedTooLong] of [
+  [0, false], [1, false], [250, false], [11999, false],
+  [12000, false], [12001, true], [15000, true], [50000, true],
+] as const) {
+  assert.equal(isClinicalChatMessageTooLong('x'.repeat(length)), expectedTooLong,
+    'Limite chat incorrecte pour ' + length + ' caractères.');
+}
+assert.equal(isClinicalChatMessageTooLong(readClinicalPromptText('  ' + 'x'.repeat(12000) + '  ')), false,
+  'Les espaces périphériques ne doivent pas faire rejeter un texte valide.');
+assert.equal(isClinicalChatMessageTooLong(readClinicalPromptText('  ' + 'x'.repeat(12001) + '  ')), true,
+  'Un texte au-dessus de la limite après trim doit être rejeté.');
+assert.ok(chat.includes('if (isClinicalChatMessageTooLong(message))') &&
+  chat.includes('return res.status(413).json(') &&
+  chat.indexOf('if (isClinicalChatMessageTooLong(message))') < chat.indexOf('const completion = await createAiCompletion('),
+  'Le rejet HTTP 413 doit se produire dans la vraie route avant l’appel IA.');
+console.log('OK — 12 contrôles fictifs de la limite de longueur chat et du garde HTTP 413.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

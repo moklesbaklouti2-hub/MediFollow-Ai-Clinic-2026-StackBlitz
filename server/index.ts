@@ -5,7 +5,7 @@ import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
 import { createSessionStore } from './security/sessionStore.ts';
 import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
-import { readClinicalPromptText } from './security/clinicalPromptInput.ts';
+import { readClinicalPromptText, isClinicalChatMessageTooLong } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -704,6 +704,9 @@ app.post('/api/chat', async (req, res) => {
   try {
     const message = readClinicalPromptText(req.body?.message);
     if (!message) return res.status(400).json({ error: 'Message vide.' });
+    if (isClinicalChatMessageTooLong(message)) {
+      return res.status(413).json({ error: 'Message trop long. Réduisez le texte transmis au copilote.' });
+    }
 
     const context = req.body?.context;
     let contextText = '';
