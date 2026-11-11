@@ -289,4 +289,76 @@ for (const [name, corrupt] of traceCorruptions) {
   assertions += 2;
 }
 
-console.log('OK — ' + assertions + ' assertions sur la traçabilité et la délivrance atomique (données fictives).');
+
+// Le replay doit vérifier les produits ET les quantités précédemment
+// délivrés ; partager un identifiant d'ordonnance ne suffit pas.
+{
+  reset();
+  const first = issue([{ inventoryItemId: 'lot-a', quantity: 8 }]);
+  assert.equal(dispenseInventoryItems(first).success, true);
+  const snapshot = JSON.stringify(getInventoryData());
+  writes = 0;
+  const replayCases: Array<[string, Array<{inventoryItemId: string; quantity: number}>]> = [
+    ['quantité plus faible', [{ inventoryItemId: 'lot-a', quantity: 7 }]],
+    ['quantité plus forte', [{ inventoryItemId: 'lot-a', quantity: 9 }]],
+    ['autre produit', [{ inventoryItemId: 'lot-c', quantity: 8 }]],
+    ['produit supplémentaire', [{ inventoryItemId: 'lot-a', quantity: 8 }, { inventoryItemId: 'lot-c', quantity: 1 }]],
+    ['même total mais autre répartition produit', [{ inventoryItemId: 'lot-a', quantity: 4 }, { inventoryItemId: 'lot-c', quantity: 4 }]],
+  ];
+  for (const [name, lines] of replayCases) {
+    assert.equal(dispenseInventoryItems(issue(lines)).success, false, name);
+    unchanged(snapshot, name);
+    assertions += 3;
+  }
+  // Le lot de départ peut changer tant que le produit et le total sont identiques.
+  assert.deepEqual(dispenseInventoryItems(issue([{ inventoryItemId: 'lot-b', quantity: 8 }])), {
+    success: true, alreadyDispensed: true,
+  });
+  unchanged(snapshot, 'rejeu FEFO identique');
+  assertions += 3;
+}
+
+// Si l'historique a changé après import, ne jamais afficher un faux succès.
+const alteredHistory: Array<[string, (d: InventoryData) => void]> = [
+  ['quantité historique différente', d => { d.movements[0].quantity = 2; }],
+  ['lot historique absent', d => { d.movements[0].itemId = 'lot-inconnu'; }],
+  ['lot historique dupliqué', d => { d.items.push({ ...d.items[0] }); }],
+  ['produit historique renommé', d => { d.items[0].name = 'Autre produit test'; }],
+];
+for (const [name, alter] of alteredHistory) {
+  const d = fixture();
+  d.movements = [issued('disp-replay', 'lot-a', 3)];
+  alter(d);
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(dispenseInventoryItems({
+    prescriptionId: 'ord-retour', patientId: 'patient-fictif',
+    items: [{ inventoryItemId: 'lot-a', quantity: 3 }],
+  }).success, false, name);
+  unchanged(before, name);
+  assertions += 3;
+}
+
+// Un nouvel enregistrement ne doit pas exploiter un identifiant de lot
+// dupliqué ou une somme de lignes qui dépasse Number.MAX_VALUE.
+{
+  const d = fixture();
+  d.items.push({ ...d.items[0] });
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(dispenseInventoryItems(issue([{ inventoryItemId: 'lot-a', quantity: 1 }])).success, false);
+  unchanged(before, 'nouvelle délivrance sur lot dupliqué');
+  assertions += 3;
+}
+{
+  reset();
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(dispenseInventoryItems(issue([
+    { inventoryItemId: 'lot-a', quantity: Number.MAX_VALUE },
+    { inventoryItemId: 'lot-b', quantity: Number.MAX_VALUE },
+  ])).success, false);
+  unchanged(before, 'somme des quantités non finie');
+  assertions += 3;
+}
+
+console.log('OK — ' + assertions + ' assertions sur les replays et la délivrance atomique (données fictives).');
