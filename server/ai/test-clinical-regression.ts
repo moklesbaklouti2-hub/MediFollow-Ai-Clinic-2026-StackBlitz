@@ -3,6 +3,9 @@ import express from 'express';
 import { CLINICAL_PATHS } from '../security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from '../security/noStoreClinicalResponses.ts';
 import {
+  classifyJsonBodyError, handleJsonBodyError,
+} from '../security/jsonBodyErrorHandler.ts';
+import {
   readClinicalPromptText, MAX_CHAT_MESSAGE_CHARS, isClinicalChatMessageTooLong,
 } from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
@@ -382,11 +385,8 @@ for (const path of CLINICAL_PATHS) {
   });
 }
 noStoreApp.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }));
-// Swallow the test parser errors without printing fake body content to logs.
-noStoreApp.use((error: { status?: number }, _req: express.Request,
-  res: express.Response, _next: express.NextFunction) => {
-  res.status(error.status === 413 ? 413 : 400).json({ error: 'Corps JSON fictif invalide.' });
-});
+// Exercise the actual API error handler, not a test-only surrogate.
+noStoreApp.use(handleJsonBodyError);
 const noStoreServer = noStoreApp.listen(0, '127.0.0.1');
 try {
   await new Promise<void>((resolve, reject) => {
@@ -413,10 +413,11 @@ try {
   }
   // The 400 and 413 occur within express.json, before any clinical handler.
   // In all three paths the anti-cache headers must already be present.
+  const fictionalCanary = 'DONNEE_FICTIVE_NE_PAS_RETOURNER';
   for (const path of CLINICAL_PATHS) {
     for (const fixture of [
-      { code: 400, payload: '{', label: 'syntaxe JSON invalide' },
-      { code: 413, payload: JSON.stringify({ text: 'x'.repeat(66_000) }), label: 'JSON trop volumineux' },
+      { code: 400, payload: '{"note":"' + fictionalCanary + '",', label: 'syntaxe JSON invalide' },
+      { code: 413, payload: JSON.stringify({ note: fictionalCanary, text: 'x'.repeat(66_000) }), label: 'JSON trop volumineux' },
     ]) {
       const response = await fetch(base + path, {
         method: 'POST',
@@ -428,6 +429,16 @@ try {
         'Réponse de parseur JSON stockable : ' + path + ' / ' + fixture.label);
       assert.equal(response.headers.get('pragma'), 'no-cache',
         'En-tête de compatibilité anti-cache manquant : ' + path + ' / ' + fixture.label);
+      const responseBody = await response.text();
+      assert.ok(!responseBody.includes(fictionalCanary) &&
+        !responseBody.includes('SyntaxError') &&
+        !responseBody.includes('PayloadTooLargeError') &&
+        !responseBody.includes('at Layer.handle'),
+        'Une réponse JSON ne doit pas renvoyer le contenu ni la pile interne.');
+      const parsed = JSON.parse(responseBody);
+      assert.equal(typeof parsed.error, 'string');
+      assert.equal(Object.keys(parsed).join(','), 'error',
+        'Une erreur JSON doit renvoyer uniquement un message générique.');
     }
   }
   const health = await fetch(base + '/api/health');
@@ -439,7 +450,25 @@ try {
     noStoreServer.close(error => error ? reject(error) : resolve()),
   );
 }
-console.log('OK — 3 routes cliniques non stockables en succès, erreur applicative, JSON invalide et dépassement 64 Ko (requêtes fictives).');
+console.log('OK — 3 routes cliniques non stockables et erreurs de parseur JSON assainies (requêtes fictives).');
+
+// QW-018 — la classification doit traiter exclusivement les erreurs connues.
+for (const [candidate, expectedStatus] of [
+  [{ type: 'entity.parse.failed' }, 400],
+  [{ type: 'entity.too.large' }, 413],
+  [{ type: 'unknown' }, null],
+  [new Error('Erreur externe fictive'), null],
+  [null, null],
+  [undefined, null],
+  [{ type: 413 }, null],
+] as const) {
+  assert.equal(classifyJsonBodyError(candidate), expectedStatus,
+    'Classification non sûre des erreurs de parseur JSON.');
+}
+assert.ok(source.indexOf('app.use(handleJsonBodyError);') > source.indexOf("app.post('/api/chat'") &&
+  source.indexOf('app.use(handleJsonBodyError);') < source.indexOf('app.listen(PORT,'),
+  'Le gestionnaire JSON doit être monté après les vraies routes Express.');
+console.log('OK — 7 cas de classification et 1 contrat du gestionnaire réel.');
 
 
 // QW-014 — ne jamais transformer un JSON non textuel en instruction IA.

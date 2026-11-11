@@ -652,3 +652,11 @@
 - **Vérification :** contrôle statique de l'ordre réel dans `server/index.ts` et six requêtes fictives sur un serveur Express loopback (3 routes × JSON invalide ou 66 Ko), avec vérification 400/413, `Cache-Control: no-store` et `Pragma: no-cache`. Le test précédent (200, 400 applicatif, santé publique) reste actif.
 - **Limites :** protection des caches intermédiaires seulement, pas une authentification ni une preuve de confidentialité de bout en bout ; aucune validation sur Android ou sur données patients.
 - **Validation :** attendre les 11 jobs GitHub Actions sur le commit exact.
+
+### 2026-11-11 — QW-018 : neutraliser les détails des erreurs JSON renvoyées au navigateur
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 en brouillon, aucune modification de `main`, aucun déploiement ni donnée réelle.
+- **Défaut distinct de QW-017 :** QW-017 corrigeait l'ordre anti-cache du parseur JSON, mais les erreurs de syntaxe `entity.parse.failed` et de taille `entity.too.large` utilisaient toujours le gestionnaire d'erreurs par défaut Express. En développement, une réponse peut contenir une pile technique ou des fragments de l'entrée.
+- **Correction :** `handleJsonBodyError` intercepte exclusivement ces deux catégories après les routes réelles, répond avec un JSON générique `400` ou `413`, sans renvoyer le corps, message du parseur ni pile. Les autres erreurs sont transmises à la chaîne Express habituelle, pour ne pas masquer de défauts.
+- **Tests :** six requêtes HTTP fictives (3 routes × deux erreurs) avec une sentinelle sensible fictive, vérification qu'aucune donnée/syntaxe interne n'est reflétée, et 8 contrôles de classification et de positionnement du middleware. Test sans vraie donnée ni clé IA.
+- **Limites :** ce correctif ne constitue ni un filtre de données personnelles avant appel IA, ni une authentification. QW-007/QW-008 et essais Chrome Android encore ouverts.
+- **Validation :** contrôle des 11 jobs Actions sur le SHA exact obligatoire.

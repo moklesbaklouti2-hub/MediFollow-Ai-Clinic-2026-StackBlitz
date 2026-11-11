@@ -5,6 +5,7 @@ import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
 import { createSessionStore } from './security/sessionStore.ts';
 import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
+import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
 import { readClinicalPromptText, isClinicalChatMessageTooLong } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
@@ -827,6 +828,9 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 });
+
+// Last in the Express chain: sanitized 400/413 JSON parsing failures.
+app.use(handleJsonBodyError);
 
 app.listen(PORT, cookieIntegrationMode === 'integration-test' ? '127.0.0.1' : '0.0.0.0', () => {
   console.log(`Serveur MediFollow AI démarré sur le port ${PORT}`);
