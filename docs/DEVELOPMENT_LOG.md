@@ -802,3 +802,10 @@
 - **Garde-fous :** aucune inférence de vaccination manquante/réalisée, éligibilité au dépistage, délai, rappel ou recommandation. Identifiants stricts ; dates invalides ignorées ; lecture locale, sans envoi à un fournisseur IA, stockage ni écriture.
 - **Tests fictifs :** 10 contrôles de séparation interpatient, ordre des dates, champs invalides, absence de mutation et contrat UI via `test:patient-linkage` dans la CI existante.
 - **Validation :** F23 ajouté au protocole final, sans demande d'essai manuel avant la fin. Ce n'est pas un système de prévention clinique validé ; recommandations locales et statuts vaccinaux restent à concevoir et faire vérifier.
+
+### 2026-11-11 — QW-039 : HELIOS Referral, préparation non transmise
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; sans fusion, déploiement, dépense ni donnée réelle.
+- **Fonction :** extrait la dernière consultation datée du dossier sélectionné et montre son motif, diagnostic et conduite tels que consignés. Les données vides sont signalées « Non renseigné ». Aucun courrier n'est généré, copié ou envoyé.
+- **Sécurité :** filtre `patientId` strict et sélection unique préexistante ; dates non analysables exclues ; diagnostic non revalidé explicite ; aucune inférence de nécessité, destinataire ou urgence d'orientation. Lecture locale sans appel IA.
+- **Tests :** 10 contrôles synthétiques (datation, isolation patient, source vide/malformée, immutabilité, contrat UI) ajoutés à `test:patient-linkage` en CI.
+- **Validation manuelle :** F24 préparé pour la phase finale uniquement. Le courrier de liaison rédigé et validé par un professionnel reste un développement distinct.

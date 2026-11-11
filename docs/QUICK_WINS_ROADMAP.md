@@ -50,7 +50,8 @@
 | QW-035 | M | HELIOS Clinical Memory : aperçu local des allergies, traitements déclarés et diagnostics documentés | `71ef53a` | [43076444812](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43076444812) : 11/11 réussis | VALIDÉ |
 | QW-036 | S | HELIOS Clinical Memory : montrer séparément les antécédents médicaux, chirurgicaux et familiaux déclarés | `4e09894` | [43077404223](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43077404223) : 11/11 réussis | VALIDÉ |
 | QW-037 | M | HELIOS Trends : comparaison brute des deux dernières valeurs datées, par constante | `f77660c` | [43078179664](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43078179664) : 11/11 réussis | VALIDÉ |
-| QW-038 | S | HELIOS Prevention : aide-mémoire documentaire non prescriptif, limité au dossier confirmé | SHA à confirmer | 10 vérifications fictives + CI 11/11 requise | EN VALIDATION |
+| QW-038 | S | HELIOS Prevention : aide-mémoire documentaire non prescriptif, limité au dossier confirmé | `9a8d09a` | [43079491902](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43079491902) : 11/11 réussis | VALIDÉ |
+| QW-039 | S | HELIOS Referral : aperçu documentaire de la dernière consultation datée, sans décision ni transmission | SHA à confirmer | 10 contrôles fictifs + CI 11/11 requise | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

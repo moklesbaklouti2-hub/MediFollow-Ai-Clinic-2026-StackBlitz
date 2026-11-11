@@ -7,6 +7,7 @@ import { latestVitalReadings } from '../clinical/patientVitals';
 import { buildClinicalMemory } from '../clinical/clinicalMemory';
 import { compareRecentVitals } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
+import { buildReferralSource } from '../clinical/referral';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -80,6 +81,7 @@ export default function Patients() {
   const clinicalMemory = selected ? buildClinicalMemory(selected, patientConsultations) : null;
   const recordedVitalComparisons = selected ? compareRecentVitals(patientConsultations) : [];
   const preventionReview = selected ? buildPreventionReview(selected, patientConsultations) : null;
+  const referralSource = selected ? buildReferralSource(selected.id, patientConsultations) : null;
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -563,6 +565,39 @@ export default function Patients() {
               </p>
             </section>
           )}
+
+          <section aria-label="HELIOS Referral — brouillon documentaire non transmis">
+            <h3 className="patient-section-title">HELIOS Referral · préparation d'orientation</h3>
+            <p className="patient-empty-history">
+              Extraits de la dernière consultation datée de ce dossier, à relire par le médecin
+              avant toute éventuelle lettre d'orientation. Ce panneau ne décide pas de l'indication d'adresser.
+            </p>
+            {referralSource ? (
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Consultation source</span>
+                  <strong>{displayDate(referralSource.date)}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Motif de consultation consigné</span>
+                  <strong>{referralSource.recordedMotif ?? 'Non renseigné'}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Diagnostic consigné (non revalidé)</span>
+                  <strong>{referralSource.recordedDiagnosis ?? 'Non renseigné'}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Conduite à tenir consignée (non revalidée)</span>
+                  <strong>{referralSource.recordedPlan ?? 'Non renseigné'}</strong>
+                </div>
+              </div>
+            ) : <p className="patient-empty-history">Aucune consultation datée exploitable pour cette préparation.</p>}
+            <p className="patient-empty-history">
+              Avant toute orientation, le médecin doit préciser le destinataire, l'objectif,
+              le niveau d'urgence et les informations pertinentes à partager. Aucun document n'est
+              créé, aucune donnée n'est transmise et aucune décision médicale n'est générée ici.
+            </p>
+          </section>
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">

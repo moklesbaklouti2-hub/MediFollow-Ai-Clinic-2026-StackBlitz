@@ -7,6 +7,7 @@ import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
 import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
 import { compareRecentVitals } from '../src/clinical/trends.ts';
 import { buildPreventionReview } from '../src/clinical/prevention.ts';
+import { buildReferralSource } from '../src/clinical/referral.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -352,5 +353,34 @@ assert.ok(patientPageSource.includes('buildPreventionReview(selected, patientCon
   patientPageSource.includes('Aucune échéance, alerte, décision clinique'),
   'Patient view must show documentary prompts with explicit no-inference safeguards.');
 console.log('PASS QW-038: 10 synthetic prevention-document checks and UI contract.');
+
+
+ // QW-039 — deterministic, read-only referral preparation from the selected
+ // patient's latest dated consultation; no referral decision, letter or send.
+const referralFixtures = [
+  { id: 'old', patientId: 'fictif-a', date: '2026-08-01', motif: ' ancien ', diagnosis: ' note ancienne ', plan: ' ancienne conduite ' },
+  { id: 'other', patientId: 'fictif-b', date: '2026-12-15', motif: 'NE PAS MONTRER', diagnosis: 'NE PAS MONTRER', plan: 'NE PAS MONTRER' },
+  { id: 'bad-date', patientId: 'fictif-a', date: 'date inconnue', motif: 'Ne pas retenir', diagnosis: '', plan: '' },
+  { id: 'latest', patientId: 'fictif-a', date: '2026-11-11', motif: ' Vertiges fictifs ', diagnosis: ' Hypothèse notée ', plan: ' Réévaluer ' },
+];
+const referralBefore = JSON.stringify(referralFixtures);
+const referral = buildReferralSource('fictif-a', referralFixtures);
+assert.equal(referral?.consultationId, 'latest');
+assert.equal(referral?.date, '2026-11-11');
+assert.equal(referral?.recordedMotif, 'Vertiges fictifs');
+assert.equal(referral?.recordedDiagnosis, 'Hypothèse notée');
+assert.equal(referral?.recordedPlan, 'Réévaluer');
+assert.equal(JSON.stringify(referralFixtures), referralBefore);
+assert.equal(buildReferralSource('absent', referralFixtures), null);
+assert.equal(buildReferralSource('', referralFixtures), null);
+assert.equal(buildReferralSource('fictif-a', [
+  { id: 'no-data', patientId: 'fictif-a', date: '2026-11-12', motif: '', diagnosis: '  ', plan: '  ' },
+]).recordedDiagnosis, null);
+assert.ok(patientPageSource.includes('buildReferralSource(selected.id, patientConsultations)') &&
+  patientPageSource.includes('HELIOS Referral · préparation d\'orientation') &&
+  patientPageSource.includes('Aucune donnée n\'est transmise') &&
+  patientPageSource.includes('Diagnostic consigné (non revalidé)'),
+  'Referral preview must remain source-only, non-prescriptive and never transmitted.');
+console.log('PASS QW-039: 10 fictional referral provenance and UI checks.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
