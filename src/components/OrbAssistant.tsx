@@ -92,8 +92,9 @@ const [isListening, setIsListening] = useState(false);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
-  function speakReply(reply: string) {
-    if (!voiceRepliesRef.current || !('speechSynthesis' in window) || !reply.trim()) return;
+  function speakReply(reply: string, manual = false) {
+    if ((!manual && !voiceRepliesRef.current) || !('speechSynthesis' in window) ||
+        !('SpeechSynthesisUtterance' in window) || !reply.trim()) return;
     stopSpeaking();
     const generation = speechGenerationRef.current;
     const utterance = new SpeechSynthesisUtterance(reply.slice(0, 800));
@@ -119,6 +120,43 @@ const [isListening, setIsListening] = useState(false);
     utterance.onend = finish;
     utterance.onerror = finish;
     window.speechSynthesis.speak(utterance);
+  }
+
+  function readMessageAloud(reply: string) {
+    if (!reply.trim()) return;
+    if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+      setSpeechMessage('Lecture vocale indisponible sur ce navigateur.');
+      return;
+    }
+    // Chaque lecture ponctuelle demande un accord explicite : une réponse
+    // peut contenir des données cliniques audibles par des tiers.
+    if (!window.confirm('Lire cette réponse à voix haute ? Vérifiez que personne ne peut entendre des informations confidentielles.')) return;
+
+    // Empêcher le microphone de transcrire la propre lecture de MediFollow.
+    commandListeningEnabledRef.current = false;
+    if (speechRestartTimerRef.current) {
+      clearTimeout(speechRestartTimerRef.current);
+      speechRestartTimerRef.current = null;
+    }
+    recognitionRef.current?.abort();
+    recognitionRef.current = null;
+    setIsListening(false);
+    setInterimTranscript('');
+    speakReply(reply, true);
+  }
+
+  function closePanel() {
+    commandListeningEnabledRef.current = false;
+    if (speechRestartTimerRef.current) {
+      clearTimeout(speechRestartTimerRef.current);
+      speechRestartTimerRef.current = null;
+    }
+    recognitionRef.current?.abort();
+    recognitionRef.current = null;
+    setIsListening(false);
+    setInterimTranscript('');
+    stopSpeaking();
+    setPanelOpen(false);
   }
 
   function toggleVoiceReplies() {
@@ -492,7 +530,7 @@ const [isListening, setIsListening] = useState(false);
               <span className={`mf-orb-status-dot${sending || isThinking ? ' is-thinking' : ''}`} />
               <div><strong>MediFollow AI</strong><small>ASSISTANT CLINIQUE PERMANENT</small></div>
             </div>
-            <button type="button" className="mf-orb-close" onClick={() => setPanelOpen(false)} aria-label="Fermer l'assistant">×</button>
+            <button type="button" className="mf-orb-close" onClick={closePanel} aria-label="Fermer l'assistant">×</button>
           </div>
 
           <div className="mf-orb-context"><span>Vous êtes dans</span><strong>{currentPage}</strong><span>Je peux vous accompagner sur cette étape.</span></div>
@@ -529,6 +567,18 @@ const [isListening, setIsListening] = useState(false);
               <div className={`mf-orb-message ${message.role}`} key={index}>
                 <span>{message.role === 'user' ? 'Vous' : 'MediFollow'}</span>
                 <p>{message.content}</p>
+                {message.role === 'assistant' && (
+                  <button
+                    type="button"
+                    className="mf-orb-read-reply"
+                    onClick={() => readMessageAloud(message.content)}
+                    disabled={!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)}
+                    aria-label={`Lire à voix haute la réponse ${index + 1} de MediFollow`}
+                    title="Lecture ponctuelle avec confirmation de confidentialité"
+                  >
+                    🔊 Lire cette réponse
+                  </button>
+                )}
               </div>
             ))}
             {sending && <div className="mf-orb-typing">MediFollow réfléchit…</div>}
@@ -547,7 +597,7 @@ const [isListening, setIsListening] = useState(false);
               {voiceRepliesEnabled ? '🔊 Voix activée' : '🔇 Activer la voix'}
             </button>
             {isSpeaking && <button type="button" onClick={stopSpeaking} aria-label="Interrompre la réponse parlée">■ Stop parole</button>}
-            <small aria-live="polite">{isSpeaking ? 'MediFollow parle…' : isListening ? 'MediFollow écoute…' : sending ? 'MediFollow réfléchit…' : 'Lecture vocale désactivée par défaut'}</small>
+            <small aria-live="polite">{isSpeaking ? 'MediFollow parle…' : isListening ? 'MediFollow écoute…' : sending ? 'MediFollow réfléchit…' : voiceRepliesEnabled ? 'Voix automatique activée' : 'Lecture automatique désactivée · lecture ponctuelle disponible'}</small>
           </div>
           {mode === 'command' && (
             <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
@@ -597,12 +647,12 @@ const [isListening, setIsListening] = useState(false);
           )}
           <div className="mf-orb-panel-footer">
             <span>Entrée pour envoyer · Maj + Entrée pour une ligne</span>
-            <button type="button" onClick={() => { setPanelOpen(false); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
+            <button type="button" onClick={() => { closePanel(); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
           </div>
         </section>
       )}
 
-      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => setPanelOpen(open => !open)} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
+      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : setPanelOpen(true)} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
         <span className="mf-orb-canvas"><OrbVisual isThinking={isThinking || sending} /></span>
       </button>
       <span className="mf-orb-caption">{sending || isThinking ? 'JE RÉFLÉCHIS' : 'À VOTRE ÉCOUTE'}</span>

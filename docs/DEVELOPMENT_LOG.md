@@ -562,3 +562,11 @@
 - **Correction :** effacer `targetedInterview` uniquement après `saveConsultation` réussi, avec les autres champs ; conserver le brouillon en cas d'échec de sauvegarde.
 - **Tests :** quatre contrôles structurels ajoutés aux tests cliniques hors ligne (position de l'effacement, succès obligatoire, absence d'effacement avant succès). À compléter par essai manuel de deux patients fictifs dans le navigateur et sur Android.
 - **Validation :** vérifier compilation et les onze jobs Actions pour le SHA final ; la réussite CI ne prouve pas la confidentialité en conditions réelles.
+
+### 2026-11-11 — QW-005 : lecture vocale ponctuelle et confidentialité de l'Orb
+- **Branche :** `audit-stabilisation-2026-11-10` ; aucune fusion, aucune modification de `main`, pas de données réelles, dépense ou déploiement.
+- **État antérieur :** lecture automatique après opt-in et bouton « Stop parole » déjà présents. Ne pas les redévelopper.
+- **Ajout ciblé :** bouton accessible « Lire cette réponse » sur les messages de MediFollow, indépendamment de la lecture automatique, avec confirmation de confidentialité pour chaque lecture et désactivation si synthèse vocale absente.
+- **Sécurité :** la lecture manuelle arrête la reconnaissance microphone et son redémarrage automatique ; fermer le panneau par la croix, le bouton Orb ou ouvrir le copilote complet arrête désormais parole et écoute.
+- **Régression :** 6 vérifications de contrat React/TSX hors ligne ajoutées à la suite `test:medical-speech`, plus styles de focus clavier. Aucun test d'interaction navigateur ou Android exécuté dans le lot ; vérification humaine de l'audio et du focus nécessaire.
+- **Validation :** compilation et 11 jobs GitHub Actions sur le SHA exact à confirmer.

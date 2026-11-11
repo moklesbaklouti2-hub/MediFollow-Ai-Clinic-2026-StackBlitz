@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type MedicalSpeechCorrection } from '../src/services/medicalSpeech';
 
 // Tests directs du module réellement utilisé par HELIOS, sans navigateur.
@@ -594,4 +595,38 @@ for (let attempt = 0; attempt < 5; attempt++) {
 assert.equal(JSON.stringify(duplicateAlternatives), duplicateSnapshot);
 assertions++;
 
-console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale (sans navigateur).');
+
+// Contrat de lecture ponctuelle Orb (inspection du vrai composant React).
+// L'essai microphone et l'interaction vocale restent à effectuer sur Android.
+const orbSource = readFileSync(new URL('../src/components/OrbAssistant.tsx', import.meta.url), 'utf8');
+assert.ok(orbSource.includes('function readMessageAloud(reply: string)') &&
+  orbSource.includes('onClick={() => readMessageAloud(message.content)}'),
+  'La lecture d’une seule réponse de MediFollow doit être proposée.');
+assertions++;
+assert.ok(orbSource.includes('if (!window.confirm(') &&
+  orbSource.includes('informations confidentielles'),
+  'La lecture ponctuelle doit demander une confirmation explicite de confidentialité.');
+assertions++;
+assert.ok(orbSource.includes('if ((!manual && !voiceRepliesRef.current)') &&
+  orbSource.includes('speakReply(reply, true);'),
+  'La lecture ponctuelle doit fonctionner sans activer les réponses automatiques.');
+assertions++;
+const readBlock = orbSource.split('function readMessageAloud(reply: string)')[1]?.split('function closePanel()')[0] ?? '';
+assert.ok(readBlock.indexOf('commandListeningEnabledRef.current = false;') > readBlock.indexOf('window.confirm(') &&
+  readBlock.includes('recognitionRef.current?.abort();') && readBlock.includes('recognitionRef.current = null;'),
+  'Le microphone doit être désarmé après consentement, avant lecture ponctuelle.');
+assertions++;
+const closeBlock = orbSource.split('function closePanel()')[1]?.split('function toggleVoiceReplies()')[0] ?? '';
+assert.ok(closeBlock.includes('stopSpeaking();') &&
+  closeBlock.includes('recognitionRef.current?.abort();') &&
+  orbSource.includes('onClick={closePanel}') &&
+  orbSource.includes('panelOpen ? closePanel() : setPanelOpen(true)'),
+  'La fermeture par bouton ou Orb doit arrêter la parole et l’écoute.');
+assertions++;
+assert.ok(orbSource.includes("disabled={!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)}") &&
+  orbSource.includes('className="mf-orb-read-reply"') &&
+  orbSource.includes('aria-label={`Lire à voix haute'),
+  'Le contrôle ponctuel doit être étiqueté et indisponible sans synthèse vocale.');
+assertions++;
+
+console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale et le contrat vocal Orb (sans navigateur).');

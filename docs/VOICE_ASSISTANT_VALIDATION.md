@@ -29,3 +29,13 @@ Aucun test sur un véritable appareil Android n'a été exécuté par la modific
 - Ajouter un bouton explicite de lecture ponctuelle des réponses, avec confirmation pour les données sensibles.
 - Tester l'accessibilité et le comportement des voix absentes.
 - Ajouter des tests automatisés des transitions d'état et de l'annulation.
+
+## QW-005 — Lecture ponctuelle des réponses (à tester sur Chrome Android)
+
+- Chaque réponse de MediFollow affiche **« Lire cette réponse »**. La lecture ponctuelle ne modifie pas le réglage général **Activer la voix**.
+- Une confirmation de confidentialité précède **chaque** lecture : refuser ne doit déclencher aucune parole.
+- À l'acceptation, le microphone et le redémarrage automatique des commandes sont arrêtés pour empêcher que l'Orb retranscrive sa propre voix.
+- La lecture utilise le moteur vocal du navigateur, une voix française si disponible et la limite existante de **800 caractères**.
+- Tester **Stop parole**, fermeture par la croix, fermeture en cliquant l'Orb et passage au copilote complet : aucun son ne doit continuer.
+- Sans moteur vocal, le contrôle ponctuel doit être désactivé ; le texte reste visible.
+- Tester navigation au clavier et focus visuel. **Aucun test sur appareil Android réel n'a été exécuté par le présent lot.**
