@@ -732,3 +732,10 @@
 - **Sécurité :** dates civiles strictes, texte d'objectif limité, aucune décision clinique générée, aucun envoi de message, aucun rappel automatique aux patients. Compatibilité des anciennes consultations sans suivi.
 - **Validation automatisée :** contrôles de dates (dont années bissextiles), préparation d'un plan, calcul de fenêtres et chargement depuis le véritable service de stockage sur localStorage fictif. Contrats d'interface vérifiés ; nouveau test raccordé à la CI existante.
 - **Limites :** pas de calendrier multi-utilisateur, de notifications ou de synchronisation distante ; essais Android/Windows réservés à la phase finale. Sécurité et conformité production restent ouvertes.
+
+### 2026-11-11 — QW-029 : liste de travail HELIOS Follow-up
+- **Branche :** `audit-stabilisation-2026-11-10`; PR #2 brouillon, `main` inchangée, aucun déploiement ni dépense, aucune donnée réelle.
+- **Fonction :** ajout sur la page Consultations d'une liste triée de plans de suivi ouverts, en retard ou prévus d'ici sept jours, avec leur date et objectif. Un dossier patient confirmé peut être ouvert pour réédition ; une association patient absente/ambiguë est signalée sans action de rapprochement automatique.
+- **Contrats :** statut terminé et date invalide exclus ; dates triées de façon déterministe, historique inchangé ; aucun rappel automatique envoyé au patient.
+- **Tests :** exemples fictifs de tri, homonymes non rapprochés, année civile, suivi terminé ; liaison aux véritables composants React vérifiée dans la CI existante.
+- **Limites :** aucun agenda externe ni confirmation de présence du patient. Tous les scénarios manuels sont reportés à la validation finale.

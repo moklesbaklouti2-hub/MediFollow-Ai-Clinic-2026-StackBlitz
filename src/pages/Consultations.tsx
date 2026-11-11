@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps } from '../clinical/followUp';
 
 
 const specialtyGroups = [
@@ -427,6 +427,8 @@ export default function Consultations({
   const sortedConsultations = [...consultations].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+  const followUpToday = new Date().toLocaleDateString('sv-SE');
+  const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
 
   const selectedPatient = patients.find((patient) => patient.id === patientId);
   const clinicalSuggestions = detectClinicalSuggestions({
@@ -1130,6 +1132,38 @@ export default function Consultations({
           Consultation enregistrée et reliée au dossier du patient.
         </div>
       )}
+
+      <div className="consultation-section">
+        <h3>HELIOS Follow-up · contrôles à revoir ({dueFollowUps.length})</h3>
+        <p className="patient-hint">
+          Consultations dont le contrôle est en retard, prévu aujourd’hui ou dans les sept jours.
+          Aucun message n’est envoyé au patient et aucun contrôle n’est clôturé automatiquement.
+        </p>
+        {dueFollowUps.length === 0 ? (
+          <p>Aucun contrôle de suivi à revoir dans cette période.</p>
+        ) : (
+          dueFollowUps.map((item) => {
+            const linkedPatient = patients.find(patient => patient.id === item.patientId);
+            const overdue = (item.followUp?.dueDate ?? '') < followUpToday;
+            return (
+              <div className="saved-consultation" key={'follow-up-' + item.id}>
+                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
+                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                {linkedPatient ? (
+                  <button type="button" className="consultation-save"
+                    onClick={() => startEditing(item)}
+                    style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                    Ouvrir ce plan de suivi
+                  </button>
+                ) : (
+                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
 
       <div className="consultation-section">
         <h3>Historique des consultations ({consultations.length})</h3>

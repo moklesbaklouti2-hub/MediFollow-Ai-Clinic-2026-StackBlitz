@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 
 // All fixtures are fictional, without external calls.
@@ -64,6 +64,33 @@ assert.deepEqual(summarizeFollowUps(restored, '2026-11-11'),
   { overdue: 1, today: 0, nextSevenDays: 0 });
 assert.equal(writes, 0, 'Reading follow-up records must not rewrite data.');
 
+const dueConsultations = [
+  { id: 'd5', followUp: f('2026-11-20').followUp },
+  { id: 'd4', followUp: f('2026-11-18').followUp },
+  { id: 'd3', followUp: f('2026-11-10', 'completed').followUp },
+  { id: 'd2', followUp: f('2026-11-11').followUp },
+  { id: 'd1', followUp: f('2026-11-09').followUp },
+  { id: 'd6', followUp: f('2026-02-30').followUp },
+  { id: 'd7' },
+  { id: 'd0', followUp: f('2026-11-11').followUp },
+];
+const originalOrder = dueConsultations.map(item => item.id).join(',');
+const selectedDue = selectDueFollowUps(
+  dueConsultations as Parameters<typeof selectDueFollowUps>[0], '2026-11-11'
+);
+assert.deepEqual(selectedDue.map(item => item.id), ['d1', 'd0', 'd2', 'd4']);
+assert.equal(dueConsultations.map(item => item.id).join(','), originalOrder,
+  'Le tri des échéances ne doit pas muter l’historique.');
+assert.deepEqual(selectDueFollowUps(
+  dueConsultations as Parameters<typeof selectDueFollowUps>[0], 'date invalide'),
+  [], 'Aucune échéance ne doit être classée sur une date de référence invalide.');
+assert.deepEqual(selectDueFollowUps(
+  [{ id: 'nouvel-an', followUp: f('2027-01-01').followUp }] as Parameters<typeof selectDueFollowUps>[0],
+  '2026-12-28',
+).map(item => item.id), ['nouvel-an']);
+assert.deepEqual(selectDueFollowUps(restored, '2026-11-11').map(item => item.id),
+  ['consultation-fictive-1']);
+
 const consultationUI = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
 const dashboardUI = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
 assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjective, followUpCompleted)') &&
@@ -76,4 +103,10 @@ assert.ok(dashboardUI.includes('summarizeFollowUps(getConsultations()') &&
   dashboardUI.includes('data.followUpConsultations.overdue') &&
   dashboardUI.includes('onClick={onStartConsultation}'),
   'The dashboard must show follow-up counts and link to consultations.');
-console.log('PASS HELIOS Follow-up: valid calendar dates, time windows, storage and UI, without data migration.');
+assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpToday)') &&
+  consultationUI.includes('dueFollowUps.map((item)') &&
+  consultationUI.includes('linkedPatient ? (') &&
+  consultationUI.includes('onClick={() => startEditing(item)}') &&
+  consultationUI.includes('Dossier patient non relié — identité à confirmer'),
+  'The worklist must order follow-ups, open confirmed records and flag unlinked identities.');
+console.log('PASS HELIOS Follow-up: date windows, clinician worklist, storage and UI, without data migration.');

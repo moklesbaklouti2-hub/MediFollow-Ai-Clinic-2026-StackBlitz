@@ -39,3 +39,26 @@ export function summarizeFollowUps(
   }
   return summary;
 }
+
+/**
+ * Upcoming and overdue consultations awaiting clinician review.
+ * Only the coming seven calendar days are included; older overdue plans
+ * remain visible until a clinician explicitly marks them completed.
+ */
+export function selectDueFollowUps(
+  consultations: readonly Consultation[],
+  today: string,
+): Consultation[] {
+  if (!isValidFollowUpDate(today)) return [];
+  const cutoff = new Date(Date.parse(today + 'T00:00:00Z') +
+    7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+  return consultations
+    .filter(item => item.followUp?.status === 'planned' &&
+      isValidFollowUpDate(item.followUp.dueDate) &&
+      item.followUp.dueDate <= cutoff)
+    .sort((a, b) => {
+      const aDate = a.followUp?.dueDate ?? '';
+      const bDate = b.followUp?.dueDate ?? '';
+      return aDate.localeCompare(bDate) || a.id.localeCompare(b.id);
+    });
+}
