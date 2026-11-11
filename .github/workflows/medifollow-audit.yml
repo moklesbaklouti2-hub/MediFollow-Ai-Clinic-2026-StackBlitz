@@ -1,10 +1,9 @@
 name: MediFollow AI - controles paralleles
 
 # Automated checks only. No code-writing AI, deployment, secrets, or production data.
+# Legacy V1 retained for manual troubleshooting only.
+# Automatic CI for this audit branch is owned by medifollow-audit-v2.yml.
 on:
-  push:
-    branches:
-      - audit-stabilisation-2026-11-10
   workflow_dispatch:
 
 permissions:
