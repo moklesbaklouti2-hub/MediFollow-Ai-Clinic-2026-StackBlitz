@@ -653,4 +653,30 @@ assert.ok(endHandler.includes('if (sessionEnded || recognitionRef.current !== re
   endHandler.includes('if (mode === \'command\' && commandListeningEnabledRef.current)'),
   'onend ne doit ni exécuter ni redémarrer une session déjà échouée.'); assertions++;
 
+
+// QW-006C — ne pas lire une réponse tardive si l'Orb a été fermé,
+// y compris si le panneau a été rouvert entre l'envoi et la réponse.
+const playbackGuard = orbSource.split('function speakReply(')[1]?.split('function readMessageAloud(')[0] ?? '';
+assert.ok(playbackGuard.includes('!panelOpenRef.current') &&
+  playbackGuard.includes('expectedGeneration !== speechGenerationRef.current'),
+  'La synthèse doit vérifier l’ouverture actuelle et la génération du message.'); assertions++;
+const panelOpenBlock = orbSource.split('function openPanel()')[1]?.split('function closePanel()')[0] ?? '';
+const panelCloseBlock = orbSource.split('function closePanel()')[1]?.split('function toggleVoiceReplies()')[0] ?? '';
+assert.ok(panelOpenBlock.includes('panelOpenRef.current = true;') &&
+  panelCloseBlock.includes('panelOpenRef.current = false;') &&
+  panelCloseBlock.includes('stopSpeaking();'),
+  'L’ouverture et la fermeture doivent synchroniser le garde audio sans attendre React.'); assertions++;
+const sendMessageBlock = orbSource.split('async function sendMessage(value = input)')[1]
+  ?.split('function handleSubmit(')[0] ?? '';
+assert.ok(sendMessageBlock.includes('const responseSpeechGeneration = speechGenerationRef.current;'),
+  'La génération audio doit être capturée avant tout appel réseau.'); assertions++;
+assert.ok(sendMessageBlock.includes("speakReply(quickMatch.page + ' ouvert.', false, responseSpeechGeneration);") &&
+  sendMessageBlock.includes('false, responseSpeechGeneration);'),
+  'Les réponses de navigation et de commandes doivent respecter la génération audio.'); assertions++;
+assert.ok(sendMessageBlock.includes("speakReply(data.reply || 'Je n’ai pas reçu de réponse.', false, responseSpeechGeneration);"),
+  'La réponse de chat reçue après fermeture ne doit pas relancer le haut-parleur.'); assertions++;
+assert.ok(orbSource.includes('onClick={() => panelOpen ? closePanel() : openPanel()}') &&
+  orbSource.includes('openPanel();') && orbSource.includes('function readMessageAloud(reply: string)'),
+  'L’ouverture de l’Orb doit conserver la lecture ponctuelle et synchroniser le panneau.'); assertions++;
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale et le contrat vocal Orb (sans navigateur).');

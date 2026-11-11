@@ -578,3 +578,10 @@
 - **Régression :** six vérifications structurelles du gestionnaire React réel dans `scripts/test-medical-speech-regression.ts`, incluses à la CI existante « Tests / dictee-helios ».
 - **Limites :** pas de test sur le système de permissions ou le matériel Android ; QW-006B reste en attente d'un essai manuel avec données fictives.
 - **Validation :** vérifier les 11 jobs GitHub Actions sur le SHA exact après publication.
+
+### 2026-11-11 — QW-006C : empêcher la lecture vocale tardive après fermeture
+- **Branche :** `audit-stabilisation-2026-11-10` ; aucune fusion sur `main`, pas de données réelles, déploiement ou dépense.
+- **Défaut distinct de QW-005 :** fermer l'Orb arrêtait une lecture en cours, mais une réponse HTTP asynchrone reçue *après la fermeture* pouvait relancer la synthèse vocale, éventuellement après réouverture du panneau.
+- **Correctif :** `OrbAssistant.tsx` suit l'ouverture/fermeture via un ref synchronisé immédiatement, capture la génération vocale au départ des requêtes et refuse toute lecture tardive si le panneau est fermé ou si la génération a été invalidée par un arrêt/une fermeture. Les lectures ponctuelles explicites restent disponibles.
+- **Tests :** six vérifications de contrat du composant réel dans `scripts/test-medical-speech-regression.ts` ; pas de simulateur Chrome ou Android, ni de données patients réelles.
+- **Validation :** CI GitHub Actions à vérifier (11 jobs, commit exact) ; test fonctionnel sur Android à réaliser dans QW-006B.

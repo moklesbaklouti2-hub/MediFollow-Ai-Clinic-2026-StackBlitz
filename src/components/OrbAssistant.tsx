@@ -61,6 +61,9 @@ export default function OrbAssistant({
   clinicalInsight,
 }: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
+  // Ref synchronisée à l'ouverture/fermeture : une réponse IA tardive
+  // ne doit pas recommencer à parler dans un panneau désormais fermé.
+  const panelOpenRef = useRef(false);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<'chat' | 'command'>('chat');
   const [sending, setSending] = useState(false);
@@ -92,8 +95,13 @@ const [isListening, setIsListening] = useState(false);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
-  function speakReply(reply: string, manual = false) {
-    if ((!manual && !voiceRepliesRef.current) || !('speechSynthesis' in window) ||
+  function speakReply(reply: string, manual = false, expectedGeneration?: number) {
+    // Contrôler l'état ACTUEL du panneau, non l'état capturé avant l'appel IA.
+    // La génération empêche aussi une réponse antérieure de se faire entendre
+    // après fermeture/réouverture ou après un bouton « Stop parole ».
+    if (!panelOpenRef.current ||
+        (expectedGeneration !== undefined && expectedGeneration !== speechGenerationRef.current) ||
+        (!manual && !voiceRepliesRef.current) || !('speechSynthesis' in window) ||
         !('SpeechSynthesisUtterance' in window) || !reply.trim()) return;
     stopSpeaking();
     const generation = speechGenerationRef.current;
@@ -145,7 +153,13 @@ const [isListening, setIsListening] = useState(false);
     speakReply(reply, true);
   }
 
+  function openPanel() {
+    panelOpenRef.current = true;
+    setPanelOpen(true);
+  }
+
   function closePanel() {
+    panelOpenRef.current = false;
     commandListeningEnabledRef.current = false;
     if (speechRestartTimerRef.current) {
       clearTimeout(speechRestartTimerRef.current);
@@ -180,13 +194,14 @@ const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     if (!clinicalPrompt) return;
-    setPanelOpen(true);
+    openPanel();
     setInput(clinicalPrompt);
     onClinicalPromptConsumed?.();
   }, [clinicalPrompt, onClinicalPromptConsumed]);
 
   useEffect(() => {
     return () => {
+      panelOpenRef.current = false;
       shouldContinueListeningRef.current = false;
       commandListeningEnabledRef.current = false;
       if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
@@ -368,6 +383,8 @@ const [isListening, setIsListening] = useState(false);
   async function sendMessage(value = input) {
     const message = value.trim();
     if (!message || sending) return;
+    // L'audio de ce message n'est valable que dans la session vocale active.
+    const responseSpeechGeneration = speechGenerationRef.current;
     if (mode !== 'command' && dictatedNumberPending) {
       setSpeechMessage('Confirmez les valeurs numériques dictées après relecture avant l’envoi.');
       return;
@@ -404,7 +421,7 @@ const [isListening, setIsListening] = useState(false);
         if (quickMatch) {
           onNavigate(quickMatch.page);
           setMessages(previous => [...previous, { role: 'assistant', content: quickMatch.page + ' ouvert.' }]);
-          speakReply(quickMatch.page + ' ouvert.');
+          speakReply(quickMatch.page + ' ouvert.', false, responseSpeechGeneration);
           return;
         }
 
@@ -462,7 +479,7 @@ const [isListening, setIsListening] = useState(false);
           role: 'assistant',
           content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action sûre à effectuer. Pouvez-vous reformuler la commande ?',
         }]);
-        speakReply(safeActions.length ? 'Commande traitée. Vérifiez les modifications affichées.' : 'Je n’ai identifié aucune action sûre. Pouvez-vous reformuler ?');
+        speakReply(safeActions.length ? 'Commande traitée. Vérifiez les modifications affichées.' : 'Je n’ai identifié aucune action sûre. Pouvez-vous reformuler ?', false, responseSpeechGeneration);
         return;
       }
 
@@ -477,7 +494,7 @@ const [isListening, setIsListening] = useState(false);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Erreur du moteur IA.');
       setMessages(previous => [...previous, { role: 'assistant', content: data.reply || 'Je n’ai pas reçu de réponse.' }]);
-      speakReply(data.reply || 'Je n’ai pas reçu de réponse.');
+      speakReply(data.reply || 'Je n’ai pas reçu de réponse.', false, responseSpeechGeneration);
     } catch (error) {
       setMessages(previous => [...previous, {
         role: 'assistant',
@@ -524,7 +541,7 @@ const [isListening, setIsListening] = useState(false);
                   ? `Poursuivons le raisonnement clinique de cette consultation. Résumé de l'analyse : ${clinicalInsight.analysis.situationSummary} Question à approfondir : ${clinicalInsight.analysis.nextQuestion}`
                   : `Aide-moi à approfondir cette analyse clinique : ${clinicalInsight.analysis?.situationSummary || ''}`;
                 setInput(prompt);
-                setPanelOpen(true);
+                openPanel();
               }}>Approfondir avec l’Orb ↗</button>
             </>
           ) : clinicalInsight.status === 'error' ? (
@@ -664,7 +681,7 @@ const [isListening, setIsListening] = useState(false);
         </section>
       )}
 
-      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : setPanelOpen(true)} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
+      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : openPanel()} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
         <span className="mf-orb-canvas"><OrbVisual isThinking={isThinking || sending} /></span>
       </button>
       <span className="mf-orb-caption">{sending || isThinking ? 'JE RÉFLÉCHIS' : 'À VOTRE ÉCOUTE'}</span>

@@ -19,7 +19,8 @@
 | QW-003 | S | Limiter « ex soudain » à l'occurrence ORL et préserver les autres phrases | `19fdebc` | [43031459300](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43031459300) : 11/11 réussis | VALIDÉ |
 | QW-004 | S | Vider l'interrogatoire ciblé après la sauvegarde, sans perdre les réponses si échec | `5599f56` | [43031944830](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43031944830) : 11/11 réussis | VALIDÉ |
 | QW-005 | M | Lecture ponctuelle confirmée et fermeture silencieuse de l'Orb | `b4805ab` | [43032937029](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43032937029) : 11/11 réussis | VALIDÉ |
-| QW-006A | S | Bloquer toute commande vocale résiduelle après erreur de reconnaissance | SHA et CI à vérifier | Tests structurels + 11 jobs | EN VALIDATION |
+| QW-006A | S | Bloquer toute commande vocale résiduelle après erreur de reconnaissance | `d9a7c52` | [43033964358](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43033964358) : 11/11 réussis | VALIDÉ |
+| QW-006C | S | Empêcher la lecture d'une réponse IA arrivée après fermeture ou réouverture de l'Orb | SHA à vérifier | Contrôles hors ligne + 11 jobs à confirmer | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
