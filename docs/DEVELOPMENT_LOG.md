@@ -809,3 +809,10 @@
 - **Sécurité :** filtre `patientId` strict et sélection unique préexistante ; dates non analysables exclues ; diagnostic non revalidé explicite ; aucune inférence de nécessité, destinataire ou urgence d'orientation. Lecture locale sans appel IA.
 - **Tests :** 10 contrôles synthétiques (datation, isolation patient, source vide/malformée, immutabilité, contrat UI) ajoutés à `test:patient-linkage` en CI.
 - **Validation manuelle :** F24 préparé pour la phase finale uniquement. Le courrier de liaison rédigé et validé par un professionnel reste un développement distinct.
+
+### 2026-11-11 — QW-040 : HELIOS Document Reader, premier aperçu local de texte
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 brouillon, `main` intacte, aucun déploiement/dépense/donnée réelle.
+- **Fonction :** zone de collage et aperçu lisible de texte fictif limité à 5 000 caractères ; comptage documentaire des caractères, lignes et mots ; bouton d'effacement.
+- **Sécurité :** aucun appel réseau, stockage, extraction PDF/OCR ni analyse médicale ; aucun texte collé n'est associé au dossier. Le composant React est isolé par `key={selected.id}` afin de perdre le brouillon lors du changement de patient ; plus aucun contenu lors de la fermeture du dossier.
+- **Tests :** 11 vérifications synthétiques (texte vide/malformé, HTML traité comme texte, coupure à la limite, métriques, contrôle d'intégration UI) intégrées à `test:patient-linkage`.
+- **Limites :** ne pas utiliser de vrais documents ; ni lecteur PDF ni OCR, ni assistance à l'interprétation. Scénario manuel F25 réservé à la fin.

@@ -8,6 +8,7 @@ import { buildClinicalMemory } from '../clinical/clinicalMemory';
 import { compareRecentVitals } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
+import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -598,6 +599,8 @@ export default function Patients() {
               créé, aucune donnée n'est transmise et aucune décision médicale n'est générée ici.
             </p>
           </section>
+
+          <LocalDocumentReader key={selected.id} />
 
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">

@@ -8,6 +8,7 @@ import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
 import { compareRecentVitals } from '../src/clinical/trends.ts';
 import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
+import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -382,5 +383,30 @@ assert.ok(patientPageSource.includes('buildReferralSource(selected.id, patientCo
   patientPageSource.includes('Diagnostic consigné (non revalidé)'),
   'Referral preview must remain source-only, non-prescriptive and never transmitted.');
 console.log('PASS QW-039: 10 fictional referral provenance and UI checks.');
+
+
+// QW-040 — text preview is local, transient and never interpreted as clinical
+// content. The real Patient UI mounts this component with a patient-specific key.
+const simpleDocument = previewLocalDocument(' Rapport fictif\nLigne deux, sans diagnostic. ');
+assert.equal(simpleDocument.hasContent, true);
+assert.equal(simpleDocument.lineCount, 2);
+assert.equal(simpleDocument.wordCount, 6);
+assert.equal(simpleDocument.text.includes('Rapport fictif'), true);
+assert.equal(previewLocalDocument('   ').hasContent, false);
+assert.equal(previewLocalDocument(123).hasContent, false);
+assert.equal(previewLocalDocument(null).characterCount, 0);
+assert.equal(previewLocalDocument('<script>test fictif</script>').text,
+  '<script>test fictif</script>');
+assert.equal(previewLocalDocument('X'.repeat(MAX_LOCAL_DOCUMENT_CHARS + 5)).characterCount,
+  MAX_LOCAL_DOCUMENT_CHARS);
+assert.equal(previewLocalDocument('X'.repeat(MAX_LOCAL_DOCUMENT_CHARS + 5)).truncated, true);
+const readerSource = readFileSync('src/components/LocalDocumentReader.tsx', 'utf8');
+assert.ok(patientPageSource.includes('<LocalDocumentReader key={selected.id} />') &&
+  readerSource.includes('HELIOS Document Reader · aperçu texte local') &&
+  readerSource.includes('previewLocalDocument(rawText)') &&
+  readerSource.includes("setRawText('')") &&
+  !readerSource.includes('localStorage') && !readerSource.includes('fetch('),
+  'Reader must stay transient, patient-keyed and without API calls or storage.');
+console.log('PASS QW-040: 11 fictional local-document and UI checks.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
