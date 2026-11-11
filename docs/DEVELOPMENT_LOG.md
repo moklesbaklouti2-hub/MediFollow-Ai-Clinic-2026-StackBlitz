@@ -528,3 +528,10 @@
 - **Correctif :** `src/services/storage.ts` reconstitue par produit/catégorie et quantité les mouvements de délivrance historiques et ne retourne `alreadyDispensed` que si le patient, la traçabilité et les totaux concordent. Vérification des lots historiques et sélectionnés et des totaux de plusieurs lignes avant toute écriture.
 - **Tests :** `scripts/test-inventory-dispense-regression.ts` ajoute 36 assertions de non-régression fictives pour replays identiques, produits/quantités contradictoires, références modifiées, lots dupliqués et sommes débordées (total attendu 277).
 - **Limites :** la concordance se fait par nom de produit et catégorie, pas par vérification pharmacologique de dosage ou formulation ; aucun patient réel, test navigateur Android ou validation clinique en situation. Compilation et onze jobs GitHub Actions à vérifier au SHA final.
+
+### 2026-11-11 — HELIOS : supprimer le rappel « histoire manquante » lorsque l'interrogatoire ciblé est rempli
+- **Branche :** `audit-stabilisation-2026-11-10`. Aucun changement de `main`, aucune fusion de PR #2 ni déploiement.
+- **Défaut :** une consultation fictive avec `symptoms` vide mais des réponses documentées dans `targetedInterview` recevait encore une invitation à renseigner l'histoire de la maladie, créant une saisie redondante.
+- **Correction :** `src/clinical/clinicalTriggers.ts` prend en compte le champ `targetedInterview` avant de signaler ce manque. Les réponses vides ou composées d'espaces ne masquent pas l'alerte. Les autres alertes, notamment les douleurs thoraciques prioritaires, ne sont pas modifiées.
+- **Tests :** six cas fonctionnels fictifs ajoutés à `server/ai/test-clinical-regression.ts` : réponses ciblées présentes, vides/blanches et symptômes déjà présents.
+- **Validation :** compiler et vérifier les 11 jobs GitHub Actions sur le SHA exact ; essais d'interface Android et revue clinique nécessaires.

@@ -119,6 +119,38 @@ assert.ok(noDetailsAtAll.some(item => item.id === 'missing-chest-pain-details'),
   'Sans interrogatoire ciblé, les éléments manquants restent détectés.');
 console.log('OK — 8 assertions de cohérence entre réponses au copilote et alertes thoraciques.');
 
+
+// Réponses utiles déjà consignées par le copilote : ne pas redemander
+// une histoire de la maladie au seul motif que « symptômes » est vide.
+for (const targetedInterview of [
+  'Depuis trois jours, fièvre et toux nocturne, aggravation progressive.',
+  'Début brutal hier soir ; pas de dyspnée ; hydratation correcte.',
+]) {
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'Toux', symptoms: '',
+    history: '', targetedInterview, vitals: { ...blankVitals },
+  });
+  assert.ok(!result.some(s => s.id === 'missing-symptom-history'),
+    'Une réponse ciblée déjà documentée ne doit pas redemander la même histoire.');
+}
+for (const targetedInterview of ['', '   ', '\\t']) {
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'Toux', symptoms: '',
+    history: '', targetedInterview, vitals: { ...blankVitals },
+  });
+  assert.ok(result.some(s => s.id === 'missing-symptom-history'),
+    'Une réponse ciblée blanche ne doit pas masquer un champ symptômes vide.');
+}
+{
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'Toux', symptoms: 'Depuis hier',
+    history: '', targetedInterview: '', vitals: { ...blankVitals },
+  });
+  assert.ok(!result.some(s => s.id === 'missing-symptom-history'),
+    'La saisie existante de symptômes continue de fonctionner.');
+}
+console.log('OK — 6 contrôles contre les rappels redondants après interrogatoire ciblé.');
+
 // Ne pas confondre une négation explicite et une douleur thoracique
 // réellement signalée. Les cas ambigus restent volontairement alertés.
 const negativeChestMentions = [

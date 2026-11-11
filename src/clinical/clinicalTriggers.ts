@@ -66,7 +66,11 @@ export function detectClinicalSuggestions(input: {
     input.patient?.currentMedications?.length
   );
 
-  if (input.motif.trim().length >= 4 && !input.symptoms.trim()) {
+  // Les réponses consignées dans l'interrogatoire ciblé constituent déjà
+  // une histoire de la maladie : éviter de réclamer une deuxième saisie.
+  // Une réponse vide/blanche ne remplace pas les symptômes à documenter.
+  const hasSymptomNarrative = Boolean(input.symptoms.trim() || input.targetedInterview?.trim());
+  if (input.motif.trim().length >= 4 && !hasSymptomNarrative) {
     suggestions.push({
       id: 'missing-symptom-history',
       priority: 'routine',
