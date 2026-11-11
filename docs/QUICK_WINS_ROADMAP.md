@@ -38,7 +38,8 @@
 | QW-023 | S | Refuser les messages mal formés à l'intérieur d'un historique de chat | `905e686` | [43064903608](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43064903608) : 11/11 réussis | VALIDÉ |
 | QW-024 | S | Ne jamais associer automatiquement un ancien document au premier patient homonyme | `0fbf120` | [43066257633](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43066257633) : 11/11 réussis | VALIDÉ |
 | QW-025 | S | Afficher sur le Dashboard le nombre de documents non reliés à un patient confirmé | `ef6b280` | [43066907748](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43066907748) : 11/11 réussis | VALIDÉ |
-| QW-026 | S | Empêcher la suppression d'un article référencé par un mouvement ou une ordonnance | SHA à confirmer | 10 scénarios fictifs + contrat UI, CI 11/11 | EN VALIDATION |
+| QW-026 | S | Empêcher la suppression d'un article référencé par un mouvement ou une ordonnance | `5e33a6c` | [43067615083](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43067615083) : 11/11 réussis | VALIDÉ |
+| QW-027 | S | Préparer une validation finale unique et séparer le travail automatisable des tests utilisateur | SHA à confirmer | Protocole F01–F19 + feuille de route globale, CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
@@ -55,7 +56,7 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 
 ## Bilan de la session
 
-- Historique des lots confirmés dans la table ci-dessus. Prochain lot : QW-009, formes plurielles thoraciques.
+- Historique des lots confirmés dans la table ci-dessus. Tous les lots QW-001 à QW-026 ne sont pas nécessairement contigus ; le prochain travail doit être identifié après lecture du dernier SHA et du plan global, sans relancer un lot déjà vert.
 - Pour les totaux de tests, compter chaque lot indépendamment ; n'inclure que les jobs et SHA vérifiés.
 - Aucun nouveau fournisseur, abonnement, endpoint réseau ou déploiement.
 - Le présent tableau de suivi est un lot documentaire distinct, à valider par sa propre CI.

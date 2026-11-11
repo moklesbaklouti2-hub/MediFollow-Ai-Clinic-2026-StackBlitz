@@ -718,3 +718,10 @@
 - **Correction :** `canDeleteInventoryItem` refuse les identifiants invalides, les articles liés à des mouvements historiques et ceux associés à une ordonnance (médication ou item). Les articles entièrement non référencés restent supprimables après confirmation. Aucun mouvement ni dossier modifié lors du refus.
 - **Tests :** dix scénarios fictifs, dont réception/délivrance, ordonnances anciennes et nouvelles, identifiants invalides, et un contrat vérifiant que le garde s'exécute avant `window.confirm` et `persist`. Tests intégrés à la suite existante d'inventaire exécutée en CI.
 - **Limite :** le lot ne fournit pas d'archivage ni de migration des anciennes traces ; conformité et contrôles Android restent à valider. Essais manuels regroupés à la fin.
+
+### 2026-11-11 — QW-027 : préparation du protocole de validation finale
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 en brouillon, `main` intacte, aucun déploiement, aucune dépense ni donnée réelle.
+- **Demande :** poursuivre d'abord les réalisations et tests automatiques ; réserver au médecin une seule phase finale de validation en direct.
+- **Livrables :** `docs/FINAL_LIVE_VALIDATION_PLAN.md` (19 scénarios fictifs F01–F19 sur Android, Windows, consultations, dictée, ordonnances, inventaire, export/import et sécurité) et `docs/ROADMAP_TO_COMPLETION.md` (distinction automatisable/complexe/bloquant/humain).
+- **État des scénarios :** tous NON EXÉCUTÉS ; aucune validation matérielle ou clinique n'est affirmée.
+- **Portée :** documentaire et de coordination, soumis à la même CI que le code. Le document ne signifie pas que les autres modules HELIOS, l'authentification de production ou la confidentialité sont terminés.
