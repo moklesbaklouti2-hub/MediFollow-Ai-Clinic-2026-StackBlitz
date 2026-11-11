@@ -15,6 +15,18 @@ const LABELS: Readonly<Partial<Record<PrescriptionCategory, string>>> = {
   radiology: 'Imagerie prescrite',
   other: 'Autre élément prescrit',
 };
+// Read-only status; never infer that a draft is valid or a dispense covers
+// every item of a recorded prescription.
+export function documentedPrescriptionStatus(status: unknown): string {
+  switch (status) {
+    case 'draft': return 'Brouillon — non validée';
+    case 'validated': return 'Validée (statut enregistré)';
+    case 'dispensed': return 'Délivrance enregistrée (statut)';
+    case 'cancelled': return 'Annulée — ne pas considérer comme active';
+    default: return 'Statut non renseigné (ancien dossier)';
+  }
+}
+
 export function documentedSupplementalOrders(prescription: SourceOrder): DocumentedOrder[] {
   const raw: unknown = prescription?.items;
   if (!Array.isArray(raw)) return [];

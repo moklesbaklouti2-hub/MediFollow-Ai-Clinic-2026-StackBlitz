@@ -10,7 +10,7 @@ import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
 import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
 import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
-import { documentedSupplementalOrders } from '../clinical/prescriptionTimeline';
+import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
@@ -701,6 +701,7 @@ export default function Patients() {
                     <span className="patient-timeline-kind">Ordonnance</span>
                     <strong>Ordonnance médicale</strong>
                     <span>{displayRecordedDate(entry.date)}</span>
+                    <span><b>Statut documentaire :</b> {documentedPrescriptionStatus(entry.prescription.status)}</span>
                     <span>{Array.isArray(entry.prescription.medications)
                       ? entry.prescription.medications.length : 0} médicament(s) consigné(s)</span>
                     {Array.isArray(entry.prescription.medications) && entry.prescription.medications.length > 0 && (

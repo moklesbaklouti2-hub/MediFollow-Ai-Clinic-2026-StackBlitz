@@ -870,3 +870,9 @@
 - Après l'annulation forcée sans effet immédiat, le workflow indépendant V2 a démarré. Le commit `737c4f3` a obtenu 11/11 succès V1 et V2, plus `npm run test:complete` local terminé code 0.
 - Le workflow V1 a ensuite été passé en déclenchement manuel uniquement ; le commit `bfca4c5` a obtenu **V2 11/11 completed/success**, sans duplication de workflow lors du push.
 - QW-046 validé par les tests et le SHA exact `737c4f3`. QW-047 est désormais intégré au fil des commits de la branche d'audit mais reste **en attente de CI V2 sur son SHA final**, et de F31 sur données fictives à la phase humaine finale. Ne jamais annoncer de résultat VERT avant confirmation 11/11 sur le HEAD courant.
+
+### 2026-11-11 — QW-048 : statut des ordonnances dans la chronologie (à valider)
+- **Contexte :** QW-047 est VERT 11/11 sur le commit `6624f2b`, mais la chronologie n'affichait pas si une ordonnance enregistrée était brouillon, annulée, validée ou avec délivrance consignée.
+- **Modification :** affichage informatif du statut documentaire avec distinction « Annulée — ne pas considérer comme active » et « Brouillon — non validée » ; statut inconnu signalé et jamais interprété comme actif.
+- **Protection :** lecture seule du statut déjà enregistré ; aucun changement de médicament, ordonnance ou stock ; aucune confirmation automatique d'une délivrance réelle.
+- **Validation :** fixtures fictives de tous les statuts, ancien format et données malformées, contrat de la page Patients ; F32 réservé à la phase humaine finale. CI V2 11/11 à confirmer sur le commit final.

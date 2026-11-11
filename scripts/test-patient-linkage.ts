@@ -11,7 +11,7 @@ import { buildReferralSource } from '../src/clinical/referral.ts';
 import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
 import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
-import { documentedSupplementalOrders } from '../src/clinical/prescriptionTimeline.ts';
+import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../src/clinical/prescriptionTimeline.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -588,5 +588,25 @@ assert.ok(patientPageSource.includes('documentedSupplementalOrders(entry.prescri
   patientPageSource.includes('item.details'),
   'Timeline must expose recorded non-drug orders without claiming that tests were performed.');
 console.log('PASS QW-047: synthetic laboratory/radiology/other order provenance and UI contracts.');
+
+// QW-048 — Explicitly distinguish cancelled, draft, dispensed and legacy documents.
+const statusFixtures = [
+  ['draft', 'Brouillon — non validée'],
+  ['validated', 'Validée (statut enregistré)'],
+  ['dispensed', 'Délivrance enregistrée (statut)'],
+  ['cancelled', 'Annulée — ne pas considérer comme active'],
+  [undefined, 'Statut non renseigné (ancien dossier)'],
+  [null, 'Statut non renseigné (ancien dossier)'],
+  ['unknown', 'Statut non renseigné (ancien dossier)'],
+  [42, 'Statut non renseigné (ancien dossier)'],
+] as const;
+for (const [status, expected] of statusFixtures) {
+  assert.equal(documentedPrescriptionStatus(status), expected);
+}
+assert.ok(patientPageSource.includes('Statut documentaire :') &&
+  patientPageSource.includes('documentedPrescriptionStatus(entry.prescription.status)') &&
+  patientPageSource.includes('documentedSupplementalOrders(entry.prescription)'),
+  'Patient timeline must label prescription status without hiding historical orders.');
+console.log('PASS QW-048: synthetic cancelled/draft/dispensed prescription statuses and timeline contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
