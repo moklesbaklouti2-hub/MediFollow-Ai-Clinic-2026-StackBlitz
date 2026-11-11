@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
+import type { Patient } from '../../src/types/medical.ts';
 import { isCurrentClinicalRequest } from '../../src/services/clinicalRequestGuard.ts';
 
 const source = readFileSync(new URL('../index.ts', import.meta.url), 'utf8');
@@ -249,6 +250,51 @@ for (const words of [
     'Une mention positive indépendante doit conserver l’alerte prioritaire.');
 }
 console.log('OK — 11 scénarios de douleur thoracique au pluriel, négations et mention positive indépendante.');
+
+
+// QW-010 — ne pas confondre une rubrique créée et une donnée réellement
+// renseignée ; reconnaître les données gynéco-obstétricales du dossier.
+const historyFixture: Patient = {
+  id: 'patient-fictif', name: 'Patient fictif', age: 37, sex: 'F',
+  phone: '', lastVisit: '', status: 'active', createdAt: '', updatedAt: '',
+};
+const historyScenarios: Array<{
+  label: string; change: Partial<Patient>; documentedHistory?: string; missing: boolean;
+}> = [
+  { label: 'dossier vide', change: {}, missing: true },
+  { label: 'rubrique gynécologique remplie', change: {
+    clinicalHistory: { gynecoObstetric: { lastMenstrualPeriod: '05/10/2026' } },
+  }, missing: false },
+  { label: 'rubrique gynécologique blanche', change: {
+    clinicalHistory: { gynecoObstetric: { lastMenstrualPeriod: '   ' } },
+  }, missing: true },
+  { label: 'ligne antécédent vide', change: {
+    clinicalHistory: { medical: [{ id: 'h1', label: '   ' }] },
+  }, missing: true },
+  { label: 'détail antécédent documenté', change: {
+    clinicalHistory: { medical: [{ id: 'h1', label: '', details: 'Opération ancienne' }] },
+  }, missing: false },
+  { label: 'traitement sans nom', change: {
+    currentMedications: [{ id: 'm1', name: '  ' }],
+  }, missing: true },
+  { label: 'traitement nommé', change: {
+    currentMedications: [{ id: 'm1', name: 'Traitement test' }],
+  }, missing: false },
+  { label: 'autre antécédent rédigé', change: {
+    clinicalHistory: { other: 'Observation documentée' },
+  }, missing: false },
+  { label: 'champ consultation renseigné', change: {}, documentedHistory: 'Antécédent décrit', missing: false },
+];
+for (const scenario of historyScenarios) {
+  const results = detectClinicalSuggestions({
+    patient: { ...historyFixture, ...scenario.change },
+    specialty: 'Médecine de famille', motif: 'Consultation de contrôle',
+    symptoms: 'Suivi', history: scenario.documentedHistory ?? '', vitals: { ...blankVitals },
+  });
+  assert.equal(results.some(item => item.id === 'missing-medical-history'), scenario.missing,
+    'Faux rappel sur les antécédents : ' + scenario.label);
+}
+console.log('OK — 9 scénarios fictifs de complétude des antécédents et traitements.');
 
 // Réponse tardive d'une requête IA : ne pas réafficher une analyse
 // attachée à un dossier précédent ou à une consultation fermée.

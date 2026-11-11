@@ -594,3 +594,10 @@
 - **Correction :** élargissement ciblé de l'expression de recherche des symptômes, avec prise en compte de « aucuns » / « aucunes » dans les négations explicites. Les négations restent non déclenchantes et une mention positive indépendante reste prioritaire.
 - **Tests :** 11 scénarios fictifs dans `server/ai/test-clinical-regression.ts` (5 mentions positives, 5 négations, 1 mention indépendante) ; les tests historiques doivent rester réussis.
 - **Limite :** détection textuelle indicative seulement, sans certification de sécurité clinique, test Android ou usage sur patient réel ; vérifier les 11 jobs Actions sur SHA final.
+
+### 2026-11-11 — QW-010 : précision du rappel d'antécédents structurés
+- **Branche :** `audit-stabilisation-2026-11-10`; PR #2 en brouillon, aucune fusion de `main`, aucun déploiement ni donnée patient réelle.
+- **Défaut distinct :** une liste d'antécédents contenant une ligne vide ou un traitement sans nom suffisait à masquer le rappel « antécédents à vérifier » ; inversement une rubrique gynéco-obstétricale renseignée n'était pas prise en compte.
+- **Correction :** seules les étiquettes/détails non vides des éléments structurés, les noms non vides des traitements, les textes libres et les rubriques gynéco-obstétricales effectivement renseignées comptent comme informations présentes. Pas de changement de stockage.
+- **Tests :** 9 cas fictifs dans `server/ai/test-clinical-regression.ts` (dossier vide, lignes blanches, contexte gynéco documenté, traitements nommés ou non, champ consultation).
+- **Limite :** correction de cohérence d'interface, non-validation clinique réelle ; compilation et 11 jobs GitHub Actions à vérifier sur le SHA final.

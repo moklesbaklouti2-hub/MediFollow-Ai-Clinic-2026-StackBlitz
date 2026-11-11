@@ -57,13 +57,20 @@ export function detectClinicalSuggestions(input: {
     .some(hasReportedChestPain);
 
   // Détection simple des données manquantes : un champ vide n'est jamais considéré comme normal.
+  // Un élément de liste créé mais non renseigné (ligne blanche) n'est
+  // pas une information clinique. Ne pas masquer le rappel sur cette base.
+  const historyLists = [
+    input.patient?.clinicalHistory?.medical,
+    input.patient?.clinicalHistory?.surgical,
+    input.patient?.clinicalHistory?.allergies,
+    input.patient?.clinicalHistory?.family,
+  ];
   const hasPatientHistory = Boolean(
-    input.patient?.clinicalHistory?.medical?.length ||
-    input.patient?.clinicalHistory?.surgical?.length ||
-    input.patient?.clinicalHistory?.allergies?.length ||
-    input.patient?.clinicalHistory?.family?.length ||
+    historyLists.some(list => list?.some(item => item?.label?.trim() || item?.details?.trim())) ||
     input.patient?.clinicalHistory?.other?.trim() ||
-    input.patient?.currentMedications?.length
+    Object.values(input.patient?.clinicalHistory?.gynecoObstetric ?? {})
+      .some(value => typeof value === 'string' && value.trim()) ||
+    input.patient?.currentMedications?.some(item => item?.name?.trim())
   );
 
   // Les réponses consignées dans l'interrogatoire ciblé constituent déjà
