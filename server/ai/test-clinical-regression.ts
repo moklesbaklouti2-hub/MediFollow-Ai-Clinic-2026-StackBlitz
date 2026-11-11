@@ -190,6 +190,27 @@ for (const input of affirmingChestMentions) {
 }
 console.log('OK — 12 mentions thoraciques niées, positives ou incertaines contrôlées.');
 
+
+const bloodPressureCases = [
+  { systolic: '140 mmHg', diastolic: '', flagged: true },
+  { systolic: '', diastolic: '90 mm Hg', flagged: true },
+  { systolic: '140,5', diastolic: '70', flagged: true },
+  { systolic: ' 141 ', diastolic: '80 mmHg', flagged: true },
+  { systolic: '139 mmHg', diastolic: '89 mm Hg', flagged: false },
+  { systolic: '140/90', diastolic: '', flagged: false },
+  { systolic: '140 inconnu', diastolic: '80', flagged: false },
+  { systolic: '', diastolic: '', flagged: false },
+] as const;
+for (const bp of bloodPressureCases) {
+  const result = detectClinicalSuggestions({
+    specialty: 'Médecine de famille', motif: 'contrôle', symptoms: '',
+    history: '', vitals: { ...blankVitals, systolic: bp.systolic, diastolic: bp.diastolic },
+  });
+  assert.equal(result.some(item => item.id === 'elevated-bp'), bp.flagged,
+    'Interprétation tensionnelle incorrecte : ' + JSON.stringify(bp));
+}
+console.log('OK — 8 tests de lecture tensionnelle avec ou sans mmHg.');
+
 // Réponse tardive d'une requête IA : ne pas réafficher une analyse
 // attachée à un dossier précédent ou à une consultation fermée.
 const firstClinicalRequest = new AbortController();

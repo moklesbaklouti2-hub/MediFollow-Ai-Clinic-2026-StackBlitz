@@ -535,3 +535,10 @@
 - **Correction :** `src/clinical/clinicalTriggers.ts` prend en compte le champ `targetedInterview` avant de signaler ce manque. Les réponses vides ou composées d'espaces ne masquent pas l'alerte. Les autres alertes, notamment les douleurs thoraciques prioritaires, ne sont pas modifiées.
 - **Tests :** six cas fonctionnels fictifs ajoutés à `server/ai/test-clinical-regression.ts` : réponses ciblées présentes, vides/blanches et symptômes déjà présents.
 - **Validation :** compiler et vérifier les 11 jobs GitHub Actions sur le SHA exact ; essais d'interface Android et revue clinique nécessaires.
+
+### 2026-11-11 — Constantes cliniques : reconnaître la pression artérielle avec unité mmHg
+- **Branche :** `audit-stabilisation-2026-11-10`, `main` inchangée, PR #2 non fusionnée, aucun déploiement.
+- **Défaut :** `Number('140 mmHg')` renvoie `NaN` : le déclencheur existant « pression artérielle à recontrôler » n'était pas proposé lorsque l'unité était saisie.
+- **Correction :** `src/clinical/clinicalTriggers.ts` accepte les chiffres avec virgule ou point, suivis facultativement de `mmHg` ou `mm Hg` ; les textes non entièrement numériques et les valeurs combinées comme « 140/90 » dans un seul champ ne sont pas interprétés.
+- **Tests :** huit cas fictifs ajoutés à `server/ai/test-clinical-regression.ts` : seuils avec unités, décimales, valeurs sous seuil, formats invalides et champs vides.
+- **Limites :** alerte indicative sur un seuil déjà existant, pas de diagnostic automatisé. Tests de compilation et 11 jobs CI à confirmer sur ce SHA, puis essais cliniques réels nécessaires.

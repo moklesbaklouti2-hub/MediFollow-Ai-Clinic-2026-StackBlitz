@@ -177,10 +177,18 @@ export function detectClinicalSuggestions(input: {
     });
   }
 
-  const systolic = Number(String(input.vitals.systolic).replace(',', '.'));
-  const diastolic = Number(String(input.vitals.diastolic).replace(',', '.'));
-  if ((Number.isFinite(systolic) && systolic >= 140) ||
-      (Number.isFinite(diastolic) && diastolic >= 90)) {
+  // Les constantes peuvent être dictées ou collées avec l'unité mmHg.
+  // Ne retenir que la forme numérique complète (pas « 140/90 » ni « 140 ? »).
+  const parseBloodPressure = (value: string): number | null => {
+    const parsed = String(value ?? '').trim().match(/^(\\d+(?:[,.]\\d+)?)\\s*(?:mm\\s*hg)?$/iu);
+    if (!parsed) return null;
+    const number = Number(parsed[1].replace(',', '.'));
+    return Number.isFinite(number) ? number : null;
+  };
+  const systolic = parseBloodPressure(input.vitals.systolic);
+  const diastolic = parseBloodPressure(input.vitals.diastolic);
+  if ((systolic !== null && systolic >= 140) ||
+      (diastolic !== null && diastolic >= 90)) {
     suggestions.push({
       id: 'elevated-bp',
       priority: 'routine',
