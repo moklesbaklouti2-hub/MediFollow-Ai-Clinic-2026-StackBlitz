@@ -644,3 +644,11 @@
 - **Correction :** limite explicite de 12 000 caractères JavaScript (UTF-16) pour un message après suppression des espaces périphériques. En cas de dépassement, réponse HTTP 413 avec erreur générique avant toute construction de contexte ou appel IA. Les commandes vocales conservent leur propre seuil de 5 000 caractères.
 - **Tests :** seuil exact et sous/sur le seuil, entrées nettoyées et inspection contractuelle de la route réelle (12 vérifications) dans `server/ai/test-clinical-regression.ts`.
 - **Limite :** plafond de taille uniquement, non-authentification ni conformité des flux de données. QW-007/QW-008 restent ouverts. Validation CI 11 jobs requise sur SHA final.
+
+### 2026-11-11 — QW-017 : réponses d'erreur du parseur JSON protégées contre le cache
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 en brouillon, `main` inchangée, aucune donnée réelle ni dépense ou déploiement.
+- **Défaut distinct de QW-013 :** le middleware anti-cache était enregistré *après* `express.json()`. Une erreur de syntaxe JSON (400) ou un corps trop volumineux (413) pouvait retourner avant l'application du `Cache-Control: no-store`.
+- **Correction :** enregistrer `app.use(CLINICAL_PATHS, preventClinicalCaching)` avant `app.use(express.json({ limit: '64kb' }))`, sans modifier les routes, le seuil 64 Ko, les fournisseurs IA ni les paramètres de sécurité.
+- **Vérification :** contrôle statique de l'ordre réel dans `server/index.ts` et six requêtes fictives sur un serveur Express loopback (3 routes × JSON invalide ou 66 Ko), avec vérification 400/413, `Cache-Control: no-store` et `Pragma: no-cache`. Le test précédent (200, 400 applicatif, santé publique) reste actif.
+- **Limites :** protection des caches intermédiaires seulement, pas une authentification ni une preuve de confidentialité de bout en bout ; aucune validation sur Android ou sur données patients.
+- **Validation :** attendre les 11 jobs GitHub Actions sur le commit exact.

@@ -40,11 +40,11 @@ if (cookieIntegrationMode === 'integration-test' &&
 
 const app = express();
 const PORT = 3001;
-app.use(express.json({ limit: '64kb' }));
 
-// Clinical responses are never cacheable, even without remote mode, or when
-// authorization rejects the request. This does not itself protect the API.
+// The no-store header must be set BEFORE parsing JSON: syntax errors and
+// body-size 413 errors can exit in the parser before reaching any route.
 app.use(CLINICAL_PATHS, preventClinicalCaching);
+app.use(express.json({ limit: '64kb' }));
 
 // All real sensitive POST handlers are below this middleware boundary.
 // Remote mode is blocked by default; only a loopback, synthetic integration

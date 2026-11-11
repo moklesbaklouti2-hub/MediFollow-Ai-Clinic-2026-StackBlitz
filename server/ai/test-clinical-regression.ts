@@ -362,9 +362,16 @@ console.log('OK — 4 contrôles contractuels : absence de transfert du brouillo
 assert.ok(source.includes('app.use(CLINICAL_PATHS, preventClinicalCaching);') &&
   source.indexOf('app.use(CLINICAL_PATHS, preventClinicalCaching);') < source.indexOf('if (remoteAccessConfig) {'),
   'Les réponses cliniques doivent être protégées contre la mise en cache avant le contrôle distant.');
+// QW-017: Express JSON parsing can reject a request before reaching the
+// route handlers. Check the actual index.ts ordering, not just a mock app.
+assert.ok(
+  source.indexOf('app.use(CLINICAL_PATHS, preventClinicalCaching);') <
+  source.indexOf("app.use(express.json({ limit: '64kb' }));"),
+  'Les erreurs de JSON doivent recevoir no-store avant même le parseur.');
 
 const noStoreApp = express();
 noStoreApp.use(CLINICAL_PATHS, preventClinicalCaching);
+noStoreApp.use(express.json({ limit: '64kb' }));
 for (const path of CLINICAL_PATHS) {
   noStoreApp.post(path, (req, res) => {
     if (req.get('x-test-error') === 'yes') {
@@ -375,6 +382,11 @@ for (const path of CLINICAL_PATHS) {
   });
 }
 noStoreApp.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+// Swallow the test parser errors without printing fake body content to logs.
+noStoreApp.use((error: { status?: number }, _req: express.Request,
+  res: express.Response, _next: express.NextFunction) => {
+  res.status(error.status === 413 ? 413 : 400).json({ error: 'Corps JSON fictif invalide.' });
+});
 const noStoreServer = noStoreApp.listen(0, '127.0.0.1');
 try {
   await new Promise<void>((resolve, reject) => {
@@ -399,6 +411,25 @@ try {
         'Directive de cache ancienne absente : ' + path);
     }
   }
+  // The 400 and 413 occur within express.json, before any clinical handler.
+  // In all three paths the anti-cache headers must already be present.
+  for (const path of CLINICAL_PATHS) {
+    for (const fixture of [
+      { code: 400, payload: '{', label: 'syntaxe JSON invalide' },
+      { code: 413, payload: JSON.stringify({ text: 'x'.repeat(66_000) }), label: 'JSON trop volumineux' },
+    ]) {
+      const response = await fetch(base + path, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: fixture.payload,
+      });
+      assert.equal(response.status, fixture.code, path + ' : ' + fixture.label);
+      assert.equal(response.headers.get('cache-control'), 'no-store',
+        'Réponse de parseur JSON stockable : ' + path + ' / ' + fixture.label);
+      assert.equal(response.headers.get('pragma'), 'no-cache',
+        'En-tête de compatibilité anti-cache manquant : ' + path + ' / ' + fixture.label);
+    }
+  }
   const health = await fetch(base + '/api/health');
   assert.equal(health.status, 200);
   assert.equal(health.headers.get('cache-control'), null,
@@ -408,7 +439,7 @@ try {
     noStoreServer.close(error => error ? reject(error) : resolve()),
   );
 }
-console.log('OK — réponses cliniques non stockables sur 3 routes HTTP, succès et erreur (18 en-têtes vérifiés).');
+console.log('OK — 3 routes cliniques non stockables en succès, erreur applicative, JSON invalide et dépassement 64 Ko (requêtes fictives).');
 
 
 // QW-014 — ne jamais transformer un JSON non textuel en instruction IA.

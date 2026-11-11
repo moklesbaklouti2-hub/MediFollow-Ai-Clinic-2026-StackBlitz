@@ -28,7 +28,8 @@
 | QW-013 | S | Désactiver la mise en cache des réponses des trois routes cliniques, succès et erreur | `6603fe6` | [43043178304](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43043178304) : 11/11 réussis | VALIDÉ |
 | QW-014 | S | Refuser les JSON non textuels dans les messages de chat et commandes vocales | `6ca700d` | [43044403101](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43044403101) : 11/11 réussis | VALIDÉ |
 | QW-015 | S | Empêcher tout démarrage du serveur en production sans mode d'accès distant explicitement validé | `95f0568` | [43046896275](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43046896275) : 11/11 réussis | VALIDÉ |
-| QW-016 | S | Refuser les messages chat de plus de 12 000 caractères avant fournisseur IA | SHA à vérifier | 12 vérifications de seuil + CI 11/11 | EN VALIDATION |
+| QW-016 | S | Refuser les messages chat de plus de 12 000 caractères avant fournisseur IA | `af94893` | [43047596054](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43047596054) : 11/11 réussis | VALIDÉ |
+| QW-017 | S | Appliquer les en-têtes anti-cache même aux erreurs de parsing JSON 400/413 | SHA à vérifier | 6 requêtes HTTP fictives de plus + CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
