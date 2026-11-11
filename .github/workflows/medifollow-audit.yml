@@ -10,8 +10,10 @@ on:
 permissions:
   contents: read
 
+# Recovery on audit only: abandon the blocked concurrency lock from prior run
+# 43084358671. Keep sequential CI within the new group; do not bypass jobs.
 concurrency:
-  group: medifollow-audit-${{ github.ref }}
+  group: medifollow-audit-recovery-2026-11-11-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
