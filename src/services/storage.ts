@@ -326,6 +326,40 @@ function hasValidInventoryBalance(item: InventoryItem, incoming = 0): boolean {
     item.quantity + incoming >= 0;
 }
 
+/** Vérifie la provenance des retours avant tout mouvement compensatoire. */
+function hasConsistentDispenseTrace(data: InventoryData, original: StockMovement): boolean {
+  if (typeof original.id !== 'string' || !original.id.trim() ||
+      typeof original.itemId !== 'string' || !original.itemId.trim() ||
+      typeof original.prescriptionId !== 'string' || !original.prescriptionId.trim() ||
+      typeof original.patientId !== 'string' || !original.patientId.trim()) {
+    return false;
+  }
+
+  // Un identifiant de mouvement doit désigner une seule trace, sans ambiguïté.
+  const counts = new Map<string, number>();
+  for (const movement of data.movements) {
+    counts.set(movement.id, (counts.get(movement.id) ?? 0) + 1);
+  }
+  if (counts.get(original.id) !== 1) return false;
+
+  // Une même ordonnance ne doit jamais référencer deux patients différents.
+  if (data.movements.some((movement) =>
+    movement.type === 'dispense' &&
+    movement.prescriptionId === original.prescriptionId &&
+    movement.patientId !== original.patientId
+  )) return false;
+
+  return data.movements.every((movement) => {
+    if (movement.type !== 'return' || movement.reversesMovementId !== original.id) return true;
+    return typeof movement.id === 'string' &&
+      movement.id.trim().length > 0 &&
+      counts.get(movement.id) === 1 &&
+      movement.itemId === original.itemId &&
+      movement.prescriptionId === original.prescriptionId &&
+      movement.patientId === original.patientId;
+  });
+}
+
 /**
  * Déduit le stock lors d'une délivrance effective.
  * Répartition FEFO automatique entre les lots du même produit :
@@ -337,15 +371,11 @@ export function dispenseInventoryItems(input: {
   patientId: string;
   items: Array<{ inventoryItemId: string; quantity: number }>;
 }): { success: boolean; error?: string; alreadyDispensed?: boolean } {
+  if (!input || typeof input.prescriptionId !== 'string' || !input.prescriptionId.trim() ||
+      typeof input.patientId !== 'string' || !input.patientId.trim()) {
+    return { success: false, error: 'Délivrance refusée : ordonnance ou patient non identifié.' };
+  }
   const data = getInventoryData();
-
-  // Empêcher toute seconde déduction pour une ordonnance déjà délivrée.
-  const existingDispense = data.movements.some(
-    (movement) =>
-      movement.type === 'dispense' &&
-      movement.prescriptionId === input.prescriptionId
-  );
-  if (existingDispense) return { success: true, alreadyDispensed: true };
 
   // Une seule ligne invalide bloque toute la délivrance : ne jamais déduire
   // silencieusement les autres articles d'une demande partiellement erronée.
@@ -359,6 +389,21 @@ export function dispenseInventoryItems(input: {
     return { success: false, error: 'Délivrance refusée : identifiant ou quantité invalide pour un article. Aucun stock modifié.' };
   }
   const requested = input.items;
+
+  // L'idempotence ne doit jamais masquer un conflit de patient ou un
+  // journal importé incohérent pour la même ordonnance.
+  const existingDispenses = data.movements.filter((movement) =>
+    movement.type === 'dispense' && movement.prescriptionId === input.prescriptionId
+  );
+  if (existingDispenses.length > 0) {
+    if (existingDispenses.some((movement) =>
+      movement.patientId !== input.patientId ||
+      !hasConsistentDispenseTrace(data, movement)
+    )) {
+      return { success: false, error: 'Délivrance refusée : conflit de patient ou traçabilité incohérente.' };
+    }
+    return { success: true, alreadyDispensed: true };
+  }
 
   const currentDate = new Date();
   const today = [
@@ -472,6 +517,9 @@ export function returnDispensedStock(input: {
     movement.id === input.dispenseMovementId && movement.type === 'dispense'
   );
   if (!original) return { success: false, error: 'Mouvement de délivrance introuvable.' };
+  if (!hasConsistentDispenseTrace(data, original)) {
+    return { success: false, error: 'Retour refusé : traçabilité du lot, du patient ou de l’ordonnance incohérente.' };
+  }
 
   // Une trace incomplète ou corrompue ne doit jamais gonfler le stock.
   if (!Number.isFinite(original.quantity) || original.quantity <= 0) {
@@ -541,6 +589,9 @@ export function cancelDispensedPrescriptionStock(input: {
 
   const allocations: Array<{ movement: StockMovement; item: InventoryItem; quantity: number }> = [];
   for (const movement of originalMovements) {
+    if (!hasConsistentDispenseTrace(data, movement)) {
+      return { success: false, error: 'Annulation refusée : traçabilité du lot, du patient ou de l’ordonnance incohérente.' };
+    }
     if (!Number.isFinite(movement.quantity) || movement.quantity <= 0) {
       return { success: false, error: 'Annulation refusée : quantité d’une délivrance incohérente.' };
     }

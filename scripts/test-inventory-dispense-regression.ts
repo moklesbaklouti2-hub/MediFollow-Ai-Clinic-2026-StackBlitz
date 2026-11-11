@@ -216,4 +216,77 @@ for (const [name, badQuantity] of badBalances) {
   assertions += 6;
 }
 
-console.log('OK — ' + assertions + ' assertions sur le stock et la délivrance atomique (données fictives).');
+// Les identifiants de prescription et de patient ne doivent pas être vides
+// ou de types inattendus. Une tentative invalide ne touche jamais le stock.
+const invalidIdentities: Array<[string, Record<string, unknown>]> = [
+  ['ordonnance vide', { prescriptionId: '' }],
+  ['ordonnance espaces', { prescriptionId: '  ' }],
+  ['ordonnance non textuelle', { prescriptionId: 42 }],
+  ['patient vide', { patientId: '' }],
+  ['patient espaces', { patientId: '  ' }],
+  ['patient non textuel', { patientId: null }],
+];
+for (const [name, override] of invalidIdentities) {
+  reset();
+  const before = JSON.stringify(getInventoryData());
+  const input = { ...issue([{ inventoryItemId: 'lot-a', quantity: 1 }]), ...override };
+  assert.equal(dispenseInventoryItems(input as Parameters<typeof dispenseInventoryItems>[0]).success, false, name);
+  unchanged(before, name);
+  assertions += 3;
+}
+
+// Une ordonnance déjà délivrée à un patient ne doit pas réussir
+// silencieusement lorsqu'elle est réutilisée pour un autre patient.
+reset();
+assert.equal(dispenseInventoryItems(issue([{ inventoryItemId: 'lot-a', quantity: 1 }])).success, true);
+let snapshotConflict = JSON.stringify(getInventoryData());
+writes = 0;
+assert.equal(dispenseInventoryItems({ ...issue([{ inventoryItemId: 'lot-a', quantity: 1 }]), patientId: 'autre-patient' }).success, false);
+unchanged(snapshotConflict, 'conflit patient-ordonnance');
+assert.equal(dispenseInventoryItems(issue([{ inventoryItemId: '', quantity: 1 }])).success, false);
+unchanged(snapshotConflict, 'rejeu avec ligne invalide');
+assert.deepEqual(dispenseInventoryItems(issue([{ inventoryItemId: 'lot-a', quantity: 1 }])), { success: true, alreadyDispensed: true });
+unchanged(snapshotConflict, 'rejeu normal autorisé');
+assertions += 10;
+
+// Une ancienne trace de retour falsifiée ou mal importée ne doit
+// jamais être créditée au mauvais patient, ordonnance ou lot.
+const traceCorruptions: Array<[string, (d: InventoryData) => void]> = [
+  ['mauvais lot du retour', d => { d.movements[1].itemId = 'lot-c'; }],
+  ['mauvaise ordonnance du retour', d => { d.movements[1].prescriptionId = 'autre-ordonnance'; }],
+  ['mauvais patient du retour', d => { d.movements[1].patientId = 'autre-patient'; }],
+  ['identifiant du retour dupliqué', d => {
+    d.movements.push({ ...returned('ret-trace', 'autre-dispense', 1) });
+  }],
+  ['identifiant de délivrance dupliqué', d => {
+    d.movements.push(issued('disp-trace', 'lot-c', 1));
+  }],
+  ['plusieurs patients pour une ordonnance', d => {
+    d.movements.push({ ...issued('disp-other', 'lot-c', 1), patientId: 'autre-patient' });
+  }],
+  ['ordonnance manquante dans la délivrance', d => { d.movements[0].prescriptionId = ''; }],
+  ['patient manquant dans la délivrance', d => { d.movements[0].patientId = ''; }],
+];
+for (const [name, corrupt] of traceCorruptions) {
+  const d = fixture();
+  d.movements = [issued('disp-trace', 'lot-a', 3), returned('ret-trace', 'disp-trace', 1)];
+  corrupt(d);
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(returnDispensedStock({ dispenseMovementId: 'disp-trace', quantity: 1 }).success, false, name);
+  unchanged(before, name + ' retour');
+  assert.equal(cancelDispensedPrescriptionStock({ prescriptionId: 'ord-retour' }).success, false, name);
+  unchanged(before, name + ' annulation');
+  assertions += 6;
+}
+// Témoin positif : un retour cohérent au bon lot et à la bonne ordonnance.
+{
+  const d = fixture();
+  d.movements = [issued('disp-ok', 'lot-a', 3), returned('ret-ok', 'disp-ok', 1)];
+  seedLedger(d);
+  assert.equal(returnDispensedStock({ dispenseMovementId: 'disp-ok', quantity: 1 }).success, true);
+  assert.equal(getInventoryData().items.find(x => x.id === 'lot-a')?.quantity, 7);
+  assertions += 2;
+}
+
+console.log('OK — ' + assertions + ' assertions sur la traçabilité et la délivrance atomique (données fictives).');

@@ -514,3 +514,10 @@
 - **Correctif :** `src/services/storage.ts` refuse la délivrance si un lot du produit demandé présente un solde invalide. Retours et annulations contrôlent le solde du lot, la somme de plusieurs retours vers un même lot et les dépassements avant toute écriture.
 - **Régression :** `scripts/test-inventory-dispense-regression.ts` ajoute 60 assertions fictives et vérifie l'absence d'écriture pour six types de soldes corrompus ainsi que le dépassement numérique (163 assertions attendues au total).
 - **Limites :** le service ne répare pas automatiquement les données corrompues. Compilation et onze jobs GitHub Actions à confirmer sur le commit exact ; essais Android et validation réelle nécessaires.
+
+### 2026-11-11 — Inventaire : verrouiller la provenance des retours et l'identité des délivrances
+- **Branche :** `audit-stabilisation-2026-11-10` ; `main` et la PR #2 non fusionnée inchangées, aucun déploiement.
+- **Défaut ciblé :** un journal importé pouvait lier un retour à une délivrance tout en lui attribuant un autre lot, patient ou identifiant d'ordonnance ; les identifiants de mouvements dupliqués rendaient les réintégrations ambiguës. L'idempotence pouvait masquer une réutilisation d'ordonnance par un autre patient, voire une ligne de délivrance invalide.
+- **Correctif :** vérification des identifiants non vides, de l'unicité des mouvements liés, des liens lot/patient/ordonnance entre délivrances et retours ; refus sans modification lors des incohérences. Une délivrance déjà enregistrée n'est reconnue comme telle que pour le même patient et un journal cohérent.
+- **Tests :** `scripts/test-inventory-dispense-regression.ts` ajoute 78 assertions sur données fictives : identifiants invalides, conflit de patient, duplications de mouvements et mauvaises références, plus cas nominal. Total attendu : 241 assertions.
+- **Validation :** compilation et 11 jobs GitHub Actions à vérifier sur le commit exact ; aucune validation clinique réelle ni sur tablette Android. Aucune réparation automatique d'un historique importé incohérent.
