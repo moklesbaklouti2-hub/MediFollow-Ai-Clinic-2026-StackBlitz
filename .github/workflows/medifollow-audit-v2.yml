@@ -1,0 +1,284 @@
+name: MediFollow AI - controles independants V2
+
+# Automated checks only. No code-writing AI, deployment, secrets, or production data.
+on:
+  push:
+    branches:
+      - audit-stabilisation-2026-11-10
+
+
+permissions:
+  contents: read
+
+# CI recovery: no shared concurrency group with stuck legacy workflow runs.
+# Each SHA is validated separately. No deployments, secrets or real patient data.
+jobs:
+  build:
+    name: Compilation TypeScript et Vite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer les dependances
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Compiler
+        run: npm run build
+      - name: Compiler le mode d'essai connexion medecin (jamais deploye)
+        env:
+          VITE_DOCTOR_AUTH_MODE: integration-test
+        run: npm run build
+
+  offline-tests:
+    name: Tests / ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - module: resilience-ia
+            command: test:ai-resilience
+          - module: clinique
+            command: test:clinical-regression
+          - module: dictionnaire-medical
+            command: test:medical-dictionary
+          - module: dictee-helios
+            command: test:medical-speech
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Installer les dependances
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Executer les tests fictifs
+        run: npm run ${{ matrix.command }}
+      - name: Verifier delivrance de stock atomique (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:inventory-dispense
+      - name: Verifier les liens anciens patients/consultations/ordonnances (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:patient-linkage
+      - name: Verifier HELIOS Follow-up et ses echeances (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:follow-up
+
+  coordination:
+    name: Verifier le registre des modules
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifier les proprietaires et les conflits de fichiers
+        run: node scripts/validate-agent-coordination.mjs
+      - name: Preparer les taches independantes pour la prochaine session
+        run: node scripts/plan-agent-tasks.mjs
+
+  api-security-inventory:
+    name: Inventaire securite API (informatif)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Inventorier les routes et signaler les risques
+        run: node scripts/audit-api-exposure.mjs
+
+  api-security-regression:
+    name: Regression inventaire securite API
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifier alertes et routes sensibles
+        run: node scripts/test-api-security-inventory.mjs
+      - name: Verifier les filtres du relais CI (GitHub simule)
+        run: node scripts/test-ci-relay.mjs
+      - name: Verifier le repli clinique sur erreur 429
+        run: node scripts/test-clinical-429-fallback.mjs
+
+  access-policy-contract:
+    name: Contrat des permissions (documentation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verifier le contrat des permissions proposees
+        run: node scripts/test-access-policy-contract.mjs
+
+  access-decision-contract:
+    name: Decisions d'acces 401-403 (simulation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # The local HTTP probe launches Express through tsx, so dependencies
+      # must be present in this job (jobs do not share node_modules).
+      - name: Installer les dependances pour le test HTTP local
+        run: npm install --ignore-scripts --no-audit --no-fund
+      - name: Tester les decisions d'acces fictives
+        run: npm run test:access-decision
+      - name: Verifier que la simulation ne protege pas artificiellement les routes
+        run: node scripts/test-api-auth-boundary.mjs
+      - name: Verifier la garde contre un port local deja occupe
+        run: node scripts/test-port-availability.mjs
+      - name: Observer les routes HTTP locales sans authentification (donnees fictives)
+        run: node scripts/test-local-http-auth-boundary.mjs
+      - name: Verifier le contrat HTTP isole 401-403 (sans branchement production)
+        run: node scripts/test-isolated-http-access-contract.mjs
+      - name: Tester le garde medecin unique desactive (HTTP fictif)
+        run: npx --no-install tsx scripts/test-single-doctor-guard.mts
+      - name: Tester les sessions isolees (expiration et revocation)
+        run: npx --no-install tsx scripts/test-session-store.mts
+      - name: Tester la protection HTTP par session (fixture isolee)
+        run: npx --no-install tsx scripts/test-doctor-session-guard.mts
+      - name: Tester les identifiants du medecin (donnees fictives)
+        run: npx --no-install tsx scripts/test-doctor-credentials.mts
+      - name: Tester la connexion-deconnexion fictive et le verrouillage
+        run: npx --no-install tsx scripts/test-doctor-login.mts
+      - name: Tester les tentatives de connexion paralleles
+        run: npx --no-install tsx scripts/test-doctor-login-concurrency.mts
+      - name: Tester la configuration HTTPS et origine distante
+        run: npx --no-install tsx scripts/test-remote-access-config.mts
+      - name: Tester le routeur clinique protege isole (trois routes)
+        run: npx --no-install tsx scripts/test-protected-clinical-router.mts
+      - name: Verifier le refus des vraies routes en mode distant incomplet
+        run: node scripts/test-remote-clinical-fail-closed.mjs
+      - name: Tester le refus HTTP des vraies API cliniques en mode distant
+        run: node scripts/test-real-remote-http-gate.mjs
+      - name: Tester connexion et deconnexion avec trois API cliniques protegees (fixture)
+        run: npx --no-install tsx scripts/test-doctor-access-router.mts
+      - name: Verifier le formulaire de connexion medecin non active
+        run: node scripts/test-doctor-login-ui.mjs
+      - name: Verifier le client navigateur de connexion sans stockage de jetons
+        run: node scripts/test-doctor-auth-client.mjs
+      - name: Tester session cookie HTTPS origine CSRF et API cliniques (fixture)
+        run: npx --no-install tsx scripts/test-doctor-cookie-auth.mts
+      - name: Tester le transport clinique React avec CSRF et erreur de session (fixture)
+        run: npx --no-install tsx scripts/test-doctor-clinical-transport.mts
+      - name: Tester la vraie API Express avec la connexion cookie en boucle locale (fixture)
+        run: npx --no-install tsx scripts/test-real-cookie-clinical-integration.mts
+      - name: Verifier raccordement React du medecin et blocage des contournements
+        run: node scripts/test-doctor-react-gate.mjs
+      - name: Verifier le comportement local des trois appels cliniques
+        run: npx --no-install tsx scripts/test-doctor-react-local-transport.mts
+      - name: Tester expiration de session et verrouillage deconnexion React
+        run: npx --no-install tsx scripts/test-doctor-gate-transitions.mts
+      - name: Tester la deconnexion et l'expiration de session entre onglets (fixture)
+        run: npx --no-install tsx scripts/test-doctor-cross-tab.mts
+      - name: Tester la vraie API Express via un proxy HTTPS local avec certificat verifie
+        run: node scripts/test-real-local-https-cookie-proxy.mjs
+
+  relay:
+    name: Bilan des controles
+    if: ${{ !cancelled() }}
+    needs: [build, offline-tests, coordination, api-security-inventory, api-security-regression, access-policy-contract, access-decision-contract]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: write  # Only this final job can comment on PR #2.
+    steps:
+      - name: Publier le relais sans ecriture au depot
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.offline-tests.result }}
+          COORDINATION_RESULT: ${{ needs.coordination.result }}
+          POLICY_RESULT: ${{ needs.access-policy-contract.result }}
+          DECISION_RESULT: ${{ needs.access-decision-contract.result }}
+          API_INVENTORY_RESULT: ${{ needs.api-security-inventory.result }}
+          SECURITY_REGRESSION_RESULT: ${{ needs.api-security-regression.result }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          {
+            echo '## Relais MediFollow AI'
+            echo "- Commit : $COMMIT_SHA"
+            echo "- Compilation : $BUILD_RESULT"
+            echo "- Tests hors ligne (4 modules) : $TEST_RESULT"
+            echo "- Coordination : $COORDINATION_RESULT"
+            echo "- Inventaire API : $API_INVENTORY_RESULT"
+            echo "- Regression securite API : $SECURITY_REGRESSION_RESULT"
+            echo "- Contrat permissions : $POLICY_RESULT"
+            echo "- Decisions 401/403 simulees : $DECISION_RESULT"
+            echo '- Si echec : consulter les logs du job concerne avant de modifier le code.'
+            echo '- Si succes : poursuivre les taches independantes sur la branche audit.'
+            echo '- Ce workflow ne lance aucun agent IA et ne modifie aucun fichier.'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$BUILD_RESULT" != success ] || [ "$TEST_RESULT" != success ] || [ "$COORDINATION_RESULT" != success ] || [ "$API_INVENTORY_RESULT" != success ] || [ "$SECURITY_REGRESSION_RESULT" != success ] || [ "$POLICY_RESULT" != success ] || [ "$DECISION_RESULT" != success ]; then
+            exit 1
+          fi
+
+      # This is a genuine GitHub webhook bridge, not a ChatGPT session launcher.
+      # Every comment cites the tested SHA and complete upstream job outcomes.
+      # Only GitHub's native token is used, with no API key or external server.
+      - name: Publier la couleur reelle sur la PR relais (pour Work)
+        if: ${{ !cancelled() && github.ref == 'refs/heads/audit-stabilisation-2026-11-10' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MEDIFOLLOW_RELAY_PR: '2'
+          COMMIT_SHA: ${{ github.sha }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.offline-tests.result }}
+          COORDINATION_RESULT: ${{ needs.coordination.result }}
+          POLICY_RESULT: ${{ needs.access-policy-contract.result }}
+          DECISION_RESULT: ${{ needs.access-decision-contract.result }}
+          API_INVENTORY_RESULT: ${{ needs.api-security-inventory.result }}
+          SECURITY_REGRESSION_RESULT: ${{ needs.api-security-regression.result }}
+        run: |
+          set -euo pipefail
+          # An incomplete run must never wake development as a red/green result.
+          for RESULT in "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"; do
+            case "$RESULT" in
+              success|failure) ;;
+              *) echo "Relais ignore : controle incomplet ($RESULT)."; exit 0 ;;
+            esac
+          done
+          CURRENT_HEAD=$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/audit-stabilisation-2026-11-10" --jq '.object.sha')
+          if [ "$CURRENT_HEAD" != "$COMMIT_SHA" ]; then
+            echo "Relais ignore : commit obsolete."
+            exit 0
+          fi
+          # Work still verifies the completed run and HEAD after receiving the event.
+          COLOR=VERT
+          for RESULT in "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"; do
+            if [ "$RESULT" != success ]; then
+              COLOR=ROUGE
+              break
+            fi
+          done
+          printf -v MESSAGE 'MEDIFOLLOW_CI_RESULT_V1\nCouleur: %s\nCommit teste: %s\nWorkflow: %s\nCompilation: %s\nTests: %s\nCoordination: %s\nPermissions: %s\nAcces clinique: %s\nInventaire API: %s\nRegression API: %s\n\nStatut reel deduit des jobs GitHub Actions. Si le commit ne correspond plus a HEAD, ignorer cet ancien resultat. Le retour CI ne prouve pas la securite medicale.' \
+            "$COLOR" "$COMMIT_SHA" "$WORKFLOW_URL" "$BUILD_RESULT" "$TEST_RESULT" "$COORDINATION_RESULT" "$POLICY_RESULT" "$DECISION_RESULT" "$API_INVENTORY_RESULT" "$SECURITY_REGRESSION_RESULT"
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${MEDIFOLLOW_RELAY_PR}/comments" -f "body=$MESSAGE" > /dev/null
+          echo "Relais CI publie sur PR #$MEDIFOLLOW_RELAY_PR : $COLOR / $COMMIT_SHA"

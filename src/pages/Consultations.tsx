@@ -4,6 +4,10 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
+import { prepareFollowUp, selectDueFollowUps, completedFollowUpPlan } from '../clinical/followUp';
+import { getConsultations } from '../services/storage';
+import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
+import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 
 
 const specialtyGroups = [
@@ -166,9 +170,16 @@ export default function Consultations({
   const [physicalExamination, setPhysicalExamination] = useState<PhysicalExamination>({});
   const [diagnosis, setDiagnosis] = useState('');
   const [plan, setPlan] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [followUpObjective, setFollowUpObjective] = useState('');
+  const [followUpCompleted, setFollowUpCompleted] = useState(false);
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expressOpen, setExpressOpen] = useState(false);
+  const [expressDraft, setExpressDraft] = useState('');
+  const [expressFeedback, setExpressFeedback] = useState('');
+  const [expressPatientId, setExpressPatientId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
   const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
   const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(true);
@@ -307,7 +318,48 @@ export default function Consultations({
     setSaved(false);
   }
 
+  function applyExpressDraft() {
+    if (editingId) {
+      setExpressFeedback('Terminez la modification en cours avant la saisie express.');
+      return;
+    }
+    if (!hasConfirmedPatientSelection(patientId, patients) || !specialty) {
+      setExpressFeedback('Choisissez d’abord un dossier patient unique et une spécialité dans le formulaire.');
+      return;
+    }
+    if (expressPatientId && expressPatientId !== patientId) {
+      setExpressFeedback('Dossier patient changé : revenez au patient initial ou annulez la saisie.');
+      return;
+    }
+    const result = parseExpressDraft(expressDraft);
+    if (result.valid === false) {
+      setExpressFeedback(result.reason);
+      return;
+    }
+    if (expressWouldOverwrite(result.fields, { motif, symptoms, history, diagnosis, plan })) {
+      setExpressFeedback('Un champ cible contient déjà du texte : effacez-le ou utilisez le formulaire habituel.');
+      return;
+    }
+    if (result.fields.motif !== undefined) setMotif(result.fields.motif);
+    if (result.fields.symptoms !== undefined) setSymptoms(result.fields.symptoms);
+    if (result.fields.history !== undefined) setHistory(result.fields.history);
+    if (result.fields.diagnosis !== undefined) setDiagnosis(result.fields.diagnosis);
+    if (result.fields.plan !== undefined) setPlan(result.fields.plan);
+    setExpressPatientId(patientId);
+    setExpressDraft('');
+    setSaved(false);
+    setExpressFeedback('Note transférée dans les champs existants. Relisez-la avant toute sauvegarde.');
+  }
+
+  function resetExpressConsultation() {
+    if (!window.confirm('Effacer toute la consultation non enregistrée et recommencer avec un dossier vierge ?')) return;
+    cancelEditing();
+  }
+
   function startEditing(item: (typeof consultations)[number]) {
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(item.id);
     setPatientId(item.patientId);
     setSpecialty(item.specialty ?? '');
@@ -320,11 +372,17 @@ export default function Consultations({
     setPhysicalExamination(item.physicalExamination ?? {});
     setDiagnosis(item.diagnosis);
     setPlan(item.plan);
+    setFollowUpDate(item.followUp?.dueDate ?? '');
+    setFollowUpObjective(item.followUp?.objective ?? '');
+    setFollowUpCompleted(item.followUp?.status === 'completed');
     setSaved(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function cancelEditing() {
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
@@ -337,12 +395,55 @@ export default function Consultations({
     setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
+    setFollowUpDate('');
+    setFollowUpObjective('');
+    setFollowUpCompleted(false);
+    setSaved(false);
+  }
+
+  function completeFollowUp(item: (typeof consultations)[number]) {
+    if (editingId === item.id) {
+      window.alert('Enregistrez ou annulez d’abord la modification de cette consultation.');
+      return;
+    }
+    // Re-read the current record before proposing the change. Never trust a
+    // stale list row or a patient name to establish clinical identity.
+    const current = getConsultations().find(record => record.id === item.id);
+    if (!current || current.patientId !== item.patientId ||
+        !hasConfirmedPatientSelection(current.patientId, patients)) {
+      window.alert('Impossible de confirmer le dossier patient. Vérifiez le lien avant tout changement.');
+      return;
+    }
+    const completedPlan = completedFollowUpPlan(current.followUp);
+    if (!completedPlan) {
+      window.alert('Ce plan de suivi n’est plus ouvert ou sa date est invalide. Actualisez la liste.');
+      return;
+    }
+    if (!window.confirm('Confirmer que ce contrôle de suivi a effectivement été réalisé ?')) return;
+    if (!updateConsultation(current.id, { followUp: completedPlan })) {
+      window.alert('Enregistrement non confirmé : le contrôle reste à vérifier dans la liste.');
+      return;
+    }
     setSaved(false);
   }
 
   function saveConsultation() {
+    if (expressPatientId && expressPatientId !== patientId) {
+      window.alert('Saisie express liée à un autre patient. Revenez au dossier initial ou annulez avant de sauvegarder.');
+      return;
+    }
     if (!patientId || !motif.trim() || (!editingId && !specialty)) {
       alert('Veuillez sélectionner un patient, choisir une spécialité et renseigner le motif.');
+      return;
+    }
+    if (!hasConfirmedPatientSelection(patientId, patients)) {
+      window.alert('Dossier patient introuvable ou identifiant ambigu. Sélectionnez un patient enregistré avant la sauvegarde.');
+      return;
+    }
+
+    const followUpPlan = prepareFollowUp(followUpDate, followUpObjective, followUpCompleted);
+    if (!followUpPlan.valid) {
+      window.alert('Suivi HELIOS : date de contrôle invalide, ou objectif de plus de 500 caractères.');
       return;
     }
 
@@ -358,6 +459,7 @@ export default function Consultations({
       physicalExamination: { ...physicalExamination },
       diagnosis: diagnosis.trim(),
       plan: plan.trim(),
+      followUp: followUpPlan.followUp,
     };
 
     const saved = editingId
@@ -371,17 +473,25 @@ export default function Consultations({
     }
 
     setSaved(true);
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
     setMotif('');
     setSymptoms('');
     setHistory('');
+    // Ne jamais réutiliser les réponses ciblées du patient précédent.
+    setTargetedInterview('');
     setVitals({ ...emptyVitals });
     setExamination('');
     setPhysicalExamination({});
     setDiagnosis('');
     setPlan('');
+    setFollowUpDate('');
+    setFollowUpObjective('');
+    setFollowUpCompleted(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -405,21 +515,26 @@ export default function Consultations({
   const sortedConsultations = [...consultations].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
+  const followUpToday = new Date().toLocaleDateString('sv-SE');
+  const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
 
-  const selectedPatient = patients.find((patient) => patient.id === patientId);
-  const clinicalSuggestions = detectClinicalSuggestions({
+  const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
+  const selectedPatient = !expressPatientMismatch
+    ? patients.find((patient) => patient.id === patientId) : undefined;
+  const clinicalSuggestions = (expressPatientMismatch ? [] : detectClinicalSuggestions({
     patient: selectedPatient,
     specialty,
     motif,
     symptoms,
     history,
+    targetedInterview,
     vitals,
-  })
+  }))
     .filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`))
     .sort((a, b) => (a.priority === 'high' ? -1 : 0) - (b.priority === 'high' ? -1 : 0));
 
   const clinicalReasoning = useClinicalReasoning({
-    enabled: smartCopilotEnabled,
+    enabled: smartCopilotEnabled && !expressPatientMismatch,
     patient: selectedPatient,
     specialty,
     motif,
@@ -435,13 +550,13 @@ export default function Consultations({
 
   useEffect(() => {
     onClinicalReasoningChange?.({
-      enabled: smartCopilotEnabled,
-      status: clinicalReasoning.status,
-      analysis: clinicalReasoning.analysis,
-      error: clinicalReasoning.error,
-      updatedAt: clinicalReasoning.updatedAt,
+      enabled: smartCopilotEnabled && !expressPatientMismatch,
+      status: expressPatientMismatch ? 'idle' : clinicalReasoning.status,
+      analysis: expressPatientMismatch ? null : clinicalReasoning.analysis,
+      error: expressPatientMismatch ? '' : clinicalReasoning.error,
+      updatedAt: expressPatientMismatch ? '' : clinicalReasoning.updatedAt,
     });
-  }, [smartCopilotEnabled, clinicalReasoning.status, clinicalReasoning.analysis, clinicalReasoning.error, clinicalReasoning.updatedAt, onClinicalReasoningChange]);
+  }, [smartCopilotEnabled, expressPatientMismatch, clinicalReasoning.status, clinicalReasoning.analysis, clinicalReasoning.error, clinicalReasoning.updatedAt, onClinicalReasoningChange]);
 
 
   return (
@@ -691,6 +806,57 @@ export default function Consultations({
         </div>
         <span className="consultation-badge">Consultation médicale</span>
       </header>
+
+      <section className="consultation-section" aria-label="HELIOS Consultation Express — saisie rapide">
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <h3 style={{ margin: '0 0 5px' }}>HELIOS Consultation Express · saisie rapide</h3>
+            <p className="patient-hint" style={{ margin: 0 }}>
+              Copiez une note fictive structurée. Aucun diagnostic n'est déduit et aucune consultation n'est enregistrée automatiquement.
+            </p>
+          </div>
+          <button type="button" className="consultation-save"
+            onClick={() => setExpressOpen(open => !open)}
+            aria-expanded={expressOpen}>
+            {expressOpen ? 'Fermer la saisie express' : 'Ouvrir la saisie express'}
+          </button>
+        </div>
+        {expressPatientId && (
+          <div style={{ display: 'grid', gap: 8 }}>
+            {expressPatientMismatch && (
+              <p role="alert" className="patient-hint">
+                Patient changé après saisie express : sauvegarde et analyse IA suspendues.
+                Reprenez le dossier initial ou réinitialisez entièrement la consultation non enregistrée.
+              </p>
+            )}
+            <button type="button" className="consultation-save" onClick={resetExpressConsultation}
+              style={{ justifySelf: 'start', background: 'transparent',
+                border: '1px solid var(--border,#dce4e8)', color: 'inherit' }}>
+              Réinitialiser la consultation non enregistrée
+            </button>
+          </div>
+        )}
+        {expressOpen && (
+          <div className="consultation-field">
+            <label htmlFor="helios-express-draft">Note fictive à répartir dans les champs existants</label>
+            <textarea id="helios-express-draft" value={expressDraft}
+              maxLength={MAX_EXPRESS_DRAFT_CHARS}
+              placeholder={'Motif: Vertiges fictifs\\nSymptômes: Depuis 2 jours\\nHistoire: Traitement fictif\\nDiagnostic: À déterminer\\nPlan: À discuter'}
+              onChange={event => { setExpressDraft(event.target.value); setExpressFeedback(''); }}
+              rows={5} disabled={Boolean(editingId)} />
+            <p className="patient-hint">
+              Une ligne par champ : Motif, Symptômes, Histoire, Diagnostic, Plan.
+              Sélectionnez d'abord un patient unique et une spécialité ci-dessous.
+              Les valeurs existantes ne seront jamais écrasées. Validez et relisez les champs avant d'enregistrer.
+            </p>
+            <button type="button" className="consultation-save" onClick={applyExpressDraft}
+              disabled={Boolean(editingId) || !expressDraft.trim()}>
+              Préremplir les champs — sans enregistrer
+            </button>
+            {expressFeedback && <p role="status" className="patient-hint">{expressFeedback}</p>}
+          </div>
+        )}
+      </section>
 
       <section aria-label="Copilote clinique intelligent" className="smart-copilot-card">
         <label className="smart-copilot-label">
@@ -1068,6 +1234,29 @@ export default function Consultations({
         </div>
       </div>
 
+      <div className="consultation-section">
+        <h3>06 · HELIOS Follow-up — contrôle programmé</h3>
+        <p className="patient-hint">Suivi décidé par le médecin. Aucun rappel envoyé automatiquement au patient.</p>
+        <div className="consultation-grid">
+          <div className="consultation-field">
+            <label htmlFor="follow-up-date">Date de contrôle prévue (facultative)</label>
+            <input id="follow-up-date" type="date" value={followUpDate}
+              onChange={(e) => { setFollowUpDate(e.target.value); setSaved(false); }} />
+          </div>
+          <div className="consultation-field">
+            <label htmlFor="follow-up-objective">Objectif du contrôle</label>
+            <textarea id="follow-up-objective" maxLength={500} value={followUpObjective}
+              onChange={(e) => { setFollowUpObjective(e.target.value); setSaved(false); }}
+              placeholder="Exemple : réévaluer les constantes et les symptômes fictifs" />
+          </div>
+        </div>
+        <label style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 10 }}>
+          <input type="checkbox" checked={followUpCompleted}
+            onChange={(e) => { setFollowUpCompleted(e.target.checked); setSaved(false); }} />
+          Contrôle effectué (confirmation manuelle)
+        </label>
+      </div>
+
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <button className="consultation-save" onClick={saveConsultation} disabled={patients.length === 0}>
           {editingId ? 'Enregistrer les modifications' : 'Enregistrer la consultation'}
@@ -1086,6 +1275,47 @@ export default function Consultations({
       )}
 
       <div className="consultation-section">
+        <h3>HELIOS Follow-up · contrôles à revoir ({dueFollowUps.length})</h3>
+        <p className="patient-hint">
+          Consultations dont le contrôle est en retard, prévu aujourd’hui ou dans les sept jours.
+          Aucun message n’est envoyé au patient et aucun contrôle n’est clôturé automatiquement.
+        </p>
+        {dueFollowUps.length === 0 ? (
+          <p>Aucun contrôle de suivi à revoir dans cette période.</p>
+        ) : (
+          dueFollowUps.map((item) => {
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find(patient => patient.id === item.patientId)
+              : undefined;
+            const overdue = (item.followUp?.dueDate ?? '') < followUpToday;
+            return (
+              <div className="saved-consultation" key={'follow-up-' + item.id}>
+                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
+                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                {linkedPatient ? (
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    <button type="button" className="consultation-save"
+                      onClick={() => startEditing(item)}
+                      style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                      Ouvrir ce plan de suivi
+                    </button>
+                    <button type="button" className="consultation-save"
+                      onClick={() => completeFollowUp(item)}
+                      style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                      Marquer le contrôle effectué
+                    </button>
+                  </div>
+                ) : (
+                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                )}
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <div className="consultation-section">
         <h3>Historique des consultations ({consultations.length})</h3>
         {sortedConsultations.length === 0 ? (
           <p>Aucune consultation enregistrée pour le moment.</p>
@@ -1100,6 +1330,10 @@ export default function Consultations({
                 <p><b>Spécialité :</b> {item.specialty || 'Non précisée'}</p>
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
+                {item.followUp && (
+                  <p><b>HELIOS Follow-up :</b> {item.followUp.dueDate} · {item.followUp.status === 'completed' ? 'Contrôle effectué' : 'Contrôle prévu'}
+                    {item.followUp.objective ? ` · ${item.followUp.objective}` : ''}</p>
+                )}
                 <button
                   type="button"
                   className="consultation-save"

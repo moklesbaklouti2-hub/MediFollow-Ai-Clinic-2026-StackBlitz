@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import OrbVisual from './OrbVisual';
 import type { ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import type { VoiceCommandAction } from '../types/medical';
-import { MEDICAL_DICTIONARY } from '../data/medicalDictionary';
+import { normalizeSpeechCandidate, findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type SpeechResultLike, type MedicalSpeechCorrection } from '../services/medicalSpeech';
+import { sendClinicalRequest } from '../services/doctorClinicalTransport';
 import './OrbAssistant.css';
 
 type OrbAssistantProps = {
@@ -23,8 +24,6 @@ type OrbAssistantProps = {
 };
 
 type OrbMessage = { role: 'user' | 'assistant'; content: string };
-type SpeechAlternativeLike = { transcript: string };
-type SpeechResultLike = { isFinal: boolean; length: number; [index: number]: SpeechAlternativeLike };
 type SpeechEventLike = { resultIndex: number; results: ArrayLike<SpeechResultLike> };
 type SpeechErrorLike = { error: string };
 type SpeechRecognitionLike = {
@@ -40,167 +39,6 @@ type SpeechRecognitionLike = {
   abort: () => void;
 };
 type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
-
-// Vocabulaire médical utilisé pour départager les alternatives proposées
-// par le moteur vocal du navigateur. Il ne remplace pas une validation humaine.
-// Le vocabulaire de reconnaissance provient du référentiel médical structuré.
-// Les synonymes sont également pris en compte pour départager les alternatives vocales.
-const medicalSpeechTerms = MEDICAL_DICTIONARY.flatMap(entry => [entry.term, ...(entry.synonyms || [])]);
-
-function normalizeSpeechCandidate(value: string): string {
-  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr');
-}
-
-// Corrections proposées uniquement pour les erreurs réellement observées pendant les tests.
-// Elles restent soumises à la confirmation du médecin : aucune substitution automatique.
-const observedMedicalSpeechCorrections: Record<string, string> = {
-  exuda: 'exsudat',
-  exudar: 'exsudat',
-  exodat: 'exsudat',
-  disney: 'dyspnée',
-  audiophagie: 'odynophagie',
-  audinophagie: 'odynophagie',
-  inaudipnee: 'dyspnée',
-  athenopathie: 'adénopathie',
-};
-
-type MedicalSpeechCorrection = { original: string; replacement: string };
-
-function levenshteinDistance(a: string, b: string): number {
-  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
-  for (let i = 1; i <= a.length; i += 1) {
-    let diagonal = previous[0];
-    previous[0] = i;
-    for (let j = 1; j <= b.length; j += 1) {
-      const above = previous[j];
-      previous[j] = Math.min(
-        previous[j] + 1,
-        previous[j - 1] + 1,
-        diagonal + (a[i - 1] === b[j - 1] ? 0 : 1),
-      );
-      diagonal = above;
-    }
-  }
-  return previous[b.length];
-}
-
-// Clé phonétique française simplifiée : rapproche certaines graphies
-// produites par la dictée sans prétendre remplacer un moteur médical spécialisé.
-function frenchPhoneticKey(value: string): string {
-  return normalizeSpeechCandidate(value)
-    .replace(/œ/g, 'oe')
-    .replace(/eaux?/g, 'o')
-    .replace(/ph/g, 'f')
-    .replace(/au/g, 'o')
-    .replace(/ou/g, 'u')
-    .replace(/oy/g, 'oi')
-    .replace(/y/g, 'i')
-    .replace(/qu/g, 'k')
-    .replace(/c(?=[eiy])/g, 's')
-    .replace(/c(?=[aou])/g, 'k')
-    .replace(/g(?=[eiy])/g, 'j')
-    .replace(/ch/g, 'sh')
-    .replace(/tion/g, 'sion')
-    .replace(/h/g, '')
-    .replace(/(.)\1+/g, '$1')
-    .replace(/(e|es|s|x)$/g, '');
-}
-
-function findClosestMedicalTerm(word: string): string | null {
-  const normalizedWord = normalizeSpeechCandidate(word);
-  if (normalizedWord.length < 5) return null;
-
-  let bestTerm = '';
-  let bestDistance = Number.POSITIVE_INFINITY;
-  for (const term of medicalSpeechTerms) {
-    // Les expressions composées sont évaluées plus tard avec le contexte.
-    if (term.includes(' ')) continue;
-    const normalizedTerm = normalizeSpeechCandidate(term);
-    if (normalizedTerm.length < 5 || normalizedTerm === normalizedWord) continue;
-    const distance = levenshteinDistance(normalizedWord, normalizedTerm);
-    const phoneticDistance = levenshteinDistance(
-      frenchPhoneticKey(word),
-      frenchPhoneticKey(term),
-    );
-    const allowedDistance = normalizedWord.length >= 10 ? 3 : normalizedWord.length >= 7 ? 2 : 1;
-    const phoneticLimit = normalizedWord.length >= 10 ? 3 : normalizedWord.length >= 7 ? 2 : 1;
-    // Une proximité phonétique peut rattraper une graphie très déformée,
-    // mais la suggestion reste soumise à validation par le médecin.
-    const isClose = distance <= allowedDistance || phoneticDistance <= phoneticLimit;
-    const combinedScore = Math.min(distance, phoneticDistance + 0.25);
-    if (isClose && combinedScore < bestDistance) {
-      bestDistance = combinedScore;
-      bestTerm = term;
-    }
-  }
-  return bestTerm || null;
-}
-
-function isLikelyExsudatContext(value: string): boolean {
-  const normalizedText = normalizeSpeechCandidate(value);
-  const hasClinicalCue = /\b(presence|depot|depots|plaque|plaques|enduit|examen)\b/.test(normalizedText);
-  const hasAnatomicalSite = /\b(amygdale|amygdales|tonsille|tonsilles|pharynx|gorge)\b/.test(normalizedText);
-  const hasLocationLink = /\b(sur|dans|au niveau de|au niveau des|au niveau du)\b/.test(normalizedText);
-  return hasClinicalCue && hasAnatomicalSite && hasLocationLink;
-}
-
-function findMedicalSpeechCorrections(value: string): MedicalSpeechCorrection[] {
-  const found = new Map<string, MedicalSpeechCorrection>();
-  const exsudatContext = isLikelyExsudatContext(value);
-  for (const original of value.match(/[\p{L}]+/gu) || []) {
-    const normalized = normalizeSpeechCandidate(original);
-    // « excellent » est un mot français valide : ne le rapprocher d'« exsudat »
-    // que dans une phrase ORL décrivant un dépôt ou une plaque sur une zone compatible.
-    const contextualReplacement = normalized === 'excellent' && exsudatContext
-      ? 'exsudat'
-      : null;
-    const explicitReplacement = observedMedicalSpeechCorrections[normalized];
-    const replacement = contextualReplacement
-      || explicitReplacement
-      || (normalized === 'excellent' ? null : findClosestMedicalTerm(original));
-    if (replacement && normalized !== normalizeSpeechCandidate(replacement)) {
-      if (!found.has(normalized)) found.set(normalized, { original, replacement });
-    }
-  }
-  return Array.from(found.values());
-}
-
-function applyMedicalSpeechCorrection(value: string, correction: MedicalSpeechCorrection): string {
-  const target = normalizeSpeechCandidate(correction.original);
-  return value.replace(/[\p{L}]+/gu, word => {
-    if (normalizeSpeechCandidate(word) !== target) return word;
-    return word[0] === word[0].toLocaleUpperCase('fr')
-      ? correction.replacement.charAt(0).toLocaleUpperCase('fr') + correction.replacement.slice(1)
-      : correction.replacement;
-  });
-}
-
-function chooseMedicalSpeechAlternative(result: SpeechResultLike): string {
-  const candidates = Array.from({ length: result.length }, (_, index) =>
-    (result[index]?.transcript || '').trim()
-  ).filter(Boolean);
-
-  if (candidates.length <= 1) return candidates[0] || '';
-
-  const scored = candidates.map((transcript, index) => {
-    const normalized = normalizeSpeechCandidate(transcript);
-    const score = medicalSpeechTerms.reduce((total, term) => {
-      const normalizedTerm = normalizeSpeechCandidate(term);
-      // Évite les faux positifs sur des fragments de mots (ex. « mal » dans « normal »).
-      const escapedTerm = normalizedTerm.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\$&');
-      const exactTerm = new RegExp(`(^|[^\\p{L}])${escapedTerm}(?=$|[^\\p{L}])`, 'u');
-      return total + (exactTerm.test(normalized) ? 3 : 0);
-    }, 0);
-    return { transcript, score, index };
-  });
-
-  // Ne choisit une alternative que si elle contient un terme médical reconnu
-  // que la première proposition ne contient pas. En cas d'égalité, garde l'original.
-  const best = scored.reduce((current, candidate) =>
-    candidate.score > current.score ? candidate : current
-  );
-  return best.score > scored[0].score ? best.transcript : candidates[0];
-}
 
 const suggestionsByPage: Record<string, string[]> = {
   'Tableau de bord': ['Aide-moi à organiser ma journée.', 'Quels points dois-je surveiller dans mon activité ?'],
@@ -223,6 +61,9 @@ export default function OrbAssistant({
   clinicalInsight,
 }: OrbAssistantProps) {
   const [panelOpen, setPanelOpen] = useState(false);
+  // Ref synchronisée à l'ouverture/fermeture : une réponse IA tardive
+  // ne doit pas recommencer à parler dans un panneau désormais fermé.
+  const panelOpenRef = useRef(false);
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<'chat' | 'command'>('chat');
   const [sending, setSending] = useState(false);
@@ -238,6 +79,7 @@ const [isListening, setIsListening] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState('');
   const [speechMessage, setSpeechMessage] = useState('');
   const [speechCorrections, setSpeechCorrections] = useState<MedicalSpeechCorrection[]>([]);
+  const [dictatedNumberPending, setDictatedNumberPending] = useState(false);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const commandListeningEnabledRef = useRef(false);
   const speechBaseInputRef = useRef('');
@@ -253,8 +95,14 @@ const [isListening, setIsListening] = useState(false);
     if ('speechSynthesis' in window) window.speechSynthesis.cancel();
   }
 
-  function speakReply(reply: string) {
-    if (!voiceRepliesRef.current || !('speechSynthesis' in window) || !reply.trim()) return;
+  function speakReply(reply: string, manual = false, expectedGeneration?: number) {
+    // Contrôler l'état ACTUEL du panneau, non l'état capturé avant l'appel IA.
+    // La génération empêche aussi une réponse antérieure de se faire entendre
+    // après fermeture/réouverture ou après un bouton « Stop parole ».
+    if (!panelOpenRef.current ||
+        (expectedGeneration !== undefined && expectedGeneration !== speechGenerationRef.current) ||
+        (!manual && !voiceRepliesRef.current) || !('speechSynthesis' in window) ||
+        !('SpeechSynthesisUtterance' in window) || !reply.trim()) return;
     stopSpeaking();
     const generation = speechGenerationRef.current;
     const utterance = new SpeechSynthesisUtterance(reply.slice(0, 800));
@@ -282,6 +130,49 @@ const [isListening, setIsListening] = useState(false);
     window.speechSynthesis.speak(utterance);
   }
 
+  function readMessageAloud(reply: string) {
+    if (!reply.trim()) return;
+    if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+      setSpeechMessage('Lecture vocale indisponible sur ce navigateur.');
+      return;
+    }
+    // Chaque lecture ponctuelle demande un accord explicite : une réponse
+    // peut contenir des données cliniques audibles par des tiers.
+    if (!window.confirm('Lire cette réponse à voix haute ? Vérifiez que personne ne peut entendre des informations confidentielles.')) return;
+
+    // Empêcher le microphone de transcrire la propre lecture de MediFollow.
+    commandListeningEnabledRef.current = false;
+    if (speechRestartTimerRef.current) {
+      clearTimeout(speechRestartTimerRef.current);
+      speechRestartTimerRef.current = null;
+    }
+    recognitionRef.current?.abort();
+    recognitionRef.current = null;
+    setIsListening(false);
+    setInterimTranscript('');
+    speakReply(reply, true);
+  }
+
+  function openPanel() {
+    panelOpenRef.current = true;
+    setPanelOpen(true);
+  }
+
+  function closePanel() {
+    panelOpenRef.current = false;
+    commandListeningEnabledRef.current = false;
+    if (speechRestartTimerRef.current) {
+      clearTimeout(speechRestartTimerRef.current);
+      speechRestartTimerRef.current = null;
+    }
+    recognitionRef.current?.abort();
+    recognitionRef.current = null;
+    setIsListening(false);
+    setInterimTranscript('');
+    stopSpeaking();
+    setPanelOpen(false);
+  }
+
   function toggleVoiceReplies() {
     if (voiceRepliesRef.current) {
       voiceRepliesRef.current = false;
@@ -303,13 +194,14 @@ const [isListening, setIsListening] = useState(false);
 
   useEffect(() => {
     if (!clinicalPrompt) return;
-    setPanelOpen(true);
+    openPanel();
     setInput(clinicalPrompt);
     onClinicalPromptConsumed?.();
   }, [clinicalPrompt, onClinicalPromptConsumed]);
 
   useEffect(() => {
     return () => {
+      panelOpenRef.current = false;
       shouldContinueListeningRef.current = false;
       commandListeningEnabledRef.current = false;
       if (speechRestartTimerRef.current) clearTimeout(speechRestartTimerRef.current);
@@ -382,6 +274,7 @@ const [isListening, setIsListening] = useState(false);
         const dictatedText = uniqueFinalParts.join(' ').trim();
         speechCurrentTextRef.current = dictatedText;
         setSpeechCorrections(findMedicalSpeechCorrections(dictatedText));
+        if (mode !== 'command') setDictatedNumberPending(hasDictatedClinicalNumber(dictatedText));
 
         const base = speechBaseInputRef.current.trimEnd();
         setInput(`${base}${base && dictatedText ? ' ' : ''}${dictatedText}`);
@@ -390,6 +283,21 @@ const [isListening, setIsListening] = useState(false);
 
       recognition.onerror = (event) => {
         if (sessionEnded || recognitionRef.current !== recognition) return;
+        // Une erreur (refus d'accès, réseau, absence de parole ou autre)
+        // invalide immédiatement la session, même si une transcription
+        // finale avait été reçue juste avant. Aucun ordre ne sera exécuté.
+        sessionEnded = true;
+        commandListeningEnabledRef.current = false;
+        recognitionRef.current = null;
+        speechCurrentTextRef.current = '';
+        speechFinalSegmentsRef.current.clear();
+        setSpeechCorrections([]);
+        setInterimTranscript('');
+        setIsListening(false);
+        if (mode === 'command') setInput('');
+        // Ne dépendre ni du délai ni de la présence d'un événement "end"
+        // envoyé après l'erreur par le navigateur Android.
+        try { recognition.abort(); } catch { /* reconnaissance déjà arrêtée */ }
         const messages: Record<string, string> = {
           'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
           'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
@@ -397,11 +305,8 @@ const [isListening, setIsListening] = useState(false);
           'audio-capture': 'Aucun microphone accessible n’a été détecté.',
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
-        // Ne pas relancer indéfiniment le microphone après un refus d'accès
-        // ou une panne réseau, ni boucler en silence si aucune parole n'est détectée.
-        if (['not-allowed', 'service-not-allowed', 'audio-capture', 'network', 'no-speech'].includes(event.error)) {
-          commandListeningEnabledRef.current = false;
-        }
+        // Toute erreur bloque le redémarrage automatique, y compris
+        // celles que ce navigateur ne répertorie pas encore.
         if (event.error !== 'aborted') {
           setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
         }
@@ -428,6 +333,9 @@ const [isListening, setIsListening] = useState(false);
           if (/^(?:stop|arrete|arret)(?:[\s,;:.!?-]+(?:l['’]?)?ecoute)?[\s,;:.!?-]*$/.test(normalizedVoiceCommand)) {
             commandListeningEnabledRef.current = false;
             setSpeechMessage('Écoute vocale arrêtée.');
+          } else if (dictatedText && hasDictatedClinicalNumber(dictatedText)) {
+            commandListeningEnabledRef.current = false;
+            setSpeechMessage('Valeur numérique dictée : commande suspendue. Vérifiez et confirmez les chiffres manuellement avant toute action.');
           } else if (dictatedText) {
             void sendMessage(dictatedText).finally(() => {
               if (commandListeningEnabledRef.current && !voiceRepliesRef.current && !speakingRef.current) {
@@ -475,9 +383,16 @@ const [isListening, setIsListening] = useState(false);
   async function sendMessage(value = input) {
     const message = value.trim();
     if (!message || sending) return;
+    // L'audio de ce message n'est valable que dans la session vocale active.
+    const responseSpeechGeneration = speechGenerationRef.current;
+    if (mode !== 'command' && dictatedNumberPending) {
+      setSpeechMessage('Confirmez les valeurs numériques dictées après relecture avant l’envoi.');
+      return;
+    }
     const history = messages.slice(-12);
     if (mode !== 'command') setMessages(previous => [...previous, { role: 'user', content: message }]);
     setInput('');
+    setDictatedNumberPending(false);
     setSending(true);
 
     const context = {
@@ -506,14 +421,13 @@ const [isListening, setIsListening] = useState(false);
         if (quickMatch) {
           onNavigate(quickMatch.page);
           setMessages(previous => [...previous, { role: 'assistant', content: quickMatch.page + ' ouvert.' }]);
-          speakReply(quickMatch.page + ' ouvert.');
+          speakReply(quickMatch.page + ' ouvert.', false, responseSpeechGeneration);
           return;
         }
 
-        const response = await fetch('/api/commands/interpret', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ instruction: message, currentPage }),
+        const response = await sendClinicalRequest('/api/commands/interpret', {
+          instruction: message,
+          currentPage,
         });
         const contentType = response.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) throw new Error('Réponse inattendue du moteur de commandes.');
@@ -565,16 +479,13 @@ const [isListening, setIsListening] = useState(false);
           role: 'assistant',
           content: resultParts.join('\n\n') || 'Je n’ai identifié aucune action sûre à effectuer. Pouvez-vous reformuler la commande ?',
         }]);
-        speakReply(safeActions.length ? 'Commande traitée. Vérifiez les modifications affichées.' : 'Je n’ai identifié aucune action sûre. Pouvez-vous reformuler ?');
+        speakReply(safeActions.length ? 'Commande traitée. Vérifiez les modifications affichées.' : 'Je n’ai identifié aucune action sûre. Pouvez-vous reformuler ?', false, responseSpeechGeneration);
         return;
       }
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, context, history }),
-        signal: AbortSignal.timeout(45000),
-      });
+      const response = await sendClinicalRequest('/api/chat', {
+        message, context, history,
+      }, { signal: AbortSignal.timeout(45000) });
       const contentType = response.headers.get('content-type') || '';
       if (!contentType.includes('application/json')) {
         const unexpected = await response.text();
@@ -583,7 +494,7 @@ const [isListening, setIsListening] = useState(false);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Erreur du moteur IA.');
       setMessages(previous => [...previous, { role: 'assistant', content: data.reply || 'Je n’ai pas reçu de réponse.' }]);
-      speakReply(data.reply || 'Je n’ai pas reçu de réponse.');
+      speakReply(data.reply || 'Je n’ai pas reçu de réponse.', false, responseSpeechGeneration);
     } catch (error) {
       setMessages(previous => [...previous, {
         role: 'assistant',
@@ -630,7 +541,7 @@ const [isListening, setIsListening] = useState(false);
                   ? `Poursuivons le raisonnement clinique de cette consultation. Résumé de l'analyse : ${clinicalInsight.analysis.situationSummary} Question à approfondir : ${clinicalInsight.analysis.nextQuestion}`
                   : `Aide-moi à approfondir cette analyse clinique : ${clinicalInsight.analysis?.situationSummary || ''}`;
                 setInput(prompt);
-                setPanelOpen(true);
+                openPanel();
               }}>Approfondir avec l’Orb ↗</button>
             </>
           ) : clinicalInsight.status === 'error' ? (
@@ -648,7 +559,7 @@ const [isListening, setIsListening] = useState(false);
               <span className={`mf-orb-status-dot${sending || isThinking ? ' is-thinking' : ''}`} />
               <div><strong>MediFollow AI</strong><small>ASSISTANT CLINIQUE PERMANENT</small></div>
             </div>
-            <button type="button" className="mf-orb-close" onClick={() => setPanelOpen(false)} aria-label="Fermer l'assistant">×</button>
+            <button type="button" className="mf-orb-close" onClick={closePanel} aria-label="Fermer l'assistant">×</button>
           </div>
 
           <div className="mf-orb-context"><span>Vous êtes dans</span><strong>{currentPage}</strong><span>Je peux vous accompagner sur cette étape.</span></div>
@@ -685,6 +596,18 @@ const [isListening, setIsListening] = useState(false);
               <div className={`mf-orb-message ${message.role}`} key={index}>
                 <span>{message.role === 'user' ? 'Vous' : 'MediFollow'}</span>
                 <p>{message.content}</p>
+                {message.role === 'assistant' && (
+                  <button
+                    type="button"
+                    className="mf-orb-read-reply"
+                    onClick={() => readMessageAloud(message.content)}
+                    disabled={!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)}
+                    aria-label={`Lire à voix haute la réponse ${index + 1} de MediFollow`}
+                    title="Lecture ponctuelle avec confirmation de confidentialité"
+                  >
+                    🔊 Lire cette réponse
+                  </button>
+                )}
               </div>
             ))}
             {sending && <div className="mf-orb-typing">MediFollow réfléchit…</div>}
@@ -703,7 +626,7 @@ const [isListening, setIsListening] = useState(false);
               {voiceRepliesEnabled ? '🔊 Voix activée' : '🔇 Activer la voix'}
             </button>
             {isSpeaking && <button type="button" onClick={stopSpeaking} aria-label="Interrompre la réponse parlée">■ Stop parole</button>}
-            <small aria-live="polite">{isSpeaking ? 'MediFollow parle…' : isListening ? 'MediFollow écoute…' : sending ? 'MediFollow réfléchit…' : 'Lecture vocale désactivée par défaut'}</small>
+            <small aria-live="polite">{isSpeaking ? 'MediFollow parle…' : isListening ? 'MediFollow écoute…' : sending ? 'MediFollow réfléchit…' : voiceRepliesEnabled ? 'Voix automatique activée' : 'Lecture automatique désactivée · lecture ponctuelle disponible'}</small>
           </div>
           {mode === 'command' && (
             <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
@@ -728,6 +651,12 @@ const [isListening, setIsListening] = useState(false);
               {mode !== 'command' && interimTranscript && isListening ? ` ${interimTranscript}` : ''}
             </div>
           )}
+          {mode !== 'command' && dictatedNumberPending && (
+            <div className="mf-orb-speech-status has-error" role="alert">
+              <strong>Valeur clinique dictée à vérifier.</strong> La reconnaissance vocale peut confondre 87 et 97 %. Relisez et corrigez les chiffres dans le texte avant de poursuivre.
+              <button type="button" onClick={() => { setDictatedNumberPending(false); setSpeechMessage('Valeurs numériques confirmées par le médecin.'); }}>J’ai vérifié les chiffres</button>
+            </div>
+          )}
           {mode !== 'command' && speechCorrections.length > 0 && (
             <div className="mf-orb-speech-corrections" aria-live="polite">
               <strong>Vérification de termes médicaux — confirmez avant correction :</strong>
@@ -747,12 +676,12 @@ const [isListening, setIsListening] = useState(false);
           )}
           <div className="mf-orb-panel-footer">
             <span>Entrée pour envoyer · Maj + Entrée pour une ligne</span>
-            <button type="button" onClick={() => { setPanelOpen(false); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
+            <button type="button" onClick={() => { closePanel(); onOpenCopilot(); }}>Ouvrir le copilote complet ↗</button>
           </div>
         </section>
       )}
 
-      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => setPanelOpen(open => !open)} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
+      <button type="button" className={`mf-orb-launcher${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : openPanel()} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
         <span className="mf-orb-canvas"><OrbVisual isThinking={isThinking || sending} /></span>
       </button>
       <span className="mf-orb-caption">{sending || isThinking ? 'JE RÉFLÉCHIS' : 'À VOTRE ÉCOUTE'}</span>

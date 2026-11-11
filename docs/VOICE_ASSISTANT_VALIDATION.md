@@ -29,3 +29,29 @@ Aucun test sur un véritable appareil Android n'a été exécuté par la modific
 - Ajouter un bouton explicite de lecture ponctuelle des réponses, avec confirmation pour les données sensibles.
 - Tester l'accessibilité et le comportement des voix absentes.
 - Ajouter des tests automatisés des transitions d'état et de l'annulation.
+
+## QW-005 — Lecture ponctuelle des réponses (à tester sur Chrome Android)
+
+- Chaque réponse de MediFollow affiche **« Lire cette réponse »**. La lecture ponctuelle ne modifie pas le réglage général **Activer la voix**.
+- Une confirmation de confidentialité précède **chaque** lecture : refuser ne doit déclencher aucune parole.
+- À l'acceptation, le microphone et le redémarrage automatique des commandes sont arrêtés pour empêcher que l'Orb retranscrive sa propre voix.
+- La lecture utilise le moteur vocal du navigateur, une voix française si disponible et la limite existante de **800 caractères**.
+- Tester **Stop parole**, fermeture par la croix, fermeture en cliquant l'Orb et passage au copilote complet : aucun son ne doit continuer.
+- Sans moteur vocal, le contrôle ponctuel doit être désactivé ; le texte reste visible.
+- Tester navigation au clavier et focus visuel. **Aucun test sur appareil Android réel n'a été exécuté par le présent lot.**
+
+## QW-006 — Préparation des essais de permission et de reprise (données fictives)
+
+- Le gestionnaire d'erreur de reconnaissance met immédiatement fin à la session, arrête le microphone et désarme toutes les commandes, même en l'absence d'événement `onend` et en cas de code d'erreur inconnu.
+- Le texte partiellement reconnu dans le **mode commandes** n'est jamais envoyé à l'IA ni exécuté à la suite d'une erreur. La conversation tapée manuellement et le mode dictée restent disponibles.
+- La suite de tests hors ligne vérifie le contrat du vrai composant pour six points (sans simuler un navigateur Android réel).
+- **À vérifier sur téléphone avec données entièrement fictives :** refuser la permission micro ; vérifier l'absence de boucle ; réautoriser puis relancer volontairement ; couper le réseau en cours de dictée ; fermer l'Orb après une phrase interrompue ; vérifier que la commande n'a pas été exécutée et qu'aucun micro ne reste actif.
+- **État :** les tests automatiques ne valident pas les permissions, le matériel ou les événements réels Chrome Android. Garder QW-006 en attente de validation manuelle avant toute clôture complète.
+
+## QW-006C — Réponse IA reçue après fermeture de l'Orb
+
+- En mode voix automatique, envoyer un message fictif qui provoque une réponse lente, puis fermer l'Orb avant sa réception : **aucune lecture ne doit commencer** après fermeture.
+- Répéter en fermant puis en rouvrant l'Orb avant la réponse : **la réponse de la session précédente ne doit pas être lue**.
+- Appuyer sur « Stop parole » pendant qu'une réponse est en cours : une ancienne requête ne doit pas déclencher une nouvelle lecture.
+- Le bouton ponctuel « Lire cette réponse » reste utilisable dans le panneau ouvert après confirmation de confidentialité.
+- Ces comportements font l'objet de six contrôles structurels hors ligne. Ils nécessitent encore une validation manuelle sur Chrome Android ; aucune reproduction matérielle n'est revendiquée.

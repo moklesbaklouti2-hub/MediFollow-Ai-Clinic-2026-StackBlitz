@@ -2,11 +2,29 @@ import { useMemo, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
+import { selectUniquePatient } from '../services/uniquePatientSelection';
+import { latestVitalReadings } from '../clinical/patientVitals';
+import { buildClinicalMemory } from '../clinical/clinicalMemory';
+import { compareRecentVitals } from '../clinical/trends';
+import { buildPreventionReview } from '../clinical/prevention';
+import { buildReferralSource } from '../clinical/referral';
+import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
+import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
+import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
+import { filterRecordedEvents } from '../clinical/timelineFilter';
+import { searchRecordedEvents } from '../clinical/timelineSearch';
+import { filterDocumentedPrescriptionStatus } from '../clinical/timelineStatusFilter';
+import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
+import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
+import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
 
   const [search, setSearch] = useState('');
+  const [timelineFilter, setTimelineFilter] = useState<MedicalTimelineFilter>('all');
+  const [timelineSearch, setTimelineSearch] = useState('');
+  const [prescriptionStatusFilter, setPrescriptionStatusFilter] = useState<TimelinePrescriptionStatusFilter>('all');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -19,7 +37,7 @@ export default function Patients() {
   const [editPhone, setEditPhone] = useState('');
   const [editStatus, setEditStatus] = useState('');
 
-  const selected = patients.find((patient) => patient.id === selectedId) ?? null;
+  const selected = selectUniquePatient(patients, selectedId);
 
   const filtered = useMemo(
     () => patients.filter((patient) =>
@@ -29,18 +47,14 @@ export default function Patients() {
   );
 
   const patientConsultations = selected
-    ? consultations
-        .filter((item) => item.patientId === selected.id)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    ? orderRecordedNewest(consultations.filter((item) => item.patientId === selected.id))
     : [];
 
   const patientPrescriptions = selected
-    ? prescriptions
-        .filter((item) => item.patientId === selected.id)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    ? orderRecordedNewest(prescriptions.filter((item) => item.patientId === selected.id))
     : [];
 
-  const medicalTimeline = [
+  const medicalTimeline = orderRecordedNewest([
     ...patientConsultations.map((consultation) => ({
       type: 'consultation' as const,
       id: consultation.id,
@@ -53,47 +67,33 @@ export default function Patients() {
       date: prescription.date,
       prescription,
     })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ]);
+  const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter);
+  const searchedMedicalTimeline = searchRecordedEvents(visibleMedicalTimeline, timelineSearch);
+  const statusFilteredMedicalTimeline = timelineFilter === 'prescription'
+    ? filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)
+    : searchedMedicalTimeline;
 
   const lastVisitByPatient = useMemo(() => {
-    const result: Record<string, string> = {};
-    const ordered = [...consultations].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    ordered.forEach((consultation) => {
-      if (consultation.patientId && !result[consultation.patientId]) {
+    // Prototype-free map: imported patient IDs cannot shadow object keys.
+    const result: Record<string, string> = Object.create(null);
+    for (const consultation of orderRecordedNewest(consultations)) {
+      if (typeof consultation.patientId !== 'string' || !consultation.patientId.trim() ||
+          recordedDateTimestamp(consultation.date) === null) continue;
+      if (!Object.prototype.hasOwnProperty.call(result, consultation.patientId)) {
         result[consultation.patientId] = consultation.date;
       }
-    });
-
+    }
     return result;
   }, [consultations]);
 
-  const latestVitals = selected
-    ? patientConsultations.reduce(
-        (latest, consultation) => {
-          (Object.keys(latest) as (keyof typeof latest)[]).forEach((key) => {
-            const currentValue = String(consultation.vitals[key] ?? '').trim();
-            if (!String(latest[key] ?? '').trim() && currentValue) {
-              latest[key] = currentValue;
-            }
-          });
-          return latest;
-        },
-        {
-          systolic: '',
-          diastolic: '',
-          heartRate: '',
-          spo2: '',
-          temperature: '',
-          respiratoryRate: '',
-          weight: '',
-          height: '',
-          glycemia: '',
-        }
-      )
-    : null;
+  // Each latest reading keeps the date of its own consultation.
+  const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;
+  const clinicalMemory = selected ? buildClinicalMemory(selected, patientConsultations) : null;
+  const recordedVitalComparisons = selected ? compareRecentVitals(patientConsultations) : [];
+  const preventionReview = selected ? buildPreventionReview(selected, patientConsultations) : null;
+  const referralSource = selected ? buildReferralSource(selected.id, patientConsultations) : null;
+  const documentedSpecialties = selected ? summarizeDocumentedSpecialties(selected.id, patientConsultations) : [];
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -194,8 +194,7 @@ export default function Patients() {
   }
 
   function displayDate(value: string) {
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? value : date.toLocaleString('fr-FR');
+    return displayRecordedDate(value);
   }
 
   const vitalLabels: { key: keyof NonNullable<typeof latestVitals>; label: string; unit: string }[] = [
@@ -340,6 +339,8 @@ export default function Patients() {
         .patient-summary-item strong,.patient-vital strong { overflow-wrap:anywhere; }
         .patient-vital strong { font-size:18px; }
         .patient-consultation,.patient-prescription { padding:14px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:7px; }
+        .patient-timeline-filter { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:10px 0 14px; font-size:13px; }
+        .patient-timeline-filter select, .patient-timeline-filter input { color:var(--text,#263646); background:var(--card,#fff); border:1px solid var(--border,#e5ebef); border-radius:8px; padding:7px 10px; max-width:100%; }
         .patient-timeline-entry { padding:15px; border:1px solid var(--border,#e5ebef); border-left:4px solid #42d5b4; border-radius:12px; display:grid; gap:8px; }
         .patient-trends-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
         @media(max-width:700px) { .patient-trends-grid { grid-template-columns:1fr; } }
@@ -405,7 +406,7 @@ export default function Patients() {
               <div className="patient-meta">{patient.age} ans · {patient.sex} · {patient.phone}</div>
               <div className="patient-meta">
                 Dernière visite : {lastVisitByPatient[patient.id]
-                  ? new Date(lastVisitByPatient[patient.id]).toLocaleDateString('fr-FR')
+                  ? displayDate(lastVisitByPatient[patient.id])
                   : 'Aucune visite'}
               </div>
             </div>
@@ -440,6 +441,15 @@ export default function Patients() {
         )}
       </section>
 
+      {selectedId !== null && !selected && (
+        <p role="alert" className="patient-empty-history">
+          Dossier patient introuvable ou identifiant dupliqué. Vérifiez les données importées
+          avant d’accéder à l’historique médical.
+          <button type="button" className="patient-view" onClick={() => setSelectedId(null)}>
+            Fermer la sélection
+          </button>
+        </p>
+      )}
       {selected && (
         <div className="patient-detail">
           <div className="patient-detail-heading">
@@ -480,6 +490,153 @@ export default function Patients() {
             onSave={(changes) => updatePatient(selected.id, changes)}
           />
 
+          {clinicalMemory && (
+            <section aria-label="HELIOS Clinical Memory — mémoire documentaire">
+              <h3 className="patient-section-title">HELIOS Clinical Memory · aperçu documentaire</h3>
+              <p className="patient-empty-history">
+                Extraits des données enregistrées pour ce dossier. À vérifier lors de la consultation :
+                aucune information manquante n'est interprétée comme une absence d'allergie, de traitement ou de diagnostic.
+              </p>
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Allergies déclarées</span>
+                  {clinicalMemory.allergies.length ? (
+                    <ul className="patient-medication-list">
+                      {clinicalMemory.allergies.map((entry, index) => <li key={index}>{entry}</li>)}
+                    </ul>
+                  ) : <strong>Non renseigné</strong>}
+                </div>
+                <div className="patient-summary-item">
+                  <span>Traitements déclarés dans le dossier (à confirmer)</span>
+                  {clinicalMemory.declaredTreatments.length ? (
+                    <ul className="patient-medication-list">
+                      {clinicalMemory.declaredTreatments.map((entry, index) => <li key={index}>{entry}</li>)}
+                    </ul>
+                  ) : <strong>Non renseigné</strong>}
+                </div>
+              </div>
+              <h4 className="patient-section-title">Antécédents documentés dans ce dossier</h4>
+              <div className="patient-summary-grid">
+                {([
+                  { key: 'medical', label: 'Antécédents médicaux déclarés' },
+                  { key: 'surgical', label: 'Antécédents chirurgicaux déclarés' },
+                  { key: 'family', label: 'Antécédents familiaux déclarés' },
+                ] as const).map(group => (
+                  <div className="patient-summary-item" key={group.key}>
+                    <span>{group.label}</span>
+                    {clinicalMemory.documentedHistory[group.key].length ? (
+                      <ul className="patient-medication-list">
+                        {clinicalMemory.documentedHistory[group.key].map((entry, index) => (
+                          <li key={index}>{entry}</li>
+                        ))}
+                      </ul>
+                    ) : <strong>Non renseigné</strong>}
+                  </div>
+                ))}
+              </div>
+              <div className="patient-summary-item">
+                <span>Trois derniers diagnostics consignés dans les consultations (non revalidés)</span>
+                {clinicalMemory.documentedDiagnoses.length ? (
+                  <ul className="patient-medication-list">
+                    {clinicalMemory.documentedDiagnoses.map((entry) => (
+                      <li key={entry.consultationId}>
+                        {entry.label} · {displayDate(entry.date)}
+                      </li>
+                    ))}
+                  </ul>
+                ) : <strong>Non renseigné</strong>}
+              </div>
+            </section>
+          )}
+
+          {preventionReview && (
+            <section aria-label="HELIOS Prevention — entretien documentaire">
+              <h3 className="patient-section-title">HELIOS Prevention · préparation documentaire</h3>
+              <p className="patient-empty-history">
+                Repères de discussion non personnalisés. Les informations du dossier restent déclaratives :
+                cette rubrique ne vérifie ni l'éligibilité ni la réalisation d'un acte préventif.
+              </p>
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Âge enregistré (à confirmer)</span>
+                  <strong>{preventionReview.recordedAge === null ? 'Non renseigné' : `${preventionReview.recordedAge} ans`}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Dernière consultation datée dans ce dossier</span>
+                  <strong>{preventionReview.lastDatedConsultation
+                    ? displayDate(preventionReview.lastDatedConsultation) : 'Non renseignée'}</strong>
+                </div>
+              </div>
+              <ul className="patient-medication-list">
+                {preventionReview.discussionTopics.map((topic) => (
+                  <li key={topic.id}><strong>{topic.label}</strong> — À vérifier avec le patient et à documenter par le médecin.</li>
+                ))}
+              </ul>
+              <p className="patient-empty-history">
+                Aucune vaccination, aucun dépistage ni autre acte n'est présumé effectué ou manquant.
+                Aucune échéance, alerte, décision clinique ou transmission à une IA externe n'est générée.
+              </p>
+            </section>
+          )}
+
+          <section aria-label="HELIOS Referral — brouillon documentaire non transmis">
+            <h3 className="patient-section-title">HELIOS Referral · préparation d'orientation</h3>
+            <p className="patient-empty-history">
+              Extraits de la dernière consultation datée de ce dossier, à relire par le médecin
+              avant toute éventuelle lettre d'orientation. Ce panneau ne décide pas de l'indication d'adresser.
+            </p>
+            {referralSource ? (
+              <div className="patient-summary-grid">
+                <div className="patient-summary-item">
+                  <span>Consultation source</span>
+                  <strong>{displayDate(referralSource.date)}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Motif de consultation consigné</span>
+                  <strong>{referralSource.recordedMotif ?? 'Non renseigné'}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Diagnostic consigné (non revalidé)</span>
+                  <strong>{referralSource.recordedDiagnosis ?? 'Non renseigné'}</strong>
+                </div>
+                <div className="patient-summary-item">
+                  <span>Conduite à tenir consignée (non revalidée)</span>
+                  <strong>{referralSource.recordedPlan ?? 'Non renseigné'}</strong>
+                </div>
+              </div>
+            ) : <p className="patient-empty-history">Aucune consultation datée exploitable pour cette préparation.</p>}
+            <p className="patient-empty-history">
+              Avant toute orientation, le médecin doit préciser le destinataire, l'objectif,
+              le niveau d'urgence et les informations pertinentes à partager. Aucun document n'est
+              créé, aucune donnée n'est transmise et aucune décision médicale n'est générée ici.
+            </p>
+          </section>
+
+          <LocalDocumentReader key={selected.id} />
+
+          <section aria-label="HELIOS Parcours spécialisés — consultations consignées">
+            <h3 className="patient-section-title">HELIOS Parcours spécialisés · consultations documentées</h3>
+            <p className="patient-empty-history">
+              Regroupement des consultations enregistrées dans ce seul dossier par spécialité saisie.
+              Le nombre de visites ne confirme ni une maladie, ni un suivi spécialisé actif, ni une prise en charge recommandée.
+            </p>
+            {documentedSpecialties.length === 0 ? (
+              <p className="patient-empty-history">Aucune consultation à regrouper.</p>
+            ) : (
+              <div className="patient-summary-grid">
+                {documentedSpecialties.map((path) => (
+                  <div className="patient-summary-item" key={path.specialty}>
+                    <span>Spécialité déclarée</span>
+                    <strong>{path.specialty}</strong>
+                    <p>{path.count} consultation(s) consignée(s)</p>
+                    <small>Dernière date enregistrée : {path.lastConsultationDate
+                      ? displayDate(path.lastConsultationDate) : 'Non renseignée'}</small>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
           <h3 className="patient-section-title">Résumé du suivi</h3>
           <div className="patient-summary-grid">
             <div className="patient-summary-item"><span>Consultations</span><strong>{patientConsultations.length}</strong></div>
@@ -489,14 +646,15 @@ export default function Patients() {
           </div>
 
           <h3 className="patient-section-title">Dernières constantes disponibles</h3>
-          {!latestVitals ? (
+          {!latestVitals || Object.keys(latestVitals).length === 0 ? (
             <p className="patient-empty-history">Aucune constante vitale enregistrée.</p>
           ) : (
             <div className="patient-vitals-grid">
-              {vitalLabels.filter((field) => String(latestVitals[field.key] ?? '').trim() !== '').map((field) => (
+              {vitalLabels.filter((field) => Boolean(latestVitals[field.key]?.value)).map((field) => (
                 <div className="patient-vital" key={field.key}>
                   <span>{field.label}</span>
-                  <strong>{latestVitals[field.key]} {field.unit}</strong>
+                  <strong>{latestVitals[field.key]?.value} {field.unit}</strong>
+                  <small>Mesurée le {displayDate(latestVitals[field.key]?.date ?? 'Date non renseignée')}</small>
                 </div>
               ))}
             </div>
@@ -513,17 +671,74 @@ export default function Patients() {
             {renderTrendChart('Saturation en oxygène (SpO₂)', '%', 'spo2')}
           </div>
 
-          <h3 className="patient-section-title">Chronologie médicale ({medicalTimeline.length} événements)</h3>
+          <section aria-label="HELIOS Trends — comparaison descriptive des mesures">
+            <h3 className="patient-section-title">HELIOS Trends · comparaison des deux dernières mesures</h3>
+            <p className="patient-empty-history">
+              Différences numériques entre deux consultations enregistrées, avec dates et unités.
+              Ces écarts ne constituent ni une tendance cliniquement validée, ni une alerte, ni une recommandation.
+            </p>
+            {recordedVitalComparisons.length === 0 ? (
+              <p className="patient-empty-history">Deux mesures numériques datées sont nécessaires pour comparer chaque constante.</p>
+            ) : (
+              <div className="patient-trends-grid">
+                {recordedVitalComparisons.map((comparison) => (
+                  <div className="patient-trend-card" key={comparison.key}>
+                    <strong>{comparison.label}</strong>
+                    <span>Plus récente : {comparison.recent.value} {comparison.unit} · {displayDate(comparison.recent.date)}</span>
+                    <span>Précédente : {comparison.previous.value} {comparison.unit} · {displayDate(comparison.previous.date)}</span>
+                    <span>Écart brut : {comparison.difference > 0 ? '+' : ''}{comparison.difference} {comparison.unit}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <h3 className="patient-section-title">Chronologie médicale ({statusFilteredMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
+          <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-filter">Filtrer la chronologie :</label>
+            <select id="patient-timeline-filter" value={timelineFilter}
+              onChange={(event) => {
+                setTimelineFilter(event.target.value as MedicalTimelineFilter);
+                setPrescriptionStatusFilter('all');
+              }}>
+              <option value="all">Consultations et ordonnances</option>
+              <option value="consultation">Consultations uniquement</option>
+              <option value="prescription">Ordonnances uniquement</option>
+            </select>
+          </div>
+          {timelineFilter === 'prescription' && (
+            <div className="patient-timeline-filter">
+              <label htmlFor="patient-timeline-status">Statut de l'ordonnance :</label>
+              <select id="patient-timeline-status" value={prescriptionStatusFilter}
+                onChange={(event) => setPrescriptionStatusFilter(event.target.value as TimelinePrescriptionStatusFilter)}>
+                <option value="all">Tous les statuts</option>
+                <option value="draft">Brouillons</option>
+                <option value="validated">Validées</option>
+                <option value="dispensed">Délivrance enregistrée</option>
+                <option value="cancelled">Annulées</option>
+                <option value="unknown">Statut non renseigné ou inconnu</option>
+              </select>
+            </div>
+          )}
+          <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-search">Rechercher dans la chronologie :</label>
+            <input id="patient-timeline-search" type="search" maxLength={100}
+              placeholder="Motif, spécialité, médicament, examen…"
+              value={timelineSearch} onChange={(event) => setTimelineSearch(event.target.value)} />
+          </div>
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
+          ) : statusFilteredMedicalTimeline.length === 0 ? (
+            <p className="patient-empty-history">Aucun événement correspondant à la recherche ou au filtre pour ce patient.</p>
           ) : (
-            medicalTimeline.map((entry) => (
+            statusFilteredMedicalTimeline.map((entry) => (
               <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
                 {entry.type === 'consultation' ? (
                   <>
                     <span className="patient-timeline-kind">Consultation</span>
                     <strong>{entry.consultation.motif || 'Consultation'}</strong>
-                    <span>{displayDate(entry.date)}</span>
+                    <span>{displayRecordedDate(entry.date)}</span>
+                    <span><b>Spécialité :</b> {entry.consultation.specialty?.trim() || 'Non renseignée'}</span>
                     {entry.consultation.symptoms && <p><b>Symptômes :</b> {entry.consultation.symptoms}</p>}
                     {entry.consultation.history && <p><b>Antécédents / traitements :</b> {entry.consultation.history}</p>}
                     {entry.consultation.examination && <p><b>Examen clinique :</b> {entry.consultation.examination}</p>}
@@ -534,9 +749,11 @@ export default function Patients() {
                   <>
                     <span className="patient-timeline-kind">Ordonnance</span>
                     <strong>Ordonnance médicale</strong>
-                    <span>{displayDate(entry.date)}</span>
-                    <span>{entry.prescription.medications.length} médicament(s)</span>
-                    {entry.prescription.medications.length > 0 && (
+                    <span>{displayRecordedDate(entry.date)}</span>
+                    <span><b>Statut documentaire :</b> {documentedPrescriptionStatus(entry.prescription.status)}</span>
+                    <span>{Array.isArray(entry.prescription.medications)
+                      ? entry.prescription.medications.length : 0} médicament(s) consigné(s)</span>
+                    {Array.isArray(entry.prescription.medications) && entry.prescription.medications.length > 0 && (
                       <ul className="patient-medication-list">
                         {entry.prescription.medications.map((medication) => (
                           <li key={medication.id}>
@@ -544,6 +761,18 @@ export default function Patients() {
                           </li>
                         ))}
                       </ul>
+                    )}
+                    {documentedSupplementalOrders(entry.prescription).length > 0 && (
+                      <div>
+                        <strong>Examens et autres éléments prescrits (non présumés réalisés)</strong>
+                        <ul className="patient-medication-list">
+                          {documentedSupplementalOrders(entry.prescription).map((item, index) => (
+                            <li key={item.id + '-' + index}>
+                              <b>{item.label} :</b> {item.name}{item.details ? ' — ' + item.details : ''}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                     {entry.prescription.advice && <p><b>Conseils :</b> {entry.prescription.advice}</p>}
                   </>

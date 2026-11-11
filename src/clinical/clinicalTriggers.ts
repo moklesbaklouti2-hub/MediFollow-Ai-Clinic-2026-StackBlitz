@@ -12,7 +12,28 @@ function normalize(value: string): string {
   return value
     .toLocaleLowerCase('fr')
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, ' ');
+    .replace(/[\u0300-\u036f]/g, '');
+}
+
+
+// Une mention explicitement niée (« pas de douleur thoracique ») ne doit
+// pas déclencher à elle seule une alerte de douleur présente. Une mention
+// positive indépendante conserve toujours l'alerte prioritaire.
+// Détection volontairement prudente : une formulation ambiguë reste signalée.
+const chestPainTerm = /\b(?:douleurs? thoraciques?|douleurs? precordiales?|oppressions? thoraciques?|angors?|thoracalgies?)\b/gu;
+const explicitChestPainNegation = /\b(?:pas|sans|aucun|aucune|aucuns|aucunes|absence|ni|nie|nient)\s+(?:(?:de|d|du|des|la|le|les|une?|toute?)\s+){0,2}$/u;
+
+function hasReportedChestPain(value: string): boolean {
+  const normalized = normalize(value);
+  return Array.from(normalized.matchAll(chestPainTerm)).some(match => {
+    // Ne pas interpréter une négation d'une phrase antérieure comme
+    // s'appliquant à une nouvelle mention après ponctuation.
+    const precedingClause = normalized
+      .slice(Math.max(0, (match.index ?? 0) - 70), match.index ?? 0)
+      .split(/[.,;:!?\n]/)
+      .pop()?.replace(/['’]/gu, ' ') ?? '';
+    return !explicitChestPainNegation.test(precedingClause);
+  });
 }
 
 export function detectClinicalSuggestions(input: {
@@ -21,6 +42,7 @@ export function detectClinicalSuggestions(input: {
   motif: string;
   symptoms: string;
   history: string;
+  targetedInterview?: string;
   vitals: Vitals;
 }): ClinicalSuggestion[] {
   const text = normalize([
@@ -28,20 +50,34 @@ export function detectClinicalSuggestions(input: {
     input.motif,
     input.symptoms,
     input.history,
+    input.targetedInterview ?? '',
   ].join(' '));
   const suggestions: ClinicalSuggestion[] = [];
+  const reportedChestPain = [input.specialty, input.motif, input.symptoms, input.history, input.targetedInterview ?? '']
+    .some(hasReportedChestPain);
 
   // Détection simple des données manquantes : un champ vide n'est jamais considéré comme normal.
+  // Un élément de liste créé mais non renseigné (ligne blanche) n'est
+  // pas une information clinique. Ne pas masquer le rappel sur cette base.
+  const historyLists = [
+    input.patient?.clinicalHistory?.medical,
+    input.patient?.clinicalHistory?.surgical,
+    input.patient?.clinicalHistory?.allergies,
+    input.patient?.clinicalHistory?.family,
+  ];
   const hasPatientHistory = Boolean(
-    input.patient?.clinicalHistory?.medical?.length ||
-    input.patient?.clinicalHistory?.surgical?.length ||
-    input.patient?.clinicalHistory?.allergies?.length ||
-    input.patient?.clinicalHistory?.family?.length ||
+    historyLists.some(list => list?.some(item => item?.label?.trim() || item?.details?.trim())) ||
     input.patient?.clinicalHistory?.other?.trim() ||
-    input.patient?.currentMedications?.length
+    Object.values(input.patient?.clinicalHistory?.gynecoObstetric ?? {})
+      .some(value => typeof value === 'string' && value.trim()) ||
+    input.patient?.currentMedications?.some(item => item?.name?.trim())
   );
 
-  if (input.motif.trim().length >= 4 && !input.symptoms.trim()) {
+  // Les réponses consignées dans l'interrogatoire ciblé constituent déjà
+  // une histoire de la maladie : éviter de réclamer une deuxième saisie.
+  // Une réponse vide/blanche ne remplace pas les symptômes à documenter.
+  const hasSymptomNarrative = Boolean(input.symptoms.trim() || input.targetedInterview?.trim());
+  if (input.motif.trim().length >= 4 && !hasSymptomNarrative) {
     suggestions.push({
       id: 'missing-symptom-history',
       priority: 'routine',
@@ -70,14 +106,16 @@ export function detectClinicalSuggestions(input: {
   }
 
 
-  if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
-    const historyText = normalize(input.symptoms);
+  if (reportedChestPain) {
+    // Les réponses déjà consignées par le copilote complètent l'histoire
+    // des symptômes sans se substituer aux antécédents médicaux.
+    const historyText = normalize([input.symptoms, input.targetedInterview ?? ''].join(' '));
     const missingChestPainDetails: string[] = [];
 
     if (!/\b(depuis|debut|apparition|duree|minutes|heures|jours)\b/.test(historyText)) {
       missingChestPainDetails.push('Préciser le début et la durée de la douleur.');
     }
-    if (!/\b(irradi|bras|machoire|dos|epaule)\b/.test(historyText)) {
+    if (!/\b(?:irradi[\p{L}]*|bras|machoire|dos|epaule)\b/u.test(historyText)) {
       missingChestPainDetails.push('Préciser si la douleur irradie (bras, mâchoire, dos ou épaule).');
     }
     if (!/\b(dyspnee|essoufflement|sueurs|sueurs|nausees|vomissements|malaise|syncope)\b/.test(historyText)) {
@@ -98,7 +136,7 @@ export function detectClinicalSuggestions(input: {
     }
   }
 
-  if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
+  if (reportedChestPain) {
     suggestions.push({
       id: 'chest-pain',
       priority: 'high',
@@ -146,10 +184,18 @@ export function detectClinicalSuggestions(input: {
     });
   }
 
-  const systolic = Number(String(input.vitals.systolic).replace(',', '.'));
-  const diastolic = Number(String(input.vitals.diastolic).replace(',', '.'));
-  if ((Number.isFinite(systolic) && systolic >= 140) ||
-      (Number.isFinite(diastolic) && diastolic >= 90)) {
+  // Les constantes peuvent être dictées ou collées avec l'unité mmHg.
+  // Ne retenir que la forme numérique complète (pas « 140/90 » ni « 140 ? »).
+  const parseBloodPressure = (value: string): number | null => {
+    const parsed = String(value ?? '').trim().match(/^(\d+(?:[,.]\d+)?)\s*(?:mm\s*hg)?$/iu);
+    if (!parsed) return null;
+    const number = Number(parsed[1].replace(',', '.'));
+    return Number.isFinite(number) ? number : null;
+  };
+  const systolic = parseBloodPressure(input.vitals.systolic);
+  const diastolic = parseBloodPressure(input.vitals.diastolic);
+  if ((systolic !== null && systolic >= 140) ||
+      (diastolic !== null && diastolic >= 90)) {
     suggestions.push({
       id: 'elevated-bp',
       priority: 'routine',

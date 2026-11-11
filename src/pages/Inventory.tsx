@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import type { InventoryCategory, InventoryData, InventoryItem } from '../types/medical';
-import { createId, getInventoryData, saveInventoryData, subscribeToMedicalData } from '../services/storage';
+import { createId, getInventoryData, getPrescriptions, saveInventoryData, subscribeToMedicalData } from '../services/storage';
+import { canDeleteInventoryItem } from '../services/inventoryDeletionGuard';
 
 const emptyForm = {
   name: '',
@@ -117,11 +118,11 @@ export default function Inventory() {
   }
 
   function deleteItem(item: InventoryItem) {
-    const hasHistory = data.movements.some(movement => movement.itemId === item.id);
-    const warning = hasHistory
-      ? `Supprimer « ${item.name} » de l’inventaire ? Son historique de mouvements sera conservé, mais l’article ne sera plus disponible pour les prochaines délivrances.`
-      : `Supprimer définitivement « ${item.name} » de l’inventaire ?`;
-    if (!window.confirm(warning)) return;
+    if (!canDeleteInventoryItem(item.id, data.movements, getPrescriptions())) {
+      setMessage('Suppression refusée : cet article est lié à une ordonnance ou à un mouvement de stock. Conservez-le pour garantir la traçabilité.');
+      return;
+    }
+    if (!window.confirm(`Supprimer définitivement « ${item.name} » de l’inventaire ?`)) return;
     if (persist({ ...data, items: data.items.filter(entry => entry.id !== item.id) })) {
       if (editingId === item.id) {
         setEditingId(null);

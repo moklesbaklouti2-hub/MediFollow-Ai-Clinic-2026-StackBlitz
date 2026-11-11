@@ -1,18 +1,88 @@
-import express from 'express';
+import express, { type RequestHandler } from 'express';
 import dotenv from 'dotenv';
+import { validateRemoteStartup } from './security/remoteAccessConfig.ts';
+import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
+import { createSessionStore } from './security/sessionStore.ts';
+import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
+import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
+import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
+import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
+import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory, hasOnlyValidChatHistoryEntries } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
+// Optional remote-deployment preflight; no public access or authentication is enabled here.
+// Invalid opt-in configuration stops startup rather than silently weakening security.
+const remoteAccessConfig = validateRemoteStartup(process.env);
+
+// Explicit test-only integration of REAL Express handlers. This is NOT a remote
+// deployment option. Only run with fictional credentials on loopback.
+const cookieIntegrationMode = process.env.REMOTE_COOKIE_AUTH_MODE;
+if (cookieIntegrationMode && cookieIntegrationMode !== 'integration-test') {
+  throw new Error('Invalid REMOTE_COOKIE_AUTH_MODE; expected integration-test or unset');
+}
+if (cookieIntegrationMode === 'integration-test' &&
+    (!remoteAccessConfig ||
+     process.env.COOKIE_AUTH_TEST_ONLY_ACK !== 'synthetic-fixture-only' ||
+     !process.env.DOCTOR_USERNAME ||
+     process.env.DOCTOR_USERNAME.trim() !== process.env.DOCTOR_USERNAME ||
+     process.env.DOCTOR_USERNAME.length > 128 ||
+     !/^scrypt\$v1\$[a-f0-9]{32}\$[a-f0-9]{128}$/.test(process.env.DOCTOR_PASSWORD_HASH ?? ''))) {
+  throw new Error('Cookie integration-test mode requires validated remote settings, explicit fixture acknowledgement and synthetic credentials');
+}
+// The shortened lifetime exists only for a loopback integration test; it must
+// never be usable as a public deployment or normal application option.
+const cookieTestTtlMs = cookieIntegrationMode === 'integration-test'
+  ? Number(process.env.COOKIE_AUTH_TEST_TTL_MS ?? 30 * 60_000)
+  : undefined;
+if (cookieIntegrationMode === 'integration-test' &&
+    (!Number.isSafeInteger(cookieTestTtlMs) || cookieTestTtlMs! < 1_000 || cookieTestTtlMs! > 24 * 60 * 60_000)) {
+  throw new Error('Invalid COOKIE_AUTH_TEST_TTL_MS for loopback integration fixture');
+}
 
 const app = express();
 const PORT = 3001;
+
+// The no-store header must be set BEFORE parsing JSON: syntax errors and
+// body-size 413 errors can exit in the parser before reaching any route.
+app.use(CLINICAL_PATHS, preventClinicalCaching);
 app.use(express.json({ limit: '64kb' }));
+
+// All real sensitive POST handlers are below this middleware boundary.
+// Remote mode is blocked by default; only a loopback, synthetic integration
+// test may traverse the actual handlers using a secure-cookie session.
+// No public remote access can be enabled by REMOTE_ACCESS_MODE alone.
+if (remoteAccessConfig) {
+  if (cookieIntegrationMode === 'integration-test') {
+    // Trust ONLY local integration test requests; never trust an open proxy.
+    app.set('trust proxy', 'loopback');
+    const continueToRealHandler: RequestHandler = (_req, _res, next) => next();
+    app.use(createDoctorCookieAuth({
+      username: process.env.DOCTOR_USERNAME!,
+      passwordHash: process.env.DOCTOR_PASSWORD_HASH!,
+      sessions: createSessionStore({ ttlMs: cookieTestTtlMs }),
+      publicOrigin: remoteAccessConfig.publicOrigin,
+      handlers: {
+        '/api/clinical/analyze': continueToRealHandler,
+        '/api/commands/interpret': continueToRealHandler,
+        '/api/chat': continueToRealHandler,
+      },
+    }));
+  } else {
+    app.use(['/api/clinical/analyze', '/api/commands/interpret', '/api/chat'], (req, res, next) => {
+      if (req.method !== 'POST') { next(); return; }
+      res.setHeader('Cache-Control', 'no-store');
+      res.status(503).json({ error: 'Accès clinique distant indisponible : authentification non activée.' });
+    });
+  }
+}
+
 
 console.log('Fournisseur IA principal configuré :', isAiProviderConfigured());
 console.log('MediFollow backend démarré');
 
 app.get('/api/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'MediFollow AI', ai: { configured: isAiProviderConfigured(), primaryProvider: 'groq' } });
+  res.json({ status: 'ok', service: 'MediFollow AI' });
 });
 
 const clinicalReasoningInstructions = `
@@ -243,7 +313,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         typeof parsed.situationSummary !== 'string' ||
         typeof parsed.evolutionNote !== 'string' ||
         !['routine', 'attention', 'urgent'].includes(String(parsed.priority)) ||
-        typeof parsed.priorityReason !== 'string' ||
+        typeof parsed.priorityReason !== 'string' || !parsed.priorityReason.trim() ||
         !Array.isArray(parsed.nextQuestionOptions) ||
         typeof parsed.nextQuestion !== 'string' ||
         typeof parsed.whyThisQuestion !== 'string' ||
@@ -286,7 +356,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         pointsToVerify,
         recommendedActions: parsed.recommendedActions.filter((item): item is string => typeof item === 'string').slice(0, 3).map((item) => item.slice(0, 180)),
         hypotheses: parsed.hypotheses
-          .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string')
+          .filter((item): item is Record<string, unknown> => isPlainObject(item) && typeof item.label === 'string' && item.label.trim().length > 0 && typeof item.reason === 'string' && item.reason.trim().length > 0)
           .slice(0, 3)
           .map((item) => ({
             label: String(item.label).slice(0, 140),
@@ -295,11 +365,10 @@ app.post('/api/clinical/analyze', async (req, res) => {
       },
     });
   } catch (error) {
-    const detail = error instanceof Error ? error.message : String(error);
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
-    console.error('Erreur analyse clinique détaillée:', error);
+    console.error('Erreur analyse clinique (statut):', statusCode);
 
     if (statusCode === 429) {
       const errorHeaders = isPlainObject(error) ? error.headers : undefined;
@@ -334,6 +403,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
         }
       }
       if (retryAfterSeconds === null) {
+        const detail = error instanceof Error ? error.message : '';
         const minutes = detail.match(/(?:in|after)\s+(\d+)\s+minutes?/i);
         if (minutes) retryAfterSeconds = Number(minutes[1]) * 60;
         else if (/in five minutes?/i.test(detail)) retryAfterSeconds = 300;
@@ -345,7 +415,7 @@ app.post('/api/clinical/analyze', async (req, res) => {
     }
 
     return res.status(statusCode >= 400 && statusCode < 600 ? statusCode : 500).json({
-      error: `Erreur du moteur clinique : ${detail.slice(0, 500)}`,
+      error: 'Le moteur clinique est temporairement indisponible. Réessayez ultérieurement.',
     });
   }
 });
@@ -364,8 +434,8 @@ const commandPages = [
 
 app.post('/api/commands/interpret', async (req, res) => {
   try {
-    const instruction = String(req.body?.instruction ?? '').trim();
-    const currentPage = String(req.body?.currentPage ?? 'Tableau de bord');
+    const instruction = readClinicalPromptText(req.body?.instruction);
+    const currentPage = allowedVoiceCommandPage(req.body?.currentPage, commandPages);
     if (!instruction) return res.status(400).json({ error: 'Commande vide.' });
     if (instruction.length > 5000) return res.status(413).json({ error: 'Commande trop longue.' });
 
@@ -502,14 +572,14 @@ Retourne exclusivement le JSON conforme au schéma.`,
       message: parsed.message.slice(0, 500),
     });
   } catch (error) {
-    console.error('Erreur interprétation commande vocale:', error);
-    const detail = error instanceof Error ? error.message : String(error);
+    logSafeAiFailure('commands', error);
+    // Do not return upstream exception text to the browser: it may contain
+    // provider metadata, request fragments or other sensitive details.
     const status = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
     return res.status(status >= 400 && status < 600 ? status : 500).json({
       error: 'Impossible d’interpréter cette commande pour le moment.',
-      detail: detail.slice(0, 300),
     });
   }
 });
@@ -634,18 +704,30 @@ function interviewQuestionIssues(reply: string, facts: string, history: Array<{ 
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const message = String(req.body?.message ?? '').trim();
+    const message = readClinicalPromptText(req.body?.message);
     if (!message) return res.status(400).json({ error: 'Message vide.' });
+    if (isClinicalChatMessageTooLong(message)) {
+      return res.status(413).json({ error: 'Message trop long. Réduisez le texte transmis au copilote.' });
+    }
 
     const context = req.body?.context;
+    if (!isOptionalChatContext(context)) {
+      return res.status(400).json({ error: 'Contexte de discussion invalide.' });
+    }
     let contextText = '';
-    if (context && typeof context === 'object' && !Array.isArray(context)) {
+    if (context != null) {
       contextText = JSON.stringify(context);
       if (contextText.length > 48000) {
         return res.status(413).json({ error: 'Le contexte clinique est trop volumineux. Réduisez les notes ou sélectionnez une consultation moins chargée.' });
       }
     }
 
+    if (!isOptionalChatHistory(req.body?.history)) {
+      return res.status(400).json({ error: 'Historique de discussion invalide.' });
+    }
+    if (Array.isArray(req.body?.history) && !hasOnlyValidChatHistoryEntries(req.body.history)) {
+      return res.status(400).json({ error: 'Messages de discussion invalides.' });
+    }
     const history: Array<{ role: 'user' | 'assistant'; content: string }> = Array.isArray(req.body?.history)
       ? req.body.history.filter((item: any) => item && (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string')
           .slice(-40).map((item: any) => ({ role: item.role, content: item.content.slice(0, 5000) }))
@@ -700,7 +782,7 @@ app.post('/api/chat', async (req, res) => {
           if (typeof revised === 'string' && revised.trim() &&
               !interviewQuestionIssues(revised, facts, history).length) reply = revised;
         } catch (error) {
-          console.warn('Contrôle de qualité de l’interrogatoire indisponible:', error);
+          logSafeAiFailure('interview-quality', error);
         }
       }
     }
@@ -736,7 +818,7 @@ app.post('/api/chat', async (req, res) => {
     }
     return res.json({ reply });
   } catch (error) {
-    console.error('Erreur du routeur IA:', error);
+    logSafeAiFailure('chat', error);
     const statusCode = isPlainObject(error) && typeof error.status === 'number'
       ? error.status
       : 500;
@@ -757,6 +839,9 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+// Last in the Express chain: sanitized 400/413 JSON parsing failures.
+app.use(handleJsonBodyError);
+
+app.listen(PORT, cookieIntegrationMode === 'integration-test' ? '127.0.0.1' : '0.0.0.0', () => {
   console.log(`Serveur MediFollow AI démarré sur le port ${PORT}`);
 });
