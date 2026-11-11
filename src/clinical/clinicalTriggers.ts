@@ -21,6 +21,7 @@ export function detectClinicalSuggestions(input: {
   motif: string;
   symptoms: string;
   history: string;
+  targetedInterview?: string;
   vitals: Vitals;
 }): ClinicalSuggestion[] {
   const text = normalize([
@@ -28,6 +29,7 @@ export function detectClinicalSuggestions(input: {
     input.motif,
     input.symptoms,
     input.history,
+    input.targetedInterview ?? '',
   ].join(' '));
   const suggestions: ClinicalSuggestion[] = [];
 
@@ -71,13 +73,15 @@ export function detectClinicalSuggestions(input: {
 
 
   if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
-    const historyText = normalize(input.symptoms);
+    // Les réponses déjà consignées par le copilote complètent l'histoire
+    // des symptômes sans se substituer aux antécédents médicaux.
+    const historyText = normalize([input.symptoms, input.targetedInterview ?? ''].join(' '));
     const missingChestPainDetails: string[] = [];
 
     if (!/\b(depuis|debut|apparition|duree|minutes|heures|jours)\b/.test(historyText)) {
       missingChestPainDetails.push('Préciser le début et la durée de la douleur.');
     }
-    if (!/\b(irradi|bras|machoire|dos|epaule)\b/.test(historyText)) {
+    if (!/\b(?:irradi[\p{L}]*|bras|machoire|dos|epaule)\b/u.test(historyText)) {
       missingChestPainDetails.push('Préciser si la douleur irradie (bras, mâchoire, dos ou épaule).');
     }
     if (!/\b(dyspnee|essoufflement|sueurs|sueurs|nausees|vomissements|malaise|syncope)\b/.test(historyText)) {

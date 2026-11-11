@@ -413,6 +413,7 @@ export default function Consultations({
     motif,
     symptoms,
     history,
+    targetedInterview,
     vitals,
   })
     .filter((suggestion) => !dismissedSuggestions.includes(`${patientId}:${suggestion.id}`) && !snoozedSuggestions.includes(`${patientId}:${suggestion.id}`))

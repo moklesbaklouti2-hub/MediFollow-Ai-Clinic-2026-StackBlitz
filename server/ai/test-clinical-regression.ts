@@ -63,5 +63,60 @@ for (const motif of ['céphalée isolée', 'consultation dermatologique']) {
 }
 console.log('OK — 7 tests de déclencheurs cliniques (accents, formes décomposées et contrôles négatifs).');
 
+// Les réponses au copilote sont distinctes du champ « Symptômes ».
+// Si les quatre éléments sont déjà consignés dans l'interrogatoire ciblé,
+// ne pas les signaler comme manquants ; conserver l'alerte de gravité.
+const completedChestInterview = detectClinicalSuggestions({
+  specialty: 'Médecine de famille',
+  motif: 'douleur thoracique',
+  symptoms: 'douleur thoracique',
+  history: '',
+  targetedInterview: 'Début depuis 30 minutes. Aucune irradiation. Sueurs présentes. Douleur à l’effort.',
+  vitals: { ...blankVitals },
+});
+assert.ok(completedChestInterview.some(item => item.id === 'chest-pain' && item.priority === 'high'),
+  'L’alerte thoracique prioritaire ne doit jamais être supprimée par les réponses ciblées.');
+assert.ok(!completedChestInterview.some(item => item.id === 'missing-chest-pain-details'),
+  'Les éléments consignés dans les réponses ciblées ne doivent plus être réclamés.');
+
+const incompleteChestInterview = detectClinicalSuggestions({
+  specialty: 'Médecine de famille',
+  motif: 'douleur précordiale',
+  symptoms: 'douleur précordiale',
+  history: '',
+  targetedInterview: 'Depuis 20 minutes, pas d’irradiation.',
+  vitals: { ...blankVitals },
+});
+const missingInterview = incompleteChestInterview.find(item => item.id === 'missing-chest-pain-details');
+assert.ok(missingInterview, 'Les informations réellement manquantes restent à demander.');
+assert.ok(missingInterview.checks.some(check => check.includes('symptômes associés')),
+  'Les symptômes associés manquants doivent rester signalés.');
+assert.ok(missingInterview.checks.some(check => check.includes('facteurs déclenchants')),
+  'Les facteurs déclenchants manquants doivent rester signalés.');
+assert.ok(!missingInterview.checks.some(check => check.includes('début et la durée') || check.includes('irradie')),
+  'La durée et l’irradiation déjà documentées ne doivent pas être demandées à nouveau.');
+
+const chestPainInTargetedOnly = detectClinicalSuggestions({
+  specialty: 'Médecine de famille',
+  motif: 'malaise',
+  symptoms: '',
+  history: '',
+  targetedInterview: 'Douleur précordiale rapportée lors de l’interrogatoire ciblé.',
+  vitals: { ...blankVitals },
+});
+assert.ok(chestPainInTargetedOnly.some(item => item.id === 'chest-pain' && item.priority === 'high'),
+  'La douleur thoracique rapportée uniquement au copilote doit déclencher une vigilance.');
+
+const noDetailsAtAll = detectClinicalSuggestions({
+  specialty: 'Médecine de famille',
+  motif: 'douleur thoracique',
+  symptoms: 'douleur thoracique',
+  history: '',
+  vitals: { ...blankVitals },
+});
+assert.ok(noDetailsAtAll.some(item => item.id === 'missing-chest-pain-details'),
+  'Sans interrogatoire ciblé, les éléments manquants restent détectés.');
+console.log('OK — 8 assertions de cohérence entre réponses au copilote et alertes thoraciques.');
+
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');
