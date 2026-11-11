@@ -449,3 +449,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` préserve les couples (molécule connue, moment de prise dicté) pour les expressions immédiatement voisines `le/chaque matin|midi|soir|nuit`, avec ou sans dose adjacente. Toute divergence conserve la première hypothèse vocale. Pas de prescription automatisée.
 - **Tests :** trois inversions refusées et trois améliorations lexicales sûres acceptées sur données fictives (`scripts/test-medical-speech-regression.ts`).
 - **Limites :** seuls les quatre noms de médicaments et les formats explicitement reconnus sont couverts ; aucune validation clinique réelle ni essai microphone Android. Vérifier les onze jobs et le relais GitHub sur le SHA final.
+
+### 2026-11-11 — HELIOS : préserver la fréquence associée au médicament dicté
+- **Branche :** `audit-stabilisation-2026-11-10` ; `main` inchangée, sans fusion ni déploiement.
+- **Défaut ciblé :** le moteur conservait la liste des nombres et des mentions « fois par jour » sans empêcher une alternative d'échanger les fréquences entre deux médicaments, par exemple paracétamol 2 fois/jour et amoxicilline 3 fois/jour.
+- **Correctif :** `src/services/medicalSpeech.ts` protège le triplet (molécule reconnue, fréquence, période jour/semaine) dans les formules directement adjacentes « N fois/prises par jour/semaine », avec dose facultative. Les autres formulations restent hors périmètre et la transcription originale prévaut en cas de divergence.
+- **Tests :** trois scénarios de permutation refusée et trois scénarios d'amélioration lexicale acceptée, données fictives, dans `scripts/test-medical-speech-regression.ts`. Aucune ordonnance ou donnée patient réelle modifiée.
+- **Validation :** vérifier compilation, tests et 11 jobs GitHub Actions du SHA final ; les essais microphone Android et l'évaluation clinique réelle restent nécessaires.

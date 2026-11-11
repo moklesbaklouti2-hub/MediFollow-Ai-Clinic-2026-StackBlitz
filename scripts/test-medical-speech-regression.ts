@@ -248,6 +248,45 @@ for (const [initial, corrected] of [
   assertions++;
 }
 
+// Le même ordre de chiffres / « fois par jour » ne prouve pas que la
+// fréquence thérapeutique soit toujours attribuée au bon médicament.
+const swappedMedicationFrequencies = [
+  [
+    'paracétamol 2 fois par jour et amoxicilline 3 fois par jour avec disney',
+    'amoxicilline 2 fois par jour et paracétamol 3 fois par jour avec dyspnée',
+  ],
+  [
+    'amoxicilline 3 prises par jour et ibuprofène 2 prises par jour avec disney',
+    'ibuprofène 3 prises par jour et amoxicilline 2 prises par jour avec dyspnée',
+  ],
+  [
+    'ibuprofène 1 fois par semaine et paracétamol 2 fois par jour avec disney',
+    'paracétamol 1 fois par semaine et ibuprofène 2 fois par jour avec dyspnée',
+  ],
+];
+for (const [initial, swapped] of swappedMedicationFrequencies) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: swapped },
+  }), initial, 'Fréquence attribuée au mauvais médicament : ' + swapped);
+  assertions++;
+}
+// Les alternatives plus lisibles restent sélectionnées si les molécules,
+// quantités et fréquences dictées n'ont pas été modifiées.
+for (const [initial, corrected] of [
+  ['paracétamol 2 fois par jour et amoxicilline 3 fois par jour avec disney', 'paracétamol 2 fois par jour et amoxicilline 3 fois par jour avec dyspnée'],
+  ['amoxicilline 3 prises par jour et ibuprofène 2 prises par jour avec disney', 'amoxicilline 3 prises par jour et ibuprofène 2 prises par jour avec dyspnée'],
+  ['amoxicilline 500 mg 2 fois par jour avec disney', 'amoxicilline 500 mg 2 fois par jour avec dyspnée'],
+]) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: corrected },
+  }), corrected, 'Correction lexicale sans changement de fréquence refusée : ' + corrected);
+  assertions++;
+}
+
 // La conservation de la liste de nombres et des unités n'assure pas
 // qu'un chiffre reste associé à la bonne mesure clinique.
 const reassignedClinicalMeasurements = [
