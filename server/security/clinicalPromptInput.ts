@@ -11,3 +11,13 @@ export const MAX_CHAT_MESSAGE_CHARS = 12_000;
 export function isClinicalChatMessageTooLong(value: string): boolean {
   return value.length > MAX_CHAT_MESSAGE_CHARS;
 }
+
+// Page context is navigation metadata, not a user prompt. Keep it to the
+// known application page labels before including it in a provider request.
+export function allowedVoiceCommandPage(
+  value: unknown,
+  allowedPages: readonly string[],
+  fallback = 'Tableau de bord',
+): string {
+  return typeof value === 'string' && allowedPages.includes(value) ? value : fallback;
+}

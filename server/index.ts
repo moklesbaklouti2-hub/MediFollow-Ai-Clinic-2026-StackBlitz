@@ -7,7 +7,7 @@ import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
 import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
 import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
-import { readClinicalPromptText, isClinicalChatMessageTooLong } from './security/clinicalPromptInput.ts';
+import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -435,7 +435,7 @@ const commandPages = [
 app.post('/api/commands/interpret', async (req, res) => {
   try {
     const instruction = readClinicalPromptText(req.body?.instruction);
-    const currentPage = String(req.body?.currentPage ?? 'Tableau de bord');
+    const currentPage = allowedVoiceCommandPage(req.body?.currentPage, commandPages);
     if (!instruction) return res.status(400).json({ error: 'Commande vide.' });
     if (instruction.length > 5000) return res.status(413).json({ error: 'Commande trop longue.' });
 

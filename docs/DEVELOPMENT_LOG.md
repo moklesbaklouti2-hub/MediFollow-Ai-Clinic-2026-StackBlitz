@@ -668,3 +668,11 @@
 - **Tests :** 9 erreurs fictives, dont une erreur avec getter déclenchant une exception, × 3 types d'opération ; sentinelle ne devant jamais apparaître dans les logs ; vérification contractuelle de la liaison des trois blocs `catch` réels.
 - **Limites :** aucun usage sur patients réels ni certification de conformité. Les autres flux de journalisation ou de télémétrie nécessitent un audit séparé ; QW-007/QW-008 restent ouverts.
 - **Validation :** attendre 11/11 jobs GitHub Actions sur le SHA exact avant VERT.
+
+### 2026-11-11 — QW-020 : filtrer la page courante avant le prompt de commandes vocales
+- **Branche :** `audit-stabilisation-2026-11-10` ; PR #2 brouillon, `main` inchangée, aucune fusion, déploiement ou donnée réelle.
+- **Défaut distinct de QW-014 :** le texte dicté était vérifié, mais `currentPage` était encore converti par `String(req.body?.currentPage)`, permettant à un objet, tableau ou libellé arbitraire de passer dans la phrase « Page actuellement ouverte » envoyée au fournisseur IA.
+- **Correction :** `allowedVoiceCommandPage` n'accepte que les huit noms de pages répertoriés par le serveur. Toute valeur inconnue ou non textuelle utilise la page de repli fixe « Tableau de bord ». Les libellés valides restent inchangés.
+- **Tests :** huit noms de pages, dix entrées non autorisées et un contrat reliant le filtre à la route réelle des commandes dans `server/ai/test-clinical-regression.ts`. Aucun fournisseur IA sollicité.
+- **Limites :** validation de métadonnée seulement, sans protection complète contre les injections par le texte dicté et sans authentification. La qualité clinique exige une validation humaine ; les chantiers QW-007/QW-008 et Android restent ouverts.
+- **Validation :** vérifier les 11 jobs Actions sur le SHA exact.
