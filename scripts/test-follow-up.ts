@@ -114,7 +114,8 @@ assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjecti
   consultationUI.includes("setFollowUpCompleted(item.followUp?.status === 'completed')") &&
   consultationUI.includes('HELIOS Follow-up'),
   'The real consultation form must edit and persist follow-up plans.');
-assert.ok(dashboardUI.includes('summarizeFollowUps(getConsultations()') &&
+assert.ok(dashboardUI.includes('summarizeFollowUps(clinicalConsultations,') &&
+  dashboardUI.includes('const clinicalConsultations = getConsultations();') &&
   dashboardUI.includes('data.followUpConsultations.overdue') &&
   dashboardUI.includes('onClick={onStartConsultation}'),
   'The dashboard must show follow-up counts and link to consultations.');
