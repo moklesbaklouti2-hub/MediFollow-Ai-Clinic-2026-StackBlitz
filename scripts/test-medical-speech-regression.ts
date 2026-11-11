@@ -155,6 +155,36 @@ for (const [initial, unsafe] of negationMeaningChanges) {
   assertions++;
 }
 
+// Protéger les symptômes et expressions médicales déjà correctement
+// reconnus, même si une seconde hypothèse a un score lexical supérieur.
+const missingMedicalTerms = [
+  ['toux avec disney', 'dyspnée et exsudat amygdalien'],
+  ['odynophagie avec display', 'dysphagie et dyspnée'],
+  ['fièvre avec disney', 'dyspnée et toux'],
+  ['insuffisance cardiaque avec disney', 'insuffisance respiratoire et dyspnée'],
+  ['douleur thoracique avec disney', 'douleur abdominale avec dyspnée et exsudat'],
+];
+for (const [initial, alternative] of missingMedicalTerms) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: alternative },
+  }), initial, 'Terme médical déjà reconnu supprimé ou remplacé : ' + alternative);
+  assertions++;
+}
+// La correction d'une erreur non médicale, elle, doit rester possible.
+for (const [initial, corrected] of [
+  ['toux avec disney', 'toux avec dyspnée'],
+  ['insuffisance cardiaque avec disney', 'insuffisance cardiaque avec dyspnée'],
+]) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: corrected },
+  }), corrected, 'Amélioration vocale sûre bloquée : ' + corrected);
+  assertions++;
+}
+
 // La suggestion médicale ne doit jamais être appliquée sans clic du médecin.
 const dictatedRaw = 'le patient présente une disney';
 const suggested = suggestions(dictatedRaw).find(item => item.replacement === 'dyspnée');

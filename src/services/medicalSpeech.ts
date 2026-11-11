@@ -291,6 +291,24 @@ function criticalSpeechTokens(value: string): string {
   return JSON.stringify({ numbers, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
+// Conserver tous les termes médicaux déjà reconnus dans la première
+// hypothèse vocale. Une alternative mieux notée ne doit pas effacer un
+// symptôme ou remplacer un diagnostic déjà lisible.
+// La vérification inclut aussi les expressions composées du dictionnaire.
+const medicalSpeechProtectedPatterns = Array.from(medicalSpeechNormalizedTerms, term => {
+  const escaped = term.replace(/[.*+?^\x24{}()|[\]\\]/g, '\\// Si le médecin a dicté un terme médical connu après une négation,
+// ne pas lui substituer un autre terme connu via le classement automatique.');
+  return new RegExp('(^|[^\\p{L}])' + escaped + '(?=$|[^\\p{L}])', 'u');
+});
+
+function preservesRecognizedMedicalTerms(initial: string, alternative: string): boolean {
+  const original = normalizeSpeechCandidate(initial);
+  const proposed = normalizeSpeechCandidate(alternative);
+  return medicalSpeechProtectedPatterns.every(pattern =>
+    !pattern.test(original) || pattern.test(proposed)
+  );
+}
+
 // Si le médecin a dicté un terme médical connu après une négation,
 // ne pas lui substituer un autre terme connu via le classement automatique.
 // Un mot mal reconnu (« disney ») reste éligible à une hypothèse plus claire.
@@ -334,6 +352,7 @@ export function chooseMedicalSpeechAlternative(result: SpeechResultLike): string
   const initialNegationTargets = negatedMedicalTargets(candidates[0]);
   const safeCandidates = scored.filter(candidate => {
     if (criticalSpeechTokens(candidate.transcript) !== initialCriticalTokens) return false;
+    if (!preservesRecognizedMedicalTerms(candidates[0], candidate.transcript)) return false;
     const proposedTargets = negatedMedicalTargets(candidate.transcript);
     // Deux noms médicaux connus différents, derrière la même négation,
     // ne sont pas de simples variantes d'orthographe.

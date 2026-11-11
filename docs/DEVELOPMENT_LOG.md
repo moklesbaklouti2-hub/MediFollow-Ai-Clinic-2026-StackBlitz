@@ -386,3 +386,10 @@
 - **Code :** `src/services/medicalSpeech.ts` ; tests : `scripts/test-medical-speech-regression.ts` avec quatre cas fictifs supplémentaires.
 - **Sécurité :** une alternative qui améliore la graphie d'un mot inconnu à position de négation inchangée reste autorisée ; aucune auto-correction médicale ajoutée.
 - **Validation :** CI GitHub Actions à contrôler après commit ; le navigateur Android et la précision clinique réelle demeurent non validés.
+
+### 2026-11-11 — HELIOS : conserver les termes médicaux déjà reconnus
+- **Branche :** `audit-stabilisation-2026-11-10` ; `main` intacte.
+- **Problème :** une alternative Chrome plus riche en vocabulaire pouvait évincer un symptôme ou une expression clinique déjà correctement reconnu(e), sans changer les constantes ou négations protégées.
+- **Correctif :** `src/services/medicalSpeech.ts` protège les termes simples et expressions médicales exactes présents dans la première hypothèse. Il ne transforme pas de texte brut et ne supprime pas la validation du médecin.
+- **Tests :** `scripts/test-medical-speech-regression.ts` ajoute cinq régressions négatives (disparition/substitution de termes médicaux) et deux cas positifs de meilleure dictée, sur données fictives uniquement.
+- **Validation :** à confirmer par GitHub Actions après le commit. Les tests de microphone Chrome Android et la validation médicale en situation clinique restent à faire.
