@@ -676,3 +676,10 @@
 - **Tests :** huit noms de pages, dix entrées non autorisées et un contrat reliant le filtre à la route réelle des commandes dans `server/ai/test-clinical-regression.ts`. Aucun fournisseur IA sollicité.
 - **Limites :** validation de métadonnée seulement, sans protection complète contre les injections par le texte dicté et sans authentification. La qualité clinique exige une validation humaine ; les chantiers QW-007/QW-008 et Android restent ouverts.
 - **Validation :** vérifier les 11 jobs Actions sur le SHA exact.
+
+### 2026-11-11 — QW-021 : refus explicite des contextes de chat invalides
+- **Branche :** `audit-stabilisation-2026-11-10`. PR #2 brouillon, `main` intacte, sans fusion, déploiement, dépense ni donnée patient réelle.
+- **Défaut :** `/api/chat` ignorait silencieusement les contextes transmis sous forme de tableau, nombre, texte ou booléen ; le médecin pouvait recevoir une réponse IA sans contexte sans en être averti.
+- **Correctif :** `isOptionalChatContext` accepte uniquement les objets JSON, `null` ou `undefined` (contexte volontairement absent). Les entrées erronées produisent HTTP 400 avant l'historique et l'appel au fournisseur IA. Les objets valides et leur limite de 48 000 caractères conservent le fonctionnement existant.
+- **Vérification :** 14 fixtures fictives et 2 tests structurels du véritable handler. Aucun fournisseur, clé, ni patient réel utilisé.
+- **Limites :** validation de forme seulement ; ni validation de la fiabilité clinique ni authentification. QW-006B, QW-007 et QW-008 restent ouverts. État CI à vérifier sur le SHA exact.

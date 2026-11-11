@@ -8,7 +8,7 @@ import {
 } from '../security/jsonBodyErrorHandler.ts';
 import {
   readClinicalPromptText, MAX_CHAT_MESSAGE_CHARS, isClinicalChatMessageTooLong,
-  allowedVoiceCommandPage,
+  allowedVoiceCommandPage, isOptionalChatContext,
 } from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
@@ -585,6 +585,30 @@ assert.ok(commandRoute.includes('allowedVoiceCommandPage(req.body?.currentPage, 
   !commandRoute.includes('String(req.body?.currentPage'),
   'La vraie route des commandes ne doit pas convertir currentPage en prompt libre.');
 console.log('OK — 8 pages vocales valides, 10 entrées invalides et 1 contrat de route filtré.');
+
+
+// QW-021 — un contexte invalide ne doit pas être ignoré silencieusement.
+const chatContextCases: Array<[unknown, boolean]> = [
+  [undefined, true], [null, true], [{}, true],
+  [{ currentPage: 'Patients' }, true],
+  [{ symptoms: ['vertiges'], vitals: { systolic: '120' } }, true],
+  [[], false], [['Patients'], false], ['', false],
+  ['Patients', false], ['instruction artificielle', false],
+  [42, false], [0, false], [true, false], [false, false],
+];
+for (const [value, expected] of chatContextCases) {
+  assert.equal(isOptionalChatContext(value), expected, 'Contexte chat invalide ou rejeté à tort');
+}
+const contextCheck = chat.indexOf('if (!isOptionalChatContext(context))');
+assert.ok(contextCheck >= 0 &&
+  chat.indexOf("return res.status(400).json({ error: 'Contexte de discussion invalide.' });") > contextCheck &&
+  contextCheck < chat.indexOf('const history:') &&
+  contextCheck < chat.indexOf('const completion = await createAiCompletion('),
+  'La vraie route doit refuser le contexte invalide avant la mémoire et le fournisseur IA.');
+assert.ok(chat.includes('if (context != null) {') &&
+  !chat.includes("if (context && typeof context === 'object' && !Array.isArray(context))"),
+  'Les contextes valides doivent toujours être transmis.');
+console.log('OK — QW-021 : 14 entrées fictives et 2 contrôles des routes du chat.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

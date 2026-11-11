@@ -7,7 +7,7 @@ import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
 import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
 import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
-import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage } from './security/clinicalPromptInput.ts';
+import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage, isOptionalChatContext } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -711,8 +711,11 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const context = req.body?.context;
+    if (!isOptionalChatContext(context)) {
+      return res.status(400).json({ error: 'Contexte de discussion invalide.' });
+    }
     let contextText = '';
-    if (context && typeof context === 'object' && !Array.isArray(context)) {
+    if (context != null) {
       contextText = JSON.stringify(context);
       if (contextText.length > 48000) {
         return res.status(413).json({ error: 'Le contexte clinique est trop volumineux. Réduisez les notes ou sélectionnez une consultation moins chargée.' });

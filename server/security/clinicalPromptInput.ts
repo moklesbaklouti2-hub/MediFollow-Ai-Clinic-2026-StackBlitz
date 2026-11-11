@@ -21,3 +21,9 @@ export function allowedVoiceCommandPage(
 ): string {
   return typeof value === 'string' && allowedPages.includes(value) ? value : fallback;
 }
+
+// A supplied context must be an object. A missing/null value is intentionally
+// context-free; arrays or primitives must not be silently dropped.
+export function isOptionalChatContext(value: unknown): boolean {
+  return value == null || (typeof value === 'object' && !Array.isArray(value));
+}
