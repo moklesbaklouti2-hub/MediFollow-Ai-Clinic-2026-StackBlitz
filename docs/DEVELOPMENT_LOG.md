@@ -570,3 +570,11 @@
 - **Sécurité :** la lecture manuelle arrête la reconnaissance microphone et son redémarrage automatique ; fermer le panneau par la croix, le bouton Orb ou ouvrir le copilote complet arrête désormais parole et écoute.
 - **Régression :** 6 vérifications de contrat React/TSX hors ligne ajoutées à la suite `test:medical-speech`, plus styles de focus clavier. Aucun test d'interaction navigateur ou Android exécuté dans le lot ; vérification humaine de l'audio et du focus nécessaire.
 - **Validation :** compilation et 11 jobs GitHub Actions sur le SHA exact à confirmer.
+
+### 2026-11-11 — QW-006A : refuser toute commande vocale résiduelle après erreur du navigateur
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 conservée en brouillon ; pas de fusion sur `main`, aucun déploiement, aucun patient réel ni dépense.
+- **Défaut distinct :** `recognition.onerror` désarmait uniquement certains codes d'erreur et dépendait de `onend` pour libérer l'écoute. Dans un navigateur émettant une erreur inconnue après une transcription, `onend` pouvait encore tenter d'exécuter l'ancien texte.
+- **Correction :** toute erreur devient terminale immédiatement : session invalidée, commandes et micro désarmés, transcription de commande abandonnée, écoute visuelle arrêtée et `recognition.abort()` protégé. L'éventuel `onend` tardif est ignoré. Le texte saisi dans le chat n'est pas effacé.
+- **Régression :** six vérifications structurelles du gestionnaire React réel dans `scripts/test-medical-speech-regression.ts`, incluses à la CI existante « Tests / dictee-helios ».
+- **Limites :** pas de test sur le système de permissions ou le matériel Android ; QW-006B reste en attente d'un essai manuel avec données fictives.
+- **Validation :** vérifier les 11 jobs GitHub Actions sur le SHA exact après publication.

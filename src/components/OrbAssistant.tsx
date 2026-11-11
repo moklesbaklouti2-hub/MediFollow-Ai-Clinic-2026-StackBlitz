@@ -268,6 +268,21 @@ const [isListening, setIsListening] = useState(false);
 
       recognition.onerror = (event) => {
         if (sessionEnded || recognitionRef.current !== recognition) return;
+        // Une erreur (refus d'accès, réseau, absence de parole ou autre)
+        // invalide immédiatement la session, même si une transcription
+        // finale avait été reçue juste avant. Aucun ordre ne sera exécuté.
+        sessionEnded = true;
+        commandListeningEnabledRef.current = false;
+        recognitionRef.current = null;
+        speechCurrentTextRef.current = '';
+        speechFinalSegmentsRef.current.clear();
+        setSpeechCorrections([]);
+        setInterimTranscript('');
+        setIsListening(false);
+        if (mode === 'command') setInput('');
+        // Ne dépendre ni du délai ni de la présence d'un événement "end"
+        // envoyé après l'erreur par le navigateur Android.
+        try { recognition.abort(); } catch { /* reconnaissance déjà arrêtée */ }
         const messages: Record<string, string> = {
           'not-allowed': 'Autorisez l’accès au microphone dans votre navigateur pour utiliser la dictée.',
           'service-not-allowed': 'Le service de reconnaissance vocale est indisponible.',
@@ -275,11 +290,8 @@ const [isListening, setIsListening] = useState(false);
           'audio-capture': 'Aucun microphone accessible n’a été détecté.',
           network: 'La reconnaissance vocale nécessite une connexion réseau.',
         };
-        // Ne pas relancer indéfiniment le microphone après un refus d'accès
-        // ou une panne réseau, ni boucler en silence si aucune parole n'est détectée.
-        if (['not-allowed', 'service-not-allowed', 'audio-capture', 'network', 'no-speech'].includes(event.error)) {
-          commandListeningEnabledRef.current = false;
-        }
+        // Toute erreur bloque le redémarrage automatique, y compris
+        // celles que ce navigateur ne répertorie pas encore.
         if (event.error !== 'aborted') {
           setSpeechMessage(messages[event.error] || 'La dictée vocale a rencontré un problème. Vous pouvez saisir votre texte manuellement.');
         }

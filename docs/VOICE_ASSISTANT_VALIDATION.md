@@ -39,3 +39,11 @@ Aucun test sur un véritable appareil Android n'a été exécuté par la modific
 - Tester **Stop parole**, fermeture par la croix, fermeture en cliquant l'Orb et passage au copilote complet : aucun son ne doit continuer.
 - Sans moteur vocal, le contrôle ponctuel doit être désactivé ; le texte reste visible.
 - Tester navigation au clavier et focus visuel. **Aucun test sur appareil Android réel n'a été exécuté par le présent lot.**
+
+## QW-006 — Préparation des essais de permission et de reprise (données fictives)
+
+- Le gestionnaire d'erreur de reconnaissance met immédiatement fin à la session, arrête le microphone et désarme toutes les commandes, même en l'absence d'événement `onend` et en cas de code d'erreur inconnu.
+- Le texte partiellement reconnu dans le **mode commandes** n'est jamais envoyé à l'IA ni exécuté à la suite d'une erreur. La conversation tapée manuellement et le mode dictée restent disponibles.
+- La suite de tests hors ligne vérifie le contrat du vrai composant pour six points (sans simuler un navigateur Android réel).
+- **À vérifier sur téléphone avec données entièrement fictives :** refuser la permission micro ; vérifier l'absence de boucle ; réautoriser puis relancer volontairement ; couper le réseau en cours de dictée ; fermer l'Orb après une phrase interrompue ; vérifier que la commande n'a pas été exécutée et qu'aucun micro ne reste actif.
+- **État :** les tests automatiques ne valident pas les permissions, le matériel ou les événements réels Chrome Android. Garder QW-006 en attente de validation manuelle avant toute clôture complète.

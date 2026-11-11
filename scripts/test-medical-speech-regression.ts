@@ -629,4 +629,28 @@ assert.ok(orbSource.includes("disabled={!('speechSynthesis' in window) || !('Spe
   'Le contrôle ponctuel doit être étiqueté et indisponible sans synthèse vocale.');
 assertions++;
 
+// QW-006 — garde de sécurité après un échec de reconnaissance Android.
+// Contrôles structurels du vrai gestionnaire d'événements, sans prétendre
+// simuler matériellement le navigateur ni la permission système Android.
+const failedSessionHandler = orbSource.split('recognition.onerror = (event) => {')[1]
+  ?.split('recognition.onend = () => {')[0] ?? '';
+assert.ok(failedSessionHandler.includes('sessionEnded = true;'),
+  'Une erreur doit rendre la session vocale terminale.'); assertions++;
+assert.ok(failedSessionHandler.includes('commandListeningEnabledRef.current = false;'),
+  'Une erreur doit désarmer toutes les commandes, pas seulement certains codes.'); assertions++;
+assert.ok(failedSessionHandler.includes('recognitionRef.current = null;') &&
+  failedSessionHandler.includes('setIsListening(false);'),
+  'Une erreur doit libérer le micro et son affichage même sans événement onend.'); assertions++;
+assert.ok(failedSessionHandler.includes("if (mode === 'command') setInput('');") &&
+  failedSessionHandler.includes("speechCurrentTextRef.current = '';"),
+  'La commande incomplète ne doit pas rester prête à être envoyée après une erreur.'); assertions++;
+assert.ok(failedSessionHandler.includes('recognition.abort();') &&
+  failedSessionHandler.indexOf('sessionEnded = true;') < failedSessionHandler.indexOf('recognition.abort();'),
+  'La session doit être neutralisée avant tout callback causé par abort.'); assertions++;
+const endHandler = orbSource.split('recognition.onend = () => {')[1]
+  ?.split("setSpeechMessage('');")[0] ?? '';
+assert.ok(endHandler.includes('if (sessionEnded || recognitionRef.current !== recognition) return;') &&
+  endHandler.includes('if (mode === \'command\' && commandListeningEnabledRef.current)'),
+  'onend ne doit ni exécuter ni redémarrer une session déjà échouée.'); assertions++;
+
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale et le contrat vocal Orb (sans navigateur).');
