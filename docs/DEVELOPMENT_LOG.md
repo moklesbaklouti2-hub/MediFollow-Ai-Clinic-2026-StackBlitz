@@ -823,3 +823,10 @@
 - **Prudence :** les fiches de protocoles existantes restent des démonstrations. Liens externes avec `noopener noreferrer` ; toute recommandation doit être relue à la source pour date, version, applicabilité et adaptation au contexte tunisien. Aucun contenu patient n'est transféré par la page.
 - **Tests :** liste des quatre domaines officiels HTTPS, unicité des identifiants, métadonnées et contrat UI intégrés à `test:patient-linkage` en CI.
 - **Validation :** scénario F26 préparé pour Windows/Android à la phase finale. Pas de formation certifiante, base de connaissances médicale validée ou intégration automatique des recommandations à ce stade.
+
+### 2026-11-11 — QW-042 : HELIOS Consultation Express, saisie rapide non destructive
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte ; sans fusion, déploiement, dépense ni donnée réelle.
+- **Fonction :** zone de texte fictif permettant au médecin de coller des lignes strictement étiquetées « Motif », « Symptômes », « Histoire », « Diagnostic » et « Plan ». Après clic explicite, les champs existants du formulaire Consultation sont préremplis ; la sauvegarde reste distincte et manuelle.
+- **Garde-fous :** pas d'identification patient par nom ; exige une sélection d'identifiant unique et une spécialité, interdit le préremplissage pendant l'édition et l'écrasement de champs non vides, refuse les libellés inconnus, doublons, champs vides et notes trop longues. Garde de la sélection d'origine après préremplissage : toute sauvegarde sur un patient différent est refusée. Aucune inférence clinique, stockage ou envoi direct par le parseur.
+- **Tests fictifs :** exemples de saisie en français, accents, doublons, données manquantes, limites de taille, collisions et contrat du vrai formulaire dans `test:follow-up` de la CI existante.
+- **Limites :** les champs remplis rejoignent le fonctionnement habituel du formulaire et de son copilote IA activé ; ne pas y saisir de données réelles. Saisie multiligne libre et reconnaissance vocale structurée non comprises dans ce premier volet. Scénario manuel F27 reporté à la phase finale.

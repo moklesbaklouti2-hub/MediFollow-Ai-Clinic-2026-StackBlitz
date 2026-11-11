@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
+import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
 
 // All fixtures are fictional, without external calls.
 for (const date of ['2026-11-11', '2024-02-29', '2027-01-01', '2000-02-29']) {
@@ -168,5 +169,42 @@ assert.ok(completionCode.includes('hasConfirmedPatientSelection(current.patientI
     completionCode.indexOf('updateConsultation('),
   'The real follow-up completion must reject ambiguous patient IDs before confirming or saving.');
 console.log('PASS HELIOS Follow-up QW-032: 8 synthetic identities and 2 actual UI contracts.');
+
+
+// QW-042 — HELIOS Consultation Express: strict documentary mapping, no
+// inference, no accidental overwrite, no patient selection by name and no save.
+const expressGood = parseExpressDraft([
+  'Motif: Vertiges fictifs', 'Symptômes: Depuis 2 jours',
+  'Histoire: Traitement fictif', 'Diagnostic: À confirmer',
+  'Plan: Contrôle à discuter',
+].join('\n'));
+assert.deepEqual(expressGood, { valid: true, fields: {
+  motif: 'Vertiges fictifs', symptoms: 'Depuis 2 jours',
+  history: 'Traitement fictif', diagnosis: 'À confirmer',
+  plan: 'Contrôle à discuter',
+} });
+assert.deepEqual(parseExpressDraft('Motif: Douleur fictive'), { valid: true, fields: { motif: 'Douleur fictive' } });
+assert.deepEqual(parseExpressDraft('MOTIF: Douleur fictive\r\nSYMPTOMES: Depuis hier'),
+  { valid: true, fields: { motif: 'Douleur fictive', symptoms: 'Depuis hier' } });
+for (const invalid of [
+  '', null, 42, 'Symptômes: Fièvre', 'Patient: Nom fictif\nMotif: Fatigue',
+  'Motif: a\nMotif: b', 'Motif:', 'Motif: a\nligne sans étiquette',
+  'Motif: a\nSpécialité: ORL', 'Motif: ' + 'a'.repeat(701),
+  'Motif: ' + 'a'.repeat(MAX_EXPRESS_DRAFT_CHARS),
+]) assert.equal(parseExpressDraft(invalid).valid, false, 'Unsafe express input');
+assert.equal(expressWouldOverwrite({ motif: 'B' }, { motif: 'A' }), true);
+assert.equal(expressWouldOverwrite({ motif: 'B' }, { symptoms: 'A' }), false);
+assert.equal(expressWouldOverwrite({ diagnosis: 'X' }, { diagnosis: '   ' }), false);
+assert.equal(expressWouldOverwrite({ plan: 'B' }, { plan: 'A' }), true);
+assert.ok(consultationUI.includes('parseExpressDraft(expressDraft)') &&
+  consultationUI.includes('expressWouldOverwrite(result.fields, { motif, symptoms, history, diagnosis, plan })') &&
+  consultationUI.includes('hasConfirmedPatientSelection(patientId, patients) || !specialty') &&
+  consultationUI.includes('if (expressPatientId && expressPatientId !== patientId)') &&
+  consultationUI.includes('onClick={applyExpressDraft}') &&
+  consultationUI.includes('Préremplir les champs — sans enregistrer') &&
+  consultationUI.includes('function saveConsultation()') &&
+  consultationUI.includes('HELIOS Consultation Express · saisie rapide'),
+  'Express UI must verify identity, avoid overwrite, and use existing manual save.');
+console.log('PASS QW-042: fictional labelled-note parsing, conflict and UI guard checks.');
 
 console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');

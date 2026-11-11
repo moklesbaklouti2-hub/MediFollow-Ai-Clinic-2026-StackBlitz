@@ -7,6 +7,7 @@ import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
+import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 
 
 const specialtyGroups = [
@@ -175,6 +176,10 @@ export default function Consultations({
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [expressOpen, setExpressOpen] = useState(false);
+  const [expressDraft, setExpressDraft] = useState('');
+  const [expressFeedback, setExpressFeedback] = useState('');
+  const [expressPatientId, setExpressPatientId] = useState<string | null>(null);
   const [dismissedSuggestions, setDismissedSuggestions] = useState<string[]>([]);
   const [snoozedSuggestions, setSnoozedSuggestions] = useState<string[]>([]);
   const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(true);
@@ -313,7 +318,43 @@ export default function Consultations({
     setSaved(false);
   }
 
+  function applyExpressDraft() {
+    if (editingId) {
+      setExpressFeedback('Terminez la modification en cours avant la saisie express.');
+      return;
+    }
+    if (!hasConfirmedPatientSelection(patientId, patients) || !specialty) {
+      setExpressFeedback('Choisissez d’abord un dossier patient unique et une spécialité dans le formulaire.');
+      return;
+    }
+    if (expressPatientId && expressPatientId !== patientId) {
+      setExpressFeedback('Dossier patient changé : revenez au patient initial ou annulez la saisie.');
+      return;
+    }
+    const result = parseExpressDraft(expressDraft);
+    if (!result.valid) {
+      setExpressFeedback(result.reason);
+      return;
+    }
+    if (expressWouldOverwrite(result.fields, { motif, symptoms, history, diagnosis, plan })) {
+      setExpressFeedback('Un champ cible contient déjà du texte : effacez-le ou utilisez le formulaire habituel.');
+      return;
+    }
+    if (result.fields.motif !== undefined) setMotif(result.fields.motif);
+    if (result.fields.symptoms !== undefined) setSymptoms(result.fields.symptoms);
+    if (result.fields.history !== undefined) setHistory(result.fields.history);
+    if (result.fields.diagnosis !== undefined) setDiagnosis(result.fields.diagnosis);
+    if (result.fields.plan !== undefined) setPlan(result.fields.plan);
+    setExpressPatientId(patientId);
+    setExpressDraft('');
+    setSaved(false);
+    setExpressFeedback('Note transférée dans les champs existants. Relisez-la avant toute sauvegarde.');
+  }
+
   function startEditing(item: (typeof consultations)[number]) {
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(item.id);
     setPatientId(item.patientId);
     setSpecialty(item.specialty ?? '');
@@ -334,6 +375,9 @@ export default function Consultations({
   }
 
   function cancelEditing() {
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
@@ -379,6 +423,10 @@ export default function Consultations({
   }
 
   function saveConsultation() {
+    if (expressPatientId && expressPatientId !== patientId) {
+      window.alert('Saisie express liée à un autre patient. Revenez au dossier initial ou annulez avant de sauvegarder.');
+      return;
+    }
     if (!patientId || !motif.trim() || (!editingId && !specialty)) {
       alert('Veuillez sélectionner un patient, choisir une spécialité et renseigner le motif.');
       return;
@@ -420,6 +468,9 @@ export default function Consultations({
     }
 
     setSaved(true);
+    setExpressDraft('');
+    setExpressFeedback('');
+    setExpressPatientId(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
@@ -748,6 +799,45 @@ export default function Consultations({
         </div>
         <span className="consultation-badge">Consultation médicale</span>
       </header>
+
+      <section className="consultation-section" aria-label="HELIOS Consultation Express — saisie rapide">
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <h3 style={{ margin: '0 0 5px' }}>HELIOS Consultation Express · saisie rapide</h3>
+            <p className="patient-hint" style={{ margin: 0 }}>
+              Copiez une note fictive structurée. Aucun diagnostic n'est déduit et aucune consultation n'est enregistrée automatiquement.
+            </p>
+          </div>
+          <button type="button" className="consultation-save"
+            onClick={() => setExpressOpen(open => !open)}
+            aria-expanded={expressOpen}>
+            {expressOpen ? 'Fermer la saisie express' : 'Ouvrir la saisie express'}
+          </button>
+        </div>
+        {expressOpen && (
+          <div className="consultation-field">
+            <label htmlFor="helios-express-draft">Note fictive à répartir dans les champs existants</label>
+            <textarea id="helios-express-draft" value={expressDraft}
+              maxLength={MAX_EXPRESS_DRAFT_CHARS}
+              placeholder={'Motif: Vertiges fictifs\\nSymptômes: Depuis 2 jours\\nHistoire: Traitement fictif\\nDiagnostic: À déterminer\\nPlan: À discuter'}
+              onChange={event => { setExpressDraft(event.target.value); setExpressFeedback(''); }}
+              rows={5} disabled={Boolean(editingId)} />
+            <p className="patient-hint">
+              Une ligne par champ : Motif, Symptômes, Histoire, Diagnostic, Plan.
+              Sélectionnez d'abord un patient unique et une spécialité ci-dessous.
+              Les valeurs existantes ne seront jamais écrasées. Validez et relisez les champs avant d'enregistrer.
+            </p>
+            <button type="button" className="consultation-save" onClick={applyExpressDraft}
+              disabled={Boolean(editingId) || !expressDraft.trim()}>
+              Préremplir les champs — sans enregistrer
+            </button>
+            {expressPatientId && expressPatientId !== patientId && (
+              <p role="alert">Le patient a changé après préremplissage : sauvegarde bloquée pour éviter un mélange de dossiers.</p>
+            )}
+            {expressFeedback && <p role="status" className="patient-hint">{expressFeedback}</p>}
+          </div>
+        )}
+      </section>
 
       <section aria-label="Copilote clinique intelligent" className="smart-copilot-card">
         <label className="smart-copilot-label">
