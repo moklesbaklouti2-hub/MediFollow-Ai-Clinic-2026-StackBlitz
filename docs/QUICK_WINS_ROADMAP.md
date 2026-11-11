@@ -66,6 +66,7 @@
 | QW-051 | S | Filtre local des ordonnances par statut (annulée, brouillon, inconnue, etc.) | `e7927a5` (préparation) | Groupe QW-049–051 : V2 11/11 + tests Codespaces requis | EN VALIDATION GROUPÉE |
 
 | QW-052 | S | Filtre de chronologie par date début/fin, bornes inclusives et dates invalides explicites | branche de préparation | Tests locaux QW-048–055 requis, CI sur intégration audit | PRÉPARÉ NON VALIDÉ |
+| QW-053 | S | Filtrer les consultations par spécialité réellement consignée, y compris « non renseignée » | branche de préparation | Test du tri, des dossiers confirmés et du reset de filtre | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

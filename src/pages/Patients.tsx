@@ -15,6 +15,7 @@ import { filterRecordedEvents } from '../clinical/timelineFilter';
 import { searchRecordedEvents } from '../clinical/timelineSearch';
 import { filterDocumentedPrescriptionStatus } from '../clinical/timelineStatusFilter';
 import { filterTimelineByDateRange } from '../clinical/timelineDateRange';
+import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../clinical/timelineSpecialty';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
 import LocalDocumentReader from '../components/LocalDocumentReader';
@@ -28,6 +29,7 @@ export default function Patients() {
   const [prescriptionStatusFilter, setPrescriptionStatusFilter] = useState<TimelinePrescriptionStatusFilter>('all');
   const [timelineFromDate, setTimelineFromDate] = useState('');
   const [timelineToDate, setTimelineToDate] = useState('');
+  const [timelineSpecialtyFilter, setTimelineSpecialtyFilter] = useState('all');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -79,6 +81,10 @@ export default function Patients() {
   const dateFilteredMedicalTimeline = filterTimelineByDateRange(
     statusFilteredMedicalTimeline, timelineFromDate, timelineToDate
   );
+  const specialtyOptions = documentedSpecialtyOptions(patientConsultations);
+  const specialtyFilteredMedicalTimeline = timelineFilter === 'consultation'
+    ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
+    : dateFilteredMedicalTimeline;
 
   const lastVisitByPatient = useMemo(() => {
     // Prototype-free map: imported patient IDs cannot shadow object keys.
@@ -699,19 +705,33 @@ export default function Patients() {
             )}
           </section>
 
-          <h3 className="patient-section-title">Chronologie médicale ({dateFilteredMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
+          <h3 className="patient-section-title">Chronologie médicale ({specialtyFilteredMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-filter">Filtrer la chronologie :</label>
             <select id="patient-timeline-filter" value={timelineFilter}
               onChange={(event) => {
                 setTimelineFilter(event.target.value as MedicalTimelineFilter);
                 setPrescriptionStatusFilter('all');
+                setTimelineSpecialtyFilter('all');
               }}>
               <option value="all">Consultations et ordonnances</option>
               <option value="consultation">Consultations uniquement</option>
               <option value="prescription">Ordonnances uniquement</option>
             </select>
           </div>
+          {timelineFilter === 'consultation' && (
+            <div className="patient-timeline-filter">
+              <label htmlFor="patient-timeline-specialty">Spécialité consignée :</label>
+              <select id="patient-timeline-specialty" value={timelineSpecialtyFilter}
+                onChange={(event) => setTimelineSpecialtyFilter(event.target.value)}>
+                <option value="all">Toutes les spécialités</option>
+                <option value="missing">Spécialité non renseignée</option>
+                {specialtyOptions.map(value => (
+                  <option key={value} value={'specialty:' + value}>{value}</option>
+                ))}
+              </select>
+            </div>
+          )}
           {timelineFilter === 'prescription' && (
             <div className="patient-timeline-filter">
               <label htmlFor="patient-timeline-status">Statut de l'ordonnance :</label>
@@ -743,10 +763,10 @@ export default function Patients() {
           </div>
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
-          ) : dateFilteredMedicalTimeline.length === 0 ? (
+          ) : specialtyFilteredMedicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucun événement correspondant à la recherche ou au filtre pour ce patient.</p>
           ) : (
-            dateFilteredMedicalTimeline.map((entry) => (
+            specialtyFilteredMedicalTimeline.map((entry) => (
               <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
                 {entry.type === 'consultation' ? (
                   <>

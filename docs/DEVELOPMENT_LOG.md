@@ -902,3 +902,8 @@
 - Filtre local par dates civiles UTC inclusives ; les dates malformées/absentes ne sont pas classées arbitrairement lors d'un filtrage actif. L'ordre et les originaux sont conservés.
 - Tests fictifs de début/fin, intervalles inversés, années/jours invalides, non-mutation et contrat UI.
 - **Statut :** préparé sur branche séparée, sans test local/CI à ce stade ; F36 réservé à la validation humaine finale.
+
+### 2026-11-11 — QW-053 : spécialités de la chronologie (préparation)
+- Choix des spécialités seulement à partir des consultations du patient confirmé ; sélection « non renseignée » pour les anciennes consultations, sans inférence ni modification des documents.
+- Filtre réinitialisé au changement de type d'événement. Tests synthétiques de spécialités, filtres, absence de mutation et contrats de l'interface.
+- **Statut :** préparé non validé sur branche distincte ; F37 prévu à la phase finale.
