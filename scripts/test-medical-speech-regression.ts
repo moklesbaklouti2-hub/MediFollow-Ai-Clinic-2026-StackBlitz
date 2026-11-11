@@ -620,7 +620,7 @@ const closeBlock = orbSource.split('function closePanel()')[1]?.split('function 
 assert.ok(closeBlock.includes('stopSpeaking();') &&
   closeBlock.includes('recognitionRef.current?.abort();') &&
   orbSource.includes('onClick={closePanel}') &&
-  orbSource.includes('panelOpen ? closePanel() : setPanelOpen(true)'),
+  orbSource.includes('panelOpen ? closePanel() : openPanel()'),
   'La fermeture par bouton ou Orb doit arrêter la parole et l’écoute.');
 assertions++;
 assert.ok(orbSource.includes("disabled={!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)}") &&
