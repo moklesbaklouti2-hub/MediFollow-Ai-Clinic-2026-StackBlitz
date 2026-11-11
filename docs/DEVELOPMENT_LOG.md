@@ -428,3 +428,10 @@
 - **Correctif :** `src/services/medicalSpeech.ts` compare le nombre d'occurrences de chaque terme médical déjà reconnu, y compris les expressions du dictionnaire. Une alternative reste admissible si elle conserve toutes les occurrences ; aucune donnée clinique n'est générée automatiquement.
 - **Tests :** trois régressions négatives et deux positives sur données fictives dans `scripts/test-medical-speech-regression.ts`.
 - **Validation :** vérifier la compilation, les tests et la couleur réelle de la CI du commit. La dictée vocale sur Android et la validation clinique en conditions réelles ne sont pas couvertes.
+
+### 2026-11-11 — HELIOS : sécuriser la dictée des constantes « à / de » et TA/PA en paires
+- **Branche :** `audit-stabilisation-2026-11-10`, sans modifier `main`, fusionner la PR ni déployer.
+- **Défaut :** des mesures telles que « glycémie à 1,2 g/L », « saturation à 98 % » et « TA 120/80 » n'étaient pas toutes liées explicitement à leur libellé ; une hypothèse alternative pouvait conserver tous les chiffres tout en réattribuant les valeurs à d'autres paramètres.
+- **Correction :** reconnaissance du lien libellé–valeur avec « à », « de », « est à/de » ; protection des couples pression artérielle/tension artérielle/TA/PA avec la paire systolique–diastolique séparée par « / » ou « sur ». Toute divergence conserve l'hypothèse initiale. Pas de saisie de mesure automatique.
+- **Tests :** quatre inversions bloquées et deux corrections lexicales acceptées sur données fictives dans `scripts/test-medical-speech-regression.ts`.
+- **Limites :** protections limitées aux formes reconnues, sans microphone Android ni validation clinique réelle. Contrôle CI sur le SHA final requis.

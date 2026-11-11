@@ -271,8 +271,14 @@ function criticalSpeechTokens(value: string): string {
   // ou permuter deux valeurs entre leurs libellés.
   // Conserver le couple (mesure reconnue, valeur) tel qu'il a été dicté.
   const measuredValues = Array.from(normalized.matchAll(
-    /(?<![\p{L}\p{N}])(spo[2₂]|saturation(?: en oxygene)?|glycemie|temperature|pression systolique|pression diastolique|frequence cardiaque|pouls|fc)(?![\p{L}\p{N}])\s*(?::|=)?\s*(\d+(?:[,.]\d+)?)/gu,
+    /(?<![\p{L}\p{N}])(spo[2₂]|saturation(?: en oxygene)?|glycemie|temperature|pression systolique|pression diastolique|frequence cardiaque|pouls|fc)(?![\p{L}\p{N}])\s*(?::|=|a|de|est\s+(?:a|de))?\s*(\d+(?:[,.]\d+)?)/gu,
   ), match => [match[1], match[2].replace(',', '.')]);
+  // Les dictées de tension groupées (120/80 ou 120 sur 80) ont deux
+  // composantes liées au même libellé clinique. Protéger leur association
+  // lors du choix entre les propositions du navigateur.
+  const bloodPressurePairs = Array.from(normalized.matchAll(
+    /(?<![\p{L}\p{N}])(tension arterielle|pression arterielle|ta|pa)(?![\p{L}\p{N}])\s*(?::|=|a|de|est\s+(?:a|de))?\s*(\d{2,3})\s*(?:\/|sur)\s*(\d{2,3})(?!\d)/gu,
+  ), match => [match[1], match[2], match[3]]);
   // Les nombres et unités peuvent être identiques alors que deux doses
   // ont été échangées entre deux médicaments. Protéger le triplet exact
   // (nom, quantité, unité) pour les molécules identifiées dans notre lexique.
@@ -303,7 +309,7 @@ function criticalSpeechTokens(value: string): string {
   // ces éléments dans une transcription alternative sélectionnée.
   const obstetrics = Array.from(normalized.matchAll(/\b(?:enceinte|grossesse|grossesses|gestante|gestantes|allaitement|allaite|menopause|menopausee|menopausees)\b/gu), match => match[0]);
   const history = Array.from(normalized.matchAll(/\b(?:antecedent|antecedents|chirurgie|chirurgical|chirurgicale|chirurgicaux|diabete|diabetique|hypertension|hta|asthme|epilepsie|infarctus|avc)\b/gu), match => match[0]);
-  return JSON.stringify({ numbers, measuredValues, medicationDoses, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
+  return JSON.stringify({ numbers, measuredValues, bloodPressurePairs, medicationDoses, negations, negationWordPositions, units, laterality, polarity, chronology, allergy, administration, routes, obstetrics, history });
 }
 
 // Conserver le nombre d'occurrences de chaque terme clinique déjà reconnu,

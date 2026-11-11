@@ -202,6 +202,46 @@ assert.equal(runtime.chooseMedicalSpeechAlternative({
 }), 'SpO₂ 97 % et glycémie 1,2 g/L avec dyspnée');
 assertions++;
 
+// Protéger les constantes dictées avec « à / de » et les tensions
+// exprimées en paires systolique/diastolique, y compris « sur ».
+const reassignedSpokenVitals = [
+  [
+    'glycémie à 1,2 g/L et saturation à 98 % avec disney',
+    'saturation à 1,2 g/L et glycémie à 98 % avec dyspnée',
+  ],
+  [
+    'température de 38,5 degrés et pouls de 96 bpm avec disney',
+    'pouls de 38,5 degrés et température de 96 bpm avec dyspnée',
+  ],
+  [
+    'TA 120/80 et pression artérielle 140/90 avec disney',
+    'pression artérielle 120/80 et TA 140/90 avec dyspnée',
+  ],
+  [
+    'tension artérielle 120 sur 80 et pression artérielle 100 sur 60 avec disney',
+    'pression artérielle 120 sur 80 et tension artérielle 100 sur 60 avec dyspnée',
+  ],
+];
+for (const [initial, unsafe] of reassignedSpokenVitals) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: unsafe },
+  }), initial, 'Constante réattribuée dans la transcription : ' + unsafe);
+  assertions++;
+}
+for (const [initial, safe] of [
+  ['TA 120/80 avec disney', 'TA 120/80 avec dyspnée'],
+  ['glycémie à 1,2 g/L et saturation à 98 % avec disney', 'glycémie à 1,2 g/L et saturation à 98 % avec dyspnée'],
+]) {
+  assert.equal(runtime.chooseMedicalSpeechAlternative({
+    length: 2,
+    0: { transcript: initial },
+    1: { transcript: safe },
+  }), safe, 'Amélioration vocale non clinique refusée : ' + safe);
+  assertions++;
+}
+
 // Une hypothèse mieux notée ne doit pas déplacer une négation ni
 // en changer la cible clinique connue (toux / dyspnée).
 const negationMeaningChanges = [
