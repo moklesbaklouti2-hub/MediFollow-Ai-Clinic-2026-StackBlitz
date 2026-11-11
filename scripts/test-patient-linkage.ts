@@ -5,6 +5,7 @@ import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGu
 import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
 import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
 import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
+import { compareRecentVitals } from '../src/clinical/trends.ts';
 import type { Consultation } from '../src/types/medical.ts';
 import { readFileSync } from 'node:fs';
 import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
@@ -277,5 +278,47 @@ assert.ok(patientPageSource.includes('clinicalMemory.documentedHistory[group.key
   patientPageSource.includes('Non renseigné'),
   'HELIOS Clinical Memory must present all three original history groups without inventing negatives.');
 console.log('PASS QW-036: 10 fictional history group and UI regression checks.');
+
+
+// QW-037 — compare only full numeric values of the same kind, ordered by
+// their recorded dates. No interpretation or patient data transmission.
+const compareVisit = (id: string, date: string, values: Partial<Consultation['vitals']>) => ({
+  id, date, vitals: {
+    systolic: '', diastolic: '', heartRate: '', spo2: '',
+    temperature: '', respiratoryRate: '', weight: '', height: '', glycemia: '',
+    ...values,
+  },
+});
+const trendFixture = [
+  compareVisit('old', '2026-10-01T10:00:00Z', { weight: '70', systolic: '120', glycemia: '1,00' }),
+  compareVisit('latest', '2026-11-11T10:00:00Z', { weight: '72', systolic: '135', glycemia: '1,20' }),
+  compareVisit('bad', '2026-12-01', { weight: '72 kg', systolic: 'valeur absente' }),
+  compareVisit('invalid-date', 'date inconnue', { weight: '90' }),
+  compareVisit('middle', '2026-11-01T10:00:00Z', { weight: '71', systolic: '130' }),
+];
+const trendOriginal = JSON.stringify(trendFixture);
+const comparisons = compareRecentVitals(trendFixture);
+const byKey = (key: string) => comparisons.find(item => item.key === key);
+assert.equal(byKey('weight')?.recent.value, 72);
+assert.equal(byKey('weight')?.previous.value, 71);
+assert.equal(byKey('weight')?.difference, 1);
+assert.equal(byKey('weight')?.recent.date, '2026-11-11T10:00:00Z');
+assert.equal(byKey('systolic')?.difference, 5);
+assert.equal(byKey('glycemia')?.difference, 0.2);
+assert.equal(byKey('diastolic'), undefined);
+assert.equal(byKey('heartRate'), undefined);
+assert.deepEqual(compareRecentVitals([]), []);
+assert.deepEqual(compareRecentVitals([compareVisit('only', '2026-11-11', { weight: '70' })]), []);
+assert.deepEqual(compareRecentVitals([
+  compareVisit('latest', '2026-11-11', { weight: '70.1' }),
+  compareVisit('old', '2026-11-10', { weight: '70,0' }),
+]).find(item => item.key === 'weight')?.difference, 0.1);
+assert.equal(JSON.stringify(trendFixture), trendOriginal, 'Trend calculation must not alter stored visits.');
+assert.ok(patientPageSource.includes('compareRecentVitals(patientConsultations)') &&
+  patientPageSource.includes('HELIOS Trends · comparaison des deux dernières mesures') &&
+  patientPageSource.includes('Écart brut :') &&
+  patientPageSource.includes('Deux mesures numériques datées sont nécessaires'),
+  'The patient UI must show source dates and avoid a clinical interpretation.');
+console.log('PASS QW-037: 12 numerical trend checks, immutable fixtures and UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

@@ -5,6 +5,7 @@ import PatientClinicalInfo from '../components/PatientClinicalInfo';
 import { selectUniquePatient } from '../services/uniquePatientSelection';
 import { latestVitalReadings } from '../clinical/patientVitals';
 import { buildClinicalMemory } from '../clinical/clinicalMemory';
+import { compareRecentVitals } from '../clinical/trends';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -76,6 +77,7 @@ export default function Patients() {
   // Each latest reading keeps the date of its own consultation.
   const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;
   const clinicalMemory = selected ? buildClinicalMemory(selected, patientConsultations) : null;
+  const recordedVitalComparisons = selected ? compareRecentVitals(patientConsultations) : [];
 
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
@@ -563,6 +565,28 @@ export default function Patients() {
             {renderTrendChart('Fréquence cardiaque', 'bpm', 'heartRate')}
             {renderTrendChart('Saturation en oxygène (SpO₂)', '%', 'spo2')}
           </div>
+
+          <section aria-label="HELIOS Trends — comparaison descriptive des mesures">
+            <h3 className="patient-section-title">HELIOS Trends · comparaison des deux dernières mesures</h3>
+            <p className="patient-empty-history">
+              Différences numériques entre deux consultations enregistrées, avec dates et unités.
+              Ces écarts ne constituent ni une tendance cliniquement validée, ni une alerte, ni une recommandation.
+            </p>
+            {recordedVitalComparisons.length === 0 ? (
+              <p className="patient-empty-history">Deux mesures numériques datées sont nécessaires pour comparer chaque constante.</p>
+            ) : (
+              <div className="patient-trends-grid">
+                {recordedVitalComparisons.map((comparison) => (
+                  <div className="patient-trend-card" key={comparison.key}>
+                    <strong>{comparison.label}</strong>
+                    <span>Plus récente : {comparison.recent.value} {comparison.unit} · {displayDate(comparison.recent.date)}</span>
+                    <span>Précédente : {comparison.previous.value} {comparison.unit} · {displayDate(comparison.previous.date)}</span>
+                    <span>Écart brut : {comparison.difference > 0 ? '+' : ''}{comparison.difference} {comparison.unit}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
 
           <h3 className="patient-section-title">Chronologie médicale ({medicalTimeline.length} événements)</h3>
           {medicalTimeline.length === 0 ? (

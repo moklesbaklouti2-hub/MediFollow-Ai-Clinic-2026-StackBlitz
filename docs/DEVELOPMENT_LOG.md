@@ -788,3 +788,10 @@
 - **Garde-fous :** les listes vides sont étiquetées « Non renseigné », jamais « aucun antécédent ». Les entrées d'import mal formées sont ignorées sans altérer la source ; lecture locale uniquement et dossier patient déjà vérifié unique.
 - **Tests fictifs :** dix vérifications dédiées (trois rubriques, dates libres, champs vides, formats invalides, immutabilité et contrat UI) ajoutées à `test:patient-linkage` exécuté en CI.
 - **Validation humaine :** scénario F21 existant enrichi pour la phase finale, non exécuté. La vue n'est ni une synthèse médicale vérifiée ni un moteur de décisions.
+
+### 2026-11-11 — QW-037 : HELIOS Trends, comparaison descriptive datée
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon, `main` intacte, sans fusion, déploiement, dépense ni données réelles.
+- **Fonction :** premier volet HELIOS Trends dans la fiche patient, à côté des graphiques existants : affiche pour chaque paramètre les deux dernières valeurs numériques datées, leur unité, leur date source et leur différence brute. Aucun diagnostic, seuil, pourcentage, alerte ou requête fournisseur IA.
+- **Garde-fous :** nombres textuels complets uniquement (virgule ou point), dates analysables, mesures invalides ignorées, aucune fusion de constantes distinctes. Le calcul ne modifie pas les consultations et reste limité au dossier patient déjà confirmé unique.
+- **Tests fictifs :** douze contrôles de tri, différence, virgule, valeurs manquantes ou invalides, immutabilité et contrat d'interface, ajoutés à la CI existante.
+- **Validation humaine :** scénario F22 ajouté au protocole final, non exécuté. Une variation de deux valeurs n'est pas une tendance clinique validée.
