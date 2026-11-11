@@ -5,6 +5,7 @@ import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
 import { createSessionStore } from './security/sessionStore.ts';
 import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
+import { readClinicalPromptText } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -431,7 +432,7 @@ const commandPages = [
 
 app.post('/api/commands/interpret', async (req, res) => {
   try {
-    const instruction = String(req.body?.instruction ?? '').trim();
+    const instruction = readClinicalPromptText(req.body?.instruction);
     const currentPage = String(req.body?.currentPage ?? 'Tableau de bord');
     if (!instruction) return res.status(400).json({ error: 'Commande vide.' });
     if (instruction.length > 5000) return res.status(413).json({ error: 'Commande trop longue.' });
@@ -701,7 +702,7 @@ function interviewQuestionIssues(reply: string, facts: string, history: Array<{ 
 
 app.post('/api/chat', async (req, res) => {
   try {
-    const message = String(req.body?.message ?? '').trim();
+    const message = readClinicalPromptText(req.body?.message);
     if (!message) return res.status(400).json({ error: 'Message vide.' });
 
     const context = req.body?.context;

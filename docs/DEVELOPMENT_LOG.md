@@ -622,3 +622,10 @@
 - **Correctif :** middleware unique `preventClinicalCaching` appliqué **avant** le contrôle d'accès et les handlers, avec `Cache-Control: no-store` et `Pragma: no-cache`. La liste des chemins est réutilisée depuis `protectedClinicalRouter.ts` pour éviter les divergences. Aucune modification des schémas de réponse, des fonctions IA, de l'authentification, du réseau ou des routes publiques.
 - **Validation ciblée :** test HTTP sur serveur Express éphémère lié à `127.0.0.1`, réponses fictives 200 et 400 pour les trois routes, plus vérification que `/api/health` n'est pas modifié et que le middleware réel est monté avant la barrière distante.
 - **Limite critique :** cette mesure ne constitue **pas** une authentification ni une protection suffisante contre l'exposition réseau, la transmission à des fournisseurs IA ou le stockage côté application. QW-007/QW-008 et les essais Android restent ouverts. Vérifier les 11 jobs Actions sur le SHA final.
+
+### 2026-11-11 — QW-014 : refuser les prompts JSON non textuels (chat et commandes)
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 conservée en brouillon ; aucune fusion, dépense, donnée réelle ou déploiement.
+- **Défaut distinct :** les routes `/api/chat` et `/api/commands/interpret` utilisaient `String(req.body?...)`, convertissant des tableaux/objets/nombres en texte (« [object Object] ») transmis par erreur aux fournisseurs IA.
+- **Correction :** `readClinicalPromptText` accepte uniquement les chaînes, en supprimant leurs espaces périphériques ; les autres types sont traités comme entrée vide et rejetés par les gardes HTTP 400 déjà en place. Aucun changement des messages valides ni des fournisseurs IA.
+- **Tests fictifs :** 13 scénarios d'entrée, plus 2 assertions vérifiant la liaison aux vraies routes et le refus avant appels IA.
+- **Limite :** ce garde ne constitue ni une authentification, ni une validation clinique, ni une certification de confidentialité. CI complète des 11 jobs sur commit final requise.

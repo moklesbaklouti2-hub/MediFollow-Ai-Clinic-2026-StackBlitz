@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import express from 'express';
 import { CLINICAL_PATHS } from '../security/protectedClinicalRouter.ts';
 import { preventClinicalCaching } from '../security/noStoreClinicalResponses.ts';
+import { readClinicalPromptText } from '../security/clinicalPromptInput.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
 import type { Patient } from '../../src/types/medical.ts';
@@ -406,6 +407,37 @@ try {
   );
 }
 console.log('OK — réponses cliniques non stockables sur 3 routes HTTP, succès et erreur (18 en-têtes vérifiés).');
+
+
+// QW-014 — ne jamais transformer un JSON non textuel en instruction IA.
+// Tous les exemples sont fictifs ; aucun appel réseau vers un fournisseur.
+const promptInputCases: Array<{ value: unknown; expected: string }> = [
+  { value: null, expected: '' },
+  { value: undefined, expected: '' },
+  { value: 123, expected: '' },
+  { value: true, expected: '' },
+  { value: false, expected: '' },
+  { value: [], expected: '' },
+  { value: ['ouvrir', 'patient'], expected: '' },
+  { value: { text: 'symptôme fictif' }, expected: '' },
+  { value: { toString: () => { throw new Error('Never coerce an object to a prompt'); } }, expected: '' },
+  { value: '', expected: '' },
+  { value: '   \t ', expected: '' },
+  { value: '  Bonjour  ', expected: 'Bonjour' },
+  { value: '  Dyspnée\n  ', expected: 'Dyspnée' },
+];
+for (const scenario of promptInputCases) {
+  assert.equal(readClinicalPromptText(scenario.value), scenario.expected,
+    'Coercition de commande ou message non sûr');
+}
+const commandRoute = source.split("app.post('/api/commands/interpret'")[1]?.split("app.post('/api/chat'")[0] ?? '';
+assert.ok(commandRoute.includes('const instruction = readClinicalPromptText(req.body?.instruction);') &&
+  commandRoute.includes("if (!instruction) return res.status(400)"),
+  'La route des commandes doit refuser le JSON non textuel avant tout appel IA.');
+assert.ok(chat.includes('const message = readClinicalPromptText(req.body?.message);') &&
+  chat.includes("if (!message) return res.status(400)"),
+  'La route Discussion IA doit refuser le JSON non textuel avant tout appel IA.');
+console.log('OK — 13 cas de validation de prompts et 2 contrats de routes IA sans coercition.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

@@ -25,7 +25,8 @@
 | QW-010 | S | Ne pas masquer les antécédents manquants par des rubriques vides et intégrer le contexte gynéco-obstétrical | `d87032e` | [43036660236](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43036660236) : 11/11 réussis | VALIDÉ |
 | QW-011 | S | Refuser retour/annulation sur identifiant de lot ambigu après import | `52eed62` | [43038818380](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43038818380) : 11/11 réussis | VALIDÉ |
 | QW-012 | S | Rejeter sans exception les requêtes de retour/annulation mal formées | `fe6a516` | [43039835513](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43039835513) : 11/11 réussis | VALIDÉ |
-| QW-013 | S | Désactiver la mise en cache des réponses des trois routes cliniques, succès et erreur | SHA à vérifier | Test HTTP loopback + CI 11/11 exigée | EN VALIDATION |
+| QW-013 | S | Désactiver la mise en cache des réponses des trois routes cliniques, succès et erreur | `6603fe6` | [43043178304](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43043178304) : 11/11 réussis | VALIDÉ |
+| QW-014 | S | Refuser les JSON non textuels dans les messages de chat et commandes vocales | SHA à vérifier | 13 cas fictifs + 2 contrats de routes, CI 11/11 requise | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
