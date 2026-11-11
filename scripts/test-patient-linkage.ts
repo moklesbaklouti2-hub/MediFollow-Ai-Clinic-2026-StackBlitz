@@ -378,7 +378,7 @@ assert.equal(buildReferralSource('fictif-a', [
 ]).recordedDiagnosis, null);
 assert.ok(patientPageSource.includes('buildReferralSource(selected.id, patientConsultations)') &&
   patientPageSource.includes('HELIOS Referral · préparation d\'orientation') &&
-  patientPageSource.includes('Aucune donnée n\'est transmise') &&
+  patientPageSource.includes('aucune donnée n\'est transmise') &&
   patientPageSource.includes('Diagnostic consigné (non revalidé)'),
   'Referral preview must remain source-only, non-prescriptive and never transmitted.');
 console.log('PASS QW-039: 10 fictional referral provenance and UI checks.');
