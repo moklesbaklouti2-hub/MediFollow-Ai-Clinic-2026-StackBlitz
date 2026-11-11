@@ -67,7 +67,9 @@ export async function getDoctorCsrfToken(signal?: AbortSignal): Promise<string> 
   let payload: unknown;
   try {
     payload = await response.json();
-  } catch {
+  } catch (error) {
+    // Fetch can resolve its headers before cancellation interrupts the body.
+    if (signal?.aborted) throw error;
     throw new DoctorAuthError(503, 'Réponse de protection de session invalide.');
   }
   const csrfToken = payload && typeof payload === 'object' && 'csrfToken' in payload

@@ -5,9 +5,11 @@ import { postDoctorClinical } from '../src/services/doctorClinicalTransport.ts';
 const originalFetch = globalThis.fetch;
 const token = 'a'.repeat(64);
 const calls: Array<{ path: string; init: RequestInit }> = [];
-let csrfMode: 'valid' | 'expired' | 'invalid' | 'abort' = 'valid';
+let csrfMode: 'valid' | 'expired' | 'invalid' | 'abort' | 'body-abort' | 'malformed-json' = 'valid';
 let clinicalStatus = 200;
 const controller = new AbortController();
+const bodyController = new AbortController();
+const bodyAbort = new DOMException('Body read aborted', 'AbortError');
 
 globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
   const path = String(input);
@@ -19,6 +21,15 @@ globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
       controller.abort();
       throw new DOMException('Aborted', 'AbortError');
     }
+    if (csrfMode === 'body-abort') {
+      const response = Response.json({ csrfToken: token });
+      response.json = async () => {
+        bodyController.abort();
+        throw bodyAbort;
+      };
+      return response;
+    }
+    if (csrfMode === 'malformed-json') return new Response('{');
     return Response.json({ csrfToken: token });
   }
   if (clinicalStatus !== 200) return Response.json({ error: 'Accès refusé' }, { status: clinicalStatus });
@@ -75,6 +86,22 @@ try {
     (error: unknown) => error instanceof DOMException && error.name === 'AbortError',
   );
   assert.deepEqual(calls.map(call => call.path), ['/api/auth/csrf'], 'Abort before sending clinical data');
+
+  csrfMode = 'body-abort';
+  calls.length = 0;
+  await assert.rejects(
+    postDoctorClinical('/api/chat', { synthetic: true }, { signal: bodyController.signal }),
+    (error: unknown) => error === bodyAbort,
+  );
+  assert.deepEqual(calls.map(call => call.path), ['/api/auth/csrf'], 'Body-read abort must block clinical POST');
+
+  csrfMode = 'malformed-json';
+  calls.length = 0;
+  await assert.rejects(
+    postDoctorClinical('/api/chat', { synthetic: true }),
+    (error: unknown) => error instanceof DoctorAuthError && error.status === 503,
+  );
+  assert.deepEqual(calls.map(call => call.path), ['/api/auth/csrf'], 'Malformed JSON must still fail closed');
   console.log('PASS: isolated browser clinical transport adds CSRF for 3 routes, fails closed, preserves abort.');
   console.log('WARNING: preparatory transport only, not wired into live React or production routes.');
 } finally {

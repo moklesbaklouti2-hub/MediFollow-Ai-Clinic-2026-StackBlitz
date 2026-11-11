@@ -23,11 +23,15 @@ export function createSessionStore(options: { ttlMs?: number; now?: () => number
       if (!subjectId || subjectId.trim() !== subjectId || subjectId.length > 128) {
         throw new Error('Invalid subject');
       }
+      const issuedAt = now();
+      const expiresAt = issuedAt + ttlMs;
+      if (!Number.isSafeInteger(issuedAt) || !Number.isSafeInteger(expiresAt)) {
+        throw new Error('Invalid session clock');
+      }
       const token = randomBytes(32).toString('base64url');
-      const expiresAt = now() + ttlMs;
       // Keep bounded memory use and prevent unlimited concurrent sessions.
       for (const [key, session] of sessions) {
-        if (expiresAt - ttlMs >= session.expiresAt) sessions.delete(key);
+        if (issuedAt >= session.expiresAt) sessions.delete(key);
       }
       while (sessions.size >= maxSessions) {
         const oldest = sessions.keys().next().value;
@@ -43,7 +47,10 @@ export function createSessionStore(options: { ttlMs?: number; now?: () => number
       // Map lookup is not constant-time; tokens are uniformly random and hashed at rest.
       const session = sessions.get(key);
       if (!session) return null;
-      if (now() >= session.expiresAt) { sessions.delete(key); return null; }
+      const checkedAt = now();
+      // Invalid clock readings must never make an expired session appear valid.
+      if (!Number.isSafeInteger(checkedAt)) return null;
+      if (checkedAt >= session.expiresAt) { sessions.delete(key); return null; }
       return { ...session };
     },
     revoke(token: unknown): boolean {

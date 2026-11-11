@@ -121,3 +121,12 @@ Une progression mesurable en modifications de code réellement testées, avec un
 - **Contrôle 2 :** revue du diff, `git diff --check` et vérification des branches success/failure/incomplètes. Aucune modification du code clinique. Pas de build application ni de test navigateur dans ce lot CI ; la CI du nouveau commit reste à vérifier.
 - **Commit :** cette entrée, le test et le workflow sont livrés ensemble ; utiliser le SHA du commit contenant cette entrée, sans commit documentaire supplémentaire.
 - **Reprise :** attendre le résultat CI de ce commit puis poursuivre l'audit des accès cliniques. Ne pas déployer, fusionner ou utiliser des données réelles. Les tests Android/microphone restent en attente.
+
+### 2026-11-11 — Fiabilité sessions et annulation CSRF (lot parallèle)
+- **Base vérifiée :** `adceed5a4543d13e0edc45c6c9ed8917f76ae20f`, événement `6782801140`, workflow `42928316379`, tentative 1 completed/success, 11 jobs réussis. Deux sous-tâches sur fichiers distincts, intégrées par un seul coordinateur.
+- **Sessions :** `server/security/sessionStore.ts` refuse les horloges invalides ou débordantes lors de la création et de la vérification ; 13 assertions ajoutées dans `scripts/test-session-store.mts`. Le défaut NaN a été reproduit sur la version précédente.
+- **Client :** `src/services/doctorAuthClient.ts` conserve l'annulation pendant la lecture du corps CSRF au lieu de la transformer en erreur 503. Régressions annulation et JSON malformé dans `scripts/test-doctor-clinical-transport.mts` ; aucun POST clinique après ces erreurs.
+- **Contrôle 1 :** suites session-store, doctor-clinical-transport et doctor-session-guard exécutées avec `node --import tsx` : PASS ; test statique doctor-auth-client : PASS. Le CLI tsx a initialement échoué sur son socket IPC (EPERM) ; l'import Node exécute les mêmes tests sans serveur IPC.
+- **Contrôle 2 :** revue des diffs, `git diff --check`, `npm run build` : PASS. Avertissement Vite existant sur bundle >500 kB. Aucun test Android ni certification médicale ; aucun mode de sécurité activé ou déploiement.
+- **Commit :** code, tests et journaux regroupés dans le commit contenant cette entrée. CI de ce nouveau commit à confirmer au prochain événement.
+- **Reprise :** examiner les refus/expirations dans les parcours intégrés et poursuivre la stabilisation du périmètre existant. Le fichier package-lock généré pour l'installation locale n'est pas inclus.

@@ -52,4 +52,18 @@ const fresh = expiring.issue('fictional-doctor');
 assert.equal(expiring.verify(expired.token), null);
 assert.ok(expiring.verify(fresh.token));
 
+// Non-finite clocks must fail closed instead of bypassing expiry comparisons.
+for (const invalidClock of [NaN, Infinity, -Infinity, Number.MAX_SAFE_INTEGER + 1]) {
+  let value = 1000;
+  const invalid = createSessionStore({ ttlMs: 1000, now: () => value });
+  const session = invalid.issue('fictional-doctor');
+  value = invalidClock;
+  assert.equal(invalid.verify(session.token), null, 'Invalid clock must reject verification');
+  assert.throws(() => invalid.issue('fictional-doctor'), /Invalid session clock/);
+  value = 2000;
+  assert.equal(invalid.verify(session.token), null, 'Expiry must still be enforced after clock recovery');
+}
+const overflowing = createSessionStore({ ttlMs: 1000, now: () => Number.MAX_SAFE_INTEGER });
+assert.throws(() => overflowing.issue('fictional-doctor'), /Invalid session clock/);
+
 console.log('PASS: isolated session lifecycle issue/verify/revoke/expire/revokeAll; not production-wired.');
