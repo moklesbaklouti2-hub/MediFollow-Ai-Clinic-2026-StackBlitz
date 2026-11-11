@@ -14,6 +14,7 @@ import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from 
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../src/clinical/prescriptionTimeline.ts';
 import { filterRecordedEvents } from '../src/clinical/timelineFilter.ts';
 import { searchRecordedEvents } from '../src/clinical/timelineSearch.ts';
+import { filterDocumentedPrescriptionStatus } from '../src/clinical/timelineStatusFilter.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -624,7 +625,7 @@ assert.deepEqual(filterRecordedEvents(timelineFixture, 'prescription').map(item 
 assert.deepEqual(filterRecordedEvents([], 'prescription'), []);
 assert.equal(JSON.stringify(timelineFixture), timelineBefore, 'Filtering must never modify clinical records.');
 assert.ok(patientPageSource.includes('const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter)') &&
-  patientPageSource.includes('searchedMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('statusFilteredMedicalTimeline.map((entry)') &&
   patientPageSource.includes('id="patient-timeline-filter"') &&
   patientPageSource.includes('Consultations uniquement') &&
   patientPageSource.includes('Ordonnances uniquement') &&
@@ -652,8 +653,35 @@ assert.deepEqual(searchRecordedEvents(searchFixture, 'absence').map(x => x.id), 
 assert.equal(JSON.stringify(searchFixture), searchOriginal, 'Local search must not mutate records.');
 assert.ok(patientPageSource.includes('searchRecordedEvents(visibleMedicalTimeline, timelineSearch)') &&
   patientPageSource.includes('id="patient-timeline-search"') &&
-  patientPageSource.includes('searchedMedicalTimeline.map((entry)'),
+  patientPageSource.includes('statusFilteredMedicalTimeline.map((entry)'),
   'Patient timeline must search only the already selected and type-filtered events.');
 console.log('PASS QW-050: accent-insensitive local timeline search and UI contracts.');
+
+// QW-051 — Recorded prescription statuses remain documentary and are filtered
+// only within the current patient's already selected event set.
+const documentedStatusFixtures = [
+  { id: 'c1', type: 'consultation' as const },
+  { id: 'p0', type: 'prescription' as const, prescription: { status: 'draft' } },
+  { id: 'p1', type: 'prescription' as const, prescription: { status: 'validated' } },
+  { id: 'p2', type: 'prescription' as const, prescription: { status: 'dispensed' } },
+  { id: 'p3', type: 'prescription' as const, prescription: { status: 'cancelled' } },
+  { id: 'p4', type: 'prescription' as const, prescription: {} },
+  { id: 'p5', type: 'prescription' as const, prescription: { status: 'invalid' } },
+];
+const statusOriginal = JSON.stringify(documentedStatusFixtures);
+assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'all').map(x => x.id),
+  ['c1', 'p0', 'p1', 'p2', 'p3', 'p4', 'p5']);
+assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'cancelled').map(x => x.id), ['p3']);
+assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'dispensed').map(x => x.id), ['p2']);
+assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'draft').map(x => x.id), ['p0']);
+assert.deepEqual(filterDocumentedPrescriptionStatus(documentedStatusFixtures, 'unknown').map(x => x.id), ['p4', 'p5']);
+assert.equal(JSON.stringify(documentedStatusFixtures), statusOriginal, 'Status filter may not alter records.');
+assert.ok(patientPageSource.includes("timelineFilter === 'prescription'") &&
+  patientPageSource.includes('filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)') &&
+  patientPageSource.includes('statusFilteredMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('id="patient-timeline-status"') &&
+  patientPageSource.includes("setPrescriptionStatusFilter('all')"),
+  'Status select must be offered only for prescriptions, reset on type change and filter events without writing.');
+console.log('PASS QW-051: synthetic documentary prescription status filters and patient UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

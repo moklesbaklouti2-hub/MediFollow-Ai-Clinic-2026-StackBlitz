@@ -886,3 +886,8 @@
 - **Fonction :** champ de recherche sur les événements déjà filtrés du dossier patient confirmé ; recherche insensible aux accents et à la casse, sur motif, spécialité, diagnostic, symptômes, médicaments et examens consignés.
 - **Garde-fous :** aucune transmission IA/API, aucune modification des données ni de l'ordre chronologique ; les valeurs importées non textuelles sont ignorées. Test sur données fictives et contrat UI ; F34 pour la validation humaine finale.
 - **Statut :** commit préparé, non poussé, non validé ; les lots QW-049 à QW-051 formeront un groupe de tests commun.
+
+### 2026-11-11 — QW-051 : filtre documentaire des statuts d'ordonnance (préparé, non validé)
+- **Fonction :** lorsqu'on sélectionne « Ordonnances uniquement », filtrer par brouillon, validée, délivrance consignée, annulée ou statut non reconnu ; réinitialiser le statut si le type d'événement change.
+- **Sécurité :** aucune activation inférée du statut, aucune donnée modifiée ; les ordonnances anciennes ou malformées sont classées dans « inconnu » plutôt que considérées actives. Test synthétique de tri et immutabilité. F35 à valider sur Android/Windows.
+- **Statut :** troisième commit du groupe préparé QW-049 à QW-051, aucun changement de la branche active. Avant publication : tests groupés et vérification du HEAD exact, sans fusion ni déploiement.

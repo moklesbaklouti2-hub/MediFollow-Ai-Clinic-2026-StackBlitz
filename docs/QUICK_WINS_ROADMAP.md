@@ -63,6 +63,7 @@
 | QW-048 | S | Chronologie : rendre explicite le statut d'une ordonnance, notamment brouillon ou annulée | commit courant | V2 11/11 sur HEAD exact + test de statuts fictifs requis | EN VALIDATION |
 | QW-049 | S | Chronologie du dossier patient : filtre local consultations / ordonnances sans altérer les dossiers | commit préparé hors branche | Tests synthétiques et V2 11/11 requis après intégration | PRÉPARÉ |
 | QW-050 | S | Recherche locale dans la chronologie par motif, spécialité, médicament ou examen, sans IA externe | commit préparé hors branche | Recherche accentuée, absence de mutation et V2 11/11 requis | PRÉPARÉ |
+| QW-051 | S | Filtre local des ordonnances par statut (annulée, brouillon, inconnue, etc.) | commit préparé hors branche | Aucun statut supposé actif ; tests fictifs et V2 11/11 requis | PRÉPARÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
