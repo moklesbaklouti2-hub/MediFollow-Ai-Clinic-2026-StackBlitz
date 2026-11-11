@@ -175,4 +175,45 @@ for (const scenario of corruptLedgers) {
   assertions += 8;
 }
 
-console.log('OK — ' + assertions + ' assertions sur la délivrance atomique (données fictives).');
+// Bloquer toute écriture pour un solde de lot corrompu, même si un autre
+// lot du même produit est disponible et utilisable.
+const badBalances: Array<[string, unknown]> = [
+  ['stock négatif', -2],
+  ['stock textuel', '4'],
+  ['stock nul', null],
+  ['stock absent', undefined],
+  ['stock NaN', NaN],
+  ['stock infini', Infinity],
+];
+for (const [name, badQuantity] of badBalances) {
+  const d = fixture();
+  d.items.find(x => x.id === 'lot-b')!.quantity = badQuantity as number;
+  seedLedger(d);
+  const beforeDispense = JSON.stringify(getInventoryData());
+  assert.equal(dispenseInventoryItems(issue([{inventoryItemId: 'lot-a', quantity: 1}])).success, false, name);
+  unchanged(beforeDispense, name + ' délivrance');
+
+  d.items.find(x => x.id === 'lot-a')!.quantity = badQuantity as number;
+  d.movements = [issued('disp-bad-stock', 'lot-a', 2)];
+  seedLedger(d);
+  const beforeReturn = JSON.stringify(getInventoryData());
+  assert.equal(returnDispensedStock({dispenseMovementId: 'disp-bad-stock', quantity: 1}).success, false, name);
+  unchanged(beforeReturn, name + ' retour');
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, false, name);
+  unchanged(beforeReturn, name + ' annulation');
+  assertions += 9;
+}
+{
+  const d = fixture();
+  d.items.find(x => x.id === 'lot-a')!.quantity = Number.MAX_VALUE;
+  d.movements = [issued('disp-overflow', 'lot-a', Number.MAX_VALUE)];
+  seedLedger(d);
+  const before = JSON.stringify(getInventoryData());
+  assert.equal(returnDispensedStock({dispenseMovementId: 'disp-overflow', quantity: Number.MAX_VALUE}).success, false);
+  unchanged(before, 'dépassement numérique au retour');
+  assert.equal(cancelDispensedPrescriptionStock({prescriptionId: 'ord-retour'}).success, false);
+  unchanged(before, 'dépassement numérique à l’annulation');
+  assertions += 6;
+}
+
+console.log('OK — ' + assertions + ' assertions sur le stock et la délivrance atomique (données fictives).');

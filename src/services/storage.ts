@@ -317,6 +317,15 @@ export function saveInventoryData(data: InventoryData): boolean {
   return writeData(STORAGE_KEYS.inventory, data);
 }
 
+/** Refuse tout calcul sur un stock importé ou enregistré avec une quantité invalide. */
+function hasValidInventoryBalance(item: InventoryItem, incoming = 0): boolean {
+  return typeof item.quantity === 'number' &&
+    Number.isFinite(item.quantity) &&
+    item.quantity >= 0 &&
+    Number.isFinite(item.quantity + incoming) &&
+    item.quantity + incoming >= 0;
+}
+
 /**
  * Déduit le stock lors d'une délivrance effective.
  * Répartition FEFO automatique entre les lots du même produit :
@@ -386,10 +395,16 @@ export function dispenseInventoryItems(input: {
   const plannedMovements: Array<{ item: InventoryItem; quantity: number }> = [];
 
   for (const request of productRequests.values()) {
-    const matchingLots = data.items
+    const productLots = data.items.filter((item) =>
+      item.category === request.category &&
+      item.name.trim().toLocaleLowerCase('fr') === request.name.trim().toLocaleLowerCase('fr')
+    );
+    // Ne pas ignorer un lot corrompu si un autre lot pourrait servir la demande.
+    if (productLots.some((lot) => !hasValidInventoryBalance(lot))) {
+      return { success: false, error: 'Délivrance refusée : quantité de stock incohérente pour un lot de ce produit.' };
+    }
+    const matchingLots = productLots
       .filter((item) =>
-        item.category === request.category &&
-        item.name.trim().toLocaleLowerCase('fr') === request.name.trim().toLocaleLowerCase('fr') &&
         item.quantity > 0 &&
         (!item.expiryDate || item.expiryDate >= today)
       )
@@ -482,6 +497,9 @@ export function returnDispensedStock(input: {
   if (item.category === 'equipment') {
     return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
   }
+  if (!hasValidInventoryBalance(item, input.quantity)) {
+    return { success: false, error: 'Retour refusé : quantité du lot incohérente ou dépassement numérique.' };
+  }
   const returnDate = new Date();
   const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
   if (item.expiryDate && item.expiryDate < today) {
@@ -543,12 +561,25 @@ export function cancelDispensedPrescriptionStock(input: {
     if (item.category === 'equipment') {
       return { success: false, error: 'Annulation refusée : un équipement durable ne peut pas être réintégré comme une délivrance.' };
     }
+    if (!hasValidInventoryBalance(item, remaining)) {
+      return { success: false, error: 'Annulation refusée : quantité du lot incohérente ou dépassement numérique.' };
+    }
     const returnDate = new Date();
     const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
     if (item.expiryDate && item.expiryDate < today) {
       return { success: false, error: `Annulation bloquée pour le lot périmé « ${item.name} ». Isolez-le : il ne peut pas être réintégré au stock disponible.` };
     }
     allocations.push({ movement, item, quantity: remaining });
+  }
+
+  // Les retours multiples vers un même lot sont cumulés avant toute écriture.
+  const returnsByLot = new Map<string, number>();
+  for (const allocation of allocations) {
+    const total = (returnsByLot.get(allocation.item.id) ?? 0) + allocation.quantity;
+    if (!Number.isFinite(total) || !hasValidInventoryBalance(allocation.item, total)) {
+      return { success: false, error: 'Annulation refusée : cumul des retours incohérent pour un lot.' };
+    }
+    returnsByLot.set(allocation.item.id, total);
   }
 
   if (allocations.length === 0) return { success: true, alreadyReturned: true };

@@ -507,3 +507,10 @@
 - **Tests :** dans `scripts/test-inventory-dispense-regression.ts`, sept historiques corrompus testés sur retour et annulation, blocage équipement et multi-lots, plus flux positif retour partiel / annulation / idempotence, pour 56 assertions nouvelles (103 au total). Tests du vrai service avec stockage navigateur fictif.
 - **CI :** les tests demeurent intégrés au job « Tests / clinique » ; les onze jobs et le relais PR #2 doivent être vérifiés pour le SHA publié.
 - **Limites :** la validation des journaux n'est pas une réparation automatique des stocks historiques. Revue et contrôles en conditions réelles requis avant usage médical.
+
+### 2026-11-11 — Inventaire : bloquer les quantités de lot corrompues avant tout mouvement
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 en brouillon ; aucun changement de `main` ni déploiement.
+- **Défaut :** une sauvegarde importée pouvait contenir une quantité négative, absente, textuelle ou non finie ; la délivrance ignorait certains lots défectueux et les retours pouvaient concaténer un nombre à une chaîne ou dépasser les limites numériques.
+- **Correctif :** `src/services/storage.ts` refuse la délivrance si un lot du produit demandé présente un solde invalide. Retours et annulations contrôlent le solde du lot, la somme de plusieurs retours vers un même lot et les dépassements avant toute écriture.
+- **Régression :** `scripts/test-inventory-dispense-regression.ts` ajoute 60 assertions fictives et vérifie l'absence d'écriture pour six types de soldes corrompus ainsi que le dépassement numérique (163 assertions attendues au total).
+- **Limites :** le service ne répare pas automatiquement les données corrompues. Compilation et onze jobs GitHub Actions à confirmer sur le commit exact ; essais Android et validation réelle nécessaires.
