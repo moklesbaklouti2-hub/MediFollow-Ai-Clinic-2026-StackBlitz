@@ -65,6 +65,9 @@ jobs:
       - name: Verifier delivrance de stock atomique (fictif)
         if: matrix.module == 'clinique'
         run: npm run test:inventory-dispense
+      - name: Verifier les liens anciens patients/consultations/ordonnances (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:patient-linkage
 
   coordination:
     name: Verifier le registre des modules

@@ -35,7 +35,8 @@
 | QW-020 | S | Filtrer la page courante des commandes vocales avant l'appel IA | `d0cd56e` | [43051564614](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43051564614) : 11/11 réussis | VALIDÉ |
 | QW-021 | S | Refuser les contextes de chat non-objets, plutôt que les ignorer silencieusement | `321e8bd` | [43062353490](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43062353490) : 11/11 réussis | VALIDÉ |
 | QW-022 | S | Refuser les historiques de chat mal typés au lieu de les ignorer | `aa05e29` | [43063926576](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43063926576) : 11/11 réussis | VALIDÉ |
-| QW-023 | S | Refuser les messages mal formés à l'intérieur d'un historique de chat | SHA à confirmer | 18 cas fictifs + 2 contrats, CI 11/11 requise | EN VALIDATION |
+| QW-023 | S | Refuser les messages mal formés à l'intérieur d'un historique de chat | `905e686` | [43064903608](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43064903608) : 11/11 réussis | VALIDÉ |
+| QW-024 | S | Ne jamais associer automatiquement un ancien document au premier patient homonyme | SHA à confirmer | 12 cas + 14 lectures réelles de données fictives ; CI 11/11 | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

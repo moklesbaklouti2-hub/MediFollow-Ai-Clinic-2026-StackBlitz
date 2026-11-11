@@ -697,3 +697,10 @@
 - **Correction :** `hasOnlyValidChatHistoryEntries` exige pour chaque message un objet non tableau avec rôle `user` ou `assistant` et contenu texte ; si un message est invalide, la vraie route renvoie HTTP 400 avant la construction de mémoire et l'appel IA. Les tableaux valides conservent la limite des 40 derniers messages et des 5 000 caractères par élément. Les historiques absents/null restent autorisés.
 - **Tests :** 18 exemples synthétiques et 2 assertions vérifiant le refus et le maintien des plafonds dans la vraie route.
 - **Limite :** cette validation de structure n'établit pas l'authenticité des messages ni leur exactitude clinique. L'authentification et la conformité fournisseurs QW-007/QW-008 ainsi que les tests Android restent ouverts. CI complète sur SHA exact requise.
+
+### 2026-11-11 — QW-024 : préserver l'identité des patients homonymes lors de la lecture des anciennes données
+- **Branche :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; `main` inchangée, aucune fusion, dépense ou déploiement, aucune donnée réelle.
+- **Risque clinique :** `getConsultations()` et `getPrescriptions()` utilisaient `patients.find` pour compléter un ancien enregistrement sans `patientId`. En présence d'homonymes, un historique pouvait être attribué arbitrairement au premier dossier trouvé.
+- **Correction :** helper pur `resolveLegacyPatientId` qui conserve tout identifiant explicite de type texte et associe les anciennes données *uniquement si un seul nom correspond*. Les homonymes, noms inconnus et formats invalides restent non liés pour vérification médicale ultérieure, sans suppression d'aucun dossier.
+- **Tests automatiques :** 12 cas de résolution et 14 lectures via les véritables fonctions de stockage (7 consultations, 7 ordonnances) avec `localStorage` fictif. Confirme qu'aucune écriture/migration n'intervient. Exécution ajoutée à `test:all-offline` et au job CI « Tests / clinique » existant.
+- **Limites :** les documents anciens ambigus demandent une réconciliation explicite par le médecin ; aucun patient réel et aucun scénario navigateur manuel exécutés. L'autorisation clinique/sécurité de production demeure bloquée.

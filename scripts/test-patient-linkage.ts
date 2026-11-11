@@ -1,0 +1,78 @@
+import assert from 'node:assert/strict';
+import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
+import { getConsultations, getPrescriptions, getPatients } from '../src/services/storage.ts';
+
+// Real storage deserialization with a fully synthetic in-memory localStorage.
+// No AI calls, no user/browser data and no external service.
+const records = new Map<string, string>();
+let writes = 0;
+Object.defineProperty(globalThis, 'window', {
+  configurable: true,
+  value: { dispatchEvent: () => true },
+});
+Object.defineProperty(globalThis, 'localStorage', {
+  configurable: true,
+  value: {
+    getItem: (key: string) => records.get(key) ?? null,
+    setItem: (key: string, value: string) => { writes++; records.set(key, value); },
+  },
+});
+const identities = [
+  { id: 'patient-alfa', name: 'Nadia Exemple' },
+  { id: 'patient-beta', name: 'nadia exemple ' },
+  { id: 'patient-unique', name: 'Karim Test' },
+];
+const lookupCases: Array<[unknown, unknown, string]> = [
+  [undefined, 'Karim Test', 'patient-unique'],
+  [null, '  KARIM TEST ', 'patient-unique'],
+  [undefined, 'Nadia Exemple', ''],
+  [undefined, 'nadia exemple', ''],
+  [undefined, 'Inconnu', ''],
+  [undefined, '', ''],
+  [undefined, {}, ''],
+  [undefined, ['Karim Test'], ''],
+  ['patient-beta', 'Karim Test', 'patient-beta'],
+  ['patient-other', 'Nadia Exemple', 'patient-other'],
+  ['', 'Karim Test', ''],
+  [0, 'Karim Test', ''],
+];
+for (const [id, name, expected] of lookupCases) {
+  assert.equal(resolveLegacyPatientId(id, name, identities), expected);
+}
+assert.equal(resolveLegacyPatientId(undefined, ' Karim Test ', identities.slice(0, 2)), '',
+  'Never assign a patient not present in the current list.');
+
+const patients = identities.map((item) => ({
+  ...item, age: 42, sex: 'Non renseigné', phone: '',
+  lastVisit: '', status: 'Fictif', createdAt: '2026-01-01', updatedAt: '2026-01-01',
+}));
+records.set('medifollow-patients', JSON.stringify(patients));
+const legacyCases = [
+  { id: 'legacy-homonym', patient: 'Nadia Exemple', expected: '' },
+  { id: 'legacy-unique', patient: ' KARIM TEST ', expected: 'patient-unique' },
+  { id: 'explicit-homonym', patient: 'Nadia Exemple', patientId: 'patient-beta', expected: 'patient-beta' },
+  { id: 'explicit-empty', patient: 'Karim Test', patientId: '', expected: '' },
+  { id: 'legacy-unknown', patient: 'Patient non inscrit', expected: '' },
+  { id: 'legacy-no-name', expected: '' },
+  { id: 'legacy-invalid-name', patient: { name: 'Karim Test' }, expected: '' },
+];
+records.set('medifollow-consultations', JSON.stringify(legacyCases.map(({ expected: _expected, ...item }) => ({
+  ...item, date: '2026-01-01', motif: 'Consultation fictive',
+}))));
+records.set('medifollow-prescriptions', JSON.stringify(legacyCases.map(({ expected: _expected, ...item }) => ({
+  ...item, date: '2026-01-01', medications: [], advice: '',
+}))));
+assert.equal(getPatients().length, patients.length);
+for (const [type, restored] of [
+  ['consultation', getConsultations()],
+  ['prescription', getPrescriptions()],
+] as const) {
+  assert.equal(restored.length, legacyCases.length, 'No legacy record may disappear.');
+  for (const entry of legacyCases) {
+    const record = restored.find(item => item.id === entry.id);
+    assert.equal(record?.patientId, entry.expected,
+      type + ': incorrect patient association for ' + entry.id);
+  }
+}
+assert.equal(writes, 0, 'Reading legacy data must never rewrite or migrate stored records.');
+console.log('PASS: 12 legacy lookup fixtures, 14 actual consultation/prescription loads and zero storage mutations.');

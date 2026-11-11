@@ -1,3 +1,4 @@
+import { resolveLegacyPatientId } from './patientLinkage';
 import type {
   Patient,
   Consultation,
@@ -191,19 +192,10 @@ export function getConsultations(): Consultation[] {
   const patients = getPatients();
 
   return readArray(STORAGE_KEYS.consultations).map((item) => {
-    const patientName = String(item.patient ?? '');
-    const matchingPatient = patients.find(
-      (patient) =>
-        patient.name.trim().toLowerCase() ===
-        patientName.trim().toLowerCase()
-    );
-
     return {
       ...item,
       id: String(item.id ?? createId()),
-      patientId: String(
-        item.patientId ?? matchingPatient?.id ?? ''
-      ),
+      patientId: resolveLegacyPatientId(item.patientId, item.patient, patients),
       date: String(item.date ?? now()),
       motif: String(item.motif ?? ''),
       symptoms: String(item.symptoms ?? ''),
@@ -235,13 +227,6 @@ export function getPrescriptions(): Prescription[] {
   const patients = getPatients();
 
   return readArray(STORAGE_KEYS.prescriptions).map((item) => {
-    const patientName = String(item.patient ?? '');
-    const matchingPatient = patients.find(
-      (patient) =>
-        patient.name.trim().toLowerCase() ===
-        patientName.trim().toLowerCase()
-    );
-
     const medications = Array.isArray(item.medications)
       ? item.medications.map((medication: Record<string, any>) => ({
           id: String(medication.id ?? createId()),
@@ -262,9 +247,7 @@ export function getPrescriptions(): Prescription[] {
     return {
       ...item,
       id: String(item.id ?? createId()),
-      patientId: String(
-        item.patientId ?? matchingPatient?.id ?? ''
-      ),
+      patientId: resolveLegacyPatientId(item.patientId, item.patient, patients),
       date: String(item.date ?? now()),
       medications,
       advice: String(item.advice ?? ''),
