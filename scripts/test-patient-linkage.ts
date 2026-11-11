@@ -10,6 +10,7 @@ import { buildPreventionReview } from '../src/clinical/prevention.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
 import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
 import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
+import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -513,5 +514,39 @@ assert.ok(dashboardActivitySource.includes('summarizeRecordedActivity(clinicalPa
   dashboardActivitySource.includes('Aucun envoi à une IA externe'),
   'Dashboard must present linked-only, descriptive activity and exclusion notice.');
 console.log('PASS QW-045: verified-patient activity counts, malformed links and UI contracts.');
+
+
+// QW-046 — Unified timeline dates: only explicit valid dates/timestamps rank
+// visits, malformed imported dates remain visible as unknown and sort last.
+const dateRecords = [
+  { id: 'bad-two', date: 'date inconnue' },
+  { id: 'old', date: '2026-10-09' },
+  { id: 'bad-one', date: '2026-02-30' },
+  { id: 'newest', date: '2026-11-11T10:00:00Z' },
+  { id: 'middle', date: '2026-11-11' },
+  { id: 'invalid-iso', date: '2026-02-30T10:00:00Z' },
+];
+const dateOriginal = JSON.stringify(dateRecords);
+assert.deepEqual(orderRecordedNewest(dateRecords).map(item => item.id),
+  ['newest', 'middle', 'old', 'bad-one', 'bad-two', 'invalid-iso']);
+assert.equal(JSON.stringify(dateRecords), dateOriginal, 'Sorting must not mutate recorded events.');
+assert.equal(recordedDateTimestamp('2026-11-11T11:00:00+01:00'),
+  recordedDateTimestamp('2026-11-11T10:00:00Z'));
+assert.ok(recordedDateTimestamp('2026-11-11') !== null);
+for (const invalid of ['2026-02-30', '2026-02-29', 'date inconnue', '11/11/2026',
+  '2026-11-11T09:00:00', '2026-02-30T09:00:00Z', '', null, 20261111]) {
+  assert.equal(recordedDateTimestamp(invalid), null, 'Invalid date must not be ranked.');
+  assert.equal(displayRecordedDate(invalid), 'Date non renseignée');
+}
+assert.notEqual(displayRecordedDate('2026-11-11T09:00:00Z'), 'Date non renseignée');
+assert.ok(patientPageSource.includes('orderRecordedNewest(consultations.filter(') &&
+  patientPageSource.includes('orderRecordedNewest(prescriptions.filter(') &&
+  patientPageSource.includes('const medicalTimeline = orderRecordedNewest([') &&
+  patientPageSource.includes('recordedDateTimestamp(consultation.date) === null') &&
+  patientPageSource.includes('Object.create(null)') &&
+  patientPageSource.includes('Spécialité :</b>') &&
+  patientPageSource.includes('displayRecordedDate(entry.date)'),
+  'Unified timeline must sort safely, display specialties and reject invalid last-visit dates.');
+console.log('PASS QW-046: fictional timeline date ordering, unknown dates, specialty and patient UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

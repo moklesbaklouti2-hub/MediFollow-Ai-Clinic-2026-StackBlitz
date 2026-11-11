@@ -851,3 +851,10 @@
 - **Sécurité :** résumés uniquement à partir de consultations existantes avec `patientId` unique confirmé par `hasConfirmedPatientSelection`. Les dossiers manquants/dupliqués sont exclus et leur nombre signalé. Les libellés vides, malformés ou trop longs sont affichés comme « Non renseigné ». Aucun nom ni contenu patient envoyé à un fournisseur.
 - **Tests :** fixtures synthétiques avec documents liés, orphelins et identifiants dupliqués, catégories vides, tri, absence de mutation et contrat de la vraie interface ; réutilisation de `test:patient-linkage` en CI.
 - **Limites :** affichage top 5 uniquement, sans filtres temporels ni export ; statistiques descriptives locales non adaptées à une interprétation épidémiologique. Scénario humain F29 réservé à la phase finale.
+
+### 2026-11-11 — QW-046 : chronologie du dossier médical unifié (préparé, non validé)
+- **Branche visée :** `audit-stabilisation-2026-11-10`, PR #2 brouillon ; `main` intacte.
+- **Objectif :** trier les consultations, ordonnances et événements documentaires par dates enregistrées valides ; conserver les entrées à dates absentes ou invalides en fin de chronologie avec un libellé explicite plutôt que de les supprimer ou de les classer arbitrairement comme récentes. Afficher la spécialité renseignée à côté de la consultation, sans inférence.
+- **Garde-fous :** validation des jours calendaires (dont 29 février) et des horodatages ISO avec fuseau, affichage « Date non renseignée » dans la chronologie ; calcul des dernières visites à partir de seules dates valides ; dictionnaire sans prototype pour les identifiants de patients importés. Pas d'écriture, de modification de `main`, d'appel IA, ni de données réelles.
+- **Tests :** scénarios fictifs incluant plusieurs patients, dates absurdes ou ambiguës, ordre déterministe, conservation des données et contrat du composant patient. F30 ajouté à la validation humaine finale, non exécuté.
+- **Statut :** préparé en attente du VERT QW-045 ; vérifier la CI sur le commit final avant toute annonce de validation.

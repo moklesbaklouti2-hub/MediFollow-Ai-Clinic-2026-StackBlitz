@@ -9,6 +9,7 @@ import { compareRecentVitals } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
 import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
+import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
 export default function Patients() {
@@ -37,18 +38,14 @@ export default function Patients() {
   );
 
   const patientConsultations = selected
-    ? consultations
-        .filter((item) => item.patientId === selected.id)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    ? orderRecordedNewest(consultations.filter((item) => item.patientId === selected.id))
     : [];
 
   const patientPrescriptions = selected
-    ? prescriptions
-        .filter((item) => item.patientId === selected.id)
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    ? orderRecordedNewest(prescriptions.filter((item) => item.patientId === selected.id))
     : [];
 
-  const medicalTimeline = [
+  const medicalTimeline = orderRecordedNewest([
     ...patientConsultations.map((consultation) => ({
       type: 'consultation' as const,
       id: consultation.id,
@@ -61,20 +58,18 @@ export default function Patients() {
       date: prescription.date,
       prescription,
     })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ]);
 
   const lastVisitByPatient = useMemo(() => {
-    const result: Record<string, string> = {};
-    const ordered = [...consultations].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    ordered.forEach((consultation) => {
-      if (consultation.patientId && !result[consultation.patientId]) {
+    // Prototype-free map: imported patient IDs cannot shadow object keys.
+    const result: Record<string, string> = Object.create(null);
+    for (const consultation of orderRecordedNewest(consultations)) {
+      if (typeof consultation.patientId !== 'string' || !consultation.patientId.trim() ||
+          recordedDateTimestamp(consultation.date) === null) continue;
+      if (!Object.prototype.hasOwnProperty.call(result, consultation.patientId)) {
         result[consultation.patientId] = consultation.date;
       }
-    });
-
+    }
     return result;
   }, [consultations]);
 
@@ -185,8 +180,7 @@ export default function Patients() {
   }
 
   function displayDate(value: string) {
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? value : date.toLocaleString('fr-FR');
+    return displayRecordedDate(value);
   }
 
   const vitalLabels: { key: keyof NonNullable<typeof latestVitals>; label: string; unit: string }[] = [
@@ -396,7 +390,7 @@ export default function Patients() {
               <div className="patient-meta">{patient.age} ans · {patient.sex} · {patient.phone}</div>
               <div className="patient-meta">
                 Dernière visite : {lastVisitByPatient[patient.id]
-                  ? new Date(lastVisitByPatient[patient.id]).toLocaleDateString('fr-FR')
+                  ? displayDate(lastVisitByPatient[patient.id])
                   : 'Aucune visite'}
               </div>
             </div>
@@ -693,7 +687,8 @@ export default function Patients() {
                   <>
                     <span className="patient-timeline-kind">Consultation</span>
                     <strong>{entry.consultation.motif || 'Consultation'}</strong>
-                    <span>{displayDate(entry.date)}</span>
+                    <span>{displayRecordedDate(entry.date)}</span>
+                    <span><b>Spécialité :</b> {entry.consultation.specialty?.trim() || 'Non renseignée'}</span>
                     {entry.consultation.symptoms && <p><b>Symptômes :</b> {entry.consultation.symptoms}</p>}
                     {entry.consultation.history && <p><b>Antécédents / traitements :</b> {entry.consultation.history}</p>}
                     {entry.consultation.examination && <p><b>Examen clinique :</b> {entry.consultation.examination}</p>}
@@ -704,7 +699,7 @@ export default function Patients() {
                   <>
                     <span className="patient-timeline-kind">Ordonnance</span>
                     <strong>Ordonnance médicale</strong>
-                    <span>{displayDate(entry.date)}</span>
+                    <span>{displayRecordedDate(entry.date)}</span>
                     <span>{entry.prescription.medications.length} médicament(s)</span>
                     {entry.prescription.medications.length > 0 && (
                       <ul className="patient-medication-list">

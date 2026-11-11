@@ -57,7 +57,8 @@
 | QW-042 | S | HELIOS Consultation Express : répartir une note fictive strictement étiquetée vers le formulaire existant, sans sauvegarde auto | `09774f5` | [43082144977](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43082144977) : 11/11 réussis | VALIDÉ |
 | QW-043 | S | Consultation Express : réinitialisation confirmée et désactivation IA lors d'un changement de patient | `be4415e` | [43082689433](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43082689433) : 11/11 réussis | VALIDÉ |
 | QW-044 | S | HELIOS Parcours spécialisés : regroupement documentaire des consultations par spécialité, par patient | `7999281` | [43083698062](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43083698062) : 11/11 réussis | VALIDÉ |
-| QW-045 | S | Statistiques descriptives Dashboard : spécialités et motifs saisis, uniquement dossiers confirmés | SHA à confirmer | Contrôles synthétiques + CI 11/11 requise | EN VALIDATION |
+| QW-045 | S | Statistiques descriptives Dashboard : spécialités et motifs saisis, uniquement dossiers confirmés | `896845e` | [43086300425](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43086300425) : 11/11 requis | EN VALIDATION |
+| QW-046 | S | Dossier médical unifié : chronologie datée robuste et spécialité consignée | SHA à confirmer | Tests de dates invalides et CI 11/11 requis | EN VALIDATION |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
