@@ -118,5 +118,44 @@ assert.ok(noDetailsAtAll.some(item => item.id === 'missing-chest-pain-details'),
   'Sans interrogatoire ciblé, les éléments manquants restent détectés.');
 console.log('OK — 8 assertions de cohérence entre réponses au copilote et alertes thoraciques.');
 
+// Ne pas confondre une négation explicite et une douleur thoracique
+// réellement signalée. Les cas ambigus restent volontairement alertés.
+const negativeChestMentions = [
+  { motif: 'toux', symptoms: 'Pas de douleur thoracique.' },
+  { motif: 'toux', symptoms: 'Absence de douleur précordiale.' },
+  { motif: 'toux', symptoms: 'Le patient nie une douleur thoracique.' },
+  { motif: 'toux', symptoms: 'Sans oppression thoracique.' },
+  { motif: 'toux', symptoms: '', targetedInterview: 'Aucune douleur thoracique rapportée.' },
+  { motif: 'toux', symptoms: 'Pas de douleur thoracique, ni douleur précordiale.' },
+];
+for (const input of negativeChestMentions) {
+  const suggestions = detectClinicalSuggestions({
+    specialty: 'Médecine de famille',
+    history: '', vitals: { ...blankVitals }, ...input,
+  });
+  assert.ok(!suggestions.some(s => s.id === 'chest-pain'),
+    'Alerte de douleur thoracique créée sur une négation explicite : ' + JSON.stringify(input));
+  assert.ok(!suggestions.some(s => s.id === 'missing-chest-pain-details'),
+    'Questionnaire de douleur thoracique créé sur une négation explicite.');
+}
+
+const affirmingChestMentions = [
+  { motif: 'douleur thoracique', symptoms: 'Pas de dyspnée.' },
+  { motif: 'toux', symptoms: 'Pas de douleur thoracique. Mais douleur précordiale à l’effort.' },
+  { motif: 'douleur précordiale', symptoms: '', targetedInterview: 'Le patient nie une douleur thoracique.' },
+  { motif: 'toux', symptoms: 'Pas d’amélioration de douleur thoracique.' },
+  { motif: 'malaise', symptoms: '', targetedInterview: 'Douleur thoracique au repos.' },
+  { motif: 'toux', symptoms: 'Douleur thoracique ? À vérifier.' },
+];
+for (const input of affirmingChestMentions) {
+  const suggestions = detectClinicalSuggestions({
+    specialty: 'Médecine de famille',
+    history: '', vitals: { ...blankVitals }, ...input,
+  });
+  assert.ok(suggestions.some(s => s.id === 'chest-pain' && s.priority === 'high'),
+    'Alerte thoracique perdue malgré une mention positive ou incertaine : ' + JSON.stringify(input));
+}
+console.log('OK — 12 mentions thoraciques niées, positives ou incertaines contrôlées.');
+
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

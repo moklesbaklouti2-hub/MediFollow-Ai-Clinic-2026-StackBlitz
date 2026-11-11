@@ -15,6 +15,27 @@ function normalize(value: string): string {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+
+// Une mention explicitement niée (« pas de douleur thoracique ») ne doit
+// pas déclencher à elle seule une alerte de douleur présente. Une mention
+// positive indépendante conserve toujours l'alerte prioritaire.
+// Détection volontairement prudente : une formulation ambiguë reste signalée.
+const chestPainTerm = /\b(?:douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/gu;
+const explicitChestPainNegation = /\b(?:pas|sans|aucun|aucune|absence|ni|nie|nient)\s+(?:(?:de|d|du|des|la|le|les|une?|toute?)\s+){0,2}$/u;
+
+function hasReportedChestPain(value: string): boolean {
+  const normalized = normalize(value);
+  return Array.from(normalized.matchAll(chestPainTerm)).some(match => {
+    // Ne pas interpréter une négation d'une phrase antérieure comme
+    // s'appliquant à une nouvelle mention après ponctuation.
+    const precedingClause = normalized
+      .slice(Math.max(0, (match.index ?? 0) - 70), match.index ?? 0)
+      .split(/[.,;:!?\n]/)
+      .pop()?.replace(/['’]/gu, ' ') ?? '';
+    return !explicitChestPainNegation.test(precedingClause);
+  });
+}
+
 export function detectClinicalSuggestions(input: {
   patient?: Patient;
   specialty: string;
@@ -32,6 +53,8 @@ export function detectClinicalSuggestions(input: {
     input.targetedInterview ?? '',
   ].join(' '));
   const suggestions: ClinicalSuggestion[] = [];
+  const reportedChestPain = [input.specialty, input.motif, input.symptoms, input.history, input.targetedInterview ?? '']
+    .some(hasReportedChestPain);
 
   // Détection simple des données manquantes : un champ vide n'est jamais considéré comme normal.
   const hasPatientHistory = Boolean(
@@ -72,7 +95,7 @@ export function detectClinicalSuggestions(input: {
   }
 
 
-  if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
+  if (reportedChestPain) {
     // Les réponses déjà consignées par le copilote complètent l'histoire
     // des symptômes sans se substituer aux antécédents médicaux.
     const historyText = normalize([input.symptoms, input.targetedInterview ?? ''].join(' '));
@@ -102,7 +125,7 @@ export function detectClinicalSuggestions(input: {
     }
   }
 
-  if (/\b(douleur thoracique|douleur precordiale|oppression thoracique|angor|thoracalgie)\b/.test(text)) {
+  if (reportedChestPain) {
     suggestions.push({
       id: 'chest-pain',
       priority: 'high',
