@@ -60,10 +60,10 @@
 | QW-045 | S | Statistiques descriptives Dashboard : spécialités et motifs saisis, uniquement dossiers confirmés | `896845e` (code), régression `737c4f3` | [43099912726](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43099912726) : 11/11 réussis + tests locaux | VALIDÉ (régression) |
 | QW-046 | S | Dossier médical unifié : chronologie datée robuste et spécialité consignée | `737c4f3` | [43099912726](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43099912726) : 11/11 réussis + tests locaux | VALIDÉ |
 | QW-047 | S | Chronologie des ordonnances : affichage des analyses, imagerie et autres éléments consignés | `6624f2b` | [43101047632](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43101047632) : V2 11/11 réussis | VALIDÉ |
-| QW-048 | S | Chronologie : rendre explicite le statut d'une ordonnance, notamment brouillon ou annulée | commit courant | V2 11/11 sur HEAD exact + test de statuts fictifs requis | EN VALIDATION |
-| QW-049 | S | Chronologie du dossier patient : filtre local consultations / ordonnances sans altérer les dossiers | commit préparé hors branche | Tests synthétiques et V2 11/11 requis après intégration | PRÉPARÉ |
-| QW-050 | S | Recherche locale dans la chronologie par motif, spécialité, médicament ou examen, sans IA externe | commit préparé hors branche | Recherche accentuée, absence de mutation et V2 11/11 requis | PRÉPARÉ |
-| QW-051 | S | Filtre local des ordonnances par statut (annulée, brouillon, inconnue, etc.) | commit préparé hors branche | Aucun statut supposé actif ; tests fictifs et V2 11/11 requis | PRÉPARÉ |
+| QW-048 | S | Chronologie : rendre explicite le statut d'une ordonnance, notamment brouillon ou annulée | `7d8dcdd` | CI [43102108140](https://github.com/moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz/actions/runs/43102108140) incomplète ; nouveau test groupé requis | EN VALIDATION |
+| QW-049 | S | Chronologie du dossier patient : filtre local consultations / ordonnances sans altérer les dossiers | `9eca29e` (préparation) | Groupe QW-049–051 : V2 11/11 + tests Codespaces requis | EN VALIDATION GROUPÉE |
+| QW-050 | S | Recherche locale dans la chronologie par motif, spécialité, médicament ou examen, sans IA externe | `7ef8eae` (préparation) | Groupe QW-049–051 : V2 11/11 + tests Codespaces requis | EN VALIDATION GROUPÉE |
+| QW-051 | S | Filtre local des ordonnances par statut (annulée, brouillon, inconnue, etc.) | `e7927a5` (préparation) | Groupe QW-049–051 : V2 11/11 + tests Codespaces requis | EN VALIDATION GROUPÉE |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

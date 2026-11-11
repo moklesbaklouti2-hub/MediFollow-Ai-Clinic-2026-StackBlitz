@@ -891,3 +891,9 @@
 - **Fonction :** lorsqu'on sélectionne « Ordonnances uniquement », filtrer par brouillon, validée, délivrance consignée, annulée ou statut non reconnu ; réinitialiser le statut si le type d'événement change.
 - **Sécurité :** aucune activation inférée du statut, aucune donnée modifiée ; les ordonnances anciennes ou malformées sont classées dans « inconnu » plutôt que considérées actives. Test synthétique de tri et immutabilité. F35 à valider sur Android/Windows.
 - **Statut :** troisième commit du groupe préparé QW-049 à QW-051, aucun changement de la branche active. Avant publication : tests groupés et vérification du HEAD exact, sans fusion ni déploiement.
+
+### 2026-11-11 — campagne groupée QW-049 à QW-051 (intégration prévue)
+- Commits préparés : `9eca29e` (type), `7ef8eae` (recherche locale), `e7927a5` (statut), suivis d'une consolidation documentaire. Pas de force push.
+- Les données de recherche restent dans la page du patient confirmé ; pas d'appel IA/API, les filtres sont purs et les tests utilisent des fixtures fictives.
+- QW-048 sur `7d8dcdd` n'a pas atteint 11/11 : sept jobs annulés, un bilan final en attente. Les tests groupés vérifieront la non-régression, mais ne transfèrent pas un ancien statut de CI.
+- **Statut :** tests groupés Codespaces et GitHub V2 requis avant de poursuivre. `main` inchangée ; PR #2 brouillon ; pas de données réelles.

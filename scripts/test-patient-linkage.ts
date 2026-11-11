@@ -638,8 +638,8 @@ const searchFixture = [
   { id: 'c1', type: 'consultation' as const, consultation: {
     motif: 'Dyspnée', specialty: 'Cardiologie', diagnosis: '', symptoms: 'Douleur fictive' } },
   { id: 'p1', type: 'prescription' as const, prescription: {
-    advice: 'À revoir', medications: [{ name: 'Paracétamol fictif' }],
-    items: [{ name: 'Échographie fictive', details: 'demande' }] } },
+    advice: 'À revoir', medications: [{ id: 'm1', name: 'Paracétamol fictif', dosage: '500 mg', route: 'orale', frequency: 'selon ordonnance fictive', duration: '2 jours', instructions: '' }],
+    items: [{ id: 'rx1', category: 'radiology' as const, name: 'Échographie fictive', details: 'demande' }] } },
   { id: 'c2', type: 'consultation' as const, consultation: {
     motif: 'Contrôle', specialty: 'Médecine de famille', diagnosis: '', symptoms: '' } },
 ];
