@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Patient, Vitals, PhysicalExamination } from '../types/medical';
 import { sendClinicalRequest } from '../services/doctorClinicalTransport';
+import { isCurrentClinicalRequest } from '../services/clinicalRequestGuard';
 
 export type ClinicalReasoningAnalysis = {
   situationSummary: string;
@@ -144,6 +145,9 @@ export function useClinicalReasoning(input: ReasoningInput) {
             },
         }, { signal: controller.signal });
         const responseText = await response.text();
+        // Une réponse arrivée après un changement de dossier ou un démontage
+        // ne peut plus mettre à jour l'analyse du patient affiché.
+        if (!isCurrentClinicalRequest(controller, activeRequest.current)) return;
         if (!responseText.trim()) {
           throw new Error(`Le serveur a retourné une réponse vide (HTTP ${response.status}). Vérifiez que le moteur IA est démarré.`);
         }
@@ -167,7 +171,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
         setUpdatedAt(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
         setStatus('ready');
       } catch (reason) {
-        if (!controller.signal.aborted) {
+        if (isCurrentClinicalRequest(controller, activeRequest.current)) {
           setError(reason instanceof Error ? reason.message : 'Erreur du moteur clinique.');
           setStatus('error');
         }
@@ -181,6 +185,13 @@ export function useClinicalReasoning(input: ReasoningInput) {
 
     return () => window.clearTimeout(timer);
   }, [input.enabled, hasUsefulContent, snapshot, safeContext, analysis, status]);
+
+  // Fermer la consultation annule la réponse en cours ; même si un
+  // fournisseur ignore l'annulation réseau, son résultat sera rejeté.
+  useEffect(() => () => {
+    activeRequest.current?.abort();
+    activeRequest.current = null;
+  }, []);
 
   return { analysis, status, error, updatedAt, quotaSecondsRemaining };
 }
