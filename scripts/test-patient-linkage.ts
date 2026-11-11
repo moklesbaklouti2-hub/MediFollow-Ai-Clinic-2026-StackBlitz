@@ -13,6 +13,7 @@ import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../src/clinical/prescriptionTimeline.ts';
 import { filterRecordedEvents } from '../src/clinical/timelineFilter.ts';
+import { searchRecordedEvents } from '../src/clinical/timelineSearch.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -623,12 +624,36 @@ assert.deepEqual(filterRecordedEvents(timelineFixture, 'prescription').map(item 
 assert.deepEqual(filterRecordedEvents([], 'prescription'), []);
 assert.equal(JSON.stringify(timelineFixture), timelineBefore, 'Filtering must never modify clinical records.');
 assert.ok(patientPageSource.includes('const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter)') &&
-  patientPageSource.includes('visibleMedicalTimeline.map((entry)') &&
+  patientPageSource.includes('searchedMedicalTimeline.map((entry)') &&
   patientPageSource.includes('id="patient-timeline-filter"') &&
   patientPageSource.includes('Consultations uniquement') &&
   patientPageSource.includes('Ordonnances uniquement') &&
-  patientPageSource.includes('Aucun événement de ce type enregistré pour ce patient.'),
+  patientPageSource.includes('Aucun événement correspondant à la recherche ou au filtre pour ce patient.'),
   'Patient view must offer read-only filters with accurate empty states.');
 console.log('PASS QW-049: synthetic medical timeline event filters and patient UI contracts.');
+
+// QW-050 — Search is browser-local, accent-insensitive and read-only.
+const searchFixture = [
+  { id: 'c1', type: 'consultation' as const, consultation: {
+    motif: 'Dyspnée', specialty: 'Cardiologie', diagnosis: '', symptoms: 'Douleur fictive' } },
+  { id: 'p1', type: 'prescription' as const, prescription: {
+    advice: 'À revoir', medications: [{ name: 'Paracétamol fictif' }],
+    items: [{ name: 'Échographie fictive', details: 'demande' }] } },
+  { id: 'c2', type: 'consultation' as const, consultation: {
+    motif: 'Contrôle', specialty: 'Médecine de famille', diagnosis: '', symptoms: '' } },
+];
+const searchOriginal = JSON.stringify(searchFixture);
+assert.deepEqual(searchRecordedEvents(searchFixture, 'DYSPNEE').map(x => x.id), ['c1']);
+assert.deepEqual(searchRecordedEvents(searchFixture, 'echographie').map(x => x.id), ['p1']);
+assert.deepEqual(searchRecordedEvents(searchFixture, 'paracetamol').map(x => x.id), ['p1']);
+assert.deepEqual(searchRecordedEvents(searchFixture, 'famille').map(x => x.id), ['c2']);
+assert.deepEqual(searchRecordedEvents(searchFixture, '   ').map(x => x.id), ['c1', 'p1', 'c2']);
+assert.deepEqual(searchRecordedEvents(searchFixture, 'absence').map(x => x.id), []);
+assert.equal(JSON.stringify(searchFixture), searchOriginal, 'Local search must not mutate records.');
+assert.ok(patientPageSource.includes('searchRecordedEvents(visibleMedicalTimeline, timelineSearch)') &&
+  patientPageSource.includes('id="patient-timeline-search"') &&
+  patientPageSource.includes('searchedMedicalTimeline.map((entry)'),
+  'Patient timeline must search only the already selected and type-filtered events.');
+console.log('PASS QW-050: accent-insensitive local timeline search and UI contracts.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

@@ -881,3 +881,8 @@
 - **Préparation :** commit Git indépendant construit sur QW-048 et non poussé sur la branche d'audit tant que la CI exacte de QW-048 n'est pas VERT 11/11.
 - **Fonction :** sélection de tous les événements, des consultations seulement, ou des ordonnances seulement dans la chronologie du patient déjà sélectionné ; affiche le nombre visible et un état vide informatif.
 - **Garanties :** fonction pure conservant l'ordre chronologique et les données originales ; aucune suppression, aucun appel IA, aucun effet sur les stocks, aucun chargement de dossier ambigu ; exercices synthétiques et contrat UI à vérifier. F33 à la phase finale.
+
+### 2026-11-11 — QW-050 : recherche locale de la chronologie (préparé, non validé)
+- **Fonction :** champ de recherche sur les événements déjà filtrés du dossier patient confirmé ; recherche insensible aux accents et à la casse, sur motif, spécialité, diagnostic, symptômes, médicaments et examens consignés.
+- **Garde-fous :** aucune transmission IA/API, aucune modification des données ni de l'ordre chronologique ; les valeurs importées non textuelles sont ignorées. Test sur données fictives et contrat UI ; F34 pour la validation humaine finale.
+- **Statut :** commit préparé, non poussé, non validé ; les lots QW-049 à QW-051 formeront un groupe de tests commun.

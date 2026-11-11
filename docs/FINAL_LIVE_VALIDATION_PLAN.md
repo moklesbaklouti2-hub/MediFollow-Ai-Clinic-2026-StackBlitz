@@ -58,6 +58,7 @@ Chaque scénario doit être marqué **OK**, **ÉCHEC** ou **NON TESTABLE** ; auc
 | F31 | Windows + Android | Sur dossier fictif contenant une ordonnance avec médicament et analyses, imagerie ou autre élément, ouvrir la chronologie médicale | Médicaments historiques conservés, catégories supplémentaires visibles comme « prescrites », jamais réputées réalisées ; pas de doublon ajouté ni de modification de stock | ☐ |
 | F32 | Windows + Android | Dans des dossiers entièrement fictifs, afficher dans la chronologie des ordonnances brouillon, annulée, validée, délivrance consignée et ancienne sans statut | Le statut documentaire est explicite ; brouillon et annulée ne sont pas présentés comme des ordonnances actives, aucun mouvement de stock ni changement de données lors de la consultation | ☐ |
 | F33 | Windows + Android | Dans un dossier fictif avec consultations et ordonnances, filtrer la chronologie par type puis revenir à tous les événements ; tester un dossier sans ordonnance | Ordre et événements conservés, compteurs cohérents, filtre vide explicite, aucune donnée modifiée ni mélange entre patients | ☐ |
+| F34 | Windows + Android | Dans un dossier fictif, rechercher « dyspnee » et « echographie » dans la chronologie après sélection du patient ; vérifier les événements non correspondants | Recherche locale insensible aux accents, bons événements visibles, ordre conservé et aucune transmission externe ni donnée modifiée | ☐ |
 
 La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non l'activation d'un accès Internet public.
 
@@ -71,6 +72,6 @@ La bonne exécution du scénario F18 requiert un banc HTTPS **de test**, et non 
 
 ## Décision de sortie
 
-**Ne pas déclarer « application validée en direct » tant que F01–F33 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
+**Ne pas déclarer « application validée en direct » tant que F01–F34 n'ont pas été exécutés ou explicitement classés NON TESTABLE et que leurs blocages n'ont pas été résolus.** Même des essais fonctionnels réussis ne signifient pas automatiquement une autorisation d'usage clinique réel.
 
-À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F33, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.
+À l'issue de la session de validation, produire une synthèse unique : version/commit testé, plateforme, navigateur, résultats F01–F34, anomalies et décision GO/NO-GO motivée. Aucun résultat ne doit être inventé.

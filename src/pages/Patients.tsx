@@ -12,6 +12,7 @@ import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
 import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import { filterRecordedEvents } from '../clinical/timelineFilter';
+import { searchRecordedEvents } from '../clinical/timelineSearch';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
@@ -20,6 +21,7 @@ export default function Patients() {
 
   const [search, setSearch] = useState('');
   const [timelineFilter, setTimelineFilter] = useState<MedicalTimelineFilter>('all');
+  const [timelineSearch, setTimelineSearch] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -64,6 +66,7 @@ export default function Patients() {
     })),
   ]);
   const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter);
+  const searchedMedicalTimeline = searchRecordedEvents(visibleMedicalTimeline, timelineSearch);
 
   const lastVisitByPatient = useMemo(() => {
     // Prototype-free map: imported patient IDs cannot shadow object keys.
@@ -331,7 +334,7 @@ export default function Patients() {
         .patient-vital strong { font-size:18px; }
         .patient-consultation,.patient-prescription { padding:14px; border:1px solid var(--border,#e5ebef); border-radius:12px; display:grid; gap:7px; }
         .patient-timeline-filter { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:10px 0 14px; font-size:13px; }
-        .patient-timeline-filter select { color:var(--text,#263646); background:var(--card,#fff); border:1px solid var(--border,#e5ebef); border-radius:8px; padding:7px 10px; max-width:100%; }
+        .patient-timeline-filter select, .patient-timeline-filter input { color:var(--text,#263646); background:var(--card,#fff); border:1px solid var(--border,#e5ebef); border-radius:8px; padding:7px 10px; max-width:100%; }
         .patient-timeline-entry { padding:15px; border:1px solid var(--border,#e5ebef); border-left:4px solid #42d5b4; border-radius:12px; display:grid; gap:8px; }
         .patient-trends-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
         @media(max-width:700px) { .patient-trends-grid { grid-template-columns:1fr; } }
@@ -684,7 +687,7 @@ export default function Patients() {
             )}
           </section>
 
-          <h3 className="patient-section-title">Chronologie médicale ({visibleMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
+          <h3 className="patient-section-title">Chronologie médicale ({searchedMedicalTimeline.length} / {medicalTimeline.length} événements affichés)</h3>
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-filter">Filtrer la chronologie :</label>
             <select id="patient-timeline-filter" value={timelineFilter}
@@ -694,12 +697,18 @@ export default function Patients() {
               <option value="prescription">Ordonnances uniquement</option>
             </select>
           </div>
+          <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-search">Rechercher dans la chronologie :</label>
+            <input id="patient-timeline-search" type="search" maxLength={100}
+              placeholder="Motif, spécialité, médicament, examen…"
+              value={timelineSearch} onChange={(event) => setTimelineSearch(event.target.value)} />
+          </div>
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
-          ) : visibleMedicalTimeline.length === 0 ? (
-            <p className="patient-empty-history">Aucun événement de ce type enregistré pour ce patient.</p>
+          ) : searchedMedicalTimeline.length === 0 ? (
+            <p className="patient-empty-history">Aucun événement correspondant à la recherche ou au filtre pour ce patient.</p>
           ) : (
-            visibleMedicalTimeline.map((entry) => (
+            searchedMedicalTimeline.map((entry) => (
               <article className="patient-timeline-entry" key={`${entry.type}-${entry.id}`}>
                 {entry.type === 'consultation' ? (
                   <>
