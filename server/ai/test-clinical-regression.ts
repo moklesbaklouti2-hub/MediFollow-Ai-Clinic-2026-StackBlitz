@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import express from 'express';
+import { CLINICAL_PATHS } from '../security/protectedClinicalRouter.ts';
+import { preventClinicalCaching } from '../security/noStoreClinicalResponses.ts';
 import { readFileSync } from 'node:fs';
 import { detectClinicalSuggestions } from '../../src/clinical/clinicalTriggers.ts';
 import type { Patient } from '../../src/types/medical.ts';
@@ -349,6 +352,60 @@ assert.ok(successReset.indexOf("setTargetedInterview('');") > successReset.index
 assert.ok(!saveConsultationSource.split('setSaved(true);')[0].includes("setTargetedInterview('');"),
   'Une sauvegarde en échec ne doit pas effacer les réponses avant confirmation.');
 console.log('OK — 4 contrôles contractuels : absence de transfert du brouillon ciblé après sauvegarde.');
+
+
+// QW-013 — exercice HTTP réel du middleware sur un serveur Express
+// éphémère exclusivement en loopback, avec des réponses fictives.
+assert.ok(source.includes('app.use(CLINICAL_PATHS, preventClinicalCaching);') &&
+  source.indexOf('app.use(CLINICAL_PATHS, preventClinicalCaching);') < source.indexOf('if (remoteAccessConfig) {'),
+  'Les réponses cliniques doivent être protégées contre la mise en cache avant le contrôle distant.');
+
+const noStoreApp = express();
+noStoreApp.use(CLINICAL_PATHS, preventClinicalCaching);
+for (const path of CLINICAL_PATHS) {
+  noStoreApp.post(path, (req, res) => {
+    if (req.get('x-test-error') === 'yes') {
+      res.status(400).json({ error: 'Donnée fictive refusée.' });
+      return;
+    }
+    res.status(200).json({ reply: 'Réponse fictive.' });
+  });
+}
+noStoreApp.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }));
+const noStoreServer = noStoreApp.listen(0, '127.0.0.1');
+try {
+  await new Promise<void>((resolve, reject) => {
+    if (noStoreServer.listening) { resolve(); return; }
+    noStoreServer.once('listening', resolve);
+    noStoreServer.once('error', reject);
+  });
+  const addr = noStoreServer.address();
+  assert.ok(addr && typeof addr !== 'string', 'Le test HTTP doit utiliser un port loopback éphémère.');
+  const base = 'http://127.0.0.1:' + (addr as { port: number }).port;
+  for (const path of CLINICAL_PATHS) {
+    for (const simulateError of [false, true]) {
+      const response = await fetch(base + path, {
+        method: 'POST',
+        headers: simulateError ? { 'x-test-error': 'yes' } : undefined,
+      });
+      assert.equal(response.status, simulateError ? 400 : 200,
+        'Mauvais statut de réponse fictive sur ' + path);
+      assert.equal(response.headers.get('cache-control'), 'no-store',
+        'Réponse clinique susceptible de mise en cache : ' + path);
+      assert.equal(response.headers.get('pragma'), 'no-cache',
+        'Directive de cache ancienne absente : ' + path);
+    }
+  }
+  const health = await fetch(base + '/api/health');
+  assert.equal(health.status, 200);
+  assert.equal(health.headers.get('cache-control'), null,
+    'Le middleware ne doit pas modifier les routes de santé publiques.');
+} finally {
+  await new Promise<void>((resolve, reject) =>
+    noStoreServer.close(error => error ? reject(error) : resolve()),
+  );
+}
+console.log('OK — réponses cliniques non stockables sur 3 routes HTTP, succès et erreur (18 en-têtes vérifiés).');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

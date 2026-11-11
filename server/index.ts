@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import { validateRemoteStartup } from './security/remoteAccessConfig.ts';
 import { createDoctorCookieAuth } from './security/doctorCookieAuth.ts';
 import { createSessionStore } from './security/sessionStore.ts';
+import { CLINICAL_PATHS } from './security/protectedClinicalRouter.ts';
+import { preventClinicalCaching } from './security/noStoreClinicalResponses.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
 
 dotenv.config();
@@ -38,6 +40,10 @@ if (cookieIntegrationMode === 'integration-test' &&
 const app = express();
 const PORT = 3001;
 app.use(express.json({ limit: '64kb' }));
+
+// Clinical responses are never cacheable, even without remote mode, or when
+// authorization rejects the request. This does not itself protect the API.
+app.use(CLINICAL_PATHS, preventClinicalCaching);
 
 // All real sensitive POST handlers are below this middleware boundary.
 // Remote mode is blocked by default; only a loopback, synthetic integration

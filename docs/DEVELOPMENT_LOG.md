@@ -615,3 +615,10 @@
 - **Correction :** validation préalable d'un identifiant texte non vide, d'une quantité numérique finie et strictement positive au retour, et d'une ordonnance identifiée à l'annulation. Refus avant lecture et toute modification de stock.
 - **Tests :** 42 assertions fictives supplémentaires sur 14 variantes d'entrée (valeurs nulles/indéfinies, chaînes vides, mauvais types et quantités absentes).
 - **Limites :** validation des entrées du service uniquement, sans confirmer de comportement clinique sur Android. CI complète de onze jobs à vérifier sur commit final.
+
+### 2026-11-11 — QW-013 : désactiver la mise en cache des réponses cliniques
+- **Branche :** `audit-stabilisation-2026-11-10`. Pas de changement de `main`, PR #2 en brouillon, aucun déploiement ni dépense ou donnée réelle.
+- **Défaut distinct :** hors du refus 503 en mode distant, les réponses des routes `/api/clinical/analyze`, `/api/chat` et `/api/commands/interpret` n'indiquaient pas systématiquement de restriction de cache. Un cache intermédiaire ne doit pas retenir des sorties cliniques.
+- **Correctif :** middleware unique `preventClinicalCaching` appliqué **avant** le contrôle d'accès et les handlers, avec `Cache-Control: no-store` et `Pragma: no-cache`. La liste des chemins est réutilisée depuis `protectedClinicalRouter.ts` pour éviter les divergences. Aucune modification des schémas de réponse, des fonctions IA, de l'authentification, du réseau ou des routes publiques.
+- **Validation ciblée :** test HTTP sur serveur Express éphémère lié à `127.0.0.1`, réponses fictives 200 et 400 pour les trois routes, plus vérification que `/api/health` n'est pas modifié et que le middleware réel est monté avant la barrière distante.
+- **Limite critique :** cette mesure ne constitue **pas** une authentification ni une protection suffisante contre l'exposition réseau, la transmission à des fournisseurs IA ou le stockage côté application. QW-007/QW-008 et les essais Android restent ouverts. Vérifier les 11 jobs Actions sur le SHA final.
