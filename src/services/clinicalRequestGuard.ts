@@ -1,11 +1,17 @@
 /**
- * N'appliquer une réponse d'analyse que si sa requête est encore active.
- * Le signal AbortController seul ne suffit pas : un transport peut
- * résoudre une promesse malgré une annulation (réponse tardive).
+ * N'appliquer une réponse d'analyse que si la requête et le contexte
+ * clinique consulté sont encore actifs. Une annulation réseau seule ne
+ * suffit pas si le transport renvoie malgré tout une ancienne réponse.
  */
 export function isCurrentClinicalRequest(
   candidate: AbortController,
   active: AbortController | null,
+  requestSnapshot: string,
+  currentSnapshot: string,
+  enabled: boolean,
 ): boolean {
-  return active === candidate && !candidate.signal.aborted;
+  return enabled
+    && active === candidate
+    && !candidate.signal.aborted
+    && requestSnapshot === currentSnapshot;
 }

@@ -162,26 +162,39 @@ console.log('OK — 12 mentions thoraciques niées, positives ou incertaines con
 // attachée à un dossier précédent ou à une consultation fermée.
 const firstClinicalRequest = new AbortController();
 const anotherClinicalRequest = new AbortController();
-assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest), true);
-assert.equal(isCurrentClinicalRequest(firstClinicalRequest, anotherClinicalRequest), false);
-assert.equal(isCurrentClinicalRequest(firstClinicalRequest, null), false);
+const initialSnapshot = '{"motif":"vertiges","symptoms":"depuis 2 jours"}';
+const updatedSnapshot = '{"motif":"vertiges","symptoms":"depuis 4 jours"}';
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest, initialSnapshot, initialSnapshot, true), true);
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, anotherClinicalRequest, initialSnapshot, initialSnapshot, true), false);
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, null, initialSnapshot, initialSnapshot, true), false);
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest, initialSnapshot, updatedSnapshot, true), false);
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest, initialSnapshot, initialSnapshot, false), false);
 firstClinicalRequest.abort();
-assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest), false);
-assert.equal(isCurrentClinicalRequest(anotherClinicalRequest, anotherClinicalRequest), true);
+assert.equal(isCurrentClinicalRequest(firstClinicalRequest, firstClinicalRequest, initialSnapshot, initialSnapshot, true), false);
+assert.equal(isCurrentClinicalRequest(anotherClinicalRequest, anotherClinicalRequest, updatedSnapshot, updatedSnapshot, true), true);
 anotherClinicalRequest.abort();
-assert.equal(isCurrentClinicalRequest(anotherClinicalRequest, anotherClinicalRequest), false);
+assert.equal(isCurrentClinicalRequest(anotherClinicalRequest, anotherClinicalRequest, updatedSnapshot, updatedSnapshot, true), false);
 
 // Vérifier que la garde accompagne réellement la réception de la réponse.
 const reasoningHook = readFileSync(new URL('../../src/hooks/useClinicalReasoning.ts', import.meta.url), 'utf8');
 const receiptIndex = reasoningHook.indexOf('const responseText = await response.text();');
-const guardIndex = reasoningHook.indexOf('if (!isCurrentClinicalRequest(controller, activeRequest.current)) return;');
+const guardIndex = reasoningHook.indexOf('if (!isCurrentClinicalRequest(controller, activeRequest.current, snapshot, currentSnapshotRef.current, analysisAllowedRef.current)) return;');
 const applyIndex = reasoningHook.indexOf('setAnalysis(data.analysis as ClinicalReasoningAnalysis);');
 assert.ok(receiptIndex >= 0 && guardIndex > receiptIndex && applyIndex > guardIndex,
   'L’analyse est appliquée sans vérifier la requête active après réception.');
 assert.ok(reasoningHook.includes('activeRequest.current?.abort();') &&
   reasoningHook.includes('activeRequest.current = null;'),
   'L’annulation de la requête au changement ou à la fermeture est absente.');
-console.log('OK — 8 assertions pour le refus des réponses cliniques IA périmées.');
+assert.ok(reasoningHook.includes('currentSnapshotRef.current = snapshot;') &&
+  reasoningHook.includes('analysisAllowedRef.current = input.enabled && hasUsefulContent;'),
+  'Le contexte actif et la désactivation du copilote doivent invalider une ancienne réponse.');
+assert.ok(reasoningHook.includes('lastSnapshot.current === snapshot') &&
+  reasoningHook.includes('controller.abort();') &&
+  reasoningHook.includes("setStatus('idle');"),
+  'Une analyse en cours doit être annulée lorsque le contexte change.');
+assert.ok(reasoningHook.includes('if (isCurrentClinicalRequest(controller, activeRequest.current, snapshot, currentSnapshotRef.current, analysisAllowedRef.current)) {'),
+  'Une erreur tardive ne doit pas écraser une nouvelle consultation.');
+console.log('OK — 13 assertions pour le refus des réponses cliniques IA périmées.');
 
 console.log('OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.');
 console.log('NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.');

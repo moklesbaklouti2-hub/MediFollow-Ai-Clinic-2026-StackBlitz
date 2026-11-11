@@ -484,3 +484,10 @@
 - **Correctif :** nouvelle garde pure `isCurrentClinicalRequest` dans `src/services/clinicalRequestGuard.ts`. Après la réception du texte de la réponse, `useClinicalReasoning` rejette les résultats d'une requête annulée ou remplacée ; les erreurs d'une requête périmée sont également ignorées. L'analyse en cours est annulée lors du démontage du composant.
 - **Tests :** huit assertions hors ligne intégrées à `server/ai/test-clinical-regression.ts`, contrôlant la requête active, remplacée, annulée et absente ainsi que l'intégration effective de la garde dans le hook React. Aucune donnée clinique réelle n'est utilisée.
 - **Limites :** contrôles de logique et de contrat logiciel ; des essais d'interface avec changement rapide de patient, navigateur et latence réseau sont requis avant usage réel. Résultat GitHub Actions du commit exact à vérifier.
+
+### 2026-11-11 — HELIOS : ignorer les réponses périmées après modification de la consultation
+- **Branche :** `audit-stabilisation-2026-11-10`, `main` intacte ; aucune fusion ou mise en production.
+- **Défaut :** la protection de requête vérifiait surtout l'annulation et le changement de patient ; une analyse lente pouvait encore afficher le contexte précédent si les symptômes, le motif ou les constantes changeaient pendant l'attente, ou après désactivation du copilote.
+- **Correctif :** `src/services/clinicalRequestGuard.ts` exige désormais la concordance entre instantané clinique initial et instantané courant, ainsi que le maintien de l'activation. `src/hooks/useClinicalReasoning.ts` invalide, annule et vide les réponses en cours sur modification du contexte ; les contrôles sont répétés juste après lecture de la réponse et dans le bloc d'erreur.
+- **Tests :** `server/ai/test-clinical-regression.ts` passe à 13 assertions de garde, d'annulation et d'intégration du hook, incluant une modification de l'histoire fictive pendant la requête et une désactivation du copilote.
+- **Limites :** tests hors ligne et CI à confirmer sur le commit exact ; aucun test réseau Android, validation clinique, donnée patient réelle ou déploiement.

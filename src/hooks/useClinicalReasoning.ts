@@ -42,6 +42,10 @@ export function useClinicalReasoning(input: ReasoningInput) {
   const lastRequestAt = useRef(0);
   const inFlight = useRef(false);
   const activeRequest = useRef<AbortController | null>(null);
+  // Références mises à jour pendant le rendu : un résultat tardif est
+  // rejeté même avant l'exécution des effets de nettoyage React.
+  const currentSnapshotRef = useRef('');
+  const analysisAllowedRef = useRef(false);
 
   const previousPatientId = useRef(input.patient?.id ?? '');
 
@@ -111,6 +115,22 @@ export function useClinicalReasoning(input: ReasoningInput) {
       input.diagnosis.trim().length >= 10 ||
       input.plan.trim().length >= 10)
   );
+  currentSnapshotRef.current = snapshot;
+  analysisAllowedRef.current = input.enabled && hasUsefulContent;
+
+  // Une consultation éditée ou un copilote désactivé invalide immédiatement
+  // la requête en cours. Elle ne pourra pas repeupler une ancienne analyse.
+  useEffect(() => {
+    const controller = activeRequest.current;
+    if (!controller || (analysisAllowedRef.current && lastSnapshot.current === snapshot)) return;
+    activeRequest.current = null;
+    inFlight.current = false;
+    controller.abort();
+    setAnalysis(null);
+    setError('');
+    setUpdatedAt('');
+    setStatus('idle');
+  }, [snapshot, input.enabled, hasUsefulContent]);
 
   useEffect(() => {
     if (!input.enabled || !hasUsefulContent || snapshot === lastSnapshot.current || status === 'analyzing') return;
@@ -147,7 +167,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
         const responseText = await response.text();
         // Une réponse arrivée après un changement de dossier ou un démontage
         // ne peut plus mettre à jour l'analyse du patient affiché.
-        if (!isCurrentClinicalRequest(controller, activeRequest.current)) return;
+        if (!isCurrentClinicalRequest(controller, activeRequest.current, snapshot, currentSnapshotRef.current, analysisAllowedRef.current)) return;
         if (!responseText.trim()) {
           throw new Error(`Le serveur a retourné une réponse vide (HTTP ${response.status}). Vérifiez que le moteur IA est démarré.`);
         }
@@ -171,7 +191,7 @@ export function useClinicalReasoning(input: ReasoningInput) {
         setUpdatedAt(new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }));
         setStatus('ready');
       } catch (reason) {
-        if (isCurrentClinicalRequest(controller, activeRequest.current)) {
+        if (isCurrentClinicalRequest(controller, activeRequest.current, snapshot, currentSnapshotRef.current, analysisAllowedRef.current)) {
           setError(reason instanceof Error ? reason.message : 'Erreur du moteur clinique.');
           setStatus('error');
         }
