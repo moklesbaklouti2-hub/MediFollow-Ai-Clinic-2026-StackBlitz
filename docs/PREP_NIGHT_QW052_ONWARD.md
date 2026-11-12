@@ -52,3 +52,7 @@ Le HEAD de cette branche peut changer ; toujours vérifier le SHA le jour du tes
 - `node scripts/test-timeline-results-accessibility-contract.mjs`
 - `node scripts/test-timeline-date-help-contract.mjs`
 - Vérifier sur données fictives : dates inversées, dates égales, effacement d'une borne, remise à zéro, annonce accessible des résultats. Aucun changement des dossiers.
+
+## QW-060 — campagne complète (préparé, non validé)
+- `npm run test:timeline-contracts` exécute les contrats QW-057–060 ; `npm run test:complete` inclut désormais cette commande après la compilation et les tests hors ligne existants.
+- Les essais humains restent distincts ; aucun statut VERT avant résultats vérifiés.

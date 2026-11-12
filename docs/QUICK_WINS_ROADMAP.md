@@ -76,6 +76,8 @@
 
 | QW-059 | S | Expliquer une période inversée et associer le message aux deux champs de date | branche de préparation | Contrat synthétique et essai des dates inversées | PRÉPARÉ NON VALIDÉ |
 
+| QW-060 | S | Inclure les contrats UI QW-057–059 dans la campagne complète hors ligne | branche de préparation | Contrat de câblage et test:complete requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

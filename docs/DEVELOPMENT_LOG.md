@@ -935,3 +935,7 @@
 ### 2026-11-12 — QW-059 : aide de saisie des dates inversées (préparation)
 - Signalement local d'une date de début postérieure à la fin ; les deux champs référencent le message et portent aria-invalid. Aucun changement du filtrage, des dossiers ou de la logique médicale.
 - Rétablissement de la ligne QW-057 omise du registre ; aucune réimplémentation. Contrat synthétique préparé, non exécuté : `node scripts/test-timeline-date-help-contract.mjs`.
+
+### 2026-11-12 — QW-060 : intégration des contrats de chronologie à la campagne groupée (préparation)
+- `test:complete` appelle désormais `test:timeline-contracts` après les tests hors ligne existants ; les contrats QW-057–059 ne peuvent plus être oubliés lors de cette commande.
+- Contrat synthétique de câblage QW-060, sans réseau ni données patient. Aucun changement de logique médicale. **Non validé**, exécution Codespaces requise.
