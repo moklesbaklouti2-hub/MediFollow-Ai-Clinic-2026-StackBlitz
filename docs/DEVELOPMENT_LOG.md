@@ -1093,3 +1093,9 @@
 - Lors d'une sauvegarde de modifications, la page recharge l'ordonnance actuellement enregistrée et refuse l'écriture si l'identifiant n'est pas unique, le patient a changé ou n'est plus confirmé, ou le statut est désormais `cancelled` / `dispensed`.
 - Protège contre une ancienne fenêtre d'édition qui permettrait d'écraser une ordonnance annulée ou déjà délivrée après changement de contexte. Les changements de statut de la procédure d'annulation restent distincts de `savePrescription`.
 - Test de contrat QW-096 ajouté aux régressions de liaison patient. **Préparé sans exécution de tests**, vérifications complètes Codespaces et CI exigées. Aucun dossier réel, `main` et déploiement inchangés.
+
+### 2026-11-12 — QW-097 : verrouillage central des modifications sur ordonnance finalisée
+- Nouveau garde-fou pur `allowsFinalizedPrescriptionUpdate` dans `src/services/prescriptionFinality.ts`, appliqué à `updatePrescription` avant toute écriture. Une ordonnance annulée est immuable ; une ordonnance délivrée ne peut recevoir ni modification du traitement, ni changement de patient, ni conseil, ni modification des quantités.
+- Exception étroite : transition `dispensed` vers `cancelled` avec seulement `status` et `cancelledAt` au format ISO. La présence de retours de stock cohérents reste à garantir avant qu'un tel changement de statut soit considéré sûr.
+- Dix scénarios synthétiques et contrat de branche de sauvegarde ajoutés à `test:patient-linkage`. **Préparé mais non validé** : npm et GitHub Actions doivent être exécutés sur le SHA exact d'intégration.
+- Pas de patient réel, pas de fusion ni déploiement. L'environnement isolé ne peut pas cloner le dépôt depuis GitHub : aucune compilation n'est revendiquée.
