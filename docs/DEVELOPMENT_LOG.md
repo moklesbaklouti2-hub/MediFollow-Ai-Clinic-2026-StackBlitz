@@ -1114,3 +1114,8 @@
 - Sur la page Ordonnances, la délivrance n'est autorisée que si le statut **actuel et enregistré** est explicitement `draft` ou `validated`. Les statuts `dispensed`, `cancelled`, absents, `null`, inconnus ou malformés sont refusés avant sauvegarde préalable et avant `dispenseInventoryItems`.
 - Les protections QW-090 (patient confirmé/ordonnance unique) et QW-095 (ordonnance annulée) restent opérationnelles. Les anciens dossiers à statut manquant restent consultables ; ils ne sont pas traités silencieusement comme des ordonnances pouvant déclencher un nouveau mouvement de stock.
 - Helper de classification pur et tests fictifs de statuts + contrat UI ajoutés à `test:patient-linkage`. **Préparé, non validé** : compilation, tests d'intégration et CI sur le SHA final restent à effectuer. Aucun patient réel, aucun déploiement ni fusion.
+
+### 2026-11-12 — QW-101 : statuts documentaires exacts dans l'historique des ordonnances
+- La liste Ordonnances réutilise le même `documentedPrescriptionStatus` que la chronologie patient : elle distingue brouillon, validée, délivrance enregistrée, annulée et statut absent/inconnu au lieu de présenter tous les autres états comme « Brouillon / non délivrée ».
+- Affichage informatif uniquement : aucune ordonnance, quantité, statut, délivrance ni retour modifié. Réutilisation du helper validé antérieurement, sans créer de classification parallèle.
+- Contrat de non-régression ajouté à `test:patient-linkage`. **Préparé, non validé en exécution** : compilation, tests fictifs dans Codespaces et CI finale encore requis. Aucune donnée réelle.
