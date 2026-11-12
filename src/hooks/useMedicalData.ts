@@ -179,6 +179,8 @@ export function useMedicalData() {
   const addPrescription = useCallback((
     prescription: Omit<Prescription, 'id' | 'savedAt'>
   ) => {
+    // Reject an unlinked or ambiguous patient even for direct hook callers.
+    if (!hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)) return null;
     const newPrescription: Prescription = {
       ...prescription,
       id: createId(),

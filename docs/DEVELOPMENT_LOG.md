@@ -1044,3 +1044,7 @@
 ### 2026-11-12 — QW-085 : création consultation et patient confirmé
 - La création d'une consultation refuse dès le hook de stockage une identité patient absente, vide ou dupliquée, y compris si une autre interface appelle directement le hook. Aucun document nouveau en cas de refus.
 - Contrat de source et données fictives préparés ; test Codespaces à effectuer.
+
+### 2026-11-12 — QW-086 : ordonnance créée seulement pour un dossier patient unique
+- Le hook central de création d'ordonnance vérifie l'existence et l'unicité de l'identifiant patient, même lorsque l'appel ne provient pas du formulaire Ordonnances. Refus sans écrire si dossier inexistant, vide ou ambigu.
+- Cas fictifs et contrat source ajoutés ; exécution Codespaces et CI encore requises.

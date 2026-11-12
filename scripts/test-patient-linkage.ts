@@ -1043,3 +1043,20 @@ console.log('PASS QW-084: ambiguous deleted patient ID cannot be restored.');
   assert.equal(hasConfirmedPatientSelection('orphan', sample), false);
 }
 console.log('PASS QW-085: central consultation creation requires unique patient.');
+
+// QW-086: prescriptions must never be created against an unconfirmed patient,
+// including direct calls not passing through the user-facing form.
+{
+  const source = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = source.split('const addPrescription = useCallback(')[1]
+    ?.split('const updatePrescription = useCallback(')[0] ?? '';
+  assert.ok(add.includes('hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)') &&
+    add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('createId()') &&
+    add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('savePrescriptions('),
+    'Prescription add must check unique patient identity before writing.');
+  const records = [{ id: 'unique' }, { id: 'duplicate' }, { id: 'duplicate' }];
+  assert.equal(hasConfirmedPatientSelection('unique', records), true);
+  assert.equal(hasConfirmedPatientSelection('duplicate', records), false);
+  assert.equal(hasConfirmedPatientSelection('unknown', records), false);
+}
+console.log('PASS QW-086: central prescription creation guarded by patient identity.');
