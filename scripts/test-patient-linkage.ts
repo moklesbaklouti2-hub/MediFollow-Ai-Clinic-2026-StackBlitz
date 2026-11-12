@@ -18,7 +18,7 @@ import { filterDocumentedPrescriptionStatus } from '../src/clinical/timelineStat
 import { filterTimelineByDateRange } from '../src/clinical/timelineDateRange.ts';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../src/clinical/timelineSpecialty.ts';
 import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
-import { summarizeTimelineDocumentation } from '../src/clinical/timelineQuality.ts';
+import { summarizeTimelineDocumentation, filterTimelineDocumentationGaps } from '../src/clinical/timelineQuality.ts';
 import { sortTimelineByRecordedDate } from '../src/clinical/timelineSort.ts';
 import { filterTimelineUndated } from '../src/clinical/timelineUndated.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
@@ -811,7 +811,7 @@ assert.deepEqual(sortTimelineByRecordedDate(sortFixtures, 'newest').map(x => x.i
 assert.deepEqual(sortTimelineByRecordedDate(sortFixtures, 'oldest').map(x => x.id), ['old', 'new', 'same', 'invalid']);
 assert.deepEqual(sortTimelineByRecordedDate([], 'oldest'), []);
 assert.equal(JSON.stringify(sortFixtures), sortBefore, 'Sorting must not mutate records.');
-assert.ok(patientPageSource.includes('sortTimelineByRecordedDate(specialtyFilteredMedicalTimeline, timelineSortDirection)') &&
+assert.ok(patientPageSource.includes('sortTimelineByRecordedDate(qualityFilteredMedicalTimeline, timelineSortDirection)') &&
   patientPageSource.includes('limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit)') &&
   patientPageSource.includes('id="patient-timeline-sort"') &&
   patientPageSource.includes("setTimelineSortDirection('newest')") &&
@@ -839,5 +839,26 @@ assert.ok(patientPageSource.includes('filterTimelineUndated(statusFilteredMedica
   patientPageSource.includes("setTimelineToDate('')"),
   'Undated-only mode must exclude date ranges and reset on patient change.');
 console.log('PASS QW-064: synthetic unknown-date filter, no mutation and UI contract.');
+
+// QW-065 — Reuse the same documentary gap rules as the quality counter,
+// staying read-only and strictly limited to passed-in patient events.
+const gapFixture = [
+  { id: 'c1', type: 'consultation' as const, date: '2026-11-11', consultation: { specialty: 'ORL' } },
+  { id: 'c2', type: 'consultation' as const, date: '2026-11-10', consultation: { specialty: '' } },
+  { id: 'p1', type: 'prescription' as const, date: '2026-11-09', prescription: { status: 'cancelled' } },
+  { id: 'p2', type: 'prescription' as const, date: 'no date', prescription: { status: 'draft' } },
+  { id: 'p3', type: 'prescription' as const, date: '2026-11-08', prescription: { status: 'made-up' } },
+];
+const gapsBefore = JSON.stringify(gapFixture);
+assert.deepEqual(filterTimelineDocumentationGaps(gapFixture).map(e => e.id), ['c2', 'p2', 'p3']);
+assert.deepEqual(filterTimelineDocumentationGaps([]), []);
+assert.equal(JSON.stringify(gapFixture), gapsBefore, 'Documentation gap view must not mutate any records.');
+assert.ok(patientPageSource.includes('filterTimelineDocumentationGaps(specialtyFilteredMedicalTimeline)') &&
+  patientPageSource.includes('id="patient-timeline-gaps"') &&
+  patientPageSource.includes('sortTimelineByRecordedDate(qualityFilteredMedicalTimeline, timelineSortDirection)') &&
+  patientPageSource.includes('setTimelineGapsOnly(false)') &&
+  patientPageSource.includes('sans interprétation médicale.'),
+  'Documentation gap view must be scoped to already selected/filtered records and remain neutral.');
+console.log('PASS QW-065: documentary-only gap review and immutable, patient-scoped UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

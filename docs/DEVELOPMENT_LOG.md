@@ -957,3 +957,8 @@
 - Filtre local explicite pour retrouver les seuls événements sans date fiable du dossier courant, sans attribuer arbitrairement une date ni modifier la source.
 - Lors de la sélection, les bornes de date sont effacées puis désactivées afin d'éviter un état contradictoire ; retour au mode « dates et période » possible. Réinitialisation sur changement de patient.
 - Tests de documents fictifs datés, invalides et absents dans `test:patient-linkage` ; F42 prévu pour la validation sur Codespaces et appareils. **Non exécuté.**
+
+### 2026-11-12 — QW-065 : vue des informations documentaires manquantes (préparation)
+- Filtre purement descriptif des événements aux dates invalides, consultations sans spécialité ou ordonnances au statut absent/inconnu. Il réutilise les règles des compteurs QW-056 pour éviter les écarts entre chiffres et vue.
+- Aucun diagnostic, statut thérapeutique ou décision clinique inféré ; aucun document modifié. F43 prévu aux essais sur des dossiers fictifs, tests synthétiques ajoutés à `test:patient-linkage`.
+- **Préparé non exécuté**, branche dédiée uniquement.

@@ -17,7 +17,7 @@ import { filterDocumentedPrescriptionStatus } from '../clinical/timelineStatusFi
 import { filterTimelineByDateRange } from '../clinical/timelineDateRange';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../clinical/timelineSpecialty';
 import { limitTimelineEvents } from '../clinical/timelineLimit';
-import { summarizeTimelineDocumentation } from '../clinical/timelineQuality';
+import { summarizeTimelineDocumentation, filterTimelineDocumentationGaps } from '../clinical/timelineQuality';
 import { sortTimelineByRecordedDate } from '../clinical/timelineSort';
 import type { TimelineSortDirection } from '../clinical/timelineSort';
 import { filterTimelineUndated } from '../clinical/timelineUndated';
@@ -39,6 +39,7 @@ export default function Patients() {
   const [timelineDisplayLimit, setTimelineDisplayLimit] = useState<TimelineDisplayLimit>('10');
   const [timelineSortDirection, setTimelineSortDirection] = useState<TimelineSortDirection>('newest');
   const [timelineUndatedOnly, setTimelineUndatedOnly] = useState(false);
+  const [timelineGapsOnly, setTimelineGapsOnly] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -61,6 +62,7 @@ export default function Patients() {
     setTimelineDisplayLimit('10');
     setTimelineSortDirection('newest');
     setTimelineUndatedOnly(false);
+    setTimelineGapsOnly(false);
   }
 
   function changeSelectedPatient(nextPatientId: string | null) {
@@ -112,7 +114,10 @@ export default function Patients() {
   const specialtyFilteredMedicalTimeline = timelineFilter === 'consultation'
     ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
     : dateFilteredMedicalTimeline;
-  const sortedMedicalTimeline = sortTimelineByRecordedDate(specialtyFilteredMedicalTimeline, timelineSortDirection);
+  const qualityFilteredMedicalTimeline = timelineGapsOnly
+    ? filterTimelineDocumentationGaps(specialtyFilteredMedicalTimeline)
+    : specialtyFilteredMedicalTimeline;
+  const sortedMedicalTimeline = sortTimelineByRecordedDate(qualityFilteredMedicalTimeline, timelineSortDirection);
   const pagedMedicalTimeline = limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit);
   const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
   // Display-only indicator: count active view restrictions, not hidden records.
@@ -123,6 +128,7 @@ export default function Patients() {
     !timelineUndatedOnly && timelineFromDate !== '',
     !timelineUndatedOnly && timelineToDate !== '',
     timelineUndatedOnly,
+    timelineGapsOnly,
     timelineFilter === 'consultation' && timelineSpecialtyFilter !== 'all',
     timelineFilter === 'prescription' && prescriptionStatusFilter !== 'all',
   ].filter(Boolean).length;
@@ -748,7 +754,7 @@ export default function Patients() {
 
           <h3 className="patient-section-title">Chronologie médicale</h3>
           <p className="patient-empty-history" role="status" aria-live="polite" aria-atomic="true" aria-label="Résultats de la chronologie">
-            {pagedMedicalTimeline.length} affichés / {specialtyFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total
+            {pagedMedicalTimeline.length} affichés / {qualityFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total
           </p>
           <p className="patient-empty-history" aria-label="Filtres actifs de la chronologie">
             {activeTimelineFilterCount === 0
@@ -848,6 +854,15 @@ export default function Patients() {
             </span>
           </div>
           <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-gaps">Complétude documentaire :</label>
+            <select id="patient-timeline-gaps" value={timelineGapsOnly ? 'gaps' : 'all'}
+              onChange={(event) => setTimelineGapsOnly(event.target.value === 'gaps')}>
+              <option value="all">Tous les documents correspondants</option>
+              <option value="gaps">Seulement les documents avec information manquante</option>
+            </select>
+            <span>Repérage de dates, spécialités et statuts non renseignés ; sans interprétation médicale.</span>
+          </div>
+          <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-sort">Ordre chronologique :</label>
             <select id="patient-timeline-sort" value={timelineSortDirection}
               onChange={(event) => setTimelineSortDirection(event.target.value as TimelineSortDirection)}>
@@ -871,7 +886,7 @@ export default function Patients() {
               Réinitialiser les filtres
             </button>
           </div>
-          {pagedMedicalTimeline.length < specialtyFilteredMedicalTimeline.length && (
+          {pagedMedicalTimeline.length < qualityFilteredMedicalTimeline.length && (
             <div className="patient-timeline-filter">
               <button type="button" className="patient-view" onClick={() => setTimelineDisplayLimit('all')}>
                 Afficher tous les résultats correspondants
@@ -880,7 +895,7 @@ export default function Patients() {
           )}
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
-          ) : specialtyFilteredMedicalTimeline.length === 0 ? (
+          ) : qualityFilteredMedicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucun événement correspondant à la recherche ou au filtre pour ce patient.</p>
           ) : (
             pagedMedicalTimeline.map((entry) => (

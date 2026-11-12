@@ -6,6 +6,35 @@ type QualityEvent =
 
 const KNOWN_STATUSES: readonly string[] = ['draft', 'validated', 'dispensed', 'cancelled'];
 
+function documentaryGaps(event: QualityEvent): {
+  date: boolean; specialty: boolean; prescriptionStatus: boolean;
+} {
+  const missingDate = recordedDateTimestamp(event.date) === null;
+  if (event.type === 'consultation') {
+    const specialty: unknown = event.consultation?.specialty;
+    return {
+      date: missingDate,
+      specialty: typeof specialty !== 'string' || !specialty.trim(),
+      prescriptionStatus: false,
+    };
+  }
+  const status: unknown = event.prescription?.status;
+  return {
+    date: missingDate,
+    specialty: false,
+    prescriptionStatus: !KNOWN_STATUSES.includes(typeof status === 'string' ? status : ''),
+  };
+}
+
+// Presentation-only quality review: a missing field is NOT a clinical finding,
+// diagnosis, obligation to alter historical data, or evidence of an active drug.
+export function filterTimelineDocumentationGaps<T extends QualityEvent>(events: readonly T[]): T[] {
+  return events.filter(event => {
+    const gaps = documentaryGaps(event);
+    return gaps.date || gaps.specialty || gaps.prescriptionStatus;
+  });
+}
+
 export type TimelineDocumentationSummary = {
   total: number;
   datesUnspecified: number;
@@ -25,16 +54,10 @@ export function summarizeTimelineDocumentation(
     prescriptionStatusesUnspecified: 0,
   };
   for (const event of events) {
-    if (recordedDateTimestamp(event.date) === null) summary.datesUnspecified++;
-    if (event.type === 'consultation') {
-      const specialty: unknown = event.consultation?.specialty;
-      if (typeof specialty !== 'string' || !specialty.trim()) summary.specialtiesUnspecified++;
-    } else {
-      const status: unknown = event.prescription?.status;
-      if (!KNOWN_STATUSES.includes(typeof status === 'string' ? status : '')) {
-        summary.prescriptionStatusesUnspecified++;
-      }
-    }
+    const gaps = documentaryGaps(event);
+    if (gaps.date) summary.datesUnspecified++;
+    if (gaps.specialty) summary.specialtiesUnspecified++;
+    if (gaps.prescriptionStatus) summary.prescriptionStatusesUnspecified++;
   }
   return summary;
 }
