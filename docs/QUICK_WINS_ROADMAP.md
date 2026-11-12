@@ -138,6 +138,8 @@
 
 | QW-094 | S | Protéger au point central les ordonnances annulées ou délivrées contre toute suppression, même sans journal de stock | branche de préparation | Contrat du hook, tests de données fictives et CI requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-095 | S | Bloquer la délivrance et la déduction de stock si le statut enregistré d'une ordonnance est déjà « annulée » | branche de préparation | Contrat source, test fictif et CI Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
