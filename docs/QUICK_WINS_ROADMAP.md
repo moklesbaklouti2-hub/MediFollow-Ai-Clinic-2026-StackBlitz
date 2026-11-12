@@ -142,6 +142,8 @@
 
 | QW-096 | S | Refuser une sauvegarde d'édition obsolète sur ordonnance annulée/délivrée ou patient réattribué | branche de préparation | Contrat source, test fictif Codespaces et CI requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-097 | S | Verrouiller les modifications d'ordonnances finalisées au hook central ; autoriser uniquement la transition documentaire de délivrée à annulée | branche de préparation | Tests fictifs et validation de l'exception d'annulation en CI nécessaires | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
