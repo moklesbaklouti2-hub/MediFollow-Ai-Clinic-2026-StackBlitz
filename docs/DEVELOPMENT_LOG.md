@@ -1109,3 +1109,8 @@
 - La suppression centrale n'accepte que les statuts `draft` et `validated` ainsi que le statut absent des anciens dossiers. Une valeur explicitement inconnue, `null`, `dispensed` ou `cancelled` bloque la suppression ; l'historique est conservé pour revue, sans suppression automatique ou conversion implicite.
 - Helper pur `isDeletablePrescriptionStatus` branché dans `deletePrescription`, plus tests synthétiques des statuts acceptés/refusés et contrat d'ordre avant sauvegarde.
 - **Préparé sans validation d'exécution** ; aucun résultat de compilation ou de CI 11/11 n'est revendiqué. Le dépôt reste sur la branche de préparation, sans modification de `main`.
+
+### 2026-11-12 — QW-100 : aucun prélèvement de stock sur statut d'ordonnance inconnu
+- Sur la page Ordonnances, la délivrance n'est autorisée que si le statut **actuel et enregistré** est explicitement `draft` ou `validated`. Les statuts `dispensed`, `cancelled`, absents, `null`, inconnus ou malformés sont refusés avant sauvegarde préalable et avant `dispenseInventoryItems`.
+- Les protections QW-090 (patient confirmé/ordonnance unique) et QW-095 (ordonnance annulée) restent opérationnelles. Les anciens dossiers à statut manquant restent consultables ; ils ne sont pas traités silencieusement comme des ordonnances pouvant déclencher un nouveau mouvement de stock.
+- Helper de classification pur et tests fictifs de statuts + contrat UI ajoutés à `test:patient-linkage`. **Préparé, non validé** : compilation, tests d'intégration et CI sur le SHA final restent à effectuer. Aucun patient réel, aucun déploiement ni fusion.
