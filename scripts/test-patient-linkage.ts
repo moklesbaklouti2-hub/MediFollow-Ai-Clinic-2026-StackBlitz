@@ -1362,3 +1362,21 @@ console.log('PASS QW-099: unknown imported statuses cannot be deleted as drafts.
     'Missing/unknown stored status must block any pre-dispense write or stock deduction.');
 }
 console.log('PASS QW-100: only explicit draft/validated statuses permit inventory dispensing.');
+
+
+// QW-101: all recorded statuses must be represented consistently with the
+// non-prescriptive patient timeline, including missing/unknown legacy ones.
+{
+  for (const status of ['draft', 'validated', 'dispensed', 'cancelled', undefined, null, 'invalid']) {
+    assert.ok(documentedPrescriptionStatus(status).length > 0);
+  }
+  assert.notEqual(documentedPrescriptionStatus('validated'), documentedPrescriptionStatus('draft'));
+  assert.notEqual(documentedPrescriptionStatus('cancelled'), documentedPrescriptionStatus('draft'));
+  assert.notEqual(documentedPrescriptionStatus(undefined), documentedPrescriptionStatus('draft'));
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  assert.ok(source.includes("import { documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';") &&
+    source.includes('Statut documentaire : {documentedPrescriptionStatus(item.status)}') &&
+    !source.includes("'Brouillon / non délivrée'"),
+    'Prescription history must not mislabel validated or unknown documents as drafts.');
+}
+console.log('PASS QW-101: history consistently labels recorded prescription statuses.');
