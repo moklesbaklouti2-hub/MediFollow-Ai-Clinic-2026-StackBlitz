@@ -947,3 +947,8 @@
 ### 2026-11-12 — QW-062 : aide accessible à la recherche chronologique (préparation)
 - Le champ de recherche référence une aide décrivant les champs réellement recherchés, la normalisation des accents et de la casse et l'absence d'appel IA. Aucun changement de logique de recherche ni de données.
 - Contrat synthétique intégré à test:timeline-contracts ; exécution et essai fictif restent à effectuer dans Codespaces. **Non validé**.
+
+### 2026-11-12 — QW-063 : ordre chronologique bidirectionnel (préparation)
+- Une option de présentation permet de voir les événements du plus ancien au plus récent, ou l'inverse (choix par défaut), après application des filtres et avant la limite d'affichage.
+- Les dates absentes ou invalides restent à la fin dans les deux directions ; aucune écriture, stockage, requête IA ni modification de dossier. Le choix de tri revient à « récent d'abord » à chaque changement de patient.
+- Tests synthétiques de tri, égalité de dates et immutabilité dans `test:patient-linkage` ; F41 réservé aux essais Codespaces/Android/Windows. **Préparé, non exécuté.**

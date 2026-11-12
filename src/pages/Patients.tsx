@@ -18,6 +18,8 @@ import { filterTimelineByDateRange } from '../clinical/timelineDateRange';
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../clinical/timelineSpecialty';
 import { limitTimelineEvents } from '../clinical/timelineLimit';
 import { summarizeTimelineDocumentation } from '../clinical/timelineQuality';
+import { sortTimelineByRecordedDate } from '../clinical/timelineSort';
+import type { TimelineSortDirection } from '../clinical/timelineSort';
 import type { TimelineDisplayLimit } from '../clinical/timelineLimit';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
@@ -34,6 +36,7 @@ export default function Patients() {
   const [timelineToDate, setTimelineToDate] = useState('');
   const [timelineSpecialtyFilter, setTimelineSpecialtyFilter] = useState('all');
   const [timelineDisplayLimit, setTimelineDisplayLimit] = useState<TimelineDisplayLimit>('10');
+  const [timelineSortDirection, setTimelineSortDirection] = useState<TimelineSortDirection>('newest');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -54,6 +57,7 @@ export default function Patients() {
     setTimelineToDate('');
     setTimelineSpecialtyFilter('all');
     setTimelineDisplayLimit('10');
+    setTimelineSortDirection('newest');
   }
 
   function changeSelectedPatient(nextPatientId: string | null) {
@@ -105,7 +109,8 @@ export default function Patients() {
   const specialtyFilteredMedicalTimeline = timelineFilter === 'consultation'
     ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
     : dateFilteredMedicalTimeline;
-  const pagedMedicalTimeline = limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit);
+  const sortedMedicalTimeline = sortTimelineByRecordedDate(specialtyFilteredMedicalTimeline, timelineSortDirection);
+  const pagedMedicalTimeline = limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit);
   const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
   // Display-only indicator: count active view restrictions, not hidden records.
   const timelineDateRangeReversed = timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;
@@ -820,7 +825,16 @@ export default function Patients() {
             </span>
           </div>
           <div className="patient-timeline-filter">
-            <label htmlFor="patient-timeline-limit">Afficher les plus récents :</label>
+            <label htmlFor="patient-timeline-sort">Ordre chronologique :</label>
+            <select id="patient-timeline-sort" value={timelineSortDirection}
+              onChange={(event) => setTimelineSortDirection(event.target.value as TimelineSortDirection)}>
+              <option value="newest">Du plus récent au plus ancien</option>
+              <option value="oldest">Du plus ancien au plus récent</option>
+            </select>
+            <span>Les dates non renseignées restent après les dates valides.</span>
+          </div>
+          <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-limit">Nombre d'événements affichés :</label>
             <select id="patient-timeline-limit" value={timelineDisplayLimit}
               onChange={(event) => setTimelineDisplayLimit(event.target.value as TimelineDisplayLimit)}>
               <option value="10">10 événements</option>

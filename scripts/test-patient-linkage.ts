@@ -19,6 +19,7 @@ import { filterTimelineByDateRange } from '../src/clinical/timelineDateRange.ts'
 import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../src/clinical/timelineSpecialty.ts';
 import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
 import { summarizeTimelineDocumentation } from '../src/clinical/timelineQuality.ts';
+import { sortTimelineByRecordedDate } from '../src/clinical/timelineSort.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -749,7 +750,7 @@ assert.equal(limitTimelineEvents(manyTimelineEvents, '50').length, 50);
 assert.equal(limitTimelineEvents(manyTimelineEvents, 'all').length, 64);
 assert.equal(limitTimelineEvents(manyTimelineEvents, '10')[0].id, 'event-0');
 assert.equal(JSON.stringify(manyTimelineEvents), manyBefore, 'Limiting must never modify storage events.');
-assert.ok(patientPageSource.includes('limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit)') &&
+assert.ok(patientPageSource.includes('limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit)') &&
   patientPageSource.includes('pagedMedicalTimeline.map((entry)') &&
   patientPageSource.includes('id="patient-timeline-limit"') &&
   patientPageSource.includes('Tous les événements'),
@@ -795,5 +796,26 @@ assert.ok(patientPageSource.includes('summarizeTimelineDocumentation(medicalTime
   patientPageSource.includes('Ces nombres décrivent les documents enregistrés, sans interprétation médicale.'),
   'Patient timeline quality counters must be descriptive and based on the selected dossier.');
 console.log('PASS QW-056: patient timeline documentation completeness counters and no mutation.');
+
+// QW-063 — Oldest/newest chronological presentation is pure and dates unknown
+// are always disclosed last, independent of sort choice or patient identity.
+const sortFixtures = [
+  { id: 'new', type: 'consultation', date: '2026-11-12' },
+  { id: 'invalid', type: 'prescription', date: '2026-02-30' },
+  { id: 'old', type: 'consultation', date: '2026-01-02' },
+  { id: 'same', type: 'prescription', date: '2026-11-12' },
+];
+const sortBefore = JSON.stringify(sortFixtures);
+assert.deepEqual(sortTimelineByRecordedDate(sortFixtures, 'newest').map(x => x.id), ['new', 'same', 'old', 'invalid']);
+assert.deepEqual(sortTimelineByRecordedDate(sortFixtures, 'oldest').map(x => x.id), ['old', 'new', 'same', 'invalid']);
+assert.deepEqual(sortTimelineByRecordedDate([], 'oldest'), []);
+assert.equal(JSON.stringify(sortFixtures), sortBefore, 'Sorting must not mutate records.');
+assert.ok(patientPageSource.includes('sortTimelineByRecordedDate(specialtyFilteredMedicalTimeline, timelineSortDirection)') &&
+  patientPageSource.includes('limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit)') &&
+  patientPageSource.includes('id="patient-timeline-sort"') &&
+  patientPageSource.includes("setTimelineSortDirection('newest')") &&
+  patientPageSource.includes('Les dates non renseignées restent après les dates valides.'),
+  'Timeline order selector must apply after existing filters and before display limit, reset on patient change.');
+console.log('PASS QW-063: pure chronological sort, unknown dates last and UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
