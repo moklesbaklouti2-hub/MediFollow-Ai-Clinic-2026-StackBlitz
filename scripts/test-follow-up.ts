@@ -349,3 +349,19 @@ console.log('PASS QW-074: follow-up horizons partition and dashboard/list agreem
     consultationUI.includes('filterFollowUpsByObjective(selectLaterPlannedFollowUps('));
 }
 console.log('PASS QW-075: local objective search, three worklists and non-mutation.');
+
+// QW-078: follow-up actions must fail closed before entering the edit form or
+// requesting confirmation if an imported consultation ID is ambiguous.
+{
+  const consultationSource = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const editing = consultationSource.split('function startEditing(')[1]
+    ?.split('function cancelEditing(')[0] ?? '';
+  const completion = consultationSource.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  assert.ok(editing.includes('hasUniqueConsultationId(item.id, currentConsultations)') &&
+    editing.includes('hasConfirmedPatientSelection(item.patientId, patients)') &&
+    editing.indexOf('hasUniqueConsultationId(') < editing.indexOf('setEditingId(item.id)'));
+  assert.ok(completion.includes('hasUniqueConsultationId(item.id, getConsultations())') &&
+    completion.indexOf('hasUniqueConsultationId(') < completion.indexOf('window.confirm('));
+}
+console.log('PASS QW-078: imported ID ambiguity blocks follow-up edit and completion actions.');

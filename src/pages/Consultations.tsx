@@ -7,6 +7,7 @@ import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
+import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 
 
@@ -358,6 +359,13 @@ export default function Consultations({
   }
 
   function startEditing(item: (typeof consultations)[number]) {
+    const currentConsultations = getConsultations();
+    if (!hasUniqueConsultationId(item.id, currentConsultations) ||
+        currentConsultations.find(record => record.id === item.id)?.patientId !== item.patientId ||
+        !hasConfirmedPatientSelection(item.patientId, patients)) {
+      window.alert('Consultation introuvable, identifiant ambigu ou dossier patient non confirmé. Aucune modification ouverte.');
+      return;
+    }
     setExpressDraft('');
     setExpressFeedback('');
     setExpressPatientId(null);
@@ -403,6 +411,10 @@ export default function Consultations({
   }
 
   function completeFollowUp(item: (typeof consultations)[number]) {
+    if (!hasUniqueConsultationId(item.id, getConsultations())) {
+      window.alert('Identifiant de consultation absent ou dupliqué : contrôle non modifié.');
+      return;
+    }
     if (editingId === item.id) {
       window.alert('Enregistrez ou annulez d’abord la modification de cette consultation.');
       return;

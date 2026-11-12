@@ -1012,3 +1012,7 @@
 ### 2026-11-12 — QW-077 : bloquer les suppressions ambiguës de consultations
 - L'opération centrale deleteConsultation rejette un identifiant vide, absent ou dupliqué, sans supprimer plusieurs consultations issues d'une sauvegarde problématique.
 - Test de non-régression fictif et contrat source ajoutés. À vérifier dans Codespaces avant validation.
+
+### 2026-11-12 — QW-078 : verrouillage avant action sur consultations ambiguës
+- Refus avant préremplissage du formulaire si la consultation est absente/dupliquée, son patient diffère de la liste ou l'identité du patient n'est pas unique. La clôture rapide refuse les identifiants ambigus avant la confirmation.
+- Contrats synthétiques source préparés. À exécuter avec dossiers fictifs dans Codespaces ; aucune validation CI revendiquée.
