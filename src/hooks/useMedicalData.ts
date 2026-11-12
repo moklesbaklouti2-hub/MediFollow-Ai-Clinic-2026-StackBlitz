@@ -213,6 +213,14 @@ export function useMedicalData() {
         !hasDocumentedPrescriptionDispense(id, currentPrescription.patientId, getInventoryData().movements)) {
       return false;
     }
+    // QW-103: if the stock was dispensed but an earlier status update failed,
+    // refuse to cancel a draft/validated/legacy record as "non dispensed".
+    // Requires explicit reconciliation instead of silently losing the return.
+    if (changes.status === 'cancelled' &&
+        currentPrescription.status !== 'dispensed' &&
+        prescriptionHasRecordedStockMovement(id, getInventoryData().movements)) {
+      return false;
+    }
     // QW-098: status may become cancelled only after every dispense movement
     // has a consistent, complete return trace in the inventory journal.
     if (currentPrescription.status === 'dispensed' &&
