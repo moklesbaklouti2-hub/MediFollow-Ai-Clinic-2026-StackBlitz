@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
-import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../services/prescriptionFinality';
+import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -181,6 +181,9 @@ export function useMedicalData() {
   const addPrescription = useCallback((
     prescription: Omit<Prescription, 'id' | 'savedAt'>
   ) => {
+    // QW-105: direct hook callers may only create drafts/validated records,
+    // never fabricate a dispensed/cancelled prescription or terminal date.
+    if (!isCreatablePrescriptionStatus(prescription)) return null;
     // Reject an unlinked or ambiguous patient even for direct hook callers.
     if (!hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)) return null;
     const newPrescription: Prescription = {
