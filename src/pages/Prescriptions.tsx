@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
+import { isDispensablePrescriptionStatus } from '../services/prescriptionFinality';
 import type { InventoryData, Medication } from '../types/medical';
 import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
 
@@ -172,6 +173,12 @@ export default function Prescriptions() {
     // editing tab still offers the action.
     if (savedPrescription.status === 'cancelled') {
       setSavedMessage('Délivrance refusée : cette ordonnance est annulée. Aucun stock déduit.');
+      return;
+    }
+    // QW-100 — a missing or unknown imported status cannot authorize a
+    // stock withdrawal, even when the user opens an old editing session.
+    if (!isDispensablePrescriptionStatus(savedPrescription.status)) {
+      setSavedMessage('Délivrance refusée : statut de l’ordonnance absent ou non reconnu. Vérification nécessaire ; aucun stock déduit.');
       return;
     }
 
