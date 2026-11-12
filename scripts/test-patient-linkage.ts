@@ -21,6 +21,7 @@ import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
 import { summarizeTimelineDocumentation, filterTimelineDocumentationGaps } from '../src/clinical/timelineQuality.ts';
 import { sortTimelineByRecordedDate } from '../src/clinical/timelineSort.ts';
 import { filterTimelineUndated } from '../src/clinical/timelineUndated.ts';
+import { filterTimelineByRecordedOrderKind } from '../src/clinical/timelineOrderKinds.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -831,7 +832,7 @@ const undatedBefore = JSON.stringify(undatedFixtures);
 assert.deepEqual(filterTimelineUndated(undatedFixtures).map(x => x.id), ['d2', 'd3', 'd4']);
 assert.deepEqual(filterTimelineUndated([]), []);
 assert.equal(JSON.stringify(undatedFixtures), undatedBefore, 'Undated selection may not mutate historical documents.');
-assert.ok(patientPageSource.includes('filterTimelineUndated(statusFilteredMedicalTimeline)') &&
+assert.ok(patientPageSource.includes('filterTimelineUndated(kindFilteredMedicalTimeline)') &&
   patientPageSource.includes('id="patient-timeline-undated"') &&
   patientPageSource.includes('disabled={timelineUndatedOnly}') &&
   patientPageSource.includes('setTimelineUndatedOnly(false)') &&
@@ -860,5 +861,30 @@ assert.ok(patientPageSource.includes('filterTimelineDocumentationGaps(specialtyF
   patientPageSource.includes('sans interprétation médicale.'),
   'Documentation gap view must be scoped to already selected/filtered records and remain neutral.');
 console.log('PASS QW-065: documentary-only gap review and immutable, patient-scoped UI contract.');
+
+// QW-066 — Presence of a prescribed category is not proof of a performed exam.
+const kindFixtures = [
+  { id: 'legacy', type: 'prescription' as const, prescription: { medications: [{ name: 'Traitement fictif' }] } },
+  { id: 'mixed', type: 'prescription' as const, prescription: { items: [
+    { category: 'laboratory', name: 'NFS fictive' }, { category: 'radiology', name: 'Radio fictive' },
+    { category: 'other', name: 'Avis fictif' },
+  ] } },
+  { id: 'newdrug', type: 'prescription' as const, prescription: { items: [{ category: 'treatment', name: 'Traitement nouveau fictif' }] } },
+  { id: 'invalid', type: 'prescription' as const, prescription: { items: [{ category: 'laboratory', name: '' }] } },
+  { id: 'visit', type: 'consultation' as const },
+];
+const kindBefore = JSON.stringify(kindFixtures);
+assert.deepEqual(filterTimelineByRecordedOrderKind(kindFixtures, 'all').map(x => x.id), ['legacy', 'mixed', 'newdrug', 'invalid', 'visit']);
+assert.deepEqual(filterTimelineByRecordedOrderKind(kindFixtures, 'treatment').map(x => x.id), ['legacy', 'newdrug']);
+assert.deepEqual(filterTimelineByRecordedOrderKind(kindFixtures, 'laboratory').map(x => x.id), ['mixed']);
+assert.deepEqual(filterTimelineByRecordedOrderKind(kindFixtures, 'radiology').map(x => x.id), ['mixed']);
+assert.deepEqual(filterTimelineByRecordedOrderKind(kindFixtures, 'other').map(x => x.id), ['mixed']);
+assert.equal(JSON.stringify(kindFixtures), kindBefore, 'Recorded category filter must not mutate prescriptions.');
+assert.ok(patientPageSource.includes('filterTimelineByRecordedOrderKind(statusFilteredMedicalTimeline, timelineOrderKind)') &&
+  patientPageSource.includes('id="patient-timeline-kind"') &&
+  patientPageSource.includes('setTimelineOrderKind(\'all\')') &&
+  patientPageSource.includes('aucun acte n\'est présumé réalisé.'),
+  'Prescription kind filter must apply only to documented orders, reset on type/patient changes.');
+console.log('PASS QW-066: prescribed order category read-only filter, legacy meds and no mutation.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');

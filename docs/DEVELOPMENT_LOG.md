@@ -962,3 +962,8 @@
 - Filtre purement descriptif des événements aux dates invalides, consultations sans spécialité ou ordonnances au statut absent/inconnu. Il réutilise les règles des compteurs QW-056 pour éviter les écarts entre chiffres et vue.
 - Aucun diagnostic, statut thérapeutique ou décision clinique inféré ; aucun document modifié. F43 prévu aux essais sur des dossiers fictifs, tests synthétiques ajoutés à `test:patient-linkage`.
 - **Préparé non exécuté**, branche dédiée uniquement.
+
+### 2026-11-12 — QW-066 : catégories consignées dans les ordonnances (préparation)
+- Lors de l'affichage des ordonnances uniquement, filtre par présence de traitement prescrit (y compris anciennes ordonnances `medications`), analyse, imagerie ou autre élément. Les éléments sans nom ou malformés sont ignorés.
+- Le filtre n'implique ni examen réalisé ni médicament délivré, et ne déclenche aucune entrée/sortie d'inventaire ; remise à zéro au changement de patient ou de type d'événement. Test fictif des 4 catégories, immutabilité et contrat UI ; F44 prévu.
+- **Non testé sur Codespaces, non validé CI.**

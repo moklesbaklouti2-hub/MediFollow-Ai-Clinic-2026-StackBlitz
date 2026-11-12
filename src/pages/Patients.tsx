@@ -21,6 +21,8 @@ import { summarizeTimelineDocumentation, filterTimelineDocumentationGaps } from 
 import { sortTimelineByRecordedDate } from '../clinical/timelineSort';
 import type { TimelineSortDirection } from '../clinical/timelineSort';
 import { filterTimelineUndated } from '../clinical/timelineUndated';
+import { filterTimelineByRecordedOrderKind } from '../clinical/timelineOrderKinds';
+import type { TimelineRecordedOrderKind } from '../clinical/timelineOrderKinds';
 import type { TimelineDisplayLimit } from '../clinical/timelineLimit';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
@@ -40,6 +42,7 @@ export default function Patients() {
   const [timelineSortDirection, setTimelineSortDirection] = useState<TimelineSortDirection>('newest');
   const [timelineUndatedOnly, setTimelineUndatedOnly] = useState(false);
   const [timelineGapsOnly, setTimelineGapsOnly] = useState(false);
+  const [timelineOrderKind, setTimelineOrderKind] = useState<TimelineRecordedOrderKind>('all');
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -63,6 +66,7 @@ export default function Patients() {
     setTimelineSortDirection('newest');
     setTimelineUndatedOnly(false);
     setTimelineGapsOnly(false);
+    setTimelineOrderKind('all');
   }
 
   function changeSelectedPatient(nextPatientId: string | null) {
@@ -107,9 +111,12 @@ export default function Patients() {
   const statusFilteredMedicalTimeline = timelineFilter === 'prescription'
     ? filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)
     : searchedMedicalTimeline;
+  const kindFilteredMedicalTimeline = timelineFilter === 'prescription'
+    ? filterTimelineByRecordedOrderKind(statusFilteredMedicalTimeline, timelineOrderKind)
+    : statusFilteredMedicalTimeline;
   const dateFilteredMedicalTimeline = timelineUndatedOnly
-    ? filterTimelineUndated(statusFilteredMedicalTimeline)
-    : filterTimelineByDateRange(statusFilteredMedicalTimeline, timelineFromDate, timelineToDate);
+    ? filterTimelineUndated(kindFilteredMedicalTimeline)
+    : filterTimelineByDateRange(kindFilteredMedicalTimeline, timelineFromDate, timelineToDate);
   const specialtyOptions = documentedSpecialtyOptions(patientConsultations);
   const specialtyFilteredMedicalTimeline = timelineFilter === 'consultation'
     ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
@@ -131,6 +138,7 @@ export default function Patients() {
     timelineGapsOnly,
     timelineFilter === 'consultation' && timelineSpecialtyFilter !== 'all',
     timelineFilter === 'prescription' && prescriptionStatusFilter !== 'all',
+    timelineFilter === 'prescription' && timelineOrderKind !== 'all',
   ].filter(Boolean).length;
 
   const lastVisitByPatient = useMemo(() => {
@@ -775,6 +783,7 @@ export default function Patients() {
               onChange={(event) => {
                 setTimelineFilter(event.target.value as MedicalTimelineFilter);
                 setPrescriptionStatusFilter('all');
+                setTimelineOrderKind('all');
                 setTimelineSpecialtyFilter('all');
               }}>
               <option value="all">Consultations et ordonnances</option>
@@ -807,6 +816,20 @@ export default function Patients() {
                 <option value="cancelled">Annulées</option>
                 <option value="unknown">Statut non renseigné ou inconnu</option>
               </select>
+            </div>
+          )}
+          {timelineFilter === 'prescription' && (
+            <div className="patient-timeline-filter">
+              <label htmlFor="patient-timeline-kind">Éléments consignés dans l'ordonnance :</label>
+              <select id="patient-timeline-kind" value={timelineOrderKind}
+                onChange={(event) => setTimelineOrderKind(event.target.value as TimelineRecordedOrderKind)}>
+                <option value="all">Toutes les ordonnances</option>
+                <option value="treatment">Contenant un traitement prescrit</option>
+                <option value="laboratory">Contenant une analyse prescrite</option>
+                <option value="radiology">Contenant une imagerie prescrite</option>
+                <option value="other">Contenant un autre élément prescrit</option>
+              </select>
+              <span>Présence documentaire uniquement : aucun acte n'est présumé réalisé.</span>
             </div>
           )}
           <div className="patient-timeline-filter">
