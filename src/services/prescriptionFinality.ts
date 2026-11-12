@@ -82,3 +82,9 @@ export function hasFullyDocumentedPrescriptionReturn(
 export function isDeletablePrescriptionStatus(status: unknown): boolean {
   return status === undefined || status === 'draft' || status === 'validated';
 }
+
+/** Only an explicitly draft or validated order can trigger inventory dispensing.
+ * Missing or malformed legacy statuses require physician review first. */
+export function isDispensablePrescriptionStatus(status: unknown): boolean {
+  return status === 'draft' || status === 'validated';
+}
