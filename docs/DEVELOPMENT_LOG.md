@@ -992,3 +992,7 @@
 ### 2026-11-12 — QW-072 : retrouver les plans de suivi dont la date est invalide (préparation)
 - Liste documentaire distincte des échéances dans Consultations. Ouvrir pour corriger uniquement si l'identifiant patient est unique et reconnu ; aucune clôture rapide ni inférence d'urgence.
 - Cas fictifs et contrat UI préparés dans `scripts/test-follow-up.ts`, en attente de compilation et campagne complète Codespaces.
+
+### 2026-11-12 — QW-073 : visualiser les suivis planifiés à plus de 7 jours (préparation)
+- Liste repliable dans Consultations, tri par date documentée. Aucune modification, notification, inférence clinique ni clôture directe.
+- Bouton d'ouverture réservé aux dossiers avec identifiant patient confirmé. Tests synthétiques et contrat UI préparés ; validation complète Codespaces à effectuer.

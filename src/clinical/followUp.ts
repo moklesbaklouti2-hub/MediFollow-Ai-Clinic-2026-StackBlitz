@@ -106,3 +106,20 @@ export function selectUndatedPlannedFollowUps(
       !isValidFollowUpDate(item.followUp.dueDate))
     .sort((a, b) => a.id.localeCompare(b.id));
 }
+
+/** QW-073: future follow-up worklist, chronological, without changing plans. */
+export function selectLaterPlannedFollowUps(
+  consultations: readonly Consultation[], today: string,
+): Consultation[] {
+  if (!isValidFollowUpDate(today)) return [];
+  const cutoff = Date.parse(today + 'T00:00:00Z') + 7 * 24 * 60 * 60 * 1000;
+  return consultations
+    .filter(item => {
+      const plan = item.followUp;
+      return !!plan && plan.status === 'planned' &&
+        isValidFollowUpDate(plan.dueDate) &&
+        Date.parse(plan.dueDate + 'T00:00:00Z') > cutoff;
+    })
+    .sort((a, b) => (a.followUp?.dueDate ?? '').localeCompare(b.followUp?.dueDate ?? '') ||
+      a.id.localeCompare(b.id));
+}

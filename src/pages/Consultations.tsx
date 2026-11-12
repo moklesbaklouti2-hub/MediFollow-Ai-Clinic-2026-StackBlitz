@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, completedFollowUpPlan } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
@@ -518,6 +518,7 @@ export default function Consultations({
   const followUpToday = new Date().toLocaleDateString('sv-SE');
   const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
   const undatedFollowUps = selectUndatedPlannedFollowUps(consultations);
+  const laterFollowUps = selectLaterPlannedFollowUps(consultations, followUpToday);
 
   const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
   const selectedPatient = !expressPatientMismatch
@@ -1345,6 +1346,37 @@ export default function Consultations({
             );
           })}
         </div>
+      )}
+
+      {laterFollowUps.length > 0 && (
+        <details className="consultation-section" aria-label="HELIOS Follow-up : contrôles ultérieurs">
+          <summary>HELIOS Follow-up · au-delà de 7 jours ({laterFollowUps.length})</summary>
+          <p className="patient-hint">
+            Contrôles futurs consignés, hors échéances à court terme. Aucune priorité clinique
+            ni réalisation du contrôle n’est inférée.
+          </p>
+          {laterFollowUps.map((item) => {
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find(patient => patient.id === item.patientId)
+              : undefined;
+            return (
+              <div className="saved-consultation" key={'later-follow-up-' + item.id}>
+                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <span>Suivi planifié : {item.followUp?.dueDate}</span>
+                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                {linkedPatient ? (
+                  <button type="button" className="consultation-save"
+                    onClick={() => startEditing(item)}
+                    style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                    Ouvrir ce plan de suivi
+                  </button>
+                ) : (
+                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                )}
+              </div>
+            );
+          })}
+        </details>
       )}
 
       <div className="consultation-section">

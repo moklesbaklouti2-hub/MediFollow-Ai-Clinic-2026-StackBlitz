@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -275,3 +275,27 @@ assert.ok(invalidDateSection.includes('hasConfirmedPatientSelection(item.patient
   !invalidDateSection.includes('completeFollowUp(item)'),
   'Invalid dates may be opened only for a uniquely linked patient, never auto-completed.');
 console.log('PASS QW-072: read-only invalid-date worklist and confirmed-identity edit action.');
+
+// QW-073: valid plans beyond seven days can be reviewed without being closed.
+const laterRows = [
+  { id: 'end', followUp: f('2026-11-20').followUp },
+  { id: 'early', followUp: f('2026-11-19').followUp },
+  { id: 'edge', followUp: f('2026-11-18').followUp },
+  { id: 'invalid', followUp: f('not-a-date').followUp },
+  { id: 'completed', followUp: f('2026-11-20', 'completed').followUp },
+];
+const laterRowsBefore = JSON.stringify(laterRows);
+assert.deepEqual(selectLaterPlannedFollowUps(
+  laterRows as Parameters<typeof selectLaterPlannedFollowUps>[0], '2026-11-11',
+).map(item => item.id), ['early', 'end']);
+assert.deepEqual(selectLaterPlannedFollowUps(
+  laterRows as Parameters<typeof selectLaterPlannedFollowUps>[0], 'invalid',
+), []);
+assert.equal(JSON.stringify(laterRows), laterRowsBefore);
+const futureWorklistUI = consultationUI.split('HELIOS Follow-up · au-delà de 7 jours (')[1]
+  ?.split('Historique des consultations')[0] ?? '';
+assert.ok(futureWorklistUI.includes('hasConfirmedPatientSelection(item.patientId, patients)') &&
+  futureWorklistUI.includes('onClick={() => startEditing(item)}') &&
+  !futureWorklistUI.includes('completeFollowUp(item)'),
+  'Future plans may be opened only for confirmed identities and not closed directly.');
+console.log('PASS QW-073: reviewable future plans sorted by recorded date, with identity safeguards.');

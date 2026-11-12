@@ -95,6 +95,8 @@
 
 | QW-072 | S | HELIOS Follow-up : liste des plans datés incorrectement, ouverture uniquement sur identité unique confirmée | branche de préparation | Cas fictifs, non-mutation et contrat UI sans clôture ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-073 | S | HELIOS Follow-up : liste repliable des suivis futurs au-delà de 7 jours, avec identité patient confirmée | branche de préparation | Tri fictif, bornes et non-mutation, contrat UI ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
