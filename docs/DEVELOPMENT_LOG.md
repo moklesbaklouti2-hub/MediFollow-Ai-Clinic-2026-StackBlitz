@@ -927,3 +927,7 @@
 - Affichage local du nombre de restrictions de vue (type, recherche, bornes de date, spécialité ou statut selon le type) sans compter la pagination comme un filtre.
 - Aucun dossier ni ordonnance modifié ; compteur purement descriptif, réinitialisé par les contrôles QW-055.
 - Contrat synthétique `node scripts/test-timeline-active-filter-contract.mjs` préparé ; compilation, exécution et essai UI fictif restent à effectuer dans Codespaces. **Non validé**.
+
+### 2026-11-12 — QW-058 : annonce accessible des résultats de chronologie (préparation)
+- Le compteur affichés / correspondants / total est présenté dans une région `role="status"` avec `aria-live="polite"` et `aria-atomic="true"`, sans changement des données ni des filtres.
+- Contrat synthétique `node scripts/test-timeline-results-accessibility-contract.mjs` préparé ; compilation, test UI fictif et lecteur écran restent à effectuer dans Codespaces. **Non validé**.

@@ -736,7 +736,10 @@ export default function Patients() {
             )}
           </section>
 
-          <h3 className="patient-section-title">Chronologie médicale ({pagedMedicalTimeline.length} affichés / {specialtyFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total)</h3>
+          <h3 className="patient-section-title">Chronologie médicale</h3>
+          <p className="patient-empty-history" role="status" aria-live="polite" aria-atomic="true" aria-label="Résultats de la chronologie">
+            {pagedMedicalTimeline.length} affichés / {specialtyFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total
+          </p>
           <p className="patient-empty-history" aria-label="Filtres actifs de la chronologie">
             {activeTimelineFilterCount === 0
               ? 'Aucun filtre de recherche actif.'
