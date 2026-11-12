@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const source = readFileSync('src/pages/Patients.tsx', 'utf8');
-const start = source.indexOf('{pagedMedicalTimeline.length < specialtyFilteredMedicalTimeline.length && (');
+const start = source.indexOf('{pagedMedicalTimeline.length < qualityFilteredMedicalTimeline.length && (');
 assert.ok(start >= 0, 'Show-all action must only appear when matching results are truncated');
 const end = source.indexOf('{medicalTimeline.length === 0 ? (', start);
 assert.ok(end > start);
@@ -11,5 +11,6 @@ assert.ok(action.includes('type="button"'));
 assert.ok(action.includes("onClick={() => setTimelineDisplayLimit('all')}"));
 assert.ok(action.includes('Afficher tous les résultats correspondants'));
 assert.ok(!action.includes('resetTimelineControls'), 'Show-all must preserve filters');
-assert.ok(source.includes('limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit)'));
-console.log('QW-061 synthetic show-all contract OK');
+assert.ok(source.includes('limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit)'));
+assert.ok(source.includes('sortTimelineByRecordedDate(qualityFilteredMedicalTimeline, timelineSortDirection)'));
+console.log('QW-061/QW-067 synthetic show-all and post-filter chronological limit contract OK');

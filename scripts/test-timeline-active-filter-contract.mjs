@@ -13,6 +13,9 @@ for (const expression of [
   "timelineToDate !== ''",
   "timelineFilter === 'consultation' && timelineSpecialtyFilter !== 'all'",
   "timelineFilter === 'prescription' && prescriptionStatusFilter !== 'all'",
+  "timelineFilter === 'prescription' && timelineOrderKind !== 'all'",
+  "timelineUndatedOnly",
+  "timelineGapsOnly",
 ]) assert.ok(block.includes(expression), 'missing view restriction: ' + expression);
 assert.ok(source.includes('aria-label="Filtres actifs de la chronologie"'));
 assert.ok(source.includes("Aucun filtre de recherche actif."));

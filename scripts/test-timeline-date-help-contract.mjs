@@ -2,11 +2,13 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 const source = readFileSync('src/pages/Patients.tsx', 'utf8');
-assert.ok(source.includes("const timelineDateRangeReversed = timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;"));
+assert.ok(source.includes("const timelineDateRangeReversed = !timelineUndatedOnly && timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;"),
+  'Reversed period warning must not appear in undated-only mode.');
 for (const id of ['patient-timeline-from', 'patient-timeline-to']) {
   const start = source.indexOf('<input id="' + id + '"');
   assert.ok(start >= 0);
   const field = source.slice(start, source.indexOf('/>', start));
+  assert.ok(field.includes('disabled={timelineUndatedOnly}'));
   assert.ok(field.includes('aria-invalid={timelineDateRangeReversed}'));
   assert.ok(field.includes('aria-describedby="patient-timeline-date-help"'));
 }

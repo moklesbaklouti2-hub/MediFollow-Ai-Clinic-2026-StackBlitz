@@ -967,3 +967,7 @@
 - Lors de l'affichage des ordonnances uniquement, filtre par présence de traitement prescrit (y compris anciennes ordonnances `medications`), analyse, imagerie ou autre élément. Les éléments sans nom ou malformés sont ignorés.
 - Le filtre n'implique ni examen réalisé ni médicament délivré, et ne déclenche aucune entrée/sortie d'inventaire ; remise à zéro au changement de patient ou de type d'événement. Test fictif des 4 catégories, immutabilité et contrat UI ; F44 prévu.
 - **Non testé sur Codespaces, non validé CI.**
+
+### 2026-11-12 — QW-067 : consolidation des contrôles de non-régression (préparation)
+- Adaptation ciblée des contrats de lecture seule QW-057, QW-058, QW-059 et QW-061 aux ajouts QW-063–066 ; le compteur de résultats doit refléter tous les filtres, les dates inversées seulement hors mode non-daté et la limite l'ordre de tri courant.
+- Ces tests ne sont **pas** déclarés réussis avant leur exécution dans Codespaces. La séquence `npm run test:complete` continuera d'exécuter les contrôles antérieurs renforcés sans suppression de scénarios.
