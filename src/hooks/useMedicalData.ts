@@ -220,6 +220,11 @@ export function useMedicalData() {
   const deletePrescription = useCallback((id: string) => {
     const currentPrescriptions = getMedicalData().prescriptions;
     if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
+    // QW-094 — a direct caller must not delete a cancelled or dispensed
+    // document even if the inventory movement log is missing or incomplete.
+    const currentPrescription = currentPrescriptions.find((item) => item.id === id);
+    if (!currentPrescription || currentPrescription.status === 'cancelled' ||
+        currentPrescription.status === 'dispensed') return false;
     if (prescriptionHasRecordedStockMovement(id, getInventoryData().movements)) return false;
     const updated = currentPrescriptions.filter(
       (item) => item.id !== id
