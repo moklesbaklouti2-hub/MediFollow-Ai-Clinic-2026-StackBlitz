@@ -150,6 +150,8 @@
 
 | QW-100 | S | Autoriser la délivrance seulement sur statut courant explicite « brouillon » ou « validée », jamais sur statut importé inconnu/absent | branche de préparation | Tests fictifs et validation Codespaces/CI sur SHA final | PRÉPARÉ NON VALIDÉ |
 
+| QW-101 | S | Afficher fidèlement le statut documentaire des ordonnances dans l'historique, sans assimiler « validée » ou « inconnue » à un brouillon | branche de préparation | Contrat UI et tests Codespaces/CI requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
