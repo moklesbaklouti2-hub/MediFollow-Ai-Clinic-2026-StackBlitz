@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1489,3 +1489,29 @@ console.log('PASS QW-103: non-dispensed status cannot hide recorded stock during
     'The central hook must lock recorded stock before persisting stale draft edits.');
 }
 console.log('PASS QW-104: documented stock locks stale draft/validated prescription content.');
+
+// QW-105: creation via the central hook cannot create a synthetic terminal
+// prescription, even when the selected patient is valid.
+{
+  const iso = '2026-11-12T10:00:00.000Z';
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft' }), true);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated' }), true);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'dispensed' }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'cancelled' }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: undefined }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft', dispensedAt: iso }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', cancelledAt: iso }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft', cancelledAt: '' }), false);
+  assert.equal(isCreatablePrescriptionStatus(null), false);
+  assert.equal(isCreatablePrescriptionStatus(undefined), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = hook.split('const addPrescription = useCallback(')[1]
+    ?.split('const updatePrescription = useCallback(')[0] ?? '';
+  assert.ok(add.includes('isCreatablePrescriptionStatus(prescription)') &&
+    add.includes('hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)') &&
+    add.indexOf('isCreatablePrescriptionStatus(') < add.indexOf('createId()') &&
+    add.indexOf('isCreatablePrescriptionStatus(') < add.indexOf('savePrescriptions('),
+    'All new prescription records must be checked before assigning an ID or writing storage.');
+}
+console.log('PASS QW-105: direct creation refuses terminal status and misleading timestamps.');
