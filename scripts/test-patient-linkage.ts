@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1450,3 +1450,42 @@ console.log('PASS QW-102: untraced, ambiguous or cross-patient stock cannot cert
   assert.equal(prescriptionHasRecordedStockMovement('', trace), false);
 }
 console.log('PASS QW-103: non-dispensed status cannot hide recorded stock during cancellation.');
+
+// QW-104: a recorded stock movement locks the medical content even when the
+// prescription is still marked draft after a failed post-dispense status write.
+{
+  const draft = { status: 'draft' as const };
+  const validated = { status: 'validated' as const };
+  const dispensed = { status: 'dispensed' as const };
+  const legacy = { status: undefined };
+  const when = '2026-11-12T09:00:00.000Z';
+
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { advice: 'Fictif' }, false), true,
+    'Draft without a stock trace must still allow normal editing.');
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { advice: 'Fictif' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(validated, { medications: [] }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { date: '2026-11-12' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { status: 'cancelled' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(legacy, { status: 'dispensed', dispensedAt: when }, true), false,
+    'Missing imported status must not be silently promoted.');
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { status: 'dispensed' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft, { status: 'dispensed', dispensedAt: 'invalid' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft,
+    { status: 'dispensed', dispensedAt: when, advice: 'Changed after dispense' }, true), false);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(draft,
+    { status: 'dispensed', dispensedAt: when }, true), true);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(validated,
+    { status: 'dispensed', dispensedAt: when }, true), true);
+  assert.equal(allowsStockLinkedPrescriptionUpdate(dispensed, { advice: 'Fictif' }, true), true,
+    'Finalized records continue through the separate QW-097 guard.');
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('allowsStockLinkedPrescriptionUpdate(currentPrescription, changes,') &&
+    update.includes('prescriptionHasRecordedStockMovement(id, getInventoryData().movements)') &&
+    update.indexOf('allowsStockLinkedPrescriptionUpdate(') < update.indexOf('savePrescriptions(updated)') &&
+    update.indexOf('allowsFinalizedPrescriptionUpdate(') < update.indexOf('allowsStockLinkedPrescriptionUpdate('),
+    'The central hook must lock recorded stock before persisting stale draft edits.');
+}
+console.log('PASS QW-104: documented stock locks stale draft/validated prescription content.');
