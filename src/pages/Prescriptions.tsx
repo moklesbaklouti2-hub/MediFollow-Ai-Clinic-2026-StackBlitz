@@ -155,6 +155,12 @@ export default function Prescriptions() {
       setSavedMessage('Cette ordonnance a déjà été délivrée. Aucune nouvelle déduction ne sera effectuée.');
       return;
     }
+    // QW-095 — an annulled order must never be dispensed, even if an old
+    // editing tab still offers the action.
+    if (savedPrescription.status === 'cancelled') {
+      setSavedMessage('Délivrance refusée : cette ordonnance est annulée. Aucun stock déduit.');
+      return;
+    }
 
     const linkedMedications = medications.filter((item) => item.inventoryItemId);
     if (linkedMedications.length === 0) {
