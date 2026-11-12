@@ -1206,3 +1206,19 @@ console.log('PASS QW-093: historical prescription editing cannot load a stale or
     'Stored cancelled/dispensed prescriptions must survive direct hook deletion attempts.');
 }
 console.log('PASS QW-094: central deletion cannot erase cancelled or dispensed orders without movements.');
+
+// QW-095: a previously annulled prescription can never be dispensed by a
+// stale editing tab. Refuse before saving quantities or invoking stock logic.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const dispense = source.split('function dispenseSavedPrescription()')[1]
+    ?.split('function handlePartialReturn(')[0] ?? '';
+  const cancelGuard = dispense.indexOf("savedPrescription.status === 'cancelled'");
+  assert.ok(cancelGuard > 0 &&
+    dispense.includes('Délivrance refusée : cette ordonnance est annulée. Aucun stock déduit.') &&
+    cancelGuard < dispense.indexOf('updatePrescription(') &&
+    cancelGuard < dispense.indexOf('dispenseInventoryItems(') &&
+    dispense.indexOf('matchingPrescriptions.length === 1') < cancelGuard,
+    'A cancelled order must be rejected using the current stored status before any stock action.');
+}
+console.log('PASS QW-095: cancelled orders cannot trigger dispensing or stock deduction.');
