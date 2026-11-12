@@ -1147,3 +1147,25 @@ console.log('PASS QW-090: reject ambiguous/wrong-patient dispense before stock w
     'No stock return before confirming the unique current prescription and patient.');
 }
 console.log('PASS QW-091: cancel dispensed prescription checks current identity before stock return.');
+
+// QW-092: partial stock return requires an unambiguous, current dispensed
+// prescription, a confirmed matching patient, and a unique linked movement.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const partialReturn = source.split('function handlePartialReturn(')[1]
+    ?.split('function cancelPrescription(')[0] ?? '';
+  assert.ok(partialReturn.includes('matchingPrescriptions.length === 1') &&
+    partialReturn.includes('currentPrescription.patientId !== expectedPatientId') &&
+    partialReturn.includes("currentPrescription.status !== 'dispensed'") &&
+    partialReturn.includes('hasConfirmedPatientSelection(currentPrescription.patientId, latestData.patients)') &&
+    partialReturn.includes('matchingMovements.length === 1') &&
+    partialReturn.includes("currentMovement.type !== 'dispense'") &&
+    partialReturn.includes('currentMovement.prescriptionId !== currentPrescription.id') &&
+    partialReturn.includes('currentMovement.patientId !== currentPrescription.patientId') &&
+    partialReturn.indexOf('matchingPrescriptions.length === 1') < partialReturn.indexOf('returnDispensedStock({') &&
+    partialReturn.indexOf('window.confirm(') < partialReturn.indexOf('matchingPrescriptions.length === 1') &&
+    source.includes('handlePartialReturn(item.id, item.patientId, movement.id, movement.itemName, remaining)'),
+    'Partial return must re-read current prescription and movement after consent, before stock writes.');
+}
+console.log('PASS QW-092: a stale or cross-patient partial return cannot bypass ownership checks.');
+
