@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
+import { hasUniquePrescriptionId } from '../src/services/prescriptionIdentity.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -934,3 +935,23 @@ console.log('PASS QW-076: duplicate/missing consultation identifiers refuse upda
     'No consultation may be deleted by an ambiguous or absent ID.');
 }
 console.log('PASS QW-077: ambiguous consultation IDs cannot trigger deletion.');
+
+// QW-080: an imported duplicated prescription identifier must never
+// update multiple prescriptions through the central storage hook.
+{
+  const importedIds = [{ id: 'rx-valid' }, { id: 'rx-duplicate' }, { id: 'rx-duplicate' }];
+  const before = JSON.stringify(importedIds);
+  assert.equal(hasUniquePrescriptionId('rx-valid', importedIds), true);
+  assert.equal(hasUniquePrescriptionId('rx-duplicate', importedIds), false);
+  assert.equal(hasUniquePrescriptionId('rx-missing', importedIds), false);
+  assert.equal(hasUniquePrescriptionId('', importedIds), false);
+  assert.equal(hasUniquePrescriptionId(null, importedIds), false);
+  assert.equal(JSON.stringify(importedIds), before, 'Guard must not mutate prescriptions.');
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('hasUniquePrescriptionId(id, currentPrescriptions)') &&
+    update.indexOf('hasUniquePrescriptionId(') < update.indexOf('savePrescriptions(updated)'),
+    'The storage hook must reject ambiguous prescription IDs before any write.');
+}
+console.log('PASS QW-080: duplicate prescription ID rejected on update.');

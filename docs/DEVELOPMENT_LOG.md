@@ -1020,3 +1020,7 @@
 ### 2026-11-12 — QW-079 : vérifier le dossier à la sauvegarde d'une consultation en édition
 - Juste avant le point d'écriture, nouvelle lecture de la consultation : l'identifiant doit être unique et le patient sélectionné identique au patient du document. Aucun déplacement implicite de consultation entre patients ; en cas d'écart, sauvegarde refusée et réouverture demandée.
 - Contrat synthétique ajouté à test-follow-up.ts ; non exécuté, validation Codespaces requise.
+
+### 2026-11-12 — QW-080 : garde-fou sur identifiant d'ordonnance modifiée
+- Refus central d'une modification par identifiant d'ordonnance nul, absent ou dupliqué après import. Aucun dossier fusionné ni correction silencieuse des données.
+- Ajout d'un test fictif et d'un contrat sur le hook d'écriture. Non exécuté dans Codespaces : préparé, non validé.

@@ -109,6 +109,8 @@
 
 | QW-079 | S | Bloquer la sauvegarde d'une consultation déjà ouverte si l'identifiant est devenu ambigu ou si le patient sélectionné diffère de celui consigné | branche de préparation | Contrat synthétique et validation UI Codespaces requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-080 | S | Refuser les modifications d'ordonnance lorsque son identifiant est absent ou dupliqué après import | branche de préparation | Test synthétique et contrat du hook ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
