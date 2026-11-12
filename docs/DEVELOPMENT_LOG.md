@@ -1036,3 +1036,7 @@
 ### 2026-11-12 — QW-083 : suppression patient refusée sur identifiant ambigu
 - Vérification du caractère unique du patient dès l'entrée de deletePatient, avant toute écriture dans la corbeille et avant suppression. En cas d'import avec IDs dupliqués, aucun dossier ni corbeille n'est modifié.
 - Contrat synthétique et tests fictifs préparés. Tests Codespaces non exécutés.
+
+### 2026-11-12 — QW-084 : restauration de corbeille seulement par identité unique
+- Une restauration depuis la corbeille refuse désormais les identifiants absents ou dupliqués, afin de ne jamais restaurer un dossier tout en effaçant plusieurs entrées de corbeille du même ID.
+- Tests synthétiques et contrat source préparés ; aucun test Codespaces exécuté.

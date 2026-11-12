@@ -1004,3 +1004,25 @@ console.log('PASS QW-082: duplicate patient ID blocks update before persistence.
     'Patient deletion must be refused on ambiguous IDs before trash or patient writes.');
 }
 console.log('PASS QW-083: patient deletion fails closed on imported duplicate IDs.');
+
+// QW-084: restoring a duplicate trash ID must not delete every matching entry.
+{
+  const trash = [
+    { patient: { id: 'restore-ok' } },
+    { patient: { id: 'restore-collision' } },
+    { patient: { id: 'restore-collision' } },
+  ];
+  const before = JSON.stringify(trash);
+  assert.equal(hasConfirmedPatientSelection('restore-ok', trash.map(row => row.patient)), true);
+  assert.equal(hasConfirmedPatientSelection('restore-collision', trash.map(row => row.patient)), false);
+  assert.equal(hasConfirmedPatientSelection('missing', trash.map(row => row.patient)), false);
+  assert.equal(JSON.stringify(trash), before);
+  const source = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const restore = source.split('const restoreDeletedPatient = useCallback(')[1]
+    ?.split('// CONSULTATIONS')[0] ?? '';
+  assert.ok(restore.includes('hasConfirmedPatientSelection(id, deletedPatients.map(item => item.patient))') &&
+    restore.indexOf('hasConfirmedPatientSelection(') < restore.indexOf('savePatients(') &&
+    restore.indexOf('hasConfirmedPatientSelection(') < restore.indexOf('saveDeletedPatients('),
+    'Duplicated trash IDs must be refused before restoring or deleting any backup.');
+}
+console.log('PASS QW-084: ambiguous deleted patient ID cannot be restored.');

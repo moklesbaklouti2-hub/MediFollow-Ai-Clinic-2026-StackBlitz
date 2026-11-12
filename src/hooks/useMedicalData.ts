@@ -107,6 +107,9 @@ export function useMedicalData() {
 
   const restoreDeletedPatient = useCallback((id: string) => {
     const deletedPatients = getDeletedPatients();
+    // A corrupted/imported trash may contain duplicate deleted IDs.
+    // Never restore one while removing all copies with the same ID.
+    if (!hasConfirmedPatientSelection(id, deletedPatients.map(item => item.patient))) return false;
     const record = deletedPatients.find((item) => item.patient.id === id);
     if (!record) return false;
 
