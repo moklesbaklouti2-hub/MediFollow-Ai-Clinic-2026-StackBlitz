@@ -274,11 +274,22 @@ export default function Prescriptions() {
   }
 
   function openPrescription(item: (typeof prescriptions)[number]) {
-    setPatientId(item.patientId);
-    setDate(item.date);
-    setMedications(item.medications.map((med) => ({ ...med })));
-    setAdvice(item.advice);
-    setEditingId(item.id);
+    // QW-093 — re-open the single, current document rather than trusting a
+    // potentially stale or duplicated history-card entry after JSON import.
+    const latestData = getMedicalData();
+    const matches = latestData.prescriptions.filter((row) => row.id === item.id);
+    const current = matches.length === 1 ? matches[0] : undefined;
+    if (!current || current.patientId !== item.patientId ||
+        !hasConfirmedPatientSelection(current.patientId, latestData.patients) ||
+        !Array.isArray(current.medications)) {
+      window.alert('Ouverture refusée : ordonnance absente, ambiguë ou dossier patient non confirmé. Aucun formulaire modifié.');
+      return;
+    }
+    setPatientId(current.patientId);
+    setDate(current.date);
+    setMedications(current.medications.map((med) => ({ ...med })));
+    setAdvice(current.advice);
+    setEditingId(current.id);
     setShowPreview(true);
     setSavedMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
