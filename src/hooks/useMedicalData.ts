@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
-import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn } from '../services/prescriptionFinality';
+import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -234,6 +234,8 @@ export function useMedicalData() {
     const currentPrescription = currentPrescriptions.find((item) => item.id === id);
     if (!currentPrescription || currentPrescription.status === 'cancelled' ||
         currentPrescription.status === 'dispensed') return false;
+    // QW-099: an explicit unknown/null imported status cannot be deleted.
+    if (!isDeletablePrescriptionStatus(currentPrescription.status)) return false;
     if (prescriptionHasRecordedStockMovement(id, getInventoryData().movements)) return false;
     const updated = currentPrescriptions.filter(
       (item) => item.id !== id
