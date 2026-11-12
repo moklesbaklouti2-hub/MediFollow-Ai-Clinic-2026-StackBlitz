@@ -82,3 +82,17 @@ export function countUndatedPlannedFollowUps(
       !isValidFollowUpDate(followUp.dueDate);
   }).length;
 }
+
+/** QW-071: visible long-horizon plans, without clinical priority inference. */
+export function countLaterPlannedFollowUps(
+  consultations: readonly Pick<Consultation, 'followUp'>[], today: string,
+): number {
+  if (!isValidFollowUpDate(today)) return 0;
+  const cutoff = Date.parse(today + 'T00:00:00Z') + 7 * 24 * 60 * 60 * 1000;
+  return consultations.filter(item => {
+    const plan = item.followUp;
+    return !!plan && plan.status === 'planned' &&
+      isValidFollowUpDate(plan.dueDate) &&
+      Date.parse(plan.dueDate + 'T00:00:00Z') > cutoff;
+  }).length;
+}

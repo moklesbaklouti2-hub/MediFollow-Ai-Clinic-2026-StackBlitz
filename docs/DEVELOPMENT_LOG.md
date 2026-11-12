@@ -984,3 +984,7 @@
 ### 2026-11-12 — QW-070 : contrôles planifiés sans date valide (préparation)
 - Compteur documentaire local sur le Dashboard ; aucune date ni urgence déduite, aucune écriture, aucun message patient. Les contrôles effectués ne sont pas comptés.
 - Tests synthétiques et contrat UI ajoutés à test-follow-up.ts. Préparé, non exécuté ; validation groupée Codespaces requise.
+
+### 2026-11-12 — QW-071 : horizons de suivi au-delà de 7 jours (préparation)
+- Les suivis planifiés à plus de 7 jours disposent d'un compteur local distinct sur Dashboard, sans modifier l'indicateur de 7 jours et sans calculer d'urgence clinique.
+- Contrats de période inclusive/exclusive, de statut et de non-mutation préparés. Pas de test Codespaces exécuté à ce stade.

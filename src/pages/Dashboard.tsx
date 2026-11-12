@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
 import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
-import { summarizeFollowUps, countUndatedPlannedFollowUps } from '../clinical/followUp';
+import { summarizeFollowUps, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../clinical/followUp';
 import { summarizeRecordedActivity, type ClinicalActivitySummary } from '../clinical/activityStats';
 import type { InventoryData } from '../types/medical';
 
@@ -47,6 +47,7 @@ type DashboardData = {
   unlinkedPrescriptions: number;
   followUpConsultations: ReturnType<typeof summarizeFollowUps>;
   undatedPlannedFollowUps: number;
+  laterPlannedFollowUps: number;
   clinicalActivity: ClinicalActivitySummary;
 };
 
@@ -74,6 +75,7 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
     unlinkedPrescriptions: unlinked.prescriptions,
     followUpConsultations: summarizeFollowUps(clinicalConsultations, new Date().toLocaleDateString('sv-SE')),
     undatedPlannedFollowUps: countUndatedPlannedFollowUps(clinicalConsultations),
+    laterPlannedFollowUps: countLaterPlannedFollowUps(clinicalConsultations, new Date().toLocaleDateString('sv-SE')),
     clinicalActivity: summarizeRecordedActivity(clinicalPatients, clinicalConsultations),
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
@@ -336,6 +338,9 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <strong>{data.followUpConsultations.overdue}</strong> en retard ·{' '}
             <strong>{data.followUpConsultations.today}</strong> aujourd’hui ·{' '}
             <strong>{data.followUpConsultations.nextSevenDays}</strong> dans les 7 jours
+          </p>
+          <p style={{ fontSize: 12, margin: '8px 0 0' }}>
+            <strong>{data.laterPlannedFollowUps}</strong> contrôle(s) planifié(s) à plus de 7 jours, non inclus dans les échéances ci-dessus.
           </p>
           <p style={{ fontSize: 12, margin: '8px 0 0' }}>
             Contrôles effectués exclus des échéances. Aucun message automatique aux patients.

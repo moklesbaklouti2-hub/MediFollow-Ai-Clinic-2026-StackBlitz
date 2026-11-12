@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -244,3 +244,14 @@ assert.equal(JSON.stringify(undatedFixtures), undatedBefore);
 assert.ok(dashboardUI.includes('countUndatedPlannedFollowUps(clinicalConsultations)') &&
   dashboardUI.includes('sans date valide, exclus des échéances'));
 console.log('PASS QW-070: documentary count of undated planned follow-ups.');
+
+// QW-071: plans beyond the 7-day window remain counted, but never inferred as urgent.
+const longHorizonFixtures = [f('2026-11-18'), f('2026-11-19'), f('2027-01-01'), f('2026-02-30'), f('2027-01-01', 'completed')];
+const longHorizonBefore = JSON.stringify(longHorizonFixtures);
+assert.equal(countLaterPlannedFollowUps(longHorizonFixtures, '2026-11-11'), 2);
+assert.equal(countLaterPlannedFollowUps(longHorizonFixtures, 'bad date'), 0);
+assert.equal(countLaterPlannedFollowUps([], '2026-11-11'), 0);
+assert.equal(JSON.stringify(longHorizonFixtures), longHorizonBefore);
+assert.ok(dashboardUI.includes('countLaterPlannedFollowUps(clinicalConsultations,') &&
+  dashboardUI.includes('planifié(s) à plus de 7 jours'));
+console.log('PASS QW-071: future follow-up horizon is displayed without status mutation.');
