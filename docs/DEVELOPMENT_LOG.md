@@ -1119,3 +1119,9 @@
 - La liste Ordonnances réutilise le même `documentedPrescriptionStatus` que la chronologie patient : elle distingue brouillon, validée, délivrance enregistrée, annulée et statut absent/inconnu au lieu de présenter tous les autres états comme « Brouillon / non délivrée ».
 - Affichage informatif uniquement : aucune ordonnance, quantité, statut, délivrance ni retour modifié. Réutilisation du helper validé antérieurement, sans créer de classification parallèle.
 - Contrat de non-régression ajouté à `test:patient-linkage`. **Préparé, non validé en exécution** : compilation, tests fictifs dans Codespaces et CI finale encore requis. Aucune donnée réelle.
+
+### 2026-11-12 — QW-102 : exiger la preuve documentaire d'une délivrance avant statut final
+- `updatePrescription` refuse désormais la transition vers `status: 'dispensed'` si le journal d'inventaire ne contient aucun mouvement `dispense` du même numéro d'ordonnance et du même patient.
+- La fonction pure `hasDocumentedPrescriptionDispense` refuse les mouvements ambigus (identifiants dupliqués), les quantités non finies/négatives/nulles, les identifiants de lot absents ou les mouvements rattachés à un autre patient. Ce contrôle est documentaire : il ne constitue pas une attestation de remise physique.
+- Tests synthétiques de statut, mouvement et identité dans `scripts/test-patient-linkage.ts` ; le fonctionnement préexistant de la délivrance (enregistrement du mouvement, puis statut) est préservé.
+- **PRÉPARÉ NON VALIDÉ :** aucun build, test Codespaces ou résultat CI 11/11 sur ce SHA n'a été obtenu. Aucune modification de `main`, aucun patient réel, aucune dépense ou déploiement.
