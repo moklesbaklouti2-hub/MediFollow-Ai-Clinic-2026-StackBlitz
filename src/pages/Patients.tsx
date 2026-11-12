@@ -84,15 +84,23 @@ export default function Patients() {
     [patients, search]
   );
 
-  const patientConsultations = selected
-    ? orderRecordedNewest(consultations.filter((item) => item.patientId === selected.id))
-    : [];
+  // Cache the selected dossier's source events. Administrative form edits
+  // and UI-only filter changes should not re-sort all recorded documents.
+  const patientConsultations = useMemo(
+    () => selected
+      ? orderRecordedNewest(consultations.filter((item) => item.patientId === selected.id))
+      : [],
+    [consultations, selected?.id],
+  );
 
-  const patientPrescriptions = selected
-    ? orderRecordedNewest(prescriptions.filter((item) => item.patientId === selected.id))
-    : [];
+  const patientPrescriptions = useMemo(
+    () => selected
+      ? orderRecordedNewest(prescriptions.filter((item) => item.patientId === selected.id))
+      : [],
+    [prescriptions, selected?.id],
+  );
 
-  const medicalTimeline = orderRecordedNewest([
+  const medicalTimeline = useMemo(() => orderRecordedNewest([
     ...patientConsultations.map((consultation) => ({
       type: 'consultation' as const,
       id: consultation.id,
@@ -105,7 +113,7 @@ export default function Patients() {
       date: prescription.date,
       prescription,
     })),
-  ]);
+  ]), [patientConsultations, patientPrescriptions]);
   const visibleMedicalTimeline = filterRecordedEvents(medicalTimeline, timelineFilter);
   const searchedMedicalTimeline = searchRecordedEvents(visibleMedicalTimeline, timelineSearch);
   const statusFilteredMedicalTimeline = timelineFilter === 'prescription'

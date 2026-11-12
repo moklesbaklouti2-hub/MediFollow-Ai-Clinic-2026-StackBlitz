@@ -87,6 +87,7 @@
 | QW-066 | S | Filtrer les ordonnances par catégorie d'élément consigné, anciens traitements inclus | branche de préparation | Test fictif 4 catégories ; aucun acte considéré effectué, aucune écriture | PRÉPARÉ NON VALIDÉ |
 | QW-067 | S | Mettre à jour les contrats automatisés QW-057–061 après l'ajout des nouveaux filtres | branche de préparation | Vérifier source et exécuter la suite `test:complete` sur Codespaces | PRÉPARÉ NON VALIDÉ |
 | QW-068 | S | Test d'intégration pure des filtres, tri et pagination avec deux patients fictifs | branche de préparation | `npm run test:timeline-composition` inclus dans `test:complete` ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+| QW-069 | S | Éviter le tri redondant des documents de base lors des saisies et changements de filtres UI | branche de préparation | Contrat source useMemo et compilation/test réel Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

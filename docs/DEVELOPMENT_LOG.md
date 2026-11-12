@@ -976,3 +976,7 @@
 - Script TypeScript fictif `scripts/test-timeline-composition.ts` utilisant des événements de deux patients distincts. Vérifie le chaînage type, recherche, statut, catégorie d'ordonnance, période, spécialité, documents sans date, qualité documentaire, ordre chronologique et limite.
 - Vérifications explicites de non-mélange interpatient, de non-mutation des données, d'absence de conclusion sur l'exécution des actes et de cohérence des compteurs.
 - `npm run test:complete` exécute ce nouveau script après compilation et contrôles déjà présents, sans API et sans donnée réelle. **Non exécuté dans cette conversation : Codespaces requis.**
+
+### 2026-11-12 — QW-069 : optimisation mémoire des chronologies sources (préparation)
+- Les consultations et ordonnances du dossier sélectionné, puis leur tri combiné, sont calculés via `useMemo` sur le patient confirmé et les sources correspondantes plutôt que sur chaque rendu de formulaire ou filtre.
+- Le changement de dossier ou des consultations/ordonnances continue d'invalider le cache. Aucun changement de stockage, d'analyse médicale ou de communication IA. Contrat source ajouté à `test:patient-linkage` ; impact de performance **non mesuré**, compilation/tests Codespaces nécessaires.

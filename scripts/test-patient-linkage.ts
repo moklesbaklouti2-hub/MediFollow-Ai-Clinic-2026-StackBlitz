@@ -552,7 +552,7 @@ for (const invalid of ['2026-02-30', '2026-02-29', 'date inconnue', '11/11/2026'
 assert.notEqual(displayRecordedDate('2026-11-11T09:00:00Z'), 'Date non renseignée');
 assert.ok(patientPageSource.includes('orderRecordedNewest(consultations.filter(') &&
   patientPageSource.includes('orderRecordedNewest(prescriptions.filter(') &&
-  patientPageSource.includes('const medicalTimeline = orderRecordedNewest([') &&
+  patientPageSource.includes('const medicalTimeline = useMemo(() => orderRecordedNewest([') &&
   patientPageSource.includes('recordedDateTimestamp(consultation.date) === null') &&
   patientPageSource.includes('Object.create(null)') &&
   patientPageSource.includes('Spécialité :</b>') &&
@@ -886,5 +886,16 @@ assert.ok(patientPageSource.includes('filterTimelineByRecordedOrderKind(statusFi
   patientPageSource.includes('aucun acte n\'est présumé réalisé.'),
   'Prescription kind filter must apply only to documented orders, reset on type/patient changes.');
 console.log('PASS QW-066: prescribed order category read-only filter, legacy meds and no mutation.');
+
+// QW-069 — Source-only performance contract: memoized source events depend on
+// patient identity and clinical sources, never on input/search state.
+assert.ok(patientPageSource.includes('const patientConsultations = useMemo(') &&
+  patientPageSource.includes('const patientPrescriptions = useMemo(') &&
+  patientPageSource.includes('[consultations, selected?.id]') &&
+  patientPageSource.includes('[prescriptions, selected?.id]') &&
+  patientPageSource.includes('const medicalTimeline = useMemo(() => orderRecordedNewest([') &&
+  patientPageSource.includes(']), [patientConsultations, patientPrescriptions]);'),
+  'Base dossier timelines must update on patient/source change without sorting again for every UI keystroke.');
+console.log('PASS QW-069: timeline memoization source contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
