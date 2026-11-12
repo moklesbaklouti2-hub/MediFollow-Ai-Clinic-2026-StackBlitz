@@ -130,7 +130,8 @@ export function allowsStockLinkedPrescriptionUpdate(
   hasRecordedMovement: boolean,
 ): boolean {
   if (!hasRecordedMovement) return true;
-  if (!current || current.status === 'dispensed') return true; // QW-097 controls finalised documents.
+  if (!current) return false;
+  if (current.status === 'dispensed') return true; // QW-097 controls finalised documents.
   if (!isDispensablePrescriptionStatus(current.status) ||
       !changes || typeof changes !== 'object' || Array.isArray(changes)) return false;
   const keys = Object.keys(changes);
