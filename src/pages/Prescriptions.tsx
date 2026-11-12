@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { isDispensablePrescriptionStatus } from '../services/prescriptionFinality';
+import { prescriptionHasRecordedStockMovement } from '../services/prescriptionIdentity';
 import { documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import type { InventoryData, Medication } from '../types/medical';
 import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
@@ -279,6 +280,14 @@ export default function Prescriptions() {
       return;
     }
     if (current.status === 'cancelled') return;
+    // QW-103: an unfinalized-looking order may still have actual stock
+    // movements (for example after a failed post-dispense status update).
+    // Do not claim there is no stock to return in this inconsistent state.
+    if (current.status !== 'dispensed' &&
+        prescriptionHasRecordedStockMovement(current.id, getInventoryData().movements)) {
+      setSavedMessage('Annulation refusée : un mouvement de stock existe malgré le statut non délivré. Vérifiez et réconciliez le dossier avant toute action.');
+      return;
+    }
     if (current.status === 'dispensed') {
       if (!window.confirm('Confirmez-vous l’annulation de cette délivrance ET la récupération physique de tous les produits restants, intacts et réintégrables ? Le reliquat de chaque lot d’origine sera réintégré.')) return;
       const stockResult = cancelDispensedPrescriptionStock({ prescriptionId: current.id });
