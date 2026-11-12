@@ -365,3 +365,15 @@ console.log('PASS QW-075: local objective search, three worklists and non-mutati
     completion.indexOf('hasUniqueConsultationId(') < completion.indexOf('window.confirm('));
 }
 console.log('PASS QW-078: imported ID ambiguity blocks follow-up edit and completion actions.');
+
+// QW-079: editing may not silently reassign an imported or changed patient ID.
+{
+  const source = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const saving = source.split('function saveConsultation()')[1]
+    ?.split('const vitalFields:')[0] ?? '';
+  assert.ok(saving.includes('const currentRecords = getConsultations().filter(record => record.id === editingId);') &&
+    saving.includes('currentRecords.length !== 1 || currentRecords[0].patientId !== patientId') &&
+    saving.indexOf('currentRecords.length !== 1') < saving.indexOf('updateConsultation(editingId, changes)'),
+    'Consultation update must refuse missing, duplicate or patient-reassigned records.');
+}
+console.log('PASS QW-079: stale patient reassignment cannot be silently persisted.');

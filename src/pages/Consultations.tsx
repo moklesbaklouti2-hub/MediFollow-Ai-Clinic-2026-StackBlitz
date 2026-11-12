@@ -454,6 +454,16 @@ export default function Consultations({
       return;
     }
 
+    // Editing must never silently move a consultation into another patient file
+    // or overwrite a record changed/removed since the form was opened.
+    if (editingId) {
+      const currentRecords = getConsultations().filter(record => record.id === editingId);
+      if (currentRecords.length !== 1 || currentRecords[0].patientId !== patientId) {
+        window.alert('Consultation modifiée, introuvable ou associée à un autre patient. Annulez la modification et rouvrez le bon dossier.');
+        return;
+      }
+    }
+
     const followUpPlan = prepareFollowUp(followUpDate, followUpObjective, followUpCompleted);
     if (!followUpPlan.valid) {
       window.alert('Suivi HELIOS : date de contrôle invalide, ou objectif de plus de 500 caractères.');

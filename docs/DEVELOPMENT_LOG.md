@@ -1016,3 +1016,7 @@
 ### 2026-11-12 — QW-078 : verrouillage avant action sur consultations ambiguës
 - Refus avant préremplissage du formulaire si la consultation est absente/dupliquée, son patient diffère de la liste ou l'identité du patient n'est pas unique. La clôture rapide refuse les identifiants ambigus avant la confirmation.
 - Contrats synthétiques source préparés. À exécuter avec dossiers fictifs dans Codespaces ; aucune validation CI revendiquée.
+
+### 2026-11-12 — QW-079 : vérifier le dossier à la sauvegarde d'une consultation en édition
+- Juste avant le point d'écriture, nouvelle lecture de la consultation : l'identifiant doit être unique et le patient sélectionné identique au patient du document. Aucun déplacement implicite de consultation entre patients ; en cas d'écart, sauvegarde refusée et réouverture demandée.
+- Contrat synthétique ajouté à test-follow-up.ts ; non exécuté, validation Codespaces requise.
