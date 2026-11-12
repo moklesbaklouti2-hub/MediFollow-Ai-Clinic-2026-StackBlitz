@@ -1222,3 +1222,22 @@ console.log('PASS QW-094: central deletion cannot erase cancelled or dispensed o
     'A cancelled order must be rejected using the current stored status before any stock action.');
 }
 console.log('PASS QW-095: cancelled orders cannot trigger dispensing or stock deduction.');
+
+// QW-096: a stale editing form cannot overwrite a cancelled or dispensed
+// prescription (or a different patient's current prescription).
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const save = source.split('function savePrescription()')[1]
+    ?.split('function updateDispensedQuantity(')[0] ?? '';
+  assert.ok(save.includes('if (editingId)') &&
+    save.includes('matches.length === 1') &&
+    save.includes('current.patientId !== patientId') &&
+    save.includes('hasConfirmedPatientSelection(patientId, currentData.patients)') &&
+    save.includes("current.status === 'cancelled'") &&
+    save.includes("current.status === 'dispensed'") &&
+    save.includes('Modification refusée : ordonnance absente, annulée, délivrée ou dossier patient ambigu.') &&
+    save.indexOf("current.status === 'cancelled'") < save.indexOf('updatePrescription(') &&
+    save.indexOf("current.status === 'dispensed'") < save.indexOf('updatePrescription('),
+    'Saving edits must refuse cancelled, dispensed or re-linked orders before persistence.');
+}
+console.log('PASS QW-096: stale form cannot edit dispensed or cancelled prescriptions.');
