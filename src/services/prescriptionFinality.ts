@@ -119,3 +119,26 @@ export function hasDocumentedPrescriptionDispense(
     typeof move.quantity === 'number' &&
     Number.isFinite(move.quantity) && move.quantity > 0);
 }
+
+// QW-104 — do not rewrite a prescription's content after any inventory
+// movement has been recorded, even if a failed status update left it as draft.
+// Only a strictly documentary draft/validated -> dispensed transition remains
+// possible; QW-102 separately requires valid evidence of actual dispensing.
+export function allowsStockLinkedPrescriptionUpdate(
+  current: Pick<Prescription, 'status'>,
+  changes: Partial<Prescription>,
+  hasRecordedMovement: boolean,
+): boolean {
+  if (!hasRecordedMovement) return true;
+  if (!current || current.status === 'dispensed') return true; // QW-097 controls finalised documents.
+  if (!isDispensablePrescriptionStatus(current.status) ||
+      !changes || typeof changes !== 'object' || Array.isArray(changes)) return false;
+  const keys = Object.keys(changes);
+  return keys.length === 2 &&
+    keys.includes('status') &&
+    keys.includes('dispensedAt') &&
+    changes.status === 'dispensed' &&
+    typeof changes.dispensedAt === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(changes.dispensedAt) &&
+    Number.isFinite(Date.parse(changes.dispensedAt));
+}
