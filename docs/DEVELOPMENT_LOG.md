@@ -1052,3 +1052,7 @@
 ### 2026-11-12 — QW-087 : protéger les ordonnances liées au journal du stock
 - Refus central de suppression si un mouvement de stock enregistré référence l'ordonnance, même lorsque son statut d'ordonnance ancien n'indique pas une délivrance. Le journal de stock et les dossiers restent inchangés.
 - Cas synthétiques et contrat sur le hook préparés ; pas de validation en Codespaces à ce stade.
+
+### 2026-11-12 — QW-088 : retour visible après refus de suppression d'ordonnance
+- Si le hook refuse la suppression (doublon d'identifiant, journal de stock lié ou échec de sauvegarde), l'interface indique explicitement que l'opération n'est pas effectuée. La confirmation préalable et les refus de statut existants restent inchangés.
+- Contrat source préparé ; tests UI fictifs Codespaces nécessaires.

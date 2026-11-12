@@ -1083,3 +1083,17 @@ console.log('PASS QW-086: central prescription creation guarded by patient ident
     'Deleting an order referenced by a stock movement must be blocked before persistence.');
 }
 console.log('PASS QW-087: inventory movement links prevent prescription deletion.');
+
+// QW-088: the prescription screen must never silently imply that a blocked
+// deletion succeeded, including duplicate imported IDs or stock trace links.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const block = source.split('function confirmDeletePrescription(')[1]
+    ?.split('function resetForm()')[0] ?? '';
+  assert.ok(block.includes("if (!deletePrescription(id))") &&
+    block.includes('Suppression non effectuée') &&
+    block.indexOf('window.confirm(') < block.indexOf('if (!deletePrescription(id))') &&
+    block.indexOf('if (!deletePrescription(id))') < block.indexOf('window.alert('),
+    'A blocked prescription deletion must show explicit feedback after consent.');
+}
+console.log('PASS QW-088: blocked prescription delete gets explicit UI feedback.');

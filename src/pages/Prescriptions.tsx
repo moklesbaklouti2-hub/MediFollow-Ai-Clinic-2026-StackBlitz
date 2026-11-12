@@ -258,7 +258,9 @@ export default function Prescriptions() {
       return;
     }
     if (!window.confirm('Supprimer définitivement cette ordonnance ?')) return;
-    deletePrescription(id);
+    if (!deletePrescription(id)) {
+      window.alert('Suppression non effectuée : identifiant ambigu, historique de stock lié ou erreur d’enregistrement. Aucune suppression confirmée.');
+    }
   }
 
   function resetForm() {

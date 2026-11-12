@@ -125,6 +125,8 @@
 
 | QW-087 | S | Préserver les ordonnances référencées par un mouvement de stock, même si le statut importé est absent ou ancien | branche de préparation | Tests fictifs, trace non mutée et contrat hook ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-088 | S | Afficher explicitement le refus de suppression d'ordonnance lorsque le stockage ou la traçabilité bloque l'action | branche de préparation | Contrat d'interface et essai fictif Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
