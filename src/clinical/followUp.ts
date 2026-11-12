@@ -71,3 +71,14 @@ export function completedFollowUpPlan(
       typeof plan.objective !== 'string') return null;
   return { ...plan, status: 'completed' };
 }
+
+/** QW-070: imported plans with invalid or absent dates are review-only. */
+export function countUndatedPlannedFollowUps(
+  consultations: readonly Pick<Consultation, 'followUp'>[],
+): number {
+  return consultations.filter(item => {
+    const followUp = item.followUp;
+    return !!followUp && followUp.status === 'planned' &&
+      !isValidFollowUpDate(followUp.dueDate);
+  }).length;
+}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
 import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
-import { summarizeFollowUps } from '../clinical/followUp';
+import { summarizeFollowUps, countUndatedPlannedFollowUps } from '../clinical/followUp';
 import { summarizeRecordedActivity, type ClinicalActivitySummary } from '../clinical/activityStats';
 import type { InventoryData } from '../types/medical';
 
@@ -46,6 +46,7 @@ type DashboardData = {
   unlinkedConsultations: number;
   unlinkedPrescriptions: number;
   followUpConsultations: ReturnType<typeof summarizeFollowUps>;
+  undatedPlannedFollowUps: number;
   clinicalActivity: ClinicalActivitySummary;
 };
 
@@ -72,6 +73,7 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
     unlinkedConsultations: unlinked.consultations,
     unlinkedPrescriptions: unlinked.prescriptions,
     followUpConsultations: summarizeFollowUps(clinicalConsultations, new Date().toLocaleDateString('sv-SE')),
+    undatedPlannedFollowUps: countUndatedPlannedFollowUps(clinicalConsultations),
     clinicalActivity: summarizeRecordedActivity(clinicalPatients, clinicalConsultations),
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
@@ -338,6 +340,11 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           <p style={{ fontSize: 12, margin: '8px 0 0' }}>
             Contrôles effectués exclus des échéances. Aucun message automatique aux patients.
           </p>
+          {data.undatedPlannedFollowUps > 0 && (
+            <p role="status" style={{ fontSize: 12, margin: '8px 0 0' }}>
+              {data.undatedPlannedFollowUps} contrôle(s) planifié(s) sans date valide, exclus des échéances ci-dessus. Date à vérifier dans le dossier.
+            </p>
+          )}
           <button type="button" onClick={onStartConsultation} style={{ marginTop: 10 }}>
             Ouvrir les consultations
           </button>

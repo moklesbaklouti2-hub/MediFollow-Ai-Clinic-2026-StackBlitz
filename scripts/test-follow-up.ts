@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -234,3 +234,13 @@ assert.ok(consultationUI.includes('enabled: smartCopilotEnabled && !expressPatie
 console.log('PASS QW-043: confirmed reset plus fail-closed AI, UI and save contracts.');
 
 console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');
+
+// QW-070: imported invalid dates must not silently disappear from dashboard.
+const undatedFixtures = [f('2026-02-30'), f(''), f('2026-11-11'), f('', 'completed'), { followUp: undefined }];
+const undatedBefore = JSON.stringify(undatedFixtures);
+assert.equal(countUndatedPlannedFollowUps(undatedFixtures), 2);
+assert.equal(countUndatedPlannedFollowUps([]), 0);
+assert.equal(JSON.stringify(undatedFixtures), undatedBefore);
+assert.ok(dashboardUI.includes('countUndatedPlannedFollowUps(clinicalConsultations)') &&
+  dashboardUI.includes('sans date valide, exclus des échéances'));
+console.log('PASS QW-070: documentary count of undated planned follow-ups.');

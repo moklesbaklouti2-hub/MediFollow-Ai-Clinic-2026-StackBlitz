@@ -980,3 +980,7 @@
 ### 2026-11-12 — QW-069 : optimisation mémoire des chronologies sources (préparation)
 - Les consultations et ordonnances du dossier sélectionné, puis leur tri combiné, sont calculés via `useMemo` sur le patient confirmé et les sources correspondantes plutôt que sur chaque rendu de formulaire ou filtre.
 - Le changement de dossier ou des consultations/ordonnances continue d'invalider le cache. Aucun changement de stockage, d'analyse médicale ou de communication IA. Contrat source ajouté à `test:patient-linkage` ; impact de performance **non mesuré**, compilation/tests Codespaces nécessaires.
+
+### 2026-11-12 — QW-070 : contrôles planifiés sans date valide (préparation)
+- Compteur documentaire local sur le Dashboard ; aucune date ni urgence déduite, aucune écriture, aucun message patient. Les contrôles effectués ne sont pas comptés.
+- Tests synthétiques et contrat UI ajoutés à test-follow-up.ts. Préparé, non exécuté ; validation groupée Codespaces requise.

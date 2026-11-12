@@ -89,6 +89,8 @@
 | QW-068 | S | Test d'intégration pure des filtres, tri et pagination avec deux patients fictifs | branche de préparation | `npm run test:timeline-composition` inclus dans `test:complete` ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 | QW-069 | S | Éviter le tri redondant des documents de base lors des saisies et changements de filtres UI | branche de préparation | Contrat source useMemo et compilation/test réel Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-070 | S | HELIOS Follow-up : signaler les contrôles planifiés exclus des échéances faute de date valide | branche de préparation | Tests fictifs et contrat Dashboard ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
