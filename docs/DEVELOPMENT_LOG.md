@@ -1104,3 +1104,8 @@
 - Le changement de statut `dispensed` -> `cancelled` via `updatePrescription` est refusé lorsque les délivrances ne possèdent pas toutes des mouvements de retour complets et cohérents, reliés à la même ordonnance, au même patient, au même lot et à des identifiants de mouvement non dupliqués.
 - Une délivrance sans trace, un retour partiel, un retour excédentaire, une attribution à un autre patient ou un identifiant ambigu bloquent la transition. Contrôle documentaire en lecture seule ; il ne prouve ni récupération physique ni qualité sanitaire du produit.
 - Fonction pure `hasFullyDocumentedPrescriptionReturn` et scénarios fictifs dans `test:patient-linkage`. **Préparé, non validé par exécution** ; intégration seulement après compilation, tests offline et CI V2 11/11 sur SHA exact.
+
+### 2026-11-12 — QW-099 : conserver les ordonnances aux statuts importés inconnus
+- La suppression centrale n'accepte que les statuts `draft` et `validated` ainsi que le statut absent des anciens dossiers. Une valeur explicitement inconnue, `null`, `dispensed` ou `cancelled` bloque la suppression ; l'historique est conservé pour revue, sans suppression automatique ou conversion implicite.
+- Helper pur `isDeletablePrescriptionStatus` branché dans `deletePrescription`, plus tests synthétiques des statuts acceptés/refusés et contrat d'ordre avant sauvegarde.
+- **Préparé sans validation d'exécution** ; aucun résultat de compilation ou de CI 11/11 n'est revendiqué. Le dépôt reste sur la branche de préparation, sans modification de `main`.
