@@ -140,6 +140,8 @@
 
 | QW-095 | S | Bloquer la délivrance et la déduction de stock si le statut enregistré d'une ordonnance est déjà « annulée » | branche de préparation | Contrat source, test fictif et CI Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-096 | S | Refuser une sauvegarde d'édition obsolète sur ordonnance annulée/délivrée ou patient réattribué | branche de préparation | Contrat source, test fictif Codespaces et CI requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
