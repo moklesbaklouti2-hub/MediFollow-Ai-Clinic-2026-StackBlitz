@@ -1088,3 +1088,8 @@
 - Le formulaire Ordonnances vérifie le **statut enregistré courant** avant toute sauvegarde préalable à une délivrance. Un document `cancelled` est refusé avec une explication ; les contrôles précédents d'identité unique, de patient correspondant et de statut `dispensed` restent inchangés.
 - Objectif : empêcher un ancien onglet d'interface d'effectuer une sortie de stock sur ordonnance annulée. Aucun mouvement n'est initié par ce garde-fou ; contrôle source ajouté à `test:patient-linkage`.
 - **Préparé non validé** : `npm run test:complete`, 11/11 jobs CI sur SHA d'intégration et scénario humain fictif requis. Pas de déploiement ni données réelles.
+
+### 2026-11-12 — QW-096 : formulaire d'ordonnance obsolète et statuts définitifs
+- Lors d'une sauvegarde de modifications, la page recharge l'ordonnance actuellement enregistrée et refuse l'écriture si l'identifiant n'est pas unique, le patient a changé ou n'est plus confirmé, ou le statut est désormais `cancelled` / `dispensed`.
+- Protège contre une ancienne fenêtre d'édition qui permettrait d'écraser une ordonnance annulée ou déjà délivrée après changement de contexte. Les changements de statut de la procédure d'annulation restent distincts de `savePrescription`.
+- Test de contrat QW-096 ajouté aux régressions de liaison patient. **Préparé sans exécution de tests**, vérifications complètes Codespaces et CI exigées. Aucun dossier réel, `main` et déploiement inchangés.
