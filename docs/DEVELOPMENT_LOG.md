@@ -1040,3 +1040,7 @@
 ### 2026-11-12 — QW-084 : restauration de corbeille seulement par identité unique
 - Une restauration depuis la corbeille refuse désormais les identifiants absents ou dupliqués, afin de ne jamais restaurer un dossier tout en effaçant plusieurs entrées de corbeille du même ID.
 - Tests synthétiques et contrat source préparés ; aucun test Codespaces exécuté.
+
+### 2026-11-12 — QW-085 : création consultation et patient confirmé
+- La création d'une consultation refuse dès le hook de stockage une identité patient absente, vide ou dupliquée, y compris si une autre interface appelle directement le hook. Aucun document nouveau en cas de refus.
+- Contrat de source et données fictives préparés ; test Codespaces à effectuer.

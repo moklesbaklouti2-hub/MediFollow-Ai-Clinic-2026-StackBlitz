@@ -1026,3 +1026,20 @@ console.log('PASS QW-083: patient deletion fails closed on imported duplicate ID
     'Duplicated trash IDs must be refused before restoring or deleting any backup.');
 }
 console.log('PASS QW-084: ambiguous deleted patient ID cannot be restored.');
+
+// QW-085: creating a consultation requires one existing patient ID at the
+// storage-hook boundary, even if the caller bypasses the normal form.
+{
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = hook.split('const addConsultation = useCallback(')[1]
+    ?.split('const updateConsultation = useCallback(')[0] ?? '';
+  assert.ok(add.includes('hasConfirmedPatientSelection(consultation.patientId, getMedicalData().patients)') &&
+    add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('createId()') &&
+    add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('saveConsultations('),
+    'Consultation creation must refuse missing or duplicate patient IDs before writing.');
+  const sample = [{ id: 'patient' }, { id: 'collision' }, { id: 'collision' }];
+  assert.equal(hasConfirmedPatientSelection('patient', sample), true);
+  assert.equal(hasConfirmedPatientSelection('collision', sample), false);
+  assert.equal(hasConfirmedPatientSelection('orphan', sample), false);
+}
+console.log('PASS QW-085: central consultation creation requires unique patient.');

@@ -125,6 +125,8 @@ export function useMedicalData() {
   const addConsultation = useCallback((
     consultation: Omit<Consultation, 'id' | 'createdAt' | 'updatedAt'>
   ) => {
+    // The central write path must enforce the same identity rule as the UI.
+    if (!hasConfirmedPatientSelection(consultation.patientId, getMedicalData().patients)) return null;
     const timestamp = new Date().toISOString();
 
     const newConsultation: Consultation = {
