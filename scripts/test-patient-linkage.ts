@@ -684,4 +684,26 @@ assert.ok(patientPageSource.includes("timelineFilter === 'prescription'") &&
   'Status select must be offered only for prescriptions, reset on type change and filter events without writing.');
 console.log('PASS QW-051: synthetic documentary prescription status filters and patient UI contracts.');
 
+// QW-052 — A selected dossier must never inherit stale timeline filters or
+// an unsaved administrative edit form from a previously opened patient.
+const openPatientHandler = patientPageSource.match(
+  /function openPatientRecord\(patientId: string\) \{([\s\S]*?)\n  \}/,
+);
+assert.ok(openPatientHandler, 'Patient opening must be centralized in a dedicated handler.');
+for (const stateReset of [
+  "setTimelineFilter('all')",
+  "setTimelineSearch('')",
+  "setPrescriptionStatusFilter('all')",
+  "setShowEditForm(false)",
+  'setSelectedId(patientId)',
+]) {
+  assert.ok(openPatientHandler[1].includes(stateReset),
+    'Dossier switch must reset scoped UI state: ' + stateReset);
+}
+assert.ok(patientPageSource.includes('onClick={() => openPatientRecord(patient.id)}>Ouvrir le dossier') &&
+  patientPageSource.includes('openPatientRecord(newPatient.id);') &&
+  !patientPageSource.includes('onClick={() => setSelectedId(patient.id)}>Ouvrir le dossier'),
+  'Both existing and newly created dossiers must use the guarded opening handler.');
+console.log('PASS QW-052: dossier-scoped timeline filters and unsaved edit form reset on selection.');
+
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
