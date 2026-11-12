@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { isDispensablePrescriptionStatus } from '../services/prescriptionFinality';
+import { documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import type { InventoryData, Medication } from '../types/medical';
 import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
 
@@ -684,7 +685,7 @@ export default function Prescriptions() {
                   {item.medications.length} médicament(s)
                 </span>
                 <span>
-                  Statut : {item.status === 'dispensed' ? 'Délivrée' : item.status === 'cancelled' ? 'Annulée' : 'Brouillon / non délivrée'}
+                  Statut documentaire : {documentedPrescriptionStatus(item.status)}
                 </span>
 
                 {item.status === 'dispensed' && (
