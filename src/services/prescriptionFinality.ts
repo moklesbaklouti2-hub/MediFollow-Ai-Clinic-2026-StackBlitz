@@ -143,3 +143,15 @@ export function allowsStockLinkedPrescriptionUpdate(
     /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(changes.dispensedAt) &&
     Number.isFinite(Date.parse(changes.dispensedAt));
 }
+
+// QW-105 — new clinical documents cannot be inserted with a fabricated
+// terminal status or timestamps of dispensing/cancellation. Imported records
+// are read separately and remain untouched.
+export function isCreatablePrescriptionStatus(
+  prescription: Pick<Prescription, 'status' | 'dispensedAt' | 'cancelledAt'> | null | undefined,
+): boolean {
+  return Boolean(prescription &&
+    isDispensablePrescriptionStatus(prescription.status) &&
+    prescription.dispensedAt === undefined &&
+    prescription.cancelledAt === undefined);
+}
