@@ -988,3 +988,19 @@ console.log('PASS QW-081: duplicated prescription ID cannot trigger deletion.');
   assert.equal(JSON.stringify(importedPatients), original);
 }
 console.log('PASS QW-082: duplicate patient ID blocks update before persistence.');
+
+// QW-083: deletion may not remove all duplicate patient IDs from an import.
+{
+  const importedPatients = [{ id: 'kept' }, { id: 'duplicate' }, { id: 'duplicate' }];
+  assert.equal(hasConfirmedPatientSelection('kept', importedPatients), true);
+  assert.equal(hasConfirmedPatientSelection('duplicate', importedPatients), false);
+  assert.equal(hasConfirmedPatientSelection('missing', importedPatients), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = hook.split('const deletePatient = useCallback(')[1]
+    ?.split('const restoreDeletedPatient = useCallback(')[0] ?? '';
+  assert.ok(deletion.includes('if (!hasConfirmedPatientSelection(id, current.patients)) return false;') &&
+    deletion.indexOf('hasConfirmedPatientSelection(') < deletion.indexOf('saveDeletedPatients(') &&
+    deletion.indexOf('hasConfirmedPatientSelection(') < deletion.indexOf('savePatients('),
+    'Patient deletion must be refused on ambiguous IDs before trash or patient writes.');
+}
+console.log('PASS QW-083: patient deletion fails closed on imported duplicate IDs.');

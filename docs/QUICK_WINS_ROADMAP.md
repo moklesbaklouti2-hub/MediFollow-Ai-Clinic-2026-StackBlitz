@@ -115,6 +115,8 @@
 
 | QW-082 | S | Bloquer toute modification de dossier patient lorsque son identifiant est absent ou dupliqué après import | branche de préparation | Tests fictifs et contrat du hook ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-083 | S | Empêcher la suppression de plusieurs dossiers patients portant le même identifiant après import, avant toute écriture en corbeille | branche de préparation | Contrat et données fictives ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

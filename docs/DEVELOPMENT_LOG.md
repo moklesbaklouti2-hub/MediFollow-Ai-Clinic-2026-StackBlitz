@@ -1032,3 +1032,7 @@
 ### 2026-11-12 — QW-082 : mise à jour patient uniquement par identifiant unique
 - Le hook de sauvegarde des patients refuse l'identifiant de dossier absent, vide ou dupliqué après import ; aucun écrasement groupé involontaire.
 - Test synthétique et contrat source ajoutés. À valider dans Codespaces ; aucun test exécuté durant cette préparation.
+
+### 2026-11-12 — QW-083 : suppression patient refusée sur identifiant ambigu
+- Vérification du caractère unique du patient dès l'entrée de deletePatient, avant toute écriture dans la corbeille et avant suppression. En cas d'import avec IDs dupliqués, aucun dossier ni corbeille n'est modifié.
+- Contrat synthétique et tests fictifs préparés. Tests Codespaces non exécutés.

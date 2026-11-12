@@ -76,6 +76,7 @@ export function useMedicalData() {
 
   const deletePatient = useCallback((id: string) => {
     const current = getMedicalData();
+    if (!hasConfirmedPatientSelection(id, current.patients)) return false;
 
     const hasConsultations = current.consultations.some(
       (item) => item.patientId === id
