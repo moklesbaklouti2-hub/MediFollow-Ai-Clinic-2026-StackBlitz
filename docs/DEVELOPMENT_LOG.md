@@ -1028,3 +1028,7 @@
 ### 2026-11-12 — QW-081 : supprimer seulement une ordonnance à identifiant unique
 - Le point d'écriture central refuse de supprimer une ordonnance lorsque l'identifiant est absent ou présent sur plusieurs documents après import ; aucun nettoyage automatique de données suspectes.
 - Test fictif du contrat de suppression, non exécuté dans Codespaces. Préparé, non validé.
+
+### 2026-11-12 — QW-082 : mise à jour patient uniquement par identifiant unique
+- Le hook de sauvegarde des patients refuse l'identifiant de dossier absent, vide ou dupliqué après import ; aucun écrasement groupé involontaire.
+- Test synthétique et contrat source ajoutés. À valider dans Codespaces ; aucun test exécuté durant cette préparation.

@@ -970,3 +970,21 @@ console.log('PASS QW-080: duplicate prescription ID rejected on update.');
     'Prescription deletion must reject ambiguous identifiers before persistence.');
 }
 console.log('PASS QW-081: duplicated prescription ID cannot trigger deletion.');
+
+// QW-082: patient updates are rejected on duplicate, absent or blank ID.
+{
+  const importedPatients = [{ id: 'safe' }, { id: 'collision' }, { id: 'collision' }];
+  const original = JSON.stringify(importedPatients);
+  assert.equal(hasConfirmedPatientSelection('safe', importedPatients), true);
+  assert.equal(hasConfirmedPatientSelection('collision', importedPatients), false);
+  assert.equal(hasConfirmedPatientSelection('unlinked', importedPatients), false);
+  assert.equal(hasConfirmedPatientSelection('', importedPatients), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const patientUpdate = hook.split('const updatePatient = useCallback(')[1]
+    ?.split('const deletePatient = useCallback(')[0] ?? '';
+  assert.ok(patientUpdate.includes('hasConfirmedPatientSelection(id, currentPatients)') &&
+    patientUpdate.indexOf('hasConfirmedPatientSelection(') < patientUpdate.indexOf('savePatients(updated)'),
+    'Do not write multiple patient records sharing the same imported ID.');
+  assert.equal(JSON.stringify(importedPatients), original);
+}
+console.log('PASS QW-082: duplicate patient ID blocks update before persistence.');

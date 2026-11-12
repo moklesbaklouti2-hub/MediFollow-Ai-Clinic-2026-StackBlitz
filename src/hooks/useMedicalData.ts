@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId } from '../services/prescriptionIdentity';
+import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
   Patient,
@@ -57,7 +58,9 @@ export function useMedicalData() {
     id: string,
     changes: Partial<Patient>
   ) => {
-    const updated = getMedicalData().patients.map((patient) =>
+    const currentPatients = getMedicalData().patients;
+    if (!hasConfirmedPatientSelection(id, currentPatients)) return false;
+    const updated = currentPatients.map((patient) =>
       patient.id === id
         ? {
             ...patient,
