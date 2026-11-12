@@ -1416,3 +1416,37 @@ console.log('PASS QW-101: history consistently labels recorded prescription stat
     'No central status update to dispensed without coherent real stock trace.');
 }
 console.log('PASS QW-102: untraced, ambiguous or cross-patient stock cannot certify dispensing.');
+
+
+// QW-103: a failed post-dispense status write can leave a draft/validated
+// prescription with real stock movements. Neither the UI nor a direct hook
+// caller may cancel it as an order without dispensed inventory.
+{
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  const guard = update.indexOf("changes.status === 'cancelled'");
+  assert.ok(guard >= 0 &&
+    update.includes("currentPrescription.status !== 'dispensed'") &&
+    update.includes('prescriptionHasRecordedStockMovement(id, getInventoryData().movements)') &&
+    update.indexOf('prescriptionHasRecordedStockMovement(id, getInventoryData().movements)') < update.indexOf('savePrescriptions(updated)'),
+    'Central prescription cancellation must reject inconsistent non-dispensed records with stock movements.');
+
+  const page = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const cancel = page.split('function cancelPrescription(')[1]
+    ?.split('function openPrescription(')[0] ?? '';
+  assert.ok(cancel.includes("current.status !== 'dispensed'") &&
+    cancel.includes('prescriptionHasRecordedStockMovement(current.id, getInventoryData().movements)') &&
+    cancel.includes('Annulation refusée : un mouvement de stock existe malgré le statut non délivré.') &&
+    cancel.indexOf('prescriptionHasRecordedStockMovement(') < cancel.indexOf('window.confirm(') &&
+    cancel.indexOf('prescriptionHasRecordedStockMovement(') < cancel.indexOf('cancelDispensedPrescriptionStock(') &&
+    cancel.indexOf('prescriptionHasRecordedStockMovement(') < cancel.indexOf('updatePrescription('),
+    'The UI must stop a stale-status cancellation before confirmation, stock changes or saving.');
+
+  const trace = [{ prescriptionId: 'rx-test' }, { prescriptionId: 'other' }];
+  assert.equal(prescriptionHasRecordedStockMovement('rx-test', trace), true);
+  assert.equal(prescriptionHasRecordedStockMovement('other', trace), true);
+  assert.equal(prescriptionHasRecordedStockMovement('missing', trace), false);
+  assert.equal(prescriptionHasRecordedStockMovement('', trace), false);
+}
+console.log('PASS QW-103: non-dispensed status cannot hide recorded stock during cancellation.');
