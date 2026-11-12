@@ -129,6 +129,8 @@
 
 | QW-089 | S | Empêcher qu'une modification d'ordonnance ou une préparation de délivrance réattribue silencieusement l'ordonnance à un autre patient | branche de préparation | Tests fictifs et contrat central ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-090 | S | Refuser toute délivrance si l'ordonnance enregistrée est dupliquée ou liée à un patient différent de la sélection confirmée | branche de préparation | Contrat UI et scénario fictif de stock Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

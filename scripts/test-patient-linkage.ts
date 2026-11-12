@@ -1115,3 +1115,19 @@ console.log('PASS QW-088: blocked prescription delete gets explicit UI feedback.
     'Cross-patient prescription reassignment must be refused before persistence.');
 }
 console.log('PASS QW-089: prescription patient ownership cannot change silently.');
+
+// QW-090: dispensing must verify unique order and patient ownership prior
+// to the preliminary save and any real inventory adjustment.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const dispense = source.split('function dispenseSavedPrescription()')[1]
+    ?.split('function handlePartialReturn(')[0] ?? '';
+  assert.ok(dispense.includes('matchingPrescriptions.length === 1') &&
+    dispense.includes('savedPrescription.patientId !== patientId') &&
+    dispense.includes('hasConfirmedPatientSelection(patientId, latestData.patients)') &&
+    dispense.includes('aucune délivrance ni déduction de stock') &&
+    dispense.indexOf('matchingPrescriptions.length === 1') < dispense.indexOf('updatePrescription(') &&
+    dispense.indexOf('savedPrescription.patientId !== patientId') < dispense.indexOf('dispenseInventoryItems('),
+    'A wrong-patient or duplicate order must not reach inventory dispensing.');
+}
+console.log('PASS QW-090: reject ambiguous/wrong-patient dispense before stock write.');

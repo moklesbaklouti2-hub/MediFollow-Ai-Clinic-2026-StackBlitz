@@ -1060,3 +1060,7 @@
 ### 2026-11-12 — QW-089 : patient d'une ordonnance immuable lors d'une modification ordinaire
 - Le point central de mise à jour conserve le lien patient existant. Les changements d'identifiant patient sont refusés, y compris pendant la sauvegarde préalable à une délivrance ; les modifications de statut sans changement du patient restent autorisées.
 - Tests synthétiques et contrat de stockage ajoutés. Une correction intentionnelle de lien patient doit être traitée séparément, pas déduite automatiquement. Codespaces requis.
+
+### 2026-11-12 — QW-090 : contrôle préalable d'identité avant délivrance du stock
+- Avant l'enregistrement de quantités et tout mouvement de stock, le formulaire vérifie que l'ordonnance enregistrée correspond à un unique ID et au même patient unique confirmé. Les cas de doublon, de dossier différent ou absent sont refusés avec message explicite.
+- Contrat de source préparé. Aucune sortie physique de stock ni test réel ; Codespaces et données fictives requis.

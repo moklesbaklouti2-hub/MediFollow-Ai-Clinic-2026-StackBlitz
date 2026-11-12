@@ -139,9 +139,16 @@ export default function Prescriptions() {
 
   function dispenseSavedPrescription() {
     if (!editingId) return;
-    const savedPrescription = getMedicalData().prescriptions.find((item) => item.id === editingId);
+    const latestData = getMedicalData();
+    const matchingPrescriptions = latestData.prescriptions.filter((item) => item.id === editingId);
+    const savedPrescription = matchingPrescriptions.length === 1 ? matchingPrescriptions[0] : undefined;
     if (!savedPrescription) {
-      setSavedMessage('Enregistrez d’abord l’ordonnance.');
+      setSavedMessage('Ordonnance introuvable ou identifiant dupliqué : aucune délivrance possible.');
+      return;
+    }
+    if (savedPrescription.patientId !== patientId ||
+        !hasConfirmedPatientSelection(patientId, latestData.patients)) {
+      setSavedMessage('Dossier patient différent ou ambigu : aucune délivrance ni déduction de stock.');
       return;
     }
     if (savedPrescription.status === 'dispensed') {
