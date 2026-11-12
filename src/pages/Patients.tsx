@@ -95,6 +95,17 @@ export default function Patients() {
   const referralSource = selected ? buildReferralSource(selected.id, patientConsultations) : null;
   const documentedSpecialties = selected ? summarizeDocumentedSpecialties(selected.id, patientConsultations) : [];
 
+  // Reset view-only filters and pending edit fields when changing patient.
+  // Prevents stale inputs from a previously opened dossier from appearing
+  // under the newly selected patient; no clinical data is written here.
+  function openPatientRecord(patientId: string) {
+    setTimelineFilter('all');
+    setTimelineSearch('');
+    setPrescriptionStatusFilter('all');
+    setShowEditForm(false);
+    setSelectedId(patientId);
+  }
+
   function addNewPatient() {
     if (!name.trim() || !age.trim()) {
       alert('Veuillez renseigner le nom et l’âge du patient.');
@@ -124,7 +135,7 @@ export default function Patients() {
     setAge('');
     setPhone('');
     setShowForm(false);
-    setSelectedId(newPatient.id);
+    openPatientRecord(newPatient.id);
   }
 
   function beginEditPatient() {
@@ -411,7 +422,7 @@ export default function Patients() {
               </div>
             </div>
             <span className="patient-status">{patient.status}</span>
-            <button className="patient-view" onClick={() => setSelectedId(patient.id)}>Ouvrir le dossier</button>
+            <button className="patient-view" onClick={() => openPatientRecord(patient.id)}>Ouvrir le dossier</button>
           </article>
         ))}
         {filtered.length === 0 && <p>Aucun patient trouvé.</p>}
