@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1319,3 +1319,23 @@ console.log('PASS QW-097: finalized prescription content immutable; explicit can
     'Complete returns must be checked before any status write.');
 }
 console.log('PASS QW-098: all returns fully documented before cancelling dispensed order.');
+
+// QW-099: malformed explicit prescription statuses from imported archives
+// cannot be treated as drafts for destructive actions.
+{
+  assert.equal(isDeletablePrescriptionStatus(undefined), true);
+  assert.equal(isDeletablePrescriptionStatus('draft'), true);
+  assert.equal(isDeletablePrescriptionStatus('validated'), true);
+  assert.equal(isDeletablePrescriptionStatus('dispensed'), false);
+  assert.equal(isDeletablePrescriptionStatus('cancelled'), false);
+  assert.equal(isDeletablePrescriptionStatus(null), false);
+  assert.equal(isDeletablePrescriptionStatus('unknown'), false);
+  assert.equal(isDeletablePrescriptionStatus({ status: 'draft' }), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = hook.split('const deletePrescription = useCallback(')[1]
+    ?.split('// PARAMÈTRES')[0] ?? '';
+  assert.ok(deletion.includes('isDeletablePrescriptionStatus(currentPrescription.status)') &&
+    deletion.indexOf('isDeletablePrescriptionStatus(') < deletion.indexOf('savePrescriptions(updated)'),
+    'Unknown imported prescription status must stop central deletion.');
+}
+console.log('PASS QW-099: unknown imported statuses cannot be deleted as drafts.');
