@@ -136,6 +136,8 @@
 
 | QW-093 | S | Refuser l'ouverture d'une ordonnance ambiguë ou déplacée vers un autre patient ; charger uniquement sa version courante | branche de préparation | Contrat UI et tests fictifs Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-094 | S | Protéger au point central les ordonnances annulées ou délivrées contre toute suppression, même sans journal de stock | branche de préparation | Contrat du hook, tests de données fictives et CI requise | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
