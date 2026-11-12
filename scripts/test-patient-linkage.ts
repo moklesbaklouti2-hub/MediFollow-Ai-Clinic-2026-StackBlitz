@@ -1189,3 +1189,20 @@ console.log('PASS QW-092: a stale or cross-patient partial return cannot bypass 
     'Opening an order must refuse imported duplicates and re-read the current patient and medications.');
 }
 console.log('PASS QW-093: historical prescription editing cannot load a stale or ambiguous patient document.');
+
+// QW-094: the central storage hook itself must preserve cancelled and
+// dispensed prescriptions, even if the inventory log was lost on import.
+{
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = hook.split('const deletePrescription = useCallback(')[1]
+    ?.split('// PARAMÈTRES')[0] ?? '';
+  assert.ok(deletion.includes('hasUniquePrescriptionId(id, currentPrescriptions)') &&
+    deletion.includes("currentPrescription.status === 'cancelled'") &&
+    deletion.includes("currentPrescription.status === 'dispensed'") &&
+    deletion.includes('prescriptionHasRecordedStockMovement(id, getInventoryData().movements)') &&
+    deletion.indexOf('hasUniquePrescriptionId(') < deletion.indexOf('currentPrescription.status') &&
+    deletion.indexOf('currentPrescription.status') < deletion.indexOf('savePrescriptions(updated)') &&
+    deletion.indexOf('prescriptionHasRecordedStockMovement(') < deletion.indexOf('savePrescriptions(updated)'),
+    'Stored cancelled/dispensed prescriptions must survive direct hook deletion attempts.');
+}
+console.log('PASS QW-094: central deletion cannot erase cancelled or dispensed orders without movements.');
