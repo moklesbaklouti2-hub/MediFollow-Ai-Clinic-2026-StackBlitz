@@ -144,6 +144,8 @@
 
 | QW-097 | S | Verrouiller les modifications d'ordonnances finalisées au hook central ; autoriser uniquement la transition documentaire de délivrée à annulée | branche de préparation | Tests fictifs et validation de l'exception d'annulation en CI nécessaires | PRÉPARÉ NON VALIDÉ |
 
+| QW-098 | S | Exiger des mouvements de retour complets, non ambigus et du même patient avant de passer une ordonnance délivrée à « annulée » | branche de préparation | Tests fictifs de mouvements et validation Codespaces/CI requises | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
