@@ -9,6 +9,7 @@ for (const path of [
   'scripts/test-timeline-results-accessibility-contract.mjs',
   'scripts/test-timeline-date-help-contract.mjs',
   'scripts/test-timeline-show-all-contract.mjs',
+  'scripts/test-timeline-search-help-contract.mjs',
   'scripts/test-timeline-suite-contract.mjs',
 ]) {
   assert.ok(existsSync(path), 'Missing contract: ' + path);

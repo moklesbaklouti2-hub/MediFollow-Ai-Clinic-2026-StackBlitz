@@ -797,8 +797,12 @@ export default function Patients() {
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-search">Rechercher dans la chronologie :</label>
             <input id="patient-timeline-search" type="search" maxLength={100}
+              aria-describedby="patient-timeline-search-help"
               placeholder="Motif, spécialité, médicament, examen…"
               value={timelineSearch} onChange={(event) => setTimelineSearch(event.target.value)} />
+            <span id="patient-timeline-search-help">
+              Recherche locale dans les événements de ce dossier : motif, spécialité, diagnostic, symptômes, noms des médicaments, examens et autres éléments prescrits, conseils. Les accents et la casse sont ignorés. Aucun appel IA.
+            </span>
           </div>
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-from">Date début :</label>

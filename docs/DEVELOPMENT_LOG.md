@@ -943,3 +943,7 @@
 ### 2026-11-12 — QW-061 : accès direct aux résultats masqués par la limite (préparation)
 - Bouton local visible uniquement lorsque des événements correspondants ne sont pas affichés. Il passe la limite à « tous » sans réinitialiser les filtres ni modifier les documents.
 - Contrat synthétique intégré à test:timeline-contracts ; essai fictif avec plus de dix résultats, filtres conservés et absence du bouton lorsque tous sont visibles. **Non validé**, exécution Codespaces requise.
+
+### 2026-11-12 — QW-062 : aide accessible à la recherche chronologique (préparation)
+- Le champ de recherche référence une aide décrivant les champs réellement recherchés, la normalisation des accents et de la casse et l'absence d'appel IA. Aucun changement de logique de recherche ni de données.
+- Contrat synthétique intégré à test:timeline-contracts ; exécution et essai fictif restent à effectuer dans Codespaces. **Non validé**.
