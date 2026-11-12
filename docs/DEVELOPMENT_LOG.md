@@ -1125,3 +1125,9 @@
 - La fonction pure `hasDocumentedPrescriptionDispense` refuse les mouvements ambigus (identifiants dupliqués), les quantités non finies/négatives/nulles, les identifiants de lot absents ou les mouvements rattachés à un autre patient. Ce contrôle est documentaire : il ne constitue pas une attestation de remise physique.
 - Tests synthétiques de statut, mouvement et identité dans `scripts/test-patient-linkage.ts` ; le fonctionnement préexistant de la délivrance (enregistrement du mouvement, puis statut) est préservé.
 - **PRÉPARÉ NON VALIDÉ :** aucun build, test Codespaces ou résultat CI 11/11 sur ce SHA n'a été obtenu. Aucune modification de `main`, aucun patient réel, aucune dépense ou déploiement.
+
+### 2026-11-12 — QW-103 : refuser l'annulation « sans stock » quand des mouvements ont déjà été enregistrés
+- Situation traitée : la délivrance a effectivement déduit le stock et créé ses mouvements, mais l'écriture ultérieure du statut `dispensed` n'a pas abouti. La ligne peut encore apparaître `draft`, `validated` ou sans statut ; elle ne doit pas être annulée par le parcours « aucun mouvement de stock ».
+- La page `Prescriptions` détecte toute trace de stock liée à l'ordonnance avant confirmation et bloque l'annulation ordinaire avec une consigne de réconciliation ; aucun retour automatique n'est tenté sur un état contradictoire.
+- `updatePrescription` ajoute le même garde-fou au point de sauvegarde : un appel direct ne peut marquer `cancelled` une ordonnance non `dispensed` qui a déjà des mouvements associés. Les protections de QW-097, QW-098 et QW-102 restent en place.
+- Test de contrat UI et hook + scénarios de mouvements fictifs ajoutés à `scripts/test-patient-linkage.ts`. **PRÉPARÉ, NON VALIDÉ** : compilation, tests complets et 11 jobs GitHub Actions sur SHA exact à effectuer. Aucun mouvement réel, aucun patient réel, pas de déploiement ni changement de `main`.
