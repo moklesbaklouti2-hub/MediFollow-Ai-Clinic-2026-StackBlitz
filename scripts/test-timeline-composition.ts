@@ -71,8 +71,9 @@ assert.deepEqual(filterDocumentedPrescriptionStatus(p, 'unknown').map(event => e
 // Accents, specialty, missing dates and invalid dates are independent filters.
 assert.deepEqual(searchRecordedEvents(alpha, 'dyspnee').map(event => event.id), ['a-c1']);
 const consultation = filterRecordedEvents(alpha, 'consultation');
-assert.deepEqual(documentedSpecialtyOptions(consultation.map(event => event.consultation)),
-  ['Cardiologie', 'ORL']);
+const consultationDocuments = consultation.flatMap(event =>
+  event.type === 'consultation' ? [event.consultation] : []);
+assert.deepEqual(documentedSpecialtyOptions(consultationDocuments), ['Cardiologie', 'ORL']);
 assert.deepEqual(filterTimelineBySpecialty(consultation, 'missing').map(event => event.id), ['a-c3']);
 assert.deepEqual(filterTimelineUndated(alpha).map(event => event.id), ['a-c3', 'a-p3']);
 assert.deepEqual(filterTimelineByDateRange(alpha, '2026-11-01', '2026-11-30').map(event => event.id),
