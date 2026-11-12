@@ -1169,3 +1169,23 @@ console.log('PASS QW-091: cancel dispensed prescription checks current identity 
 }
 console.log('PASS QW-092: a stale or cross-patient partial return cannot bypass ownership checks.');
 
+// QW-093: opening the edit form must use only a unique current prescription
+// belonging to a confirmed patient; stale history-card data cannot fill fields.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const open = source.split('function openPrescription(')[1]
+    ?.split('function confirmDeletePrescription(')[0] ?? '';
+  assert.ok(open.includes('const latestData = getMedicalData()') &&
+    open.includes('matches.length === 1') &&
+    open.includes('current.patientId !== item.patientId') &&
+    open.includes('hasConfirmedPatientSelection(current.patientId, latestData.patients)') &&
+    open.includes('Array.isArray(current.medications)') &&
+    open.includes('setPatientId(current.patientId)') &&
+    open.includes('setMedications(current.medications.map(') &&
+    open.includes('setEditingId(current.id)') &&
+    !open.includes('setEditingId(item.id)') &&
+    open.indexOf('matches.length === 1') < open.indexOf('setPatientId(') &&
+    open.indexOf('hasConfirmedPatientSelection(') < open.indexOf('setEditingId('),
+    'Opening an order must refuse imported duplicates and re-read the current patient and medications.');
+}
+console.log('PASS QW-093: historical prescription editing cannot load a stale or ambiguous patient document.');
