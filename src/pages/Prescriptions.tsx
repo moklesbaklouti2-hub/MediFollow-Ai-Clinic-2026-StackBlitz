@@ -201,7 +201,7 @@ export default function Prescriptions() {
       : 'Stock déduit et mouvement enregistré, mais le statut de l’ordonnance n’a pas été actualisé. Ne relancez pas la délivrance.');
   }
 
-  function handlePartialReturn(movementId: string, itemName: string, remaining: number) {
+  function handlePartialReturn(prescriptionId: string, expectedPatientId: string, movementId: string, itemName: string, remaining: number) {
     const raw = window.prompt(`Quantité réellement retournée pour ${itemName} (maximum : ${remaining}) :`);
     if (raw === null) return;
     const quantity = Number(raw.replace(',', '.'));
@@ -210,6 +210,24 @@ export default function Prescriptions() {
       return;
     }
     if (!window.confirm('Confirmez-vous que cette quantité a été physiquement récupérée, est intacte et peut être réintégrée au stock ?')) return;
+
+    // QW-092 — re-read ownership *after* confirmation, just before changing
+    // stock. Never trust a stale history card or an imported duplicate ID.
+    const latestData = getMedicalData();
+    const matchingPrescriptions = latestData.prescriptions.filter((row) => row.id === prescriptionId);
+    const currentPrescription = matchingPrescriptions.length === 1 ? matchingPrescriptions[0] : undefined;
+    const inventoryBeforeReturn = getInventoryData();
+    const matchingMovements = inventoryBeforeReturn.movements.filter((row) => row.id === movementId);
+    const currentMovement = matchingMovements.length === 1 ? matchingMovements[0] : undefined;
+    if (!currentPrescription || currentPrescription.patientId !== expectedPatientId ||
+        currentPrescription.status !== 'dispensed' ||
+        !hasConfirmedPatientSelection(currentPrescription.patientId, latestData.patients) ||
+        !currentMovement || currentMovement.type !== 'dispense' ||
+        currentMovement.prescriptionId !== currentPrescription.id ||
+        currentMovement.patientId !== currentPrescription.patientId) {
+      setSavedMessage('Retour refusé : ordonnance, dossier ou mouvement ambigu ou modifié. Aucun stock réintégré.');
+      return;
+    }
 
     const result = returnDispensedStock({
       dispenseMovementId: movementId,
@@ -652,7 +670,7 @@ export default function Prescriptions() {
                           <div className="return-lot-row" key={movement.id}>
                             <span>{movement.itemName} · {movement.reason || 'Lot'} — délivré : {movement.quantity} · retourné : {returned} · reste : {remaining} {lot?.unit || ''}</span>
                             {remaining > 0 && (
-                              <button onClick={() => handlePartialReturn(movement.id, movement.itemName, remaining)}>
+                              <button onClick={() => handlePartialReturn(item.id, item.patientId, movement.id, movement.itemName, remaining)}>
                                 Enregistrer un retour partiel
                               </button>
                             )}
