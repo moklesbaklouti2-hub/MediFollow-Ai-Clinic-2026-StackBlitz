@@ -1024,3 +1024,7 @@
 ### 2026-11-12 — QW-080 : garde-fou sur identifiant d'ordonnance modifiée
 - Refus central d'une modification par identifiant d'ordonnance nul, absent ou dupliqué après import. Aucun dossier fusionné ni correction silencieuse des données.
 - Ajout d'un test fictif et d'un contrat sur le hook d'écriture. Non exécuté dans Codespaces : préparé, non validé.
+
+### 2026-11-12 — QW-081 : supprimer seulement une ordonnance à identifiant unique
+- Le point d'écriture central refuse de supprimer une ordonnance lorsque l'identifiant est absent ou présent sur plusieurs documents après import ; aucun nettoyage automatique de données suspectes.
+- Test fictif du contrat de suppression, non exécuté dans Codespaces. Préparé, non validé.

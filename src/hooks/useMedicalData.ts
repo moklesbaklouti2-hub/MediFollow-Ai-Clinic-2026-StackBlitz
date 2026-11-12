@@ -204,7 +204,9 @@ export function useMedicalData() {
   }, []);
 
   const deletePrescription = useCallback((id: string) => {
-    const updated = getMedicalData().prescriptions.filter(
+    const currentPrescriptions = getMedicalData().prescriptions;
+    if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
+    const updated = currentPrescriptions.filter(
       (item) => item.id !== id
     );
 

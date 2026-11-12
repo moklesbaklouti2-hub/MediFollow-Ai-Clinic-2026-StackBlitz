@@ -955,3 +955,18 @@ console.log('PASS QW-077: ambiguous consultation IDs cannot trigger deletion.');
     'The storage hook must reject ambiguous prescription IDs before any write.');
 }
 console.log('PASS QW-080: duplicate prescription ID rejected on update.');
+
+// QW-081: deleting by a duplicated/missing prescription ID must be refused.
+{
+  const importedIds = [{ id: 'rx-one' }, { id: 'rx-same' }, { id: 'rx-same' }];
+  assert.equal(hasUniquePrescriptionId('rx-one', importedIds), true);
+  assert.equal(hasUniquePrescriptionId('rx-same', importedIds), false);
+  assert.equal(hasUniquePrescriptionId('rx-absent', importedIds), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = hook.split('const deletePrescription = useCallback(')[1]
+    ?.split('// PARAMÈTRES')[0] ?? '';
+  assert.ok(deletion.includes('if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;') &&
+    deletion.indexOf('hasUniquePrescriptionId(') < deletion.indexOf('savePrescriptions(updated)'),
+    'Prescription deletion must reject ambiguous identifiers before persistence.');
+}
+console.log('PASS QW-081: duplicated prescription ID cannot trigger deletion.');
