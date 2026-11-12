@@ -952,3 +952,8 @@
 - Une option de présentation permet de voir les événements du plus ancien au plus récent, ou l'inverse (choix par défaut), après application des filtres et avant la limite d'affichage.
 - Les dates absentes ou invalides restent à la fin dans les deux directions ; aucune écriture, stockage, requête IA ni modification de dossier. Le choix de tri revient à « récent d'abord » à chaque changement de patient.
 - Tests synthétiques de tri, égalité de dates et immutabilité dans `test:patient-linkage` ; F41 réservé aux essais Codespaces/Android/Windows. **Préparé, non exécuté.**
+
+### 2026-11-12 — QW-064 : documents sans date exploitable (préparation)
+- Filtre local explicite pour retrouver les seuls événements sans date fiable du dossier courant, sans attribuer arbitrairement une date ni modifier la source.
+- Lors de la sélection, les bornes de date sont effacées puis désactivées afin d'éviter un état contradictoire ; retour au mode « dates et période » possible. Réinitialisation sur changement de patient.
+- Tests de documents fictifs datés, invalides et absents dans `test:patient-linkage` ; F42 prévu pour la validation sur Codespaces et appareils. **Non exécuté.**

@@ -20,6 +20,7 @@ import { limitTimelineEvents } from '../clinical/timelineLimit';
 import { summarizeTimelineDocumentation } from '../clinical/timelineQuality';
 import { sortTimelineByRecordedDate } from '../clinical/timelineSort';
 import type { TimelineSortDirection } from '../clinical/timelineSort';
+import { filterTimelineUndated } from '../clinical/timelineUndated';
 import type { TimelineDisplayLimit } from '../clinical/timelineLimit';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
@@ -37,6 +38,7 @@ export default function Patients() {
   const [timelineSpecialtyFilter, setTimelineSpecialtyFilter] = useState('all');
   const [timelineDisplayLimit, setTimelineDisplayLimit] = useState<TimelineDisplayLimit>('10');
   const [timelineSortDirection, setTimelineSortDirection] = useState<TimelineSortDirection>('newest');
+  const [timelineUndatedOnly, setTimelineUndatedOnly] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -58,6 +60,7 @@ export default function Patients() {
     setTimelineSpecialtyFilter('all');
     setTimelineDisplayLimit('10');
     setTimelineSortDirection('newest');
+    setTimelineUndatedOnly(false);
   }
 
   function changeSelectedPatient(nextPatientId: string | null) {
@@ -102,9 +105,9 @@ export default function Patients() {
   const statusFilteredMedicalTimeline = timelineFilter === 'prescription'
     ? filterDocumentedPrescriptionStatus(searchedMedicalTimeline, prescriptionStatusFilter)
     : searchedMedicalTimeline;
-  const dateFilteredMedicalTimeline = filterTimelineByDateRange(
-    statusFilteredMedicalTimeline, timelineFromDate, timelineToDate
-  );
+  const dateFilteredMedicalTimeline = timelineUndatedOnly
+    ? filterTimelineUndated(statusFilteredMedicalTimeline)
+    : filterTimelineByDateRange(statusFilteredMedicalTimeline, timelineFromDate, timelineToDate);
   const specialtyOptions = documentedSpecialtyOptions(patientConsultations);
   const specialtyFilteredMedicalTimeline = timelineFilter === 'consultation'
     ? filterTimelineBySpecialty(dateFilteredMedicalTimeline, timelineSpecialtyFilter)
@@ -113,12 +116,13 @@ export default function Patients() {
   const pagedMedicalTimeline = limitTimelineEvents(sortedMedicalTimeline, timelineDisplayLimit);
   const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
   // Display-only indicator: count active view restrictions, not hidden records.
-  const timelineDateRangeReversed = timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;
+  const timelineDateRangeReversed = !timelineUndatedOnly && timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;
   const activeTimelineFilterCount = [
     timelineFilter !== 'all',
     timelineSearch.trim().length > 0,
-    timelineFromDate !== '',
-    timelineToDate !== '',
+    !timelineUndatedOnly && timelineFromDate !== '',
+    !timelineUndatedOnly && timelineToDate !== '',
+    timelineUndatedOnly,
     timelineFilter === 'consultation' && timelineSpecialtyFilter !== 'all',
     timelineFilter === 'prescription' && prescriptionStatusFilter !== 'all',
   ].filter(Boolean).length;
@@ -810,18 +814,37 @@ export default function Patients() {
             </span>
           </div>
           <div className="patient-timeline-filter">
+            <label htmlFor="patient-timeline-undated">Dates de la chronologie :</label>
+            <select id="patient-timeline-undated" value={timelineUndatedOnly ? 'unknown' : 'all'}
+              onChange={(event) => {
+                const onlyUnknown = event.target.value === 'unknown';
+                setTimelineUndatedOnly(onlyUnknown);
+                if (onlyUnknown) {
+                  setTimelineFromDate('');
+                  setTimelineToDate('');
+                }
+              }}>
+              <option value="all">Toutes les dates (ou une période)</option>
+              <option value="unknown">Seulement les événements sans date exploitable</option>
+            </select>
+          </div>
+          <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-from">Date début :</label>
             <input id="patient-timeline-from" type="date" value={timelineFromDate}
+              disabled={timelineUndatedOnly}
               aria-invalid={timelineDateRangeReversed} aria-describedby="patient-timeline-date-help"
               onChange={(event) => setTimelineFromDate(event.target.value)} />
             <label htmlFor="patient-timeline-to">Date fin :</label>
             <input id="patient-timeline-to" type="date" value={timelineToDate}
+              disabled={timelineUndatedOnly}
               aria-invalid={timelineDateRangeReversed} aria-describedby="patient-timeline-date-help"
               onChange={(event) => setTimelineToDate(event.target.value)} />
             <span id="patient-timeline-date-help">
-              {timelineDateRangeReversed
-                ? 'La date de début est postérieure à la date de fin. Corrigez les bornes pour afficher les résultats.'
-                : 'Les événements sans date valide ne figurent pas dans une période filtrée.'}
+              {timelineUndatedOnly
+                ? 'Seuls les documents sans date exploitable sont affichés ; les bornes de période sont désactivées.'
+                : timelineDateRangeReversed
+                  ? 'La date de début est postérieure à la date de fin. Corrigez les bornes pour afficher les résultats.'
+                  : 'Les événements sans date valide ne figurent pas dans une période filtrée.'}
             </span>
           </div>
           <div className="patient-timeline-filter">

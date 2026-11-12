@@ -82,6 +82,7 @@
 
 | QW-062 | S | Expliquer le périmètre et le caractère local de la recherche chronologique, avec aide accessible | branche de préparation | Contrat synthétique et essai fictif de recherche | PRÉPARÉ NON VALIDÉ |
 | QW-063 | S | Chronologie ascendante ou descendante ; dates inconnues toujours en dernier | branche de préparation | Test synthétique de tri, immutabilité et contrat UI ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+| QW-064 | S | Visualiser seulement les événements aux dates manquantes ou invalides | branche de préparation | Tests fictifs, remise à zéro et absence d'écriture ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

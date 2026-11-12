@@ -20,6 +20,7 @@ import { documentedSpecialtyOptions, filterTimelineBySpecialty } from '../src/cl
 import { limitTimelineEvents } from '../src/clinical/timelineLimit.ts';
 import { summarizeTimelineDocumentation } from '../src/clinical/timelineQuality.ts';
 import { sortTimelineByRecordedDate } from '../src/clinical/timelineSort.ts';
+import { filterTimelineUndated } from '../src/clinical/timelineUndated.ts';
 import { MAX_LOCAL_DOCUMENT_CHARS, previewLocalDocument } from '../src/clinical/documentReader.ts';
 import { academySources } from '../src/clinical/academySources.ts';
 import type { Consultation } from '../src/types/medical.ts';
@@ -817,5 +818,26 @@ assert.ok(patientPageSource.includes('sortTimelineByRecordedDate(specialtyFilter
   patientPageSource.includes('Les dates non renseignées restent après les dates valides.'),
   'Timeline order selector must apply after existing filters and before display limit, reset on patient change.');
 console.log('PASS QW-063: pure chronological sort, unknown dates last and UI contract.');
+
+// QW-064 — Display only dated-unknown records without inventing dates.
+const undatedFixtures = [
+  { id: 'd1', date: '2026-11-11' },
+  { id: 'd2', date: 'date non fiable' },
+  { id: 'd3', date: '' },
+  { id: 'd4', date: '2026-02-30' },
+  { id: 'd5', date: '2026-11-09T08:00:00Z' },
+];
+const undatedBefore = JSON.stringify(undatedFixtures);
+assert.deepEqual(filterTimelineUndated(undatedFixtures).map(x => x.id), ['d2', 'd3', 'd4']);
+assert.deepEqual(filterTimelineUndated([]), []);
+assert.equal(JSON.stringify(undatedFixtures), undatedBefore, 'Undated selection may not mutate historical documents.');
+assert.ok(patientPageSource.includes('filterTimelineUndated(statusFilteredMedicalTimeline)') &&
+  patientPageSource.includes('id="patient-timeline-undated"') &&
+  patientPageSource.includes('disabled={timelineUndatedOnly}') &&
+  patientPageSource.includes('setTimelineUndatedOnly(false)') &&
+  patientPageSource.includes("setTimelineFromDate('')") &&
+  patientPageSource.includes("setTimelineToDate('')"),
+  'Undated-only mode must exclude date ranges and reset on patient change.');
+console.log('PASS QW-064: synthetic unknown-date filter, no mutation and UI contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
