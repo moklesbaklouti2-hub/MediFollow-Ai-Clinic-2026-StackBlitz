@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
+import { allowsFinalizedPrescriptionUpdate } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -204,6 +205,8 @@ export function useMedicalData() {
     if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
     const currentPrescription = currentPrescriptions.find(item => item.id === id);
     if (!currentPrescription || !preservesPrescriptionPatientId(currentPrescription, changes)) return false;
+    // QW-097: enforce finality at the storage boundary, not only in the form.
+    if (!allowsFinalizedPrescriptionUpdate(currentPrescription, changes)) return false;
     const updated = currentPrescriptions.map((item) =>
       item.id === id
         ? {
