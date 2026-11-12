@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1339,3 +1339,26 @@ console.log('PASS QW-098: all returns fully documented before cancelling dispens
     'Unknown imported prescription status must stop central deletion.');
 }
 console.log('PASS QW-099: unknown imported statuses cannot be deleted as drafts.');
+
+// QW-100: a stock deduction requires an explicitly dispensable current
+// prescription status. Legacy missing/unknown/imported values fail closed.
+{
+  const cases: Array<[unknown, boolean]> = [
+    ['draft', true], ['validated', true], ['dispensed', false],
+    ['cancelled', false], [undefined, false], [null, false],
+    ['unknown', false], ['DRAFT', false], [42, false],
+  ];
+  for (const [status, expected] of cases) {
+    assert.equal(isDispensablePrescriptionStatus(status), expected);
+  }
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const dispense = source.split('function dispenseSavedPrescription()')[1]
+    ?.split('function handlePartialReturn(')[0] ?? '';
+  assert.ok(dispense.includes('isDispensablePrescriptionStatus(savedPrescription.status)') &&
+    dispense.includes('Délivrance refusée : statut de l’ordonnance absent ou non reconnu.') &&
+    dispense.indexOf('isDispensablePrescriptionStatus(') < dispense.indexOf('updatePrescription(') &&
+    dispense.indexOf('isDispensablePrescriptionStatus(') < dispense.indexOf('dispenseInventoryItems(') &&
+    dispense.indexOf('matchingPrescriptions.length === 1') < dispense.indexOf('isDispensablePrescriptionStatus('),
+    'Missing/unknown stored status must block any pre-dispense write or stock deduction.');
+}
+console.log('PASS QW-100: only explicit draft/validated statuses permit inventory dispensing.');
