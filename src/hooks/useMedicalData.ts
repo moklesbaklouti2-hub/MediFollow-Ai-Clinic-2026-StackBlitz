@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
-import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement } from '../services/prescriptionIdentity';
+import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -202,6 +202,8 @@ export function useMedicalData() {
   ) => {
     const currentPrescriptions = getMedicalData().prescriptions;
     if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
+    const currentPrescription = currentPrescriptions.find(item => item.id === id);
+    if (!currentPrescription || !preservesPrescriptionPatientId(currentPrescription, changes)) return false;
     const updated = currentPrescriptions.map((item) =>
       item.id === id
         ? {

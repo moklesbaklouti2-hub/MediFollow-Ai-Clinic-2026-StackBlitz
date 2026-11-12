@@ -1056,3 +1056,7 @@
 ### 2026-11-12 — QW-088 : retour visible après refus de suppression d'ordonnance
 - Si le hook refuse la suppression (doublon d'identifiant, journal de stock lié ou échec de sauvegarde), l'interface indique explicitement que l'opération n'est pas effectuée. La confirmation préalable et les refus de statut existants restent inchangés.
 - Contrat source préparé ; tests UI fictifs Codespaces nécessaires.
+
+### 2026-11-12 — QW-089 : patient d'une ordonnance immuable lors d'une modification ordinaire
+- Le point central de mise à jour conserve le lien patient existant. Les changements d'identifiant patient sont refusés, y compris pendant la sauvegarde préalable à une délivrance ; les modifications de statut sans changement du patient restent autorisées.
+- Tests synthétiques et contrat de stockage ajoutés. Une correction intentionnelle de lien patient doit être traitée séparément, pas déduite automatiquement. Codespaces requis.

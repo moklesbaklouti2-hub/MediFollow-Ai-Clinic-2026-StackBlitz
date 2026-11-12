@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
-import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement } from '../src/services/prescriptionIdentity.ts';
+import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1097,3 +1097,21 @@ console.log('PASS QW-087: inventory movement links prevent prescription deletion
     'A blocked prescription deletion must show explicit feedback after consent.');
 }
 console.log('PASS QW-088: blocked prescription delete gets explicit UI feedback.');
+
+// QW-089: a prescription edit, including the step before stock deduction,
+// must never silently reassign the historical document to another patient.
+{
+  const current = { patientId: 'patient-a' };
+  assert.equal(preservesPrescriptionPatientId(current, {}), true);
+  assert.equal(preservesPrescriptionPatientId(current, { patientId: 'patient-a' }), true);
+  assert.equal(preservesPrescriptionPatientId(current, { patientId: 'patient-b' }), false);
+  assert.equal(preservesPrescriptionPatientId(current, { patientId: '' }), false);
+  assert.equal(preservesPrescriptionPatientId(current, { patientId: undefined }), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('preservesPrescriptionPatientId(currentPrescription, changes)') &&
+    update.indexOf('preservesPrescriptionPatientId(') < update.indexOf('savePrescriptions(updated)'),
+    'Cross-patient prescription reassignment must be refused before persistence.');
+}
+console.log('PASS QW-089: prescription patient ownership cannot change silently.');

@@ -127,6 +127,8 @@
 
 | QW-088 | S | Afficher explicitement le refus de suppression d'ordonnance lorsque le stockage ou la traçabilité bloque l'action | branche de préparation | Contrat d'interface et essai fictif Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-089 | S | Empêcher qu'une modification d'ordonnance ou une préparation de délivrance réattribue silencieusement l'ordonnance à un autre patient | branche de préparation | Tests fictifs et contrat central ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
