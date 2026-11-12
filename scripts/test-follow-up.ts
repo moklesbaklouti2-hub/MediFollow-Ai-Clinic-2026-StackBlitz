@@ -299,3 +299,30 @@ assert.ok(futureWorklistUI.includes('hasConfirmedPatientSelection(item.patientId
   !futureWorklistUI.includes('completeFollowUp(item)'),
   'Future plans may be opened only for confirmed identities and not closed directly.');
 console.log('PASS QW-073: reviewable future plans sorted by recorded date, with identity safeguards.');
+
+// QW-074: each planned fictional follow-up belongs to exactly one horizon.
+{
+  const fixtures = [
+    { id: 'past', followUp: f('2026-12-27').followUp },
+    { id: 'today', followUp: f('2026-12-28').followUp },
+    { id: 'boundary', followUp: f('2027-01-04').followUp },
+    { id: 'later', followUp: f('2027-01-05').followUp },
+    { id: 'invalid', followUp: f('2027-02-30').followUp },
+    { id: 'done', followUp: f('2027-01-05', 'completed').followUp },
+    { id: 'absent' },
+  ] as Parameters<typeof selectDueFollowUps>[0];
+  const before = JSON.stringify(fixtures);
+  const today = '2026-12-28';
+  const due = selectDueFollowUps(fixtures, today);
+  const later = selectLaterPlannedFollowUps(fixtures, today);
+  const undated = selectUndatedPlannedFollowUps(fixtures);
+  const summary = summarizeFollowUps(fixtures, today);
+  assert.equal(due.length, summary.overdue + summary.today + summary.nextSevenDays);
+  assert.equal(later.length, countLaterPlannedFollowUps(fixtures, today));
+  assert.equal(undated.length, countUndatedPlannedFollowUps(fixtures));
+  const ids = [...due, ...later, ...undated].map(item => item.id);
+  assert.deepEqual(ids.sort(), ['boundary', 'invalid', 'later', 'past', 'today']);
+  assert.equal(new Set(ids).size, ids.length);
+  assert.equal(JSON.stringify(fixtures), before);
+}
+console.log('PASS QW-074: follow-up horizons partition and dashboard/list agreement.');

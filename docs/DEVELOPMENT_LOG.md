@@ -996,3 +996,7 @@
 ### 2026-11-12 — QW-073 : visualiser les suivis planifiés à plus de 7 jours (préparation)
 - Liste repliable dans Consultations, tri par date documentée. Aucune modification, notification, inférence clinique ni clôture directe.
 - Bouton d'ouverture réservé aux dossiers avec identifiant patient confirmé. Tests synthétiques et contrat UI préparés ; validation complète Codespaces à effectuer.
+
+### 2026-11-12 — QW-074 : cohérence des horizons Follow-up
+- Contrôle synthétique de partition sans doublons entre échéances, dates invalides et suivis au-delà de sept jours, avec passage de décembre à janvier. Vérifie la concordance des compteurs Dashboard et des listes, sans mutation ni appel externe.
+- Ajout au script existant test-follow-up.ts ; non exécuté, validation Codespaces requise.

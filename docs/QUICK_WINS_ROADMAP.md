@@ -97,6 +97,8 @@
 
 | QW-073 | S | HELIOS Follow-up : liste repliable des suivis futurs au-delà de 7 jours, avec identité patient confirmée | branche de préparation | Tri fictif, bornes et non-mutation, contrat UI ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-074 | S | Vérifier la cohérence des compteurs et listes HELIOS Follow-up sur tous les horizons, y compris changement d’année | branche de préparation | Test fictif de partition, non-mutation et concordance ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
