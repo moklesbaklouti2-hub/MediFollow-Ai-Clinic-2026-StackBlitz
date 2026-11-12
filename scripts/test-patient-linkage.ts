@@ -1131,3 +1131,19 @@ console.log('PASS QW-089: prescription patient ownership cannot change silently.
     'A wrong-patient or duplicate order must not reach inventory dispensing.');
 }
 console.log('PASS QW-090: reject ambiguous/wrong-patient dispense before stock write.');
+
+// QW-091: never return dispensed stock for a stale or ambiguous imported order.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const cancellation = source.split('function cancelPrescription(')[1]
+    ?.split('function openPrescription(')[0] ?? '';
+  assert.ok(cancellation.includes('matchingPrescriptions.length === 1') &&
+    cancellation.includes('current.patientId !== item.patientId') &&
+    cancellation.includes('hasConfirmedPatientSelection(current.patientId, currentData.patients)') &&
+    cancellation.includes('current.status === \'dispensed\'') &&
+    cancellation.includes('cancelDispensedPrescriptionStock({ prescriptionId: current.id })') &&
+    cancellation.indexOf('matchingPrescriptions.length === 1') < cancellation.indexOf('cancelDispensedPrescriptionStock(') &&
+    cancellation.indexOf('hasConfirmedPatientSelection(') < cancellation.indexOf('cancelDispensedPrescriptionStock('),
+    'No stock return before confirming the unique current prescription and patient.');
+}
+console.log('PASS QW-091: cancel dispensed prescription checks current identity before stock return.');

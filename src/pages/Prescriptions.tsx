@@ -225,10 +225,18 @@ export default function Prescriptions() {
   }
 
   function cancelPrescription(item: (typeof prescriptions)[number]) {
-    if (item.status === 'cancelled') return;
-    if (item.status === 'dispensed') {
+    const currentData = getMedicalData();
+    const matchingPrescriptions = currentData.prescriptions.filter(row => row.id === item.id);
+    const current = matchingPrescriptions.length === 1 ? matchingPrescriptions[0] : undefined;
+    if (!current || current.patientId !== item.patientId ||
+        !hasConfirmedPatientSelection(current.patientId, currentData.patients)) {
+      setSavedMessage('Annulation refusée : ordonnance ambiguë, modifiée ou dossier patient non confirmé. Aucun stock modifié.');
+      return;
+    }
+    if (current.status === 'cancelled') return;
+    if (current.status === 'dispensed') {
       if (!window.confirm('Confirmez-vous l’annulation de cette délivrance ET la récupération physique de tous les produits restants, intacts et réintégrables ? Le reliquat de chaque lot d’origine sera réintégré.')) return;
-      const stockResult = cancelDispensedPrescriptionStock({ prescriptionId: item.id });
+      const stockResult = cancelDispensedPrescriptionStock({ prescriptionId: current.id });
       if (!stockResult.success) {
         alert(stockResult.error || 'Impossible de réintégrer le stock.');
         return;
@@ -238,7 +246,7 @@ export default function Prescriptions() {
       return;
     }
 
-    const saved = updatePrescription(item.id, {
+    const saved = updatePrescription(current.id, {
       status: 'cancelled',
       cancelledAt: new Date().toISOString(),
     });

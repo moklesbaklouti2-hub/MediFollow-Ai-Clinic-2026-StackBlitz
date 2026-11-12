@@ -1064,3 +1064,7 @@
 ### 2026-11-12 — QW-090 : contrôle préalable d'identité avant délivrance du stock
 - Avant l'enregistrement de quantités et tout mouvement de stock, le formulaire vérifie que l'ordonnance enregistrée correspond à un unique ID et au même patient unique confirmé. Les cas de doublon, de dossier différent ou absent sont refusés avec message explicite.
 - Contrat de source préparé. Aucune sortie physique de stock ni test réel ; Codespaces et données fictives requis.
+
+### 2026-11-12 — QW-091 : annuler une délivrance seulement après vérification d'identité
+- Avant une annulation susceptible de réintégrer des produits au stock, relire l'ordonnance actuelle ; l'identifiant doit être unique, le patient doit correspondre à la ligne affichée et son dossier doit être confirmé. Le statut utilisé est celui réellement stocké, pas celui d'une ligne ancienne.
+- Sur ambiguïté, aucune réintégration ni modification de statut. Contrat synthétique préparé ; tests Codespaces requis.
