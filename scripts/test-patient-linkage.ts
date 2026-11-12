@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1380,3 +1380,39 @@ console.log('PASS QW-100: only explicit draft/validated statuses permit inventor
     'Prescription history must not mislabel validated or unknown documents as drafts.');
 }
 console.log('PASS QW-101: history consistently labels recorded prescription statuses.');
+
+
+// QW-102 — a 'dispensed' status must correspond to existing, unique,
+// positive, patient-linked stock movements, not an unsupported claim.
+{
+  const movement = {
+    id: 'dispense-1', itemId: 'lot-fictif', type: 'dispense' as const,
+    prescriptionId: 'ordonnance-fictive', patientId: 'patient-fictif', quantity: 2,
+  };
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif', [movement]), true);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif', []), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-autre', 'patient-fictif', [movement]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-autre', [movement]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [{ ...movement, id: '' }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [{ ...movement, quantity: 0 }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [{ ...movement, quantity: Number.NaN }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [{ ...movement, itemId: '' }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [movement, { ...movement }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [movement, { ...movement, id: 'dispense-2', patientId: 'patient-autre' }]), false);
+  assert.equal(hasDocumentedPrescriptionDispense('ordonnance-fictive', 'patient-fictif',
+    [{ ...movement, type: 'return' }]), false);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes("changes.status === 'dispensed'") &&
+    update.includes('hasDocumentedPrescriptionDispense(id, currentPrescription.patientId, getInventoryData().movements)') &&
+    update.indexOf('hasDocumentedPrescriptionDispense(') < update.indexOf('savePrescriptions(updated)'),
+    'No central status update to dispensed without coherent real stock trace.');
+}
+console.log('PASS QW-102: untraced, ambiguous or cross-patient stock cannot certify dispensing.');
