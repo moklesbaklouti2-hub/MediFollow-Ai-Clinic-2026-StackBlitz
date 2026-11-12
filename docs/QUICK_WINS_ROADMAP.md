@@ -152,6 +152,8 @@
 
 | QW-101 | S | Afficher fidèlement le statut documentaire des ordonnances dans l'historique, sans assimiler « validée » ou « inconnue » à un brouillon | branche de préparation | Contrat UI et tests Codespaces/CI requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-102 | S | Empêcher le statut « délivrée » sans trace de stock liée à la bonne ordonnance et au bon patient, avec mouvements uniques et quantités valides | branche de préparation | Tests fictifs et CI sur SHA final requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
