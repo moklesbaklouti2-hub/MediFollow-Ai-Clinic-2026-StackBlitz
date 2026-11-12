@@ -830,6 +830,13 @@ export default function Patients() {
               Réinitialiser les filtres
             </button>
           </div>
+          {pagedMedicalTimeline.length < specialtyFilteredMedicalTimeline.length && (
+            <div className="patient-timeline-filter">
+              <button type="button" className="patient-view" onClick={() => setTimelineDisplayLimit('all')}>
+                Afficher tous les résultats correspondants
+              </button>
+            </div>
+          )}
           {medicalTimeline.length === 0 ? (
             <p className="patient-empty-history">Aucune consultation ni ordonnance enregistrée pour ce patient.</p>
           ) : specialtyFilteredMedicalTimeline.length === 0 ? (

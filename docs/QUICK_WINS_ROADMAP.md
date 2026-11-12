@@ -78,6 +78,8 @@
 
 | QW-060 | S | Inclure les contrats UI QW-057–059 dans la campagne complète hors ligne | branche de préparation | Contrat de câblage et test:complete requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-061 | S | Accès direct à tous les résultats correspondants lorsque la limite masque des événements | branche de préparation | Contrat synthétique et essai fictif avec filtres conservés | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

@@ -939,3 +939,7 @@
 ### 2026-11-12 — QW-060 : intégration des contrats de chronologie à la campagne groupée (préparation)
 - `test:complete` appelle désormais `test:timeline-contracts` après les tests hors ligne existants ; les contrats QW-057–059 ne peuvent plus être oubliés lors de cette commande.
 - Contrat synthétique de câblage QW-060, sans réseau ni données patient. Aucun changement de logique médicale. **Non validé**, exécution Codespaces requise.
+
+### 2026-11-12 — QW-061 : accès direct aux résultats masqués par la limite (préparation)
+- Bouton local visible uniquement lorsque des événements correspondants ne sont pas affichés. Il passe la limite à « tous » sans réinitialiser les filtres ni modifier les documents.
+- Contrat synthétique intégré à test:timeline-contracts ; essai fictif avec plus de dix résultats, filtres conservés et absence du bouton lorsque tous sont visibles. **Non validé**, exécution Codespaces requise.
