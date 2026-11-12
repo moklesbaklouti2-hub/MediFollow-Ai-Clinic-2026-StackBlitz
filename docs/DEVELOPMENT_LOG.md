@@ -1099,3 +1099,8 @@
 - Exception étroite : transition `dispensed` vers `cancelled` avec seulement `status` et `cancelledAt` au format ISO. La présence de retours de stock cohérents reste à garantir avant qu'un tel changement de statut soit considéré sûr.
 - Dix scénarios synthétiques et contrat de branche de sauvegarde ajoutés à `test:patient-linkage`. **Préparé mais non validé** : npm et GitHub Actions doivent être exécutés sur le SHA exact d'intégration.
 - Pas de patient réel, pas de fusion ni déploiement. L'environnement isolé ne peut pas cloner le dépôt depuis GitHub : aucune compilation n'est revendiquée.
+
+### 2026-11-12 — QW-098 : exiger tous les retours consignés avant statut « annulée » d'une délivrance
+- Le changement de statut `dispensed` -> `cancelled` via `updatePrescription` est refusé lorsque les délivrances ne possèdent pas toutes des mouvements de retour complets et cohérents, reliés à la même ordonnance, au même patient, au même lot et à des identifiants de mouvement non dupliqués.
+- Une délivrance sans trace, un retour partiel, un retour excédentaire, une attribution à un autre patient ou un identifiant ambigu bloquent la transition. Contrôle documentaire en lecture seule ; il ne prouve ni récupération physique ni qualité sanitaire du produit.
+- Fonction pure `hasFullyDocumentedPrescriptionReturn` et scénarios fictifs dans `test:patient-linkage`. **Préparé, non validé par exécution** ; intégration seulement après compilation, tests offline et CI V2 11/11 sur SHA exact.
