@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -899,3 +900,22 @@ assert.ok(patientPageSource.includes('const patientConsultations = useMemo(') &&
 console.log('PASS QW-069: timeline memoization source contract.');
 
 console.log('PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.');
+
+// QW-076: imported duplicate consultation IDs must never update multiple records.
+{
+  const ids = [{ id: 'unique' }, { id: 'duplicate' }, { id: 'duplicate' }];
+  const before = JSON.stringify(ids);
+  assert.equal(hasUniqueConsultationId('unique', ids), true);
+  assert.equal(hasUniqueConsultationId('duplicate', ids), false);
+  assert.equal(hasUniqueConsultationId('absent', ids), false);
+  assert.equal(hasUniqueConsultationId('', ids), false);
+  assert.equal(hasUniqueConsultationId(null, ids), false);
+  assert.equal(JSON.stringify(ids), before);
+  const hookSource = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const updateBlock = hookSource.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  assert.ok(updateBlock.includes('hasUniqueConsultationId(id, currentConsultations)') &&
+    updateBlock.indexOf('hasUniqueConsultationId(') < updateBlock.indexOf('saveConsultations(updated)'),
+    'Consultation update must reject ambiguous IDs before any persistence.');
+}
+console.log('PASS QW-076: duplicate/missing consultation identifiers refuse update.');

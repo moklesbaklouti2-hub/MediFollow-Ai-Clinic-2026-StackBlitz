@@ -1004,3 +1004,7 @@
 ### 2026-11-12 — QW-075 : recherche documentaire Follow-up (préparation)
 - Recherche locale dans les seuls objectifs textuels consignés des suivis en retard, à date invalide et ultérieurs. Accents/casse ignorés ; résultats comptés, filtre effaçable. Aucun appel IA ni recherche par identité du patient, aucune mutation.
 - Tests synthétiques et contrats source ajoutés à test-follow-up.ts ; non exécutés, validation Codespaces requise.
+
+### 2026-11-12 — QW-076 : bloquer les modifications sur identifiants de consultation ambigus
+- Garde-fou dans le point d'écriture central des consultations : updateConsultation refuse l'absence ou la duplication d'un identifiant d'enregistrement importé. Les enregistrements ne sont ni fusionnés ni dédupliqués silencieusement.
+- Test synthétique du helper et contrat de la fonction d'écriture ; aucune donnée réelle. Préparé, validation Codespaces requise.

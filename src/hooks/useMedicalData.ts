@@ -1,5 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
+import { hasUniqueConsultationId } from '../services/consultationIdentity';
 
 import type {
   Patient,
@@ -137,7 +138,9 @@ export function useMedicalData() {
     id: string,
     changes: Partial<Consultation>
   ) => {
-    const updated = getMedicalData().consultations.map((item) =>
+    const currentConsultations = getMedicalData().consultations;
+    if (!hasUniqueConsultationId(id, currentConsultations)) return false;
+    const updated = currentConsultations.map((item) =>
       item.id === id
         ? {
             ...item,
