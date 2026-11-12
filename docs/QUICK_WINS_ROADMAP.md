@@ -148,6 +148,8 @@
 
 | QW-099 | S | Refuser la suppression d'une ordonnance dont le statut importé est explicitement inconnu ; conserver les dossiers historiques | branche de préparation | Tests fictifs, compilation et CI requises | PRÉPARÉ NON VALIDÉ |
 
+| QW-100 | S | Autoriser la délivrance seulement sur statut courant explicite « brouillon » ou « validée », jamais sur statut importé inconnu/absent | branche de préparation | Tests fictifs et validation Codespaces/CI sur SHA final | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
