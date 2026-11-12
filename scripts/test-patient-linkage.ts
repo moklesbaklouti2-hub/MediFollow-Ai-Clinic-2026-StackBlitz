@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, hasFullyDocumentedPrescriptionReturn } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1272,3 +1272,50 @@ console.log('PASS QW-096: stale form cannot edit dispensed or cancelled prescrip
     'All callers must be subject to the finalized-order guard before any write.');
 }
 console.log('PASS QW-097: finalized prescription content immutable; explicit cancellation remains possible.');
+
+// QW-098 — all dispense movements must have full, unambiguous return traces
+// before the central hook permits the final status change to cancelled.
+{
+  const originals = [
+    { id: 'disp-1', type: 'dispense' as const, itemId: 'lot-1',
+      prescriptionId: 'rx-fictif', patientId: 'patient-fictif', quantity: 3 },
+    { id: 'disp-2', type: 'dispense' as const, itemId: 'lot-2',
+      prescriptionId: 'rx-fictif', patientId: 'patient-fictif', quantity: 2 },
+  ];
+  const returns = [
+    { id: 'return-1', type: 'return' as const, itemId: 'lot-1',
+      prescriptionId: 'rx-fictif', patientId: 'patient-fictif',
+      quantity: 1, reversesMovementId: 'disp-1' },
+    { id: 'return-2', type: 'return' as const, itemId: 'lot-1',
+      prescriptionId: 'rx-fictif', patientId: 'patient-fictif',
+      quantity: 2, reversesMovementId: 'disp-1' },
+    { id: 'return-3', type: 'return' as const, itemId: 'lot-2',
+      prescriptionId: 'rx-fictif', patientId: 'patient-fictif',
+      quantity: 2, reversesMovementId: 'disp-2' },
+  ];
+  const complete = [...originals, ...returns];
+  const before = JSON.stringify(complete);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', complete), true);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', []), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'autre-patient', complete), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('autre-rx', 'patient-fictif', complete), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', [...originals, ...returns.slice(0, 2)]), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', [...complete, returns[0]]), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', [
+    ...originals, ...returns.slice(1), { ...returns[0], quantity: 4 },
+  ]), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', [
+    ...originals, ...returns.slice(1), { ...returns[0], patientId: 'autre-patient' },
+  ]), false);
+  assert.equal(hasFullyDocumentedPrescriptionReturn('rx-fictif', 'patient-fictif', [
+    ...originals, ...returns, { ...returns[2], id: 'orphan', reversesMovementId: 'unknown' },
+  ]), false);
+  assert.equal(JSON.stringify(complete), before, 'Validation must be read-only.');
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('hasFullyDocumentedPrescriptionReturn(id, currentPrescription.patientId, getInventoryData().movements)') &&
+    update.indexOf('hasFullyDocumentedPrescriptionReturn(') < update.indexOf('savePrescriptions(updated)'),
+    'Complete returns must be checked before any status write.');
+}
+console.log('PASS QW-098: all returns fully documented before cancelling dispensed order.');
