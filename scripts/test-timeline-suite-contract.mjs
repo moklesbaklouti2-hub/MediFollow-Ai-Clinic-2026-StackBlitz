@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 const { scripts } = JSON.parse(readFileSync('package.json', 'utf8'));
 assert.ok(scripts['test:complete'].split(' && ').includes('npm run test:timeline-contracts'));
+assert.ok(scripts['test:complete'].split(' && ').includes('npm run test:timeline-composition'));
+assert.equal(scripts['test:timeline-composition'], 'tsx scripts/test-timeline-composition.ts');
+assert.ok(existsSync('scripts/test-timeline-composition.ts'));
 const commands = scripts['test:timeline-contracts'].split(' && ');
 for (const path of [
   'scripts/test-timeline-active-filter-contract.mjs',

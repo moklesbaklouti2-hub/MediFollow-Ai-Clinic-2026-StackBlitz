@@ -13,14 +13,15 @@
     "test:clinical-regression": "tsx server/ai/test-clinical-regression.ts",
     "test:all-offline": "npm run test:ai-resilience && npm run test:clinical-regression && npm run test:medical-dictionary && npm run test:medical-speech && npm run test:inventory-dispense && npm run test:patient-linkage && npm run test:follow-up",
     "test:clinical-live": "tsx server/ai/test-clinical-live.ts",
-    "test:complete": "npm run build && npm run test:all-offline && npm run test:timeline-contracts",
+    "test:complete": "npm run build && npm run test:all-offline && npm run test:timeline-contracts && npm run test:timeline-composition",
     "test:timeline-contracts": "node scripts/test-timeline-active-filter-contract.mjs && node scripts/test-timeline-results-accessibility-contract.mjs && node scripts/test-timeline-date-help-contract.mjs && node scripts/test-timeline-show-all-contract.mjs && node scripts/test-timeline-search-help-contract.mjs && node scripts/test-timeline-suite-contract.mjs",
     "test:medical-dictionary": "tsx scripts/test-medical-dictionary.ts",
     "test:medical-speech": "tsx scripts/test-medical-speech-regression.ts",
     "test:access-decision": "node scripts/test-access-decision-contract.mjs",
     "test:inventory-dispense": "tsx scripts/test-inventory-dispense-regression.ts",
     "test:patient-linkage": "tsx scripts/test-patient-linkage.ts",
-    "test:follow-up": "tsx scripts/test-follow-up.ts"
+    "test:follow-up": "tsx scripts/test-follow-up.ts",
+    "test:timeline-composition": "tsx scripts/test-timeline-composition.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
