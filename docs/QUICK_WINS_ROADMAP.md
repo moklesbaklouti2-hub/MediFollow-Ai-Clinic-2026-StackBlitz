@@ -71,7 +71,10 @@
 | QW-055 | S | Réinitialiser tous les filtres de chronologie au changement de patient ou par bouton | branche de préparation | Tests UI de remise à zéro, dossiers fictifs croisés | PRÉPARÉ NON VALIDÉ |
 | QW-056 | S | Compteurs de complétude documentaire de la chronologie (dates, spécialités, statuts) | branche de préparation | Test de source par dossier, non-inférence et immutabilité | PRÉPARÉ NON VALIDÉ |
 
+| QW-057 | S | Indicateur local du nombre de filtres actifs de la chronologie | branche de préparation (`2dc3766`) | Contrat synthétique et essai UI fictif | PRÉPARÉ NON VALIDÉ |
 | QW-058 | S | Annonce accessible et non intrusive du nombre de résultats de chronologie après filtrage | branche de préparation | Test synthétique + lecteur écran et navigation clavier à la validation finale | PRÉPARÉ NON VALIDÉ |
+
+| QW-059 | S | Expliquer une période inversée et associer le message aux deux champs de date | branche de préparation | Contrat synthétique et essai des dates inversées | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

@@ -108,6 +108,7 @@ export default function Patients() {
   const pagedMedicalTimeline = limitTimelineEvents(specialtyFilteredMedicalTimeline, timelineDisplayLimit);
   const timelineDocumentation = summarizeTimelineDocumentation(medicalTimeline);
   // Display-only indicator: count active view restrictions, not hidden records.
+  const timelineDateRangeReversed = timelineFromDate !== '' && timelineToDate !== '' && timelineFromDate > timelineToDate;
   const activeTimelineFilterCount = [
     timelineFilter !== 'all',
     timelineSearch.trim().length > 0,
@@ -802,11 +803,17 @@ export default function Patients() {
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-from">Date début :</label>
             <input id="patient-timeline-from" type="date" value={timelineFromDate}
+              aria-invalid={timelineDateRangeReversed} aria-describedby="patient-timeline-date-help"
               onChange={(event) => setTimelineFromDate(event.target.value)} />
             <label htmlFor="patient-timeline-to">Date fin :</label>
             <input id="patient-timeline-to" type="date" value={timelineToDate}
+              aria-invalid={timelineDateRangeReversed} aria-describedby="patient-timeline-date-help"
               onChange={(event) => setTimelineToDate(event.target.value)} />
-            <span>Les événements sans date valide ne figurent pas dans une période filtrée.</span>
+            <span id="patient-timeline-date-help">
+              {timelineDateRangeReversed
+                ? 'La date de début est postérieure à la date de fin. Corrigez les bornes pour afficher les résultats.'
+                : 'Les événements sans date valide ne figurent pas dans une période filtrée.'}
+            </span>
           </div>
           <div className="patient-timeline-filter">
             <label htmlFor="patient-timeline-limit">Afficher les plus récents :</label>

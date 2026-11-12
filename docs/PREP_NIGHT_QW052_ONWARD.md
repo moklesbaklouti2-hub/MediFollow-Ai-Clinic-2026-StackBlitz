@@ -47,3 +47,8 @@ Le HEAD de cette branche peut changer ; toujours vérifier le SHA le jour du tes
 - Le panneau chronologique indique si aucun filtre n'est actif ou combien de restrictions de vue sont appliquées.
 - La limite 10/25/50/tous n'est pas un filtre de recherche ; la spécialité et le statut ne comptent que dans leur type d'événement.
 - Contrat synthétique : `node scripts/test-timeline-active-filter-contract.mjs`. Vérifier aussi `npm run test:complete` puis l'interface sur données fictives, sans annoncer VERT avant résultats.
+
+## QW-058–059 — contrôles complémentaires (préparés, non validés)
+- `node scripts/test-timeline-results-accessibility-contract.mjs`
+- `node scripts/test-timeline-date-help-contract.mjs`
+- Vérifier sur données fictives : dates inversées, dates égales, effacement d'une borne, remise à zéro, annonce accessible des résultats. Aucun changement des dossiers.

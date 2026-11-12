@@ -931,3 +931,7 @@
 ### 2026-11-12 — QW-058 : annonce accessible des résultats de chronologie (préparation)
 - Le compteur affichés / correspondants / total est présenté dans une région `role="status"` avec `aria-live="polite"` et `aria-atomic="true"`, sans changement des données ni des filtres.
 - Contrat synthétique `node scripts/test-timeline-results-accessibility-contract.mjs` préparé ; compilation, test UI fictif et lecteur écran restent à effectuer dans Codespaces. **Non validé**.
+
+### 2026-11-12 — QW-059 : aide de saisie des dates inversées (préparation)
+- Signalement local d'une date de début postérieure à la fin ; les deux champs référencent le message et portent aria-invalid. Aucun changement du filtrage, des dossiers ou de la logique médicale.
+- Rétablissement de la ligne QW-057 omise du registre ; aucune réimplémentation. Contrat synthétique préparé, non exécuté : `node scripts/test-timeline-date-help-contract.mjs`.
