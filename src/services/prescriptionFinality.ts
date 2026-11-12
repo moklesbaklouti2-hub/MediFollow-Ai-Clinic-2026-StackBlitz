@@ -76,3 +76,9 @@ export function hasFullyDocumentedPrescriptionReturn(
   }
   return true;
 }
+// QW-099 — unknown imported statuses must never be silently interpreted
+// as an editable draft when deleting clinical records. Legacy missing status
+// remains compatible, but an explicit unfamiliar value fails closed.
+export function isDeletablePrescriptionStatus(status: unknown): boolean {
+  return status === undefined || status === 'draft' || status === 'validated';
+}
