@@ -93,6 +93,8 @@
 
 | QW-071 | S | HELIOS Follow-up : compter séparément les contrôles valides au-delà de 7 jours | branche de préparation | Test synthétique bornes inclusives et contrat Dashboard ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-072 | S | HELIOS Follow-up : liste des plans datés incorrectement, ouverture uniquement sur identité unique confirmée | branche de préparation | Cas fictifs, non-mutation et contrat UI sans clôture ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

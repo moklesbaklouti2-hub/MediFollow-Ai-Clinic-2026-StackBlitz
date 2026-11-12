@@ -96,3 +96,13 @@ export function countLaterPlannedFollowUps(
       Date.parse(plan.dueDate + 'T00:00:00Z') > cutoff;
   }).length;
 }
+
+/** QW-072: list imported invalid-date plans separately, without modifying them. */
+export function selectUndatedPlannedFollowUps(
+  consultations: readonly Consultation[],
+): Consultation[] {
+  return consultations
+    .filter(item => !!item.followUp && item.followUp.status === 'planned' &&
+      !isValidFollowUpDate(item.followUp.dueDate))
+    .sort((a, b) => a.id.localeCompare(b.id));
+}

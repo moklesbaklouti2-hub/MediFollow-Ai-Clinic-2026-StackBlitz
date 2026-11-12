@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, completedFollowUpPlan } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
@@ -517,6 +517,7 @@ export default function Consultations({
   );
   const followUpToday = new Date().toLocaleDateString('sv-SE');
   const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
+  const undatedFollowUps = selectUndatedPlannedFollowUps(consultations);
 
   const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
   const selectedPatient = !expressPatientMismatch
@@ -1314,6 +1315,37 @@ export default function Consultations({
           })
         )}
       </div>
+
+      {undatedFollowUps.length > 0 && (
+        <div className="consultation-section" aria-label="HELIOS Follow-up : dates à corriger">
+          <h3>HELIOS Follow-up · dates à corriger ({undatedFollowUps.length})</h3>
+          <p className="patient-hint">
+            Plans consignés sans date de suivi valide : aucune échéance ni urgence n’est déduite.
+            Vérifier la date avant toute modification du dossier.
+          </p>
+          {undatedFollowUps.map((item) => {
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find(patient => patient.id === item.patientId)
+              : undefined;
+            return (
+              <div className="saved-consultation" key={'undated-follow-up-' + item.id}>
+                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <span>Date de suivi absente ou invalide</span>
+                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                {linkedPatient ? (
+                  <button type="button" className="consultation-save"
+                    onClick={() => startEditing(item)}
+                    style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                    Ouvrir pour corriger la date
+                  </button>
+                ) : (
+                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <div className="consultation-section">
         <h3>Historique des consultations ({consultations.length})</h3>

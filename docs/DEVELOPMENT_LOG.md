@@ -988,3 +988,7 @@
 ### 2026-11-12 — QW-071 : horizons de suivi au-delà de 7 jours (préparation)
 - Les suivis planifiés à plus de 7 jours disposent d'un compteur local distinct sur Dashboard, sans modifier l'indicateur de 7 jours et sans calculer d'urgence clinique.
 - Contrats de période inclusive/exclusive, de statut et de non-mutation préparés. Pas de test Codespaces exécuté à ce stade.
+
+### 2026-11-12 — QW-072 : retrouver les plans de suivi dont la date est invalide (préparation)
+- Liste documentaire distincte des échéances dans Consultations. Ouvrir pour corriger uniquement si l'identifiant patient est unique et reconnu ; aucune clôture rapide ni inférence d'urgence.
+- Cas fictifs et contrat UI préparés dans `scripts/test-follow-up.ts`, en attente de compilation et campagne complète Codespaces.

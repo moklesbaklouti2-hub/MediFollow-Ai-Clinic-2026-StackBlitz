@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -255,3 +255,23 @@ assert.equal(JSON.stringify(longHorizonFixtures), longHorizonBefore);
 assert.ok(dashboardUI.includes('countLaterPlannedFollowUps(clinicalConsultations,') &&
   dashboardUI.includes('planifié(s) à plus de 7 jours'));
 console.log('PASS QW-071: future follow-up horizon is displayed without status mutation.');
+
+// QW-072: invalid imported follow-up dates must be reviewable, never auto-completed.
+const undatedRows = [
+  { id: 'z', followUp: f('invalid').followUp },
+  { id: 'a', followUp: f('').followUp },
+  { id: 'x', followUp: f('2026-11-10').followUp },
+  { id: 'y', followUp: f('invalid', 'completed').followUp },
+];
+const undatedRowsBefore = JSON.stringify(undatedRows);
+assert.deepEqual(selectUndatedPlannedFollowUps(
+  undatedRows as Parameters<typeof selectUndatedPlannedFollowUps>[0],
+).map(item => item.id), ['a', 'z']);
+assert.equal(JSON.stringify(undatedRows), undatedRowsBefore);
+const invalidDateSection = consultationUI.split('HELIOS Follow-up · dates à corriger (')[1]
+  ?.split('Historique des consultations')[0] ?? '';
+assert.ok(invalidDateSection.includes('hasConfirmedPatientSelection(item.patientId, patients)') &&
+  invalidDateSection.includes('onClick={() => startEditing(item)}') &&
+  !invalidDateSection.includes('completeFollowUp(item)'),
+  'Invalid dates may be opened only for a uniquely linked patient, never auto-completed.');
+console.log('PASS QW-072: read-only invalid-date worklist and confirmed-identity edit action.');
