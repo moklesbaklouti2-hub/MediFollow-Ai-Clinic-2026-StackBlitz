@@ -101,6 +101,19 @@ export default function Prescriptions() {
 
   function savePrescription() {
     if (!validatePrescription()) return;
+    // QW-096 — a stale editor must never rewrite a cancelled or dispensed
+    // prescription, even when an older UI snapshot still enables Save.
+    if (editingId) {
+      const currentData = getMedicalData();
+      const matches = currentData.prescriptions.filter((row) => row.id === editingId);
+      const current = matches.length === 1 ? matches[0] : undefined;
+      if (!current || current.patientId !== patientId ||
+          !hasConfirmedPatientSelection(patientId, currentData.patients) ||
+          current.status === 'cancelled' || current.status === 'dispensed') {
+        setSavedMessage('Modification refusée : ordonnance absente, annulée, délivrée ou dossier patient ambigu. Aucun document modifié.');
+        return;
+      }
+    }
 
     const prescriptionData = {
       patientId,
