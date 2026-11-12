@@ -134,6 +134,8 @@
 | QW-091 | S | Vérifier l'ordonnance actuelle et l'identité patient avant toute annulation avec réintégration de stock | branche de préparation | Tests fictifs et contrat avant mouvement ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 | QW-092 | S | Empêcher les retours partiels de stock sur mouvement ou ordonnance ambiguë, patient différent ou statut obsolète | branche de préparation | Contrat source QW-092 et essais fictifs Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-093 | S | Refuser l'ouverture d'une ordonnance ambiguë ou déplacée vers un autre patient ; charger uniquement sa version courante | branche de préparation | Contrat UI et tests fictifs Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
