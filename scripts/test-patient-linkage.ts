@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
+import { allowsFinalizedPrescriptionUpdate } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1241,3 +1242,33 @@ console.log('PASS QW-095: cancelled orders cannot trigger dispensing or stock de
     'Saving edits must refuse cancelled, dispensed or re-linked orders before persistence.');
 }
 console.log('PASS QW-096: stale form cannot edit dispensed or cancelled prescriptions.');
+
+// QW-097: immutable finalized prescriptions at central storage boundary.
+// A dispensed document may only be marked cancelled with a documented time;
+// medication, patient, quantity and advice edits must remain forbidden.
+{
+  const nowIso = '2026-11-12T09:00:00.000Z';
+  const dispensed = { status: 'dispensed' as const };
+  const cancelled = { status: 'cancelled' as const };
+  const draft = { status: 'draft' as const };
+  assert.equal(allowsFinalizedPrescriptionUpdate(draft, { advice: 'Test fictif' }), true);
+  assert.equal(allowsFinalizedPrescriptionUpdate(cancelled, { advice: 'Fictif' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(cancelled, { status: 'draft' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed, { advice: 'Fictif' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed, { medications: [] }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed, { status: 'draft' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed, { status: 'cancelled' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed,
+    { status: 'cancelled', cancelledAt: 'date inconnue' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed,
+    { status: 'cancelled', cancelledAt: nowIso, advice: 'Modification parasite' }), false);
+  assert.equal(allowsFinalizedPrescriptionUpdate(dispensed,
+    { status: 'cancelled', cancelledAt: nowIso }), true);
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('allowsFinalizedPrescriptionUpdate(currentPrescription, changes)') &&
+    update.indexOf('allowsFinalizedPrescriptionUpdate(') < update.indexOf('savePrescriptions(updated)'),
+    'All callers must be subject to the finalized-order guard before any write.');
+}
+console.log('PASS QW-097: finalized prescription content immutable; explicit cancellation remains possible.');
