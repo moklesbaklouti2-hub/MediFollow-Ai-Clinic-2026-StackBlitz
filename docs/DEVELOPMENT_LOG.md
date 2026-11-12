@@ -1073,3 +1073,8 @@
 - Dans la page Ordonnances, après la confirmation physique et avant l'appel de réintégration, relire l'ordonnance actuelle, le dossier patient et le mouvement d'origine. Refuser si ordonnance absente ou identifiant dupliqué, patient modifié/non unique, statut autre que « délivrée », mouvement ambigu, non délivrance ou lié à un autre patient/ordonnance.
 - Réutilisation du garde-fou de stock existant pour la quantité, les retours déjà enregistrés, le lot et la péremption ; aucune règle d'interprétation médicale ajoutée.
 - Contrat synthétique ajouté à `scripts/test-patient-linkage.ts`. **Préparé, non exécuté :** compilation, tests Codespaces et CI finale indispensables. Aucun patient réel ni mouvement de stock effectué durant la préparation.
+
+### 2026-11-12 — QW-093 : ouverture d'ordonnance avec source courante et identité vérifiée
+- Le bouton « Modifier » dans l'historique recharge l'ordonnance actuelle avant toute modification du formulaire. Si son identifiant est absent ou dupliqué, si le lien patient a changé ou si le patient n'est plus unique, l'ouverture est refusée et signalée.
+- Les champs du formulaire sont peuplés depuis l'ordonnance actuelle uniquement, jamais depuis une ancienne ligne conservée à l'écran. Un tableau de médicaments corrompu est refusé sans exception dans cette interface.
+- Contrat QW-093 ajouté au test de liaison patient. **Préparé, non testé** dans Codespaces ; compilation et CI requises avant validation. Aucun changement de `main`, aucun déploiement, aucune donnée réelle.
