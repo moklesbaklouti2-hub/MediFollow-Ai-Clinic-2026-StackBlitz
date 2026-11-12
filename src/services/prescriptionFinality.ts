@@ -88,3 +88,34 @@ export function isDeletablePrescriptionStatus(status: unknown): boolean {
 export function isDispensablePrescriptionStatus(status: unknown): boolean {
   return status === 'draft' || status === 'validated';
 }
+
+
+// QW-102 — a caller cannot mark a prescription as dispensed without a
+// traceable inventory movement for that very document and patient.
+// This only verifies records; it never asserts that items were physically given.
+export function hasDocumentedPrescriptionDispense(
+  prescriptionId: string,
+  patientId: string,
+  movements: readonly ReturnTrace[],
+): boolean {
+  if (typeof prescriptionId !== 'string' || !prescriptionId.trim() ||
+      typeof patientId !== 'string' || !patientId.trim() ||
+      !Array.isArray(movements)) return false;
+
+  const dispenses = movements.filter(move =>
+    move && move.type === 'dispense' && move.prescriptionId === prescriptionId);
+  if (dispenses.length === 0) return false;
+
+  const ids = new Set<string>();
+  for (const movement of movements) {
+    if (!movement || typeof movement.id !== 'string' || !movement.id.trim()) return false;
+    if (ids.has(movement.id)) return false;
+    ids.add(movement.id);
+  }
+
+  return dispenses.every(move =>
+    move.patientId === patientId &&
+    typeof move.itemId === 'string' && move.itemId.trim().length > 0 &&
+    typeof move.quantity === 'number' &&
+    Number.isFinite(move.quantity) && move.quantity > 0);
+}
