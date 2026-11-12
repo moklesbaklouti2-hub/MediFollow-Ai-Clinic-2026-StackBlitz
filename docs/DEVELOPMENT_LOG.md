@@ -1008,3 +1008,7 @@
 ### 2026-11-12 — QW-076 : bloquer les modifications sur identifiants de consultation ambigus
 - Garde-fou dans le point d'écriture central des consultations : updateConsultation refuse l'absence ou la duplication d'un identifiant d'enregistrement importé. Les enregistrements ne sont ni fusionnés ni dédupliqués silencieusement.
 - Test synthétique du helper et contrat de la fonction d'écriture ; aucune donnée réelle. Préparé, validation Codespaces requise.
+
+### 2026-11-12 — QW-077 : bloquer les suppressions ambiguës de consultations
+- L'opération centrale deleteConsultation rejette un identifiant vide, absent ou dupliqué, sans supprimer plusieurs consultations issues d'une sauvegarde problématique.
+- Test de non-régression fictif et contrat source ajoutés. À vérifier dans Codespaces avant validation.

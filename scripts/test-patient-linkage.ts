@@ -919,3 +919,18 @@ console.log('PASS: legacy document linkage, 10 orphan records detected, visible 
     'Consultation update must reject ambiguous IDs before any persistence.');
 }
 console.log('PASS QW-076: duplicate/missing consultation identifiers refuse update.');
+
+// QW-077: deletion must also fail closed for duplicate or missing IDs.
+{
+  const ids = [{ id: 'one' }, { id: 'same' }, { id: 'same' }];
+  assert.equal(hasUniqueConsultationId('one', ids), true);
+  assert.equal(hasUniqueConsultationId('same', ids), false);
+  assert.equal(hasUniqueConsultationId('unknown', ids), false);
+  const code = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = code.split('const deleteConsultation = useCallback(')[1]
+    ?.split('// ORDONNANCES')[0] ?? '';
+  assert.ok(deletion.includes('if (!hasUniqueConsultationId(id, currentConsultations)) return false;') &&
+    deletion.indexOf('hasUniqueConsultationId(') < deletion.indexOf('saveConsultations(updated)'),
+    'No consultation may be deleted by an ambiguous or absent ID.');
+}
+console.log('PASS QW-077: ambiguous consultation IDs cannot trigger deletion.');

@@ -155,7 +155,9 @@ export function useMedicalData() {
   }, []);
 
   const deleteConsultation = useCallback((id: string) => {
-    const updated = getMedicalData().consultations.filter(
+    const currentConsultations = getMedicalData().consultations;
+    if (!hasUniqueConsultationId(id, currentConsultations)) return false;
+    const updated = currentConsultations.filter(
       (item) => item.id !== id
     );
 

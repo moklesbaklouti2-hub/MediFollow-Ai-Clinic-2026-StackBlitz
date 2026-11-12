@@ -103,6 +103,8 @@
 
 | QW-076 | S | Refuser toute modification de consultation si son identifiant est absent ou dupliqué après import | branche de préparation | Tests synthétiques et contrat du hook de stockage ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-077 | S | Refuser la suppression de consultations pour un identifiant absent ou dupliqué après import | branche de préparation | Tests synthétiques et contrat du hook ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
