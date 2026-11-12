@@ -1048,3 +1048,7 @@
 ### 2026-11-12 — QW-086 : ordonnance créée seulement pour un dossier patient unique
 - Le hook central de création d'ordonnance vérifie l'existence et l'unicité de l'identifiant patient, même lorsque l'appel ne provient pas du formulaire Ordonnances. Refus sans écrire si dossier inexistant, vide ou ambigu.
 - Cas fictifs et contrat source ajoutés ; exécution Codespaces et CI encore requises.
+
+### 2026-11-12 — QW-087 : protéger les ordonnances liées au journal du stock
+- Refus central de suppression si un mouvement de stock enregistré référence l'ordonnance, même lorsque son statut d'ordonnance ancien n'indique pas une délivrance. Le journal de stock et les dossiers restent inchangés.
+- Cas synthétiques et contrat sur le hook préparés ; pas de validation en Codespaces à ce stade.

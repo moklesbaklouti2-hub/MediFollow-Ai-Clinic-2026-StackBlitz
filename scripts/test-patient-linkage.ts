@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
-import { hasUniquePrescriptionId } from '../src/services/prescriptionIdentity.ts';
+import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement } from '../src/services/prescriptionIdentity.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1060,3 +1060,26 @@ console.log('PASS QW-085: central consultation creation requires unique patient.
   assert.equal(hasConfirmedPatientSelection('unknown', records), false);
 }
 console.log('PASS QW-086: central prescription creation guarded by patient identity.');
+
+// QW-087: preserve an inventory audit trail linked to a prescription, including
+// dispenses and returns imported with older or missing prescription statuses.
+{
+  const movements = [
+    { prescriptionId: 'rx-dispensed' },
+    { prescriptionId: 'rx-returned' },
+    { prescriptionId: undefined },
+  ];
+  const before = JSON.stringify(movements);
+  assert.equal(prescriptionHasRecordedStockMovement('rx-dispensed', movements), true);
+  assert.equal(prescriptionHasRecordedStockMovement('rx-returned', movements), true);
+  assert.equal(prescriptionHasRecordedStockMovement('rx-unlinked', movements), false);
+  assert.equal(prescriptionHasRecordedStockMovement('', movements), false);
+  assert.equal(JSON.stringify(movements), before, 'No inventory mutation is permitted.');
+  const source = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const deletion = source.split('const deletePrescription = useCallback(')[1]
+    ?.split('// PARAMÈTRES')[0] ?? '';
+  assert.ok(deletion.includes('prescriptionHasRecordedStockMovement(id, getInventoryData().movements)') &&
+    deletion.indexOf('prescriptionHasRecordedStockMovement(') < deletion.indexOf('savePrescriptions(updated)'),
+    'Deleting an order referenced by a stock movement must be blocked before persistence.');
+}
+console.log('PASS QW-087: inventory movement links prevent prescription deletion.');

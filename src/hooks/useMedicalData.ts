@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
-import { hasUniquePrescriptionId } from '../services/prescriptionIdentity';
+import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement } from '../services/prescriptionIdentity';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -21,6 +21,7 @@ import {
   saveSettings,
   getDeletedPatients,
   saveDeletedPatients,
+  getInventoryData,
   subscribeToMedicalData,
   createId,
 } from '../services/storage';
@@ -217,6 +218,7 @@ export function useMedicalData() {
   const deletePrescription = useCallback((id: string) => {
     const currentPrescriptions = getMedicalData().prescriptions;
     if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
+    if (prescriptionHasRecordedStockMovement(id, getInventoryData().movements)) return false;
     const updated = currentPrescriptions.filter(
       (item) => item.id !== id
     );

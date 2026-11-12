@@ -123,6 +123,8 @@
 
 | QW-086 | S | Vérifier l'identifiant patient unique avant toute création d'ordonnance depuis le hook central, quelle que soit l'interface | branche de préparation | Contrat du hook et cas fictifs ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-087 | S | Préserver les ordonnances référencées par un mouvement de stock, même si le statut importé est absent ou ancien | branche de préparation | Tests fictifs, trace non mutée et contrat hook ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
