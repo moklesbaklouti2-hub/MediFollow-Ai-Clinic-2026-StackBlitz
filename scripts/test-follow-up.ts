@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -326,3 +326,26 @@ console.log('PASS QW-073: reviewable future plans sorted by recorded date, with 
   assert.equal(JSON.stringify(fixtures), before);
 }
 console.log('PASS QW-074: follow-up horizons partition and dashboard/list agreement.');
+
+// QW-075: objective search remains local, accent-insensitive, and non-mutating.
+{
+  const rows = [
+    { id: 'a', followUp: { dueDate: '2026-11-20', objective: 'Réévaluer la dyspnée', status: 'planned' as const } },
+    { id: 'b', followUp: { dueDate: '2026-11-21', objective: 'Contrôle des constantes', status: 'planned' as const } },
+    { id: 'c', followUp: { dueDate: '2026-11-22', objective: '', status: 'planned' as const } },
+    { id: 'd', followUp: undefined },
+  ];
+  const initial = JSON.stringify(rows);
+  assert.deepEqual(filterFollowUpsByObjective(rows, '  DYSPNEE ').map(item => item.id), ['a']);
+  assert.deepEqual(filterFollowUpsByObjective(rows, 'controle').map(item => item.id), ['b']);
+  assert.deepEqual(filterFollowUpsByObjective(rows, 'aucune correspondance'), []);
+  assert.deepEqual(filterFollowUpsByObjective(rows, '').map(item => item.id), ['a', 'b', 'c', 'd']);
+  assert.deepEqual(filterFollowUpsByObjective(rows, '   ').map(item => item.id), ['a', 'b', 'c', 'd']);
+  assert.equal(JSON.stringify(rows), initial);
+  assert.ok(consultationUI.includes('id="follow-up-search-objective"') &&
+    consultationUI.includes('setFollowUpSearch(e.target.value)') &&
+    consultationUI.includes('filterFollowUpsByObjective(selectDueFollowUps(') &&
+    consultationUI.includes('filterFollowUpsByObjective(selectUndatedPlannedFollowUps(') &&
+    consultationUI.includes('filterFollowUpsByObjective(selectLaterPlannedFollowUps('));
+}
+console.log('PASS QW-075: local objective search, three worklists and non-mutation.');

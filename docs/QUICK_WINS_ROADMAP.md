@@ -99,6 +99,8 @@
 
 | QW-074 | S | Vérifier la cohérence des compteurs et listes HELIOS Follow-up sur tous les horizons, y compris changement d’année | branche de préparation | Test fictif de partition, non-mutation et concordance ; Codespaces requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-075 | S | Recherche locale des objectifs consignés dans les trois listes HELIOS Follow-up, insensible aux accents | branche de préparation | Tests synthétiques, zéro mutation, recherche UI Codespaces requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

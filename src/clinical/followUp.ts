@@ -123,3 +123,20 @@ export function selectLaterPlannedFollowUps(
     .sort((a, b) => (a.followUp?.dueDate ?? '').localeCompare(b.followUp?.dueDate ?? '') ||
       a.id.localeCompare(b.id));
 }
+
+// QW-075: local, read-only search in explicitly documented follow-up objectives.
+// No patient identifier, decision, medical synonym, or remote AI search is used.
+function normalizeFollowUpObjectiveSearch(value: unknown): string {
+  return typeof value === 'string'
+    ? value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr-FR').trim()
+    : '';
+}
+
+export function filterFollowUpsByObjective<T extends Pick<Consultation, 'followUp'>>(
+  rows: readonly T[], query: string,
+): T[] {
+  const needle = normalizeFollowUpObjectiveSearch(query);
+  if (!needle) return [...rows];
+  return rows.filter(item =>
+    normalizeFollowUpObjectiveSearch(item.followUp?.objective).includes(needle));
+}

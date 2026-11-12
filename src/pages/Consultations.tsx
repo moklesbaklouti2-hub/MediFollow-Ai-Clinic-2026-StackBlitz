@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
@@ -172,6 +172,7 @@ export default function Consultations({
   const [plan, setPlan] = useState('');
   const [followUpDate, setFollowUpDate] = useState('');
   const [followUpObjective, setFollowUpObjective] = useState('');
+  const [followUpSearch, setFollowUpSearch] = useState('');
   const [followUpCompleted, setFollowUpCompleted] = useState(false);
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
@@ -516,9 +517,9 @@ export default function Consultations({
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
   const followUpToday = new Date().toLocaleDateString('sv-SE');
-  const dueFollowUps = selectDueFollowUps(consultations, followUpToday);
-  const undatedFollowUps = selectUndatedPlannedFollowUps(consultations);
-  const laterFollowUps = selectLaterPlannedFollowUps(consultations, followUpToday);
+  const dueFollowUps = filterFollowUpsByObjective(selectDueFollowUps(consultations, followUpToday), followUpSearch);
+  const undatedFollowUps = filterFollowUpsByObjective(selectUndatedPlannedFollowUps(consultations), followUpSearch);
+  const laterFollowUps = filterFollowUpsByObjective(selectLaterPlannedFollowUps(consultations, followUpToday), followUpSearch);
 
   const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
   const selectedPatient = !expressPatientMismatch
@@ -1275,6 +1276,23 @@ export default function Consultations({
           Consultation enregistrée et reliée au dossier du patient.
         </div>
       )}
+
+      <div className="consultation-section" aria-label="HELIOS Follow-up : recherche locale">
+        <label htmlFor="follow-up-search-objective">Rechercher dans les objectifs des suivis</label>
+        <input id="follow-up-search-objective" type="search" value={followUpSearch} maxLength={100}
+          onChange={(e) => setFollowUpSearch(e.target.value)}
+          placeholder="Exemple : constantes, contrôle, bilan..."
+          style={{ width: '100%', marginTop: 8 }} />
+        {followUpSearch && (
+          <button type="button" onClick={() => setFollowUpSearch('')} style={{ marginTop: 8 }}>
+            Effacer la recherche
+          </button>
+        )}
+        <p className="patient-hint" role="status" aria-live="polite">
+          {dueFollowUps.length + undatedFollowUps.length + laterFollowUps.length} suivi(s) planifié(s)
+          correspondant aux objectifs saisis. Recherche locale sans IA, sans modification des dossiers.
+        </p>
+      </div>
 
       <div className="consultation-section">
         <h3>HELIOS Follow-up · contrôles à revoir ({dueFollowUps.length})</h3>

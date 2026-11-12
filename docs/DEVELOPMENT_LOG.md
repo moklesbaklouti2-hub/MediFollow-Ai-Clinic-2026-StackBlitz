@@ -1000,3 +1000,7 @@
 ### 2026-11-12 — QW-074 : cohérence des horizons Follow-up
 - Contrôle synthétique de partition sans doublons entre échéances, dates invalides et suivis au-delà de sept jours, avec passage de décembre à janvier. Vérifie la concordance des compteurs Dashboard et des listes, sans mutation ni appel externe.
 - Ajout au script existant test-follow-up.ts ; non exécuté, validation Codespaces requise.
+
+### 2026-11-12 — QW-075 : recherche documentaire Follow-up (préparation)
+- Recherche locale dans les seuls objectifs textuels consignés des suivis en retard, à date invalide et ultérieurs. Accents/casse ignorés ; résultats comptés, filtre effaçable. Aucun appel IA ni recherche par identité du patient, aucune mutation.
+- Tests synthétiques et contrats source ajoutés à test-follow-up.ts ; non exécutés, validation Codespaces requise.
