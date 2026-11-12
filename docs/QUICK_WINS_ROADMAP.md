@@ -156,6 +156,8 @@
 
 | QW-103 | S | Refuser l'annulation d'une ordonnance affichée non délivrée lorsque des mouvements de stock liés existent (statut obsolète après écriture échouée) | branche de préparation | Tests fictifs, compilation et CI sur le SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-104 | S | Verrouiller toute réécriture du contenu d'une ordonnance dès qu'un mouvement de stock existe, malgré un statut brouillon obsolète ; permettre seulement sa finalisation documentaire contrôlée | branche de préparation | Tests fictifs, compilation et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
