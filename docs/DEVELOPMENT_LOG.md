@@ -1083,3 +1083,8 @@
 - Le hook `deletePrescription` refuse désormais directement un document enregistré avec statut `cancelled` ou `dispensed`, **même si le journal de mouvements de stock est incomplet ou absent**. La protection déjà présente contre les identifiants dupliqués et contre une traçabilité de stock existante reste active.
 - Un appel direct au hook ne peut ainsi contourner le refus du bouton de suppression de l'interface pour ces deux statuts.
 - Contrat synthétique QW-094 ajouté à `scripts/test-patient-linkage.ts`. **Préparé, non validé** : exécuter `npm run test:complete` et les 11 jobs GitHub Actions sur le SHA final dans Codespaces / CI. Aucun déploiement, patient réel ou fusion vers `main`.
+
+### 2026-11-12 — QW-095 : refus de délivrance d'une ordonnance déjà annulée
+- Le formulaire Ordonnances vérifie le **statut enregistré courant** avant toute sauvegarde préalable à une délivrance. Un document `cancelled` est refusé avec une explication ; les contrôles précédents d'identité unique, de patient correspondant et de statut `dispensed` restent inchangés.
+- Objectif : empêcher un ancien onglet d'interface d'effectuer une sortie de stock sur ordonnance annulée. Aucun mouvement n'est initié par ce garde-fou ; contrôle source ajouté à `test:patient-linkage`.
+- **Préparé non validé** : `npm run test:complete`, 11/11 jobs CI sur SHA d'intégration et scénario humain fictif requis. Pas de déploiement ni données réelles.
