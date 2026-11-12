@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
-import { allowsFinalizedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../services/prescriptionFinality';
+import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isDeletablePrescriptionStatus } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -207,6 +207,10 @@ export function useMedicalData() {
     if (!currentPrescription || !preservesPrescriptionPatientId(currentPrescription, changes)) return false;
     // QW-097: enforce finality at the storage boundary, not only in the form.
     if (!allowsFinalizedPrescriptionUpdate(currentPrescription, changes)) return false;
+    // QW-104: stock trace locks prescription content even if the old status
+    // remains draft/validated. Only a documented finalisation may proceed.
+    if (!allowsStockLinkedPrescriptionUpdate(currentPrescription, changes,
+        prescriptionHasRecordedStockMovement(id, getInventoryData().movements))) return false;
     // QW-102: do not allow a status-only claim of dispensing when no matching
     // positive, uniquely identified inventory movement has been recorded.
     if (changes.status === 'dispensed' &&
