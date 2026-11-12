@@ -1078,3 +1078,8 @@
 - Le bouton « Modifier » dans l'historique recharge l'ordonnance actuelle avant toute modification du formulaire. Si son identifiant est absent ou dupliqué, si le lien patient a changé ou si le patient n'est plus unique, l'ouverture est refusée et signalée.
 - Les champs du formulaire sont peuplés depuis l'ordonnance actuelle uniquement, jamais depuis une ancienne ligne conservée à l'écran. Un tableau de médicaments corrompu est refusé sans exception dans cette interface.
 - Contrat QW-093 ajouté au test de liaison patient. **Préparé, non testé** dans Codespaces ; compilation et CI requises avant validation. Aucun changement de `main`, aucun déploiement, aucune donnée réelle.
+
+### 2026-11-12 — QW-094 : préserver les ordonnances délivrées ou annulées au point central de suppression
+- Le hook `deletePrescription` refuse désormais directement un document enregistré avec statut `cancelled` ou `dispensed`, **même si le journal de mouvements de stock est incomplet ou absent**. La protection déjà présente contre les identifiants dupliqués et contre une traçabilité de stock existante reste active.
+- Un appel direct au hook ne peut ainsi contourner le refus du bouton de suppression de l'interface pour ces deux statuts.
+- Contrat synthétique QW-094 ajouté à `scripts/test-patient-linkage.ts`. **Préparé, non validé** : exécuter `npm run test:complete` et les 11 jobs GitHub Actions sur le SHA final dans Codespaces / CI. Aucun déploiement, patient réel ou fusion vers `main`.
