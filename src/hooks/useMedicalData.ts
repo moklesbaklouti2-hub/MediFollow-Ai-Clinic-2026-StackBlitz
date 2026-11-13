@@ -1,7 +1,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
-import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
+import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
@@ -185,15 +185,21 @@ export function useMedicalData() {
     // never fabricate a dispensed/cancelled prescription or terminal date.
     if (!isCreatablePrescriptionStatus(prescription)) return null;
     // Reject an unlinked or ambiguous patient even for direct hook callers.
-    if (!hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)) return null;
+    const currentData = getMedicalData();
+    if (!hasConfirmedPatientSelection(prescription.patientId, currentData.patients)) return null;
+
+    // QW-113: a generated ID must not identify any current prescription or
+    // an orphaned inventory movement from an imported backup.
+    const newId = createId();
+    if (!isUnusedPrescriptionId(newId, currentData.prescriptions, getInventoryData().movements)) return null;
     const newPrescription: Prescription = {
       ...prescription,
-      id: createId(),
+      id: newId,
       savedAt: new Date().toISOString(),
     };
 
     const saved = savePrescriptions([
-      ...getMedicalData().prescriptions,
+      ...currentData.prescriptions,
       newPrescription,
     ]);
 
