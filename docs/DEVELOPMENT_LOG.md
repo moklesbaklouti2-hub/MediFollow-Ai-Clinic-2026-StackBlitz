@@ -1262,3 +1262,11 @@
 ### 2026-11-13 — QW-123 : cohérence de la clôture des suivis HELIOS
 - Réutiliser isWritableFollowUpPlan lors de la clôture explicite : un objectif importé dépassant 500 caractères ne doit pas produire un plan terminé que le hook refuserait ensuite. Aucun changement automatique des dossiers.
 - Tests fictifs des limites 500/501 caractères. **PRÉPARÉ NON VALIDÉ** : compilation, tests et CI à exécuter.
+
+### 2026-11-13 — QW-124 : fiabiliser les dates des consultations enregistrées
+- **Coordination anti-doublon :** QW-123 est déjà attribué à la validation de clôture HELIOS, préparée sur cette même branche par un autre travail. Cette correction de dates a été renumérotée QW-124 pour éviter toute attribution contradictoire ou réécriture du lot existant.
+- Le parseur de chronologie `recordedDateTimestamp` distingue déjà les dates civiles réelles et les horodatages ISO munis d'un fuseau, des valeurs ambiguës ou impossibles ; le hook central ne l'appliquait toutefois pas aux créations et corrections explicites de dates.
+- `addConsultation` refuse maintenant une date clinique non vérifiable **avant** génération de l'ID ou écriture. `updateConsultation` n'exige cette vérification que lorsque `date` est explicitement fournie dans `changes`, afin de ne pas bloquer des éditions ordinaires d'anciens dossiers importés dont la date est inconnue.
+- Les horodatages techniques `createdAt` et `updatedAt` continuent de suivre QW-119 : la validation QW-124 concerne uniquement la date clinique `date`. Aucune migration ni modification automatique de dossier existant.
+- Tests fictifs et contrats du chemin central dans `scripts/test-patient-linkage.ts` : dates valides, années bissextiles, dates impossibles et sans fuseau, ordre des gardes, absence de mutation d'archives.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:patient-linkage`, `npm run test:complete` et vérification des 11 jobs GitHub Actions sur HEAD exact encore nécessaires. Ne pas toucher à `main` ni à la PR d'audit ; aucune donnée réelle ou dépense.
