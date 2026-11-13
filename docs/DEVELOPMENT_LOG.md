@@ -1270,3 +1270,10 @@
 - Les horodatages techniques `createdAt` et `updatedAt` continuent de suivre QW-119 : la validation QW-124 concerne uniquement la date clinique `date`. Aucune migration ni modification automatique de dossier existant.
 - Tests fictifs et contrats du chemin central dans `scripts/test-patient-linkage.ts` : dates valides, années bissextiles, dates impossibles et sans fuseau, ordre des gardes, absence de mutation d'archives.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:patient-linkage`, `npm run test:complete` et vérification des 11 jobs GitHub Actions sur HEAD exact encore nécessaires. Ne pas toucher à `main` ni à la PR d'audit ; aucune donnée réelle ou dépense.
+
+### 2026-11-13 — QW-125 : empêcher la clôture HELIOS d'un plan de suivi modifié entre-temps
+- Cas distinct des lots QW-120 et QW-123 : le formulaire vérifiait l'identité de la consultation, le patient et la validité du plan, mais une ancienne ligne de liste pouvait déclencher « Terminé » sur un plan entre-temps modifié (date, objectif ou état) dans un autre onglet. Le médecin pouvait ainsi confirmer un contrôle différent de celui initialement affiché.
+- Fonction pure `matchesDisplayedFollowUpPlan` dans `src/clinical/followUp.ts` : compare date, objectif, statut `planned`, et vérifie la validité des deux plans. N'écrit aucune donnée et ne fait pas d'inférence médicale.
+- `src/pages/Consultations.tsx::completeFollowUp` refuse désormais un plan obsolète avant toute confirmation, puis recontrôle la consultation unique, son patient et le plan après la fenêtre de confirmation avant l'appel à `updateConsultation`. Invite à actualiser la liste si les données ont changé.
+- Tests fictifs ajoutés à `scripts/test-follow-up.ts` : identité conservée, date/objectif/statut périmés, plan absent ou invalide, absence de mutation et ordre des contrôles UI. Aucun rappel patient automatique.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:follow-up`, `npm run test:complete` et les 11 jobs GitHub Actions restent à confirmer sur le HEAD exact. Branche de préparation uniquement ; ne pas modifier `main` ni la PR d'audit, pas de données réelles, déploiement ou dépense.
