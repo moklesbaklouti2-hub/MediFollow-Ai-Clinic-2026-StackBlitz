@@ -1187,3 +1187,10 @@
 - Amélioration strictement informative : aucune écriture d'ordonnance, aucune délivrance, aucun mouvement de stock, aucune conversion automatique de l'état.
 - Les attentes QW-048 ont été ajustées et des tests fictifs QW-112 vérifient les états connus, manquants et invalides ainsi que la réutilisation du même helper dans l'historique.
 - **PRÉPARÉ NON VALIDÉ** : compilation, tests Codespaces et 11 jobs GitHub Actions à confirmer sur le SHA final. `main` et la PR d'audit restent inchangées ; aucune donnée réelle et aucun déploiement.
+
+### 2026-11-13 — QW-113 : interdire toute collision d'identifiant à la création d'une ordonnance
+- `addPrescription` générait un nouvel identifiant sans vérifier son absence dans les ordonnances actuelles ou dans un ancien journal de mouvements de stock importé. Une collision pouvait rendre les dossiers ambigus ou rattacher à tort un historique de délivrance à une nouvelle ordonnance.
+- Nouveau helper pur `isUnusedPrescriptionId` dans `prescriptionIdentity.ts` : l'ID doit être une chaîne non vide, absent des documents enregistrés et des mouvements de stock, y compris si un mouvement est devenu orphelin après import.
+- Le hook central lit le même instantané des dossiers patients et ordonnances pour sa vérification, contrôle l'ID généré avant construction et sauvegarde, et refuse la création sans aucune écriture si l'ID est déjà occupé. Il ne fusionne, ne renomme ni ne supprime les archives.
+- Tests fictifs de création, de collisions d'ordonnances et de traces de stock, d'ID invalide et du contrat d'ordre des contrôles. Deux tests de contrat précédents ont été ajustés au nouvel instantané `currentData`.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, tests complets et 11 jobs Actions non vérifiés sur le HEAD final. `main` et PR d'audit inchangées, aucune donnée réelle, aucune dépense ou déploiement.
