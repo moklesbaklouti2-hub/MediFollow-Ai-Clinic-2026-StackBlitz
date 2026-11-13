@@ -1403,3 +1403,10 @@
 - **QW-147 :** un champ `objectif` ne reçoit plus d'objet/tableau ou de chaîne de plus de 500 caractères importée. La mise à vide proposée exige le même consentement, sans réécriture automatique.
 - **Tests fictifs ajoutés :** statut absent/inconnu, dates calendaires valides et invalides, champs textuels malformés/surdimensionnés, conservation des originaux et contrats des champs contrôlés.
 - **État :** préparé non validé. `npm run test:follow-up`, `npm run build` et les 11 jobs CI sur SHA exact indispensables avant validation. Aucun patient réel, déploiement ni dépense.
+
+
+### 2026-11-13 — validation de la branche de préparation dans GitHub Actions (CI déclenchée sur push)
+- **Objectif :** exécuter la compilation et les onze contrôles réels sur la branche `prep-chronologie-2026-11-11-qw052-055`, qui n'était pas incluse dans le déclencheur du workflow V2. Ne pas attribuer une couleur à des lots non testés.
+- **Modification strictement limitée :** ajouter la branche de préparation au déclencheur `on.push.branches` du workflow V2, sans modifier ni `main`, ni la branche d'audit, ni PR #2.
+- **Sécurité :** GitHub Actions utilise les runners standards `ubuntu-latest` du dépôt public (sans coût d'exécution selon la documentation GitHub). Le workflow est sans déploiement ni secret de données patient. Le relais commentant PR #2 reste explicitement limité à la branche d'audit.
+- **Statut à établir :** inspecter le résultat réel et les 11 jobs du workflow sur le nouveau SHA après le commit ; en cas d'échec, corriger seulement les erreurs confirmées sans masquer les autres jobs.

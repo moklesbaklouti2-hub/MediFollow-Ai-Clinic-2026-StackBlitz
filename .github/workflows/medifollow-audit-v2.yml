@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - audit-stabilisation-2026-11-10
+      - prep-chronologie-2026-11-11-qw052-055
 
 
 permissions:
