@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -430,3 +430,47 @@ console.log('PASS QW-120: HELIOS follow-up plans validated before central clinic
   assert.equal(plan.status, 'planned');
 }
 console.log('PASS QW-123: completion respects central follow-up validation.');
+
+// QW-125: an old HELIOS worklist row must never silently close a newer plan.
+// All examples are fictional and this comparison is read-only.
+{
+  const shown = { dueDate: '2026-11-16', objective: 'Contrôle fictif', status: 'planned' as const };
+  const persisted = { ...shown };
+  const beforeShown = JSON.stringify(shown);
+  const beforePersisted = JSON.stringify(persisted);
+  assert.equal(matchesDisplayedFollowUpPlan(shown, persisted), true);
+  assert.equal(matchesDisplayedFollowUpPlan(shown, shown), true);
+  assert.equal(matchesDisplayedFollowUpPlan(shown,
+    { ...shown, dueDate: '2026-11-17' }), false);
+  assert.equal(matchesDisplayedFollowUpPlan(shown,
+    { ...shown, objective: 'Contrôle biologique fictif' }), false);
+  assert.equal(matchesDisplayedFollowUpPlan(shown,
+    { ...shown, status: 'completed' }), false);
+  assert.equal(matchesDisplayedFollowUpPlan(
+    { ...shown, status: 'completed' }, shown), false);
+  assert.equal(matchesDisplayedFollowUpPlan(undefined, shown), false);
+  assert.equal(matchesDisplayedFollowUpPlan(shown, undefined), false);
+  assert.equal(matchesDisplayedFollowUpPlan(
+    { ...shown, dueDate: '2026-02-30' }, shown), false);
+  assert.equal(matchesDisplayedFollowUpPlan(shown,
+    { ...shown, objective: 'x'.repeat(501) }), false);
+  assert.equal(JSON.stringify(shown), beforeShown);
+  assert.equal(JSON.stringify(persisted), beforePersisted);
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const completion = page.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  const firstCheck = completion.indexOf(
+    'matchesDisplayedFollowUpPlan(item.followUp, current.followUp)');
+  const confirmation = completion.indexOf('window.confirm(');
+  const secondCheck = completion.indexOf(
+    'matchesDisplayedFollowUpPlan(item.followUp, latest[0].followUp)');
+  const update = completion.indexOf('updateConsultation(current.id, { followUp: completedPlan })');
+  assert.ok(firstCheck > completion.indexOf('hasConfirmedPatientSelection(') &&
+    firstCheck < confirmation &&
+    completion.includes('const latest = getConsultations().filter(') &&
+    secondCheck > confirmation && secondCheck < update &&
+    completion.includes('latest.length !== 1 || latest[0].patientId !== item.patientId'),
+    'A stale follow-up must be refused both before and after confirmation, before update.');
+}
+console.log('PASS QW-125: stale HELIOS worklist rows cannot silently complete changed plans.');
