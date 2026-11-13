@@ -487,7 +487,21 @@ assert.ok(patientPageSource.includes('summarizeDocumentedSpecialties(selected.id
   patientPageSource.includes('ne confirme ni une maladie') &&
   patientPageSource.includes('Dernière date enregistrée :'),
   'Specialty group UI must show only documented visits with limits and provenance.');
-console.log('PASS QW-044: synthetic specialty grouping, isolation and UI checks.');
+// QW-166/167: source provenance and impossible dates in specialty indexes.
+const importedSpecialty = [
+  { id: 'valid-source', patientId: 'fictif-a', specialty: 'ORL', date: '2026-11-01' },
+  { id: 'impossible-date', patientId: 'fictif-a', specialty: 'ORL', date: '2026-11-31' },
+  { id: '', patientId: 'fictif-a', specialty: 'ORL', date: '2026-11-29' },
+  { id: 'duplicate-source', patientId: 'fictif-a', specialty: 'ORL', date: '2026-11-25' },
+  { id: 'duplicate-source', patientId: 'fictif-a', specialty: 'ORL', date: '2026-11-26' },
+  { id: 'another-patient', patientId: 'fictif-b', specialty: 'ORL', date: '2026-11-30' },
+];
+const importedSpecialtyBefore = JSON.stringify(importedSpecialty);
+assert.deepEqual(summarizeDocumentedSpecialties('fictif-a', importedSpecialty), [
+  { specialty: 'ORL', count: 2, lastConsultationDate: '2026-11-01' },
+]);
+assert.equal(JSON.stringify(importedSpecialty), importedSpecialtyBefore);
+console.log('PASS QW-044/166/167: synthetic specialty grouping, provenance and strict dates.');
 
 
 // QW-045 — recorded-only activity counts. Exclude records with missing or

@@ -1462,3 +1462,9 @@
 - Referral : filtrer de manière analogue les dates et identifiants, puis choisir la dernière consultation fiable pour un aperçu **sans décision d'adressage**.
 - Test fictif `test:helios-trends-referral` ajouté à la commande `test:complete` et au workflow V2 ; aucune donnée réelle, réseau clinique ou nouveau fournisseur.
 - Changements limités à la branche de préparation. Compilation et tous les jobs CI du nouveau commit requis avant toute déclaration de succès.
+
+
+### 2026-11-14 — QW-166 et QW-167 : provenance des parcours spécialisés
+- La source des statistiques par spécialité ignore les consultations sans identifiant stable ou à identifiant dupliqué ; une consultation non datée reste comptée dans sa catégorie avec dernière date inconnue.
+- Les dates affichées passent par le validateur de chronologie, sans correction implicite des imports.
+- Scénarios fictifs ajoutés à `scripts/test-patient-linkage.ts`, exécuté par GitHub Actions. Aucun changement de `main`, PR d'audit ni déploiement. Validation 11/11 sur SHA exact requise.

@@ -250,6 +250,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-163 | S | Trends ne compte pas deux fois les consultations importées à identifiant dupliqué | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
 | QW-164 | S | Referral choisit la dernière consultation via une date validée, et non Date.parse permissif | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
 | QW-165 | S | Referral refuse les sources de consultation sans ID unique ou avec ID dupliqué | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-166 | S | Parcours spécialisés : exclure du comptage les consultations à identifiant absent ou dupliqué | branche de préparation | Tests fictifs ajoutés au contrôle CI clinique | PRÉPARÉ NON VALIDÉ |
+| QW-167 | S | Parcours spécialisés : afficher la dernière consultation uniquement si sa date est chronologiquement fiable | branche de préparation | Test dates impossibles et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

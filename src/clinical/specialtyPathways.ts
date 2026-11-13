@@ -1,4 +1,5 @@
 import type { Consultation } from '../types/medical';
+import { recordedDateTimestamp } from './medicalTimeline';
 
 // HELIOS Parcours spécialisés: a read-only index of explicitly recorded
 // consultation specialties. It does not infer care pathways or clinical status.
@@ -20,17 +21,24 @@ export function summarizeDocumentedSpecialties(
   consultations: readonly SpecialtyVisit[],
 ): DocumentedSpecialtyPath[] {
   if (typeof patientId !== 'string' || !patientId.trim()) return [];
+  // QW-166: never count imported visits with missing or colliding IDs.
+  const ids = new Map<string, number>();
+  for (const visit of consultations) {
+    if (!visit || typeof visit.id !== 'string' || !visit.id.trim()) continue;
+    ids.set(visit.id, (ids.get(visit.id) ?? 0) + 1);
+  }
   const groups = new Map<string, { count: number; lastConsultationDate: string | null; lastTimestamp: number }>();
   for (const visit of consultations) {
-    if (!visit || visit.patientId !== patientId) continue;
+    if (!visit || visit.patientId !== patientId ||
+        typeof visit.id !== 'string' || ids.get(visit.id) !== 1) continue;
     const specialty = documentedSpecialty(visit.specialty);
     const group = groups.get(specialty) ?? { count: 0, lastConsultationDate: null, lastTimestamp: -Infinity };
     group.count++;
-    const date = typeof visit.date === 'string' ? visit.date : '';
-    const time = date ? Date.parse(date) : NaN;
-    if (Number.isFinite(time) && time > group.lastTimestamp) {
+    // QW-167: ambiguous/impossible dates cannot establish a clinical last visit.
+    const time = recordedDateTimestamp(visit.date);
+    if (time !== null && time > group.lastTimestamp) {
       group.lastTimestamp = time;
-      group.lastConsultationDate = date;
+      group.lastConsultationDate = visit.date;
     }
     groups.set(specialty, group);
   }
