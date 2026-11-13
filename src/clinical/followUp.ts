@@ -9,6 +9,19 @@ export function isValidFollowUpDate(date: unknown): date is string {
     parsed.toISOString().slice(0, 10) === date;
 }
 
+// QW-120: a direct consultation writer may not save malformed follow-up
+// plans that disappear from the clinician's worklist. Existing legacy records
+// are left untouched unless a caller explicitly supplies a new plan.
+// undefined is an intentional absence/clearing of a follow-up.
+export function isWritableFollowUpPlan(plan: unknown): boolean {
+  if (plan === undefined) return true;
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return false;
+  const item = plan as Record<string, unknown>;
+  return isValidFollowUpDate(item.dueDate) &&
+    typeof item.objective === 'string' && item.objective.length <= 500 &&
+    (item.status === 'planned' || item.status === 'completed');
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {
