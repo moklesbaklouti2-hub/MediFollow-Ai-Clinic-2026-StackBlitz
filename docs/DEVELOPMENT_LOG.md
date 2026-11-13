@@ -1420,3 +1420,10 @@
 - **QW-151 :** nom de patient affiché via `confirmedPatientNameLabel` sans modifier la validation des liens au patient.
 - **Tests :** scénarios fictifs de tri, données importées malformées, contrôles statiques de rendu et d'immuabilité.
 - **Statut :** préparé non validé jusqu'au succès de la compilation et des onze jobs GitHub Actions sur le SHA exact. Aucun déploiement, pas de patient réel ni de dépense.
+
+
+### 2026-11-13 — QW-152 : réparation ciblée du contrat de tests après CI rouge (préparé)
+- **Déclencheur :** GitHub Actions run #43477900374, job « Tests / clinique », étape `npm run test:follow-up`, assertion ligne 124 sur ancienne chaîne d'affichage du nom de patient. Les autres étapes cliniques précédentes étaient vertes.
+- **Correction ciblée :** actualiser les trois vérifications anciennes QW-032 (nom), QW-134 (nom) et QW-141 (motif) afin de vérifier les helpers `confirmedPatientNameLabel` et `consultationMotifLabel` réellement utilisés depuis QW-149/QW-151. Tests de comportement supplémentaires QW-152 ; aucune modification du code d'interface ou de stockage.
+- **Validation :** attendre la nouvelle CI 11/11 pour le SHA exact ; ne pas déduire un résultat vert de l'ancien workflow qui a échoué.
+- **Portée :** branche `prep-chronologie-2026-11-11-qw052-055` seulement. Ni `main`, ni audit/PR #2, ni déploiement ni données médicales réelles.

@@ -125,7 +125,7 @@ assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpTod
   consultationUI.includes('dueFollowUps.map((item, index)') &&
   consultationUI.includes('canActOnFollowUp ? (') &&
   consultationUI.includes('onClick={() => startEditing(item)}') &&
-  consultationUI.includes('Dossier patient non relié — identité à confirmer'),
+  consultationUI.includes('confirmedPatientNameLabel(linkedPatient)'),
   'The worklist must order follow-ups, open confirmed records and flag unlinked identities.');
 const completionCode = consultationUI.split('function completeFollowUp(')[1]?.split('function saveConsultation()')[0] ?? '';
 assert.ok(completionCode.includes('getConsultations().find(') &&
@@ -695,7 +695,7 @@ console.log('PASS QW-133: HELIOS invalid imported follow-up dates flagged, never
   const editCallAt = history.indexOf('onClick={() => startEditing(item)}');
   assert.ok(identityAt >= 0 && editEligibilityAt > identityAt &&
     showButtonAt > editEligibilityAt && editCallAt > showButtonAt &&
-    history.includes("Dossier patient non relié — identité à confirmer") &&
+    history.includes('confirmedPatientNameLabel(linkedPatient)') &&
     history.includes('Identifiant de patient ou de consultation absent, dupliqué ou non confirmé') &&
     !history.includes("linkedPatient?.name || legacyPatientName"),
     'History must not infer an identity from the first duplicate or a legacy name.');
@@ -919,7 +919,7 @@ console.log('PASS QW-140: unknown imported HELIOS statuses remain visible and re
   for (const [start, end] of sections) {
     const ui = page.split(start)[1]?.split(end)[0] ?? '';
     assert.ok(ui.includes('Consultation : {displayRecordedDate(item.date)} · Motif :') &&
-      ui.includes("item.motif.trim() || 'Non précisé'") &&
+      ui.includes('consultationMotifLabel(item.motif)') &&
       ui.includes('followUpObjectiveLabel(item.followUp)'),
       'A planned follow-up must show its documented origin: ' + start);
   }
@@ -1126,3 +1126,19 @@ console.log('PASS QW-150: malformed historical diagnoses remain readable for rev
   assert.ok(ui.includes('hasConfirmedPatientSelection(item.patientId, patients)'));
 }
 console.log('PASS QW-151: imported patient names safely display across five clinical lists.');
+
+
+// QW-152 — regressions must assert the public UI contract through the
+// QW-149/151 safe read-only labels, not the older direct imported fields.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const source = readFileSync(new URL('../src/services/patientSelectionGuard.ts', import.meta.url), 'utf8');
+  const history = page.split('Historique des consultations (')[1] ?? '';
+  assert.ok(page.includes('confirmedPatientNameLabel(linkedPatient)') &&
+    page.includes('consultationMotifLabel(item.motif)') &&
+    source.includes('export function confirmedPatientNameLabel(') &&
+    history.includes('confirmedPatientNameLabel(linkedPatient)') &&
+    !history.includes('linkedPatient?.name || legacyPatientName'),
+    'Historical identity tests must guard actual safe label contracts.');
+}
+console.log('PASS QW-152: legacy test assertions aligned with protected HELIOS labels.');
