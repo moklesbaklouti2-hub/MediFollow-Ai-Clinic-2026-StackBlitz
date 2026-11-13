@@ -176,6 +176,8 @@
 
 | QW-113 | S | Refuser la création d'une ordonnance dont le nouvel identifiant existe déjà dans les ordonnances ou les traces de stock importées | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-114 | S | Refuser toute modification de contenu sur une ordonnance importée au statut absent ou inconnu, dans le hook et le formulaire, sans affecter les transitions finalisées autorisées | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
