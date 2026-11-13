@@ -80,8 +80,8 @@ export function selectDueFollowUps(
 export function completedFollowUpPlan(
   plan: ConsultationFollowUp | undefined,
 ): ConsultationFollowUp | null {
-  if (!plan || plan.status !== 'planned' || !isValidFollowUpDate(plan.dueDate) ||
-      typeof plan.objective !== 'string') return null;
+  // QW-123: completion must satisfy the same rules as central persistence.
+  if (!plan || plan.status !== 'planned' || !isWritableFollowUpPlan(plan)) return null;
   return { ...plan, status: 'completed' };
 }
 
