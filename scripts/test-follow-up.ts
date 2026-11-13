@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
-import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel } from '../src/services/consultationIdentity.ts';
+import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
-import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
+import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
 
 // All fixtures are fictional, without external calls.
@@ -1056,3 +1056,73 @@ console.log('PASS QW-146: imported invalid follow-up dates cannot enter date inp
     'Malformed objective must require explicit consent and a valid input string.');
 }
 console.log('PASS QW-147: invalid imported follow-up objectives cannot enter editor textarea.');
+
+
+// QW-148: restored malformed IDs remain visible; ordering never mutates them.
+{
+  const imported = [
+    { id: 'z', followUp: { dueDate: '2026-11-18', objective: 'Contrôle fictif', status: 'planned' } },
+    { id: 19, followUp: { dueDate: '2026-11-18', objective: 'Contrôle fictif', status: 'planned' } },
+    { id: null, followUp: { dueDate: '2026-11-18', objective: 'Contrôle fictif', status: 'planned' } },
+  ];
+  const before = JSON.stringify(imported);
+  const rows = imported as unknown as Parameters<typeof selectDueFollowUps>[0];
+  assert.deepEqual(selectDueFollowUps(rows, '2026-11-13').map(item => item.id), [null, 19, 'z']);
+  assert.deepEqual(selectLaterPlannedFollowUps(rows, '2026-11-01').map(item => item.id), [null, 19, 'z']);
+  const undated = imported.map(item => ({
+    ...item, followUp: { ...item.followUp, dueDate: 'date invalide' },
+  })) as unknown as Parameters<typeof selectUndatedPlannedFollowUps>[0];
+  assert.deepEqual(selectUndatedPlannedFollowUps(undated).map(item => item.id), [null, 19, 'z']);
+  assert.equal(JSON.stringify(imported), before);
+  const clinical = readFileSync(new URL('../src/clinical/followUp.ts', import.meta.url), 'utf8');
+  assert.equal(clinical.split("String(a.id ?? '').localeCompare(String(b.id ?? ''))").length - 1, 4,
+    'Three worklists and the existing status-review list use safe ID sorting.');
+}
+console.log('PASS QW-148: invalid imported IDs cannot crash HELIOS follow-up sorting.');
+
+// QW-149: document-only motif labels never coerce imported objects into notes.
+{
+  assert.equal(consultationMotifLabel('Vertiges fictifs'), 'Vertiges fictifs');
+  assert.equal(consultationMotifLabel('  Douleur fictive  '), '  Douleur fictive  ');
+  for (const value of ['', ' ', null, undefined]) assert.equal(consultationMotifLabel(value), 'Non précisé');
+  for (const value of [7, [], { note: 'fictif' }, ['motif'], true]) {
+    assert.equal(consultationMotifLabel(value), 'Motif à vérifier');
+  }
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.equal(ui.split('Motif : {consultationMotifLabel(item.motif)}').length - 1, 4);
+  const history = ui.split('Historique des consultations (')[1] ?? '';
+  assert.ok(history.includes('<p><b>Motif :</b> {consultationMotifLabel(item.motif)}</p>') &&
+    !ui.includes("item.motif.trim() || 'Non précisé'"));
+}
+console.log('PASS QW-149: safe clinical reason display in HELIOS and history.');
+
+// QW-150: diagnostic rendering is read-only and type-aware.
+{
+  assert.equal(consultationDiagnosisLabel('Diagnostic fictif'), 'Diagnostic fictif');
+  for (const value of ['', ' ', null, undefined]) assert.equal(consultationDiagnosisLabel(value), 'Non précisé');
+  for (const value of [7, [], { label: 'non textuel' }, ['diagnostic'], true]) {
+    assert.equal(consultationDiagnosisLabel(value), 'Diagnostic à vérifier');
+  }
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const history = ui.split('Historique des consultations (')[1] ?? '';
+  assert.ok(history.includes('consultationDiagnosisLabel(item.diagnosis)') &&
+    !history.includes('<b>Diagnostic :</b> {item.diagnosis}'));
+}
+console.log('PASS QW-150: malformed historical diagnoses remain readable for review.');
+
+// QW-151: a validated patient link does not guarantee valid imported name text.
+{
+  const patient = { id: 'fictif-a', name: 'Patient fictif' };
+  const before = JSON.stringify(patient);
+  assert.equal(confirmedPatientNameLabel(patient), patient.name);
+  assert.equal(confirmedPatientNameLabel(undefined), 'Dossier patient non relié — identité à confirmer');
+  assert.equal(confirmedPatientNameLabel(null), 'Dossier patient non relié — identité à confirmer');
+  for (const name of ['', ' ', 7, ['nom fictif'], { nom: 'fictif' }]) {
+    assert.equal(confirmedPatientNameLabel({ id: 'fictif-a', name }), 'Nom du patient à vérifier');
+  }
+  assert.equal(JSON.stringify(patient), before);
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.equal(ui.split('<strong>{confirmedPatientNameLabel(linkedPatient)}</strong>').length - 1, 5);
+  assert.ok(ui.includes('hasConfirmedPatientSelection(item.patientId, patients)'));
+}
+console.log('PASS QW-151: imported patient names safely display across five clinical lists.');

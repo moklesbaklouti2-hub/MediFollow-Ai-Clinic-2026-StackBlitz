@@ -6,8 +6,8 @@ import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
-import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
-import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel } from '../services/consultationIdentity';
+import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../services/patientSelectionGuard';
+import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
 
@@ -1417,11 +1417,11 @@ export default function Consultations({
               isWritableFollowUpPlan(item.followUp);
             return (
               <div className="saved-consultation" key={'follow-up-' + item.id + '-' + index}>
-                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <strong>{confirmedPatientNameLabel(linkedPatient)}</strong>
                 <span>{followUpDueLabel(item.followUp, followUpToday)} · {followUpDateLabel(item.followUp)}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 <p className="patient-hint">
-                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {consultationMotifLabel(item.motif)} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
                 </p>
                 {canActOnFollowUp ? (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -1468,11 +1468,11 @@ export default function Consultations({
               hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={'undated-follow-up-' + item.id + '-' + index}>
-                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <strong>{confirmedPatientNameLabel(linkedPatient)}</strong>
                 <span>Date de suivi absente ou invalide</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 <p className="patient-hint">
-                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {consultationMotifLabel(item.motif)} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
                 </p>
                 {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
@@ -1506,11 +1506,11 @@ export default function Consultations({
               hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={'later-follow-up-' + item.id + '-' + index}>
-                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <strong>{confirmedPatientNameLabel(linkedPatient)}</strong>
                 <span>Suivi planifié : {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 <p className="patient-hint">
-                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {consultationMotifLabel(item.motif)} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
                 </p>
                 {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
@@ -1541,11 +1541,11 @@ export default function Consultations({
               : undefined;
             return (
               <div className="saved-consultation" key={'unknown-status-follow-up-' + item.id + '-' + index}>
-                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <strong>{confirmedPatientNameLabel(linkedPatient)}</strong>
                 <span>{followUpStatusLabel(item.followUp)} · {followUpDateLabel(item.followUp)}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 <p className="patient-hint">
-                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {consultationMotifLabel(item.motif)} · Spécialité : {consultationSpecialtyLabel(item.specialty)}
                 </p>
                 <p className="patient-hint">Vérifiez le statut dans le dossier source avant toute correction.</p>
               </div>
@@ -1569,11 +1569,11 @@ export default function Consultations({
               hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={'history-consultation-' + item.id + '-' + index}>
-                <strong>{linkedPatient?.name || 'Dossier patient non relié — identité à confirmer'}</strong>
+                <strong>{confirmedPatientNameLabel(linkedPatient)}</strong>
                 <span>{displayRecordedDate(item.date)}</span>
                 <p><b>Spécialité :</b> {consultationSpecialtyLabel(item.specialty)}</p>
-                <p><b>Motif :</b> {item.motif}</p>
-                {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
+                <p><b>Motif :</b> {consultationMotifLabel(item.motif)}</p>
+                {item.diagnosis && <p><b>Diagnostic :</b> {consultationDiagnosisLabel(item.diagnosis)}</p>}
                 {item.followUp && (
                   <p><b>HELIOS Follow-up :</b> {followUpDateLabel(item.followUp)} · {followUpStatusLabel(item.followUp)}
                     {' · Objectif : '}{followUpObjectiveLabel(item.followUp)}</p>

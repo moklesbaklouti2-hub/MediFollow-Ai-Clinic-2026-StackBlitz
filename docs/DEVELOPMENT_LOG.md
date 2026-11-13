@@ -1410,3 +1410,13 @@
 - **Modification strictement limitée :** ajouter la branche de préparation au déclencheur `on.push.branches` du workflow V2, sans modifier ni `main`, ni la branche d'audit, ni PR #2.
 - **Sécurité :** GitHub Actions utilise les runners standards `ubuntu-latest` du dépôt public (sans coût d'exécution selon la documentation GitHub). Le workflow est sans déploiement ni secret de données patient. Le relais commentant PR #2 reste explicitement limité à la branche d'audit.
 - **Statut à établir :** inspecter le résultat réel et les 11 jobs du workflow sur le nouveau SHA après le commit ; en cas d'échec, corriger seulement les erreurs confirmées sans masquer les autres jobs.
+
+
+### 2026-11-13 — QW-148 à QW-151 : robustesse des imports (préparés)
+- **Branche de préparation :** `prep-chronologie-2026-11-11-qw052-055` uniquement. `main` et PR #2 inchangées.
+- **QW-148 :** tri des trois listes HELIOS tolérant les identifiants de consultations non textuels importés. La liste d'anomalies disposait déjà de cette protection, conservée.
+- **QW-149 :** motif historique / source HELIOS lu via `consultationMotifLabel` ; données malformées signalées, jamais déduites ni corrigées automatiquement.
+- **QW-150 :** diagnostic historique via `consultationDiagnosisLabel` sans rendu React d'objets/tableaux importés.
+- **QW-151 :** nom de patient affiché via `confirmedPatientNameLabel` sans modifier la validation des liens au patient.
+- **Tests :** scénarios fictifs de tri, données importées malformées, contrôles statiques de rendu et d'immuabilité.
+- **Statut :** préparé non validé jusqu'au succès de la compilation et des onze jobs GitHub Actions sur le SHA exact. Aucun déploiement, pas de patient réel ni de dépense.

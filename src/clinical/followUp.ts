@@ -179,7 +179,7 @@ export function selectDueFollowUps(
     .sort((a, b) => {
       const aDate = a.followUp?.dueDate ?? '';
       const bDate = b.followUp?.dueDate ?? '';
-      return aDate.localeCompare(bDate) || a.id.localeCompare(b.id);
+      return aDate.localeCompare(bDate) || String(a.id ?? '').localeCompare(String(b.id ?? ''));
     });
 }
 
@@ -237,7 +237,7 @@ export function selectUndatedPlannedFollowUps(
   return consultations
     .filter(item => !!item.followUp && item.followUp.status === 'planned' &&
       !isValidFollowUpDate(item.followUp.dueDate))
-    .sort((a, b) => a.id.localeCompare(b.id));
+    .sort((a, b) => String(a.id ?? '').localeCompare(String(b.id ?? '')));
 }
 
 /** QW-073: future follow-up worklist, chronological, without changing plans. */
@@ -254,7 +254,7 @@ export function selectLaterPlannedFollowUps(
         Date.parse(plan.dueDate + 'T00:00:00Z') > cutoff;
     })
     .sort((a, b) => (a.followUp?.dueDate ?? '').localeCompare(b.followUp?.dueDate ?? '') ||
-      a.id.localeCompare(b.id));
+      String(a.id ?? '').localeCompare(String(b.id ?? '')));
 }
 
 // QW-075: local, read-only search in explicitly documented follow-up objectives.

@@ -232,6 +232,10 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-145 | S | Bloquer l'ouverture d'une consultation dont le suivi importé a un statut absent ou inconnu afin d'éviter sa reclassification implicite lors d'une édition clinique sans rapport | branche de préparation | Tests fictifs et garde-fou formulaire ; build et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 | QW-146 | S | Charger uniquement des dates civiles valides dans l'éditeur de suivi, avec confirmation explicite avant correction d'une date importée invalide | branche de préparation | Tests fictifs, contrat de consentement ; build/CI requis | PRÉPARÉ NON VALIDÉ |
 | QW-147 | S | Charger uniquement un objectif textuel de 500 caractères au plus dans l'éditeur et demander confirmation avant remplacement d'une valeur importée malformée | branche de préparation | Tests fictifs, contrat de consentement ; build/CI requis | PRÉPARÉ NON VALIDÉ |
+| QW-148 | S | Assurer le tri des trois listes HELIOS avec des identifiants importés non textuels, sans écriture | branche de préparation | Fixtures fictives et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
+| QW-149 | S | Afficher le motif de consultation importé en sécurité dans quatre listes HELIOS et l'historique | branche de préparation | Tests fictifs et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
+| QW-150 | S | Protéger l'affichage des diagnostics historiques importés non textuels | branche de préparation | Tests fictifs et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
+| QW-151 | S | Protéger l'affichage des noms de patients importés non textuels dans les cinq listes | branche de préparation | Tests fictifs et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

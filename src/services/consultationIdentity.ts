@@ -57,6 +57,26 @@ export function consultationSpecialtyLabel(value: unknown): string {
   return value.trim() ? value : 'Non précisée';
 }
 
+/**
+ * QW-149 — a malformed imported reason must not be rendered or trimmed
+ * as though it was ordinary clinical text.
+ */
+export function consultationMotifLabel(value: unknown): string {
+  if (value === undefined || value === null || value === '') return 'Non précisé';
+  if (typeof value !== 'string') return 'Motif à vérifier';
+  return value.trim() ? value : 'Non précisé';
+}
+
+/**
+ * QW-150 — render imported historical diagnoses as clinical text only
+ * when the source is a string; never infer a diagnosis from malformed data.
+ */
+export function consultationDiagnosisLabel(value: unknown): string {
+  if (value === undefined || value === null || value === '') return 'Non précisé';
+  if (typeof value !== 'string') return 'Diagnostic à vérifier';
+  return value.trim() ? value : 'Non précisé';
+}
+
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
 // patient requires separate reviewed reconciliation, never a generic update.
 export function preservesConsultationPatientLink(
