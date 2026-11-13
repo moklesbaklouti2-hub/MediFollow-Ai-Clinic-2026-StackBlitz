@@ -1258,3 +1258,7 @@
 - La protection n'affecte pas `updateConsultation` : les anciens documents dont la spécialité n'était pas saisie restent consultables et modifiables sans conversion automatique ni perte d'information. Aucune vérification diagnostique ou validation médicale n'est déduite de la simple présence de ces champs.
 - Contrats fictifs ajoutés à `scripts/test-patient-linkage.ts` : valeurs valides, absentes, vides, mal typées, ordre des gardes et conservation du fonctionnement du formulaire existant.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:patient-linkage`, `npm run test:complete` et 11 jobs GitHub Actions non exécutés sur HEAD exact. Branche de préparation uniquement, aucune modification de `main` ni de la PR d'audit, aucune donnée réelle ni déploiement.
+
+### 2026-11-13 — QW-123 : cohérence de la clôture des suivis HELIOS
+- Réutiliser isWritableFollowUpPlan lors de la clôture explicite : un objectif importé dépassant 500 caractères ne doit pas produire un plan terminé que le hook refuserait ensuite. Aucun changement automatique des dossiers.
+- Tests fictifs des limites 500/501 caractères. **PRÉPARÉ NON VALIDÉ** : compilation, tests et CI à exécuter.
