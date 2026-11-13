@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1553,3 +1553,40 @@ console.log('PASS QW-105: direct creation refuses terminal status and misleading
     'The central prescription hook must reject audit timestamp rewrites before persistence.');
 }
 console.log('PASS QW-106: creation timestamp immutable; finalized status changes require dated audit fields.');
+
+// QW-107: prescription status cannot regress from validated to draft or be
+// silently repaired from an unknown imported value through a normal update.
+{
+  const draft = { status: 'draft' as const };
+  const validated = { status: 'validated' as const };
+  const dispensed = { status: 'dispensed' as const };
+  const cancelled = { status: 'cancelled' as const };
+  const unknown = { status: undefined };
+  assert.equal(allowsPrescriptionStatusTransition(draft, { advice: 'Fictif' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(draft, { status: 'draft' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(draft, { status: 'validated' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(draft, { status: 'dispensed' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(draft, { status: 'cancelled' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { advice: 'Fictif' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: 'validated' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: 'draft' }), false);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: 'dispensed' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: 'cancelled' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(dispensed, { status: 'draft' }), false);
+  assert.equal(allowsPrescriptionStatusTransition(dispensed, { status: 'cancelled' }), true);
+  assert.equal(allowsPrescriptionStatusTransition(cancelled, { status: 'validated' }), false);
+  assert.equal(allowsPrescriptionStatusTransition(unknown, { status: 'draft' }), false);
+  assert.equal(allowsPrescriptionStatusTransition({ status: 'inconnu' as 'draft' }, { status: 'validated' }), false);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: undefined }), false);
+  assert.equal(allowsPrescriptionStatusTransition(validated, { status: 'invalid' as 'draft' }), false);
+  assert.equal(allowsPrescriptionStatusTransition(validated, {}), true);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('allowsPrescriptionStatusTransition(currentPrescription, changes)') &&
+    update.indexOf('allowsPrescriptionStatusTransition(') < update.indexOf('preservesPrescriptionAuditTimestamps(') &&
+    update.indexOf('allowsPrescriptionStatusTransition(') < update.indexOf('savePrescriptions(updated)'),
+    'Validate the status transition centrally before any prescription write.');
+}
+console.log('PASS QW-107: forward-only status transitions and no silent coercion of imported states.');
