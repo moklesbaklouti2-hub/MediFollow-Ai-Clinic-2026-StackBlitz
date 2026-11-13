@@ -1368,3 +1368,11 @@
 - **Correction :** réutilisation du helper existant `followUpObjectiveLabel` dans les listes « à revoir », « dates à corriger » et « au-delà de 7 jours ». Pas de duplication de logique, modification de dossier ni changement de décision clinique.
 - **Tests fictifs ajoutés :** objet, tableau, objectif excessif, absence de mutation, contrat statique des trois listes.
 - **Statut :** préparé non validé. Tests réels, compilation et CI 11/11 sur le SHA exact encore nécessaires.
+
+
+### 2026-11-13 — QW-138 : masquer les actions HELIOS sur consultations importées ambiguës (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055` uniquement ; `main` et la PR #2 sont inchangées.
+- **Constat :** les trois listes HELIOS vérifiaient l'identité du patient, mais proposaient encore des boutons d'ouverture ou de clôture pour une consultation portant un ID dupliqué. Les handlers protégeaient déjà l'écriture, mais l'action affichée était trompeuse.
+- **Correctif :** conditionner les actions à la fois à un patient confirmé et à un ID de consultation unique grâce au helper existant `hasUniqueConsultationId` ; conserver les lignes en lecture seule avec une consigne claire de vérification. Les protections dans les handlers restent actives.
+- **Tests fictifs ajoutés :** ID unique, dupliqué, absent, vide, immutabilité et contrat UI sur les trois listes ; présence des garde-fous d'ouverture/clôture.
+- **Statut :** préparé, non validé. `npm run test:follow-up`, compilation et CI 11/11 sur le SHA exact à exécuter avant toute validation. Aucun dossier patient réel, déploiement ou dépense.

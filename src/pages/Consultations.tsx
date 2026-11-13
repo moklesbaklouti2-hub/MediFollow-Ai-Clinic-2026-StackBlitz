@@ -1388,13 +1388,17 @@ export default function Consultations({
             const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
               ? patients.find(patient => patient.id === item.patientId)
               : undefined;
+            // QW-138: an imported duplicate consultation ID cannot identify
+            // which follow-up action to apply. The row remains review-only.
+            const canActOnFollowUp = Boolean(linkedPatient &&
+              hasUniqueConsultationId(item.id, consultations));
             const overdue = (item.followUp?.dueDate ?? '') < followUpToday;
             return (
               <div className="saved-consultation" key={'follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
-                {linkedPatient ? (
+                {canActOnFollowUp ? (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button type="button" className="consultation-save"
                       onClick={() => startEditing(item)}
@@ -1408,7 +1412,7 @@ export default function Consultations({
                     </button>
                   </div>
                 ) : (
-                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                  <p className="patient-hint">Identifiant de patient ou de consultation absent, dupliqué ou non confirmé : vérifiez le dossier avant toute action.</p>
                 )}
               </div>
             );
@@ -1427,19 +1431,23 @@ export default function Consultations({
             const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
               ? patients.find(patient => patient.id === item.patientId)
               : undefined;
+            // QW-138: an imported duplicate consultation ID cannot identify
+            // which follow-up action to apply. The row remains review-only.
+            const canActOnFollowUp = Boolean(linkedPatient &&
+              hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={'undated-follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Date de suivi absente ou invalide</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
-                {linkedPatient ? (
+                {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
                     style={{ justifySelf: 'start', padding: '9px 13px' }}>
                     Ouvrir pour corriger la date
                   </button>
                 ) : (
-                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                  <p className="patient-hint">Identifiant de patient ou de consultation absent, dupliqué ou non confirmé : vérifiez le dossier avant toute action.</p>
                 )}
               </div>
             );
@@ -1458,19 +1466,23 @@ export default function Consultations({
             const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
               ? patients.find(patient => patient.id === item.patientId)
               : undefined;
+            // QW-138: an imported duplicate consultation ID cannot identify
+            // which follow-up action to apply. The row remains review-only.
+            const canActOnFollowUp = Boolean(linkedPatient &&
+              hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={'later-follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Suivi planifié : {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
-                {linkedPatient ? (
+                {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
                     style={{ justifySelf: 'start', padding: '9px 13px' }}>
                     Ouvrir ce plan de suivi
                   </button>
                 ) : (
-                  <p className="patient-hint">Vérifiez le lien au dossier patient avant toute action.</p>
+                  <p className="patient-hint">Identifiant de patient ou de consultation absent, dupliqué ou non confirmé : vérifiez le dossier avant toute action.</p>
                 )}
               </div>
             );

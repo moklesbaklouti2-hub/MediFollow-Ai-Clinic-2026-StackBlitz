@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
-import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
+import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -123,7 +123,7 @@ assert.ok(dashboardUI.includes('summarizeFollowUps(clinicalConsultations,') &&
   'The dashboard must show follow-up counts and link to consultations.');
 assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpToday)') &&
   consultationUI.includes('dueFollowUps.map((item)') &&
-  consultationUI.includes('linkedPatient ? (') &&
+  consultationUI.includes('canActOnFollowUp ? (') &&
   consultationUI.includes('onClick={() => startEditing(item)}') &&
   consultationUI.includes('Dossier patient non relié — identité à confirmer'),
   'The worklist must order follow-ups, open confirmed records and flag unlinked identities.');
@@ -137,7 +137,7 @@ assert.ok(completionCode.includes('getConsultations().find(') &&
   'La clôture rapide doit revérifier le patient, confirmer explicitement et vérifier l’enregistrement.');
 assert.ok(consultationUI.includes('onClick={() => completeFollowUp(item)}') &&
   consultationUI.includes('Marquer le contrôle effectué') &&
-  consultationUI.includes('linkedPatient ? ('),
+  consultationUI.includes('canActOnFollowUp ? ('),
   'L’action de clôture n’est offerte qu’aux dossiers patients confirmés.');
 
 // QW-032 — all rapid follow-up actions must refuse duplicate imported IDs.
@@ -805,3 +805,46 @@ console.log('PASS QW-136: historical imported HELIOS objectives are displayed wi
   }
 }
 console.log('PASS QW-137: three HELIOS follow-up worklists use safe imported objective labels.');
+
+
+// QW-138 — clinical follow-up worklists must not offer opening or completion
+// when the consultation ID is missing/duplicated in an imported backup.
+// Patients stay visible for documentary review; no record is reconciled here.
+{
+  const single = [{ id: 'consult-fictive-a' }, { id: 'consult-fictive-b' }];
+  const duplicate = [{ id: 'consult-fictive-a' }, { id: 'consult-fictive-a' }];
+  const before = JSON.stringify({ single, duplicate });
+  assert.equal(hasUniqueConsultationId('consult-fictive-a', single), true);
+  assert.equal(hasUniqueConsultationId('consult-fictive-a', duplicate), false);
+  assert.equal(hasUniqueConsultationId('consult-absente', single), false);
+  assert.equal(hasUniqueConsultationId('', single), false);
+  assert.equal(JSON.stringify({ single, duplicate }), before,
+    'Import conflict checks must not rewrite clinical records.');
+
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const ranges: Array<[string, string]> = [
+    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item) => {', 'Historique des consultations ('],
+  ];
+  for (const [start, end] of ranges) {
+    const block = ui.split(start)[1]?.split(end)[0] ?? '';
+    const patientCheckAt = block.indexOf('hasConfirmedPatientSelection(item.patientId, patients)');
+    const consultationCheckAt = block.indexOf('hasUniqueConsultationId(item.id, consultations)');
+    const gateAt = block.indexOf('{canActOnFollowUp ? (');
+    const warningAt = block.indexOf('Identifiant de patient ou de consultation absent, dupliqué ou non confirmé');
+    assert.ok(patientCheckAt >= 0 && consultationCheckAt > patientCheckAt &&
+      gateAt > consultationCheckAt && warningAt > gateAt &&
+      block.includes('const canActOnFollowUp = Boolean(linkedPatient &&') &&
+      !block.includes('{linkedPatient ? ('),
+      'Ambiguous imported encounter IDs must hide follow-up actions in ' + start);
+  }
+  const completion = ui.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  const startEditing = ui.split('function startEditing(')[1]
+    ?.split('function cancelEditing(')[0] ?? '';
+  assert.ok(completion.includes('hasUniqueConsultationId(item.id, getConsultations())') &&
+    startEditing.includes('hasUniqueConsultationId(item.id, currentConsultations)'),
+    'Underlying persistence and editing guards must remain active independently.');
+}
+console.log('PASS QW-138: three HELIOS follow-up lists hide actions for duplicate encounter IDs.');
