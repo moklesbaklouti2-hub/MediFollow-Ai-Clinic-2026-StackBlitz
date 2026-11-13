@@ -1174,3 +1174,9 @@
 - Le parcours `dispenseSavedPrescription` vérifie désormais les mouvements de stock liés à l'ordonnance actuelle après le contrôle de son statut et **avant** toute sauvegarde des quantités ou appel à `dispenseInventoryItems`. Toute trace déjà enregistrée déclenche un refus lisible invitant à vérifier le journal et à réconcilier le statut.
 - Aucune réintégration ni nouvelle déduction automatique n'est effectuée ; aucune modification de la logique de stock. Un test de contrat de l'ordre des gardes et des scénarios purement fictifs sont ajoutés à `scripts/test-patient-linkage.ts`.
 - **PRÉPARÉ NON VALIDÉ** : compilation, tests d'exécution et 11 jobs GitHub Actions sur le HEAD exact restent à vérifier. Branche de préparation uniquement ; `main` et la PR d'audit sont préservées, aucune donnée réelle.
+
+### 2026-11-13 — QW-111 : refuser l'annulation UI d'une ordonnance au statut importé inconnu
+- Une ordonnance importée sans statut ou avec un état non reconnu ne doit pas suivre le parcours ordinaire d'annulation « sans délivrance ». Le hook central avait déjà un verrou de transition (QW-107), mais l'écran pouvait encore afficher une confirmation suivie d'un échec imprécis.
+- `cancelPrescription` refuse désormais immédiatement ces états et affiche un message demandant de vérifier le dossier. Ce contrôle intervient avant `window.confirm`, `cancelDispensedPrescriptionStock` et `updatePrescription` ; aucun stock n'est touché.
+- Les états explicites `draft`, `validated` et `dispensed` conservent leurs parcours précédents, sous réserve des gardes QW-091/098/103. Tests de contrats UI et statuts fictifs ajoutés à `scripts/test-patient-linkage.ts`.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:complete`, validation Codespaces et 11 jobs Actions restent à effectuer sur le SHA exact. Aucun patient réel, aucune modification de `main`, aucun déploiement.
