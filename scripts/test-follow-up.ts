@@ -421,3 +421,12 @@ console.log('PASS QW-079: stale patient reassignment cannot be silently persiste
     'The existing clinician form must continue to normalize and validate follow-ups.');
 }
 console.log('PASS QW-120: HELIOS follow-up plans validated before central clinical writes.');
+
+// QW-123: imported malformed plans cannot be marked completed.
+{
+  const plan = { dueDate: '2026-11-16', objective: 'x'.repeat(500), status: 'planned' as const };
+  assert.equal(completedFollowUpPlan(plan)?.status, 'completed');
+  assert.equal(completedFollowUpPlan({ ...plan, objective: 'x'.repeat(501) }), null);
+  assert.equal(plan.status, 'planned');
+}
+console.log('PASS QW-123: completion respects central follow-up validation.');
