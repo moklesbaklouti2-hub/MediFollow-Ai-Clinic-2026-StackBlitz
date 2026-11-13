@@ -1194,3 +1194,10 @@
 - Le hook central lit le même instantané des dossiers patients et ordonnances pour sa vérification, contrôle l'ID généré avant construction et sauvegarde, et refuse la création sans aucune écriture si l'ID est déjà occupé. Il ne fusionne, ne renomme ni ne supprime les archives.
 - Tests fictifs de création, de collisions d'ordonnances et de traces de stock, d'ID invalide et du contrat d'ordre des contrôles. Deux tests de contrat précédents ont été ajustés au nouvel instantané `currentData`.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, tests complets et 11 jobs Actions non vérifiés sur le HEAD final. `main` et PR d'audit inchangées, aucune donnée réelle, aucune dépense ou déploiement.
+
+### 2026-11-13 — QW-114 : refuser la modification d'une ordonnance au statut absent ou inconnu
+- Les protections QW-107/QW-111 bloquaient déjà certaines transitions de statut et annulations d'archives malformées, mais `updatePrescription` permettait encore des écritures de contenu lorsque le statut enregistré était `undefined`, `null` ou inconnu et qu'aucun `changes.status` n'était envoyé.
+- Nouveau garde-fou central avant `savePrescriptions` : les modifications ordinaires sont possibles seulement depuis `draft` ou `validated`. Une ordonnance déjà `dispensed` conserve exclusivement l'exception documentaire de QW-097, avec retour de stock tracé selon QW-098 ; `cancelled` reste non modifiable.
+- Le formulaire `Prescriptions` refuse désormais une édition d'un statut absent ou invalide avec une explication demandant la vérification du dossier, sans appeler `updatePrescription`.
+- Tests de contrat sur les deux chemins et statuts synthétiques dans `scripts/test-patient-linkage.ts`. Aucune normalisation automatique des archives ni modification des mouvements de stock.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, tests complets et 11 jobs GitHub Actions à vérifier sur le HEAD final. Branche de préparation seule, `main` et PR d'audit inchangées, aucune donnée réelle.
