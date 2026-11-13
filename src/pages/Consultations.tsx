@@ -7,7 +7,7 @@ import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
-import { hasUniqueConsultationId } from '../services/consultationIdentity';
+import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 
 
@@ -178,6 +178,7 @@ export default function Consultations({
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingClinicalSnapshot, setEditingClinicalSnapshot] = useState<string | null>(null);
   const [expressOpen, setExpressOpen] = useState(false);
   const [expressDraft, setExpressDraft] = useState('');
   const [expressFeedback, setExpressFeedback] = useState('');
@@ -366,9 +367,18 @@ export default function Consultations({
       window.alert('Consultation introuvable, identifiant ambigu ou dossier patient non confirmé. Aucune modification ouverte.');
       return;
     }
+    // QW-126: do not edit a stale row; capture exactly the clinical content
+    // loaded from the persisted consultation, not just its patient ID.
+    const current = currentConsultations.find(record => record.id === item.id);
+    const snapshot = consultationClinicalSnapshot(current);
+    if (!snapshot || snapshot !== consultationClinicalSnapshot(item)) {
+      window.alert('Cette consultation a été modifiée depuis l’affichage. Actualisez la liste avant de l’ouvrir.');
+      return;
+    }
     setExpressDraft('');
     setExpressFeedback('');
     setExpressPatientId(null);
+    setEditingClinicalSnapshot(snapshot);
     setEditingId(item.id);
     setPatientId(item.patientId);
     setSpecialty(item.specialty ?? '');
@@ -392,6 +402,7 @@ export default function Consultations({
     setExpressDraft('');
     setExpressFeedback('');
     setExpressPatientId(null);
+    setEditingClinicalSnapshot(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
@@ -476,6 +487,14 @@ export default function Consultations({
         window.alert('Consultation modifiée, introuvable ou associée à un autre patient. Annulez la modification et rouvrez le bon dossier.');
         return;
       }
+      // QW-126: keep unsaved text and refuse an outdated edit, including if
+      // another tab completed a follow-up or corrected a clinical note.
+      if (!editingClinicalSnapshot ||
+          consultationClinicalSnapshot(currentRecords[0]) !== editingClinicalSnapshot) {
+        window.alert('La consultation a changé depuis son ouverture. Vos modifications restent dans le formulaire ; actualisez le dossier avant d’enregistrer.');
+        setSaved(false);
+        return;
+      }
     }
 
     const followUpPlan = prepareFollowUp(followUpDate, followUpObjective, followUpCompleted);
@@ -513,6 +532,7 @@ export default function Consultations({
     setExpressDraft('');
     setExpressFeedback('');
     setExpressPatientId(null);
+    setEditingClinicalSnapshot(null);
     setEditingId(null);
     setPatientId('');
     setSpecialty('');
