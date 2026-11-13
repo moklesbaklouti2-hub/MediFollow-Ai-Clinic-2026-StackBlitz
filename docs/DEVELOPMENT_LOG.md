@@ -1336,3 +1336,11 @@
 - **Modification :** `followUpDateLabel` réutilise `isValidFollowUpDate`, conserve le format historique pour les dates valides et affiche « Date de suivi à vérifier » sinon. Le texte de statut QW-132 reste indépendant, aucune échéance n'est inférée. Aucune mutation ou correction automatique du dossier.
 - **Vérifications prévues :** dates fictives valides/bissextiles, formats invalides, date absente, type numérique, absence de mutation et contrat de rendu de l'historique.
 - **Statut :** préparé non validé. Exécuter `npm run test:follow-up`, `npm run build`, les tests hors ligne et la CI 11/11 sur le SHA exact dans un environnement adapté avant toute validation.
+
+
+### 2026-11-13 — QW-134 : identité incertaine dans l'historique des consultations (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. Ni `main` ni la PR d'audit #2 ne sont modifiées.
+- **Constat :** l'historique utilisait `patients.find` seul pour afficher le premier patient portant un ID même dupliqué et pouvait afficher un ancien nom importé comme une identité établie. Le bouton Modifier restait offert, bien que `startEditing` refusât déjà certaines de ces actions.
+- **Correctif :** afficher un patient seulement si son identifiant est unique et confirmé ; n'offrir Modifier que si l'identifiant de consultation est également unique. Sinon montrer un message de liaison incertaine, sans associer par nom ni écrire dans les dossiers. La validation avant ouverture dans `startEditing` demeure active.
+- **Tests fictifs :** patient unique, doublon, identifiant absent, immutabilité ; vérification statique du rendu et du garde-fou d'ouverture.
+- **Statut :** préparé, non validé. Compilation, tests Codespaces et CI 11/11 sur le SHA exact requis. Aucun patient réel, dépense ou déploiement.

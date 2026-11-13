@@ -672,3 +672,36 @@ console.log('PASS QW-132: imported unknown HELIOS statuses shown as requiring re
     'The real clinical history must distinguish invalid dates from documented appointments.');
 }
 console.log('PASS QW-133: HELIOS invalid imported follow-up dates flagged, never inferred.');
+
+
+// QW-134 — historical consultations may be edited only when both the patient
+// linkage and consultation ID are unique. An imported name is not identity proof.
+{
+  const patients = [{ id: 'patient-fictif' }, { id: 'autre-patient-fictif' }];
+  const duplicatePatients = [{ id: 'patient-fictif' }, { id: 'patient-fictif' }];
+  const before = JSON.stringify({ patients, duplicatePatients });
+  assert.equal(hasConfirmedPatientSelection('patient-fictif', patients), true);
+  assert.equal(hasConfirmedPatientSelection('patient-fictif', duplicatePatients), false);
+  assert.equal(hasConfirmedPatientSelection('patient-absent', patients), false);
+  assert.equal(hasConfirmedPatientSelection('', patients), false);
+  assert.equal(JSON.stringify({ patients, duplicatePatients }), before);
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const history = page.split('Historique des consultations (')[1] ?? '';
+  const identityAt = history.indexOf('hasConfirmedPatientSelection(item.patientId, patients)');
+  const editEligibilityAt = history.indexOf('hasUniqueConsultationId(item.id, consultations)');
+  const showButtonAt = history.indexOf('{canEditHistoricalConsultation ? (');
+  const editCallAt = history.indexOf('onClick={() => startEditing(item)}');
+  assert.ok(identityAt >= 0 && editEligibilityAt > identityAt &&
+    showButtonAt > editEligibilityAt && editCallAt > showButtonAt &&
+    history.includes("Dossier patient non relié — identité à confirmer") &&
+    history.includes('Identifiant de patient ou de consultation absent, dupliqué ou non confirmé') &&
+    !history.includes("linkedPatient?.name || legacyPatientName"),
+    'History must not infer an identity from the first duplicate or a legacy name.');
+  const editor = page.split('function startEditing(')[1]
+    ?.split('function cancelEditing(')[0] ?? '';
+  assert.ok(editor.includes('hasUniqueConsultationId(item.id, currentConsultations)') &&
+    editor.includes('hasConfirmedPatientSelection(item.patientId, patients)'),
+    'The historical edit handler must still independently recheck identity.');
+}
+console.log('PASS QW-134: imported historical identity ambiguity cannot offer unsafe editing.');

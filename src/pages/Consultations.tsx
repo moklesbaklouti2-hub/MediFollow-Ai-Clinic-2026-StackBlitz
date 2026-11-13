@@ -1483,11 +1483,16 @@ export default function Consultations({
           <p>Aucune consultation enregistrée pour le moment.</p>
         ) : (
           sortedConsultations.map((item) => {
-            const linkedPatient = patients.find((patient) => patient.id === item.patientId);
-            const legacyPatientName = (item as typeof item & { patient?: string }).patient;
+            // QW-134: never use the first patient with a duplicated imported ID
+            // or an unverified legacy name to imply an established patient link.
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find((patient) => patient.id === item.patientId)
+              : undefined;
+            const canEditHistoricalConsultation = Boolean(linkedPatient &&
+              hasUniqueConsultationId(item.id, consultations));
             return (
               <div className="saved-consultation" key={item.id}>
-                <strong>{linkedPatient?.name || legacyPatientName || 'Patient non identifié'}</strong>
+                <strong>{linkedPatient?.name || 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>{new Date(item.date).toLocaleString('fr-FR')}</span>
                 <p><b>Spécialité :</b> {item.specialty || 'Non précisée'}</p>
                 <p><b>Motif :</b> {item.motif}</p>
@@ -1496,16 +1501,20 @@ export default function Consultations({
                   <p><b>HELIOS Follow-up :</b> {followUpDateLabel(item.followUp)} · {followUpStatusLabel(item.followUp)}
                     {item.followUp.objective ? ` · ${item.followUp.objective}` : ''}</p>
                 )}
-                <button
-                  type="button"
-                  className="consultation-save"
-                  onClick={() => startEditing(item)}
-                  style={{ justifySelf: 'start', padding: '9px 13px' }}
-                >
-                  Modifier cette consultation
-                </button>
-                {!linkedPatient && (
-                  <p className="patient-hint">Ancienne consultation : dossier patient non relié.</p>
+                {canEditHistoricalConsultation ? (
+                  <button
+                    type="button"
+                    className="consultation-save"
+                    onClick={() => startEditing(item)}
+                    style={{ justifySelf: 'start', padding: '9px 13px' }}
+                  >
+                    Modifier cette consultation
+                  </button>
+                ) : (
+                  <p className="patient-hint" role="status">
+                    Identifiant de patient ou de consultation absent, dupliqué ou non confirmé :
+                    vérifiez le dossier avant toute modification.
+                  </p>
                 )}
               </div>
             );
