@@ -21,6 +21,17 @@ export function isUnusedConsultationId(
     !records.some(record => record?.id === id);
 }
 
+// QW-122 — a new clinical visit must document both its main reason and
+// specialty, as required by the consultation form. Legacy consultations with
+// missing specialty remain readable and editable; only creation is guarded.
+export function hasRequiredConsultationDetails(
+  consultation: Pick<Consultation, 'motif' | 'specialty'> | null | undefined,
+): boolean {
+  return Boolean(consultation &&
+    typeof consultation.motif === 'string' && consultation.motif.trim().length > 0 &&
+    typeof consultation.specialty === 'string' && consultation.specialty.trim().length > 0);
+}
+
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
 // patient requires separate reviewed reconciliation, never a generic update.
 export function preservesConsultationPatientLink(
