@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
-import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
+import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -220,6 +220,11 @@ export function useMedicalData() {
     if (!preservesPrescriptionAuditTimestamps(currentPrescription, changes)) return false;
     // QW-097: enforce finality at the storage boundary, not only in the form.
     if (!allowsFinalizedPrescriptionUpdate(currentPrescription, changes)) return false;
+    // QW-114: even a content-only write must fail closed for an imported
+    // missing/unknown status. Only draft/validated may be edited normally;
+    // dispensed follows the tightly scoped QW-097 cancellation exception.
+    if (currentPrescription.status !== 'dispensed' &&
+        !isDispensablePrescriptionStatus(currentPrescription.status)) return false;
     // QW-104: stock trace locks prescription content even if the old status
     // remains draft/validated. Only a documented finalisation may proceed.
     if (!allowsStockLinkedPrescriptionUpdate(currentPrescription, changes,
