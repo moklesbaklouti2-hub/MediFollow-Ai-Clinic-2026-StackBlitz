@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
@@ -427,12 +427,26 @@ export default function Consultations({
       window.alert('Impossible de confirmer le dossier patient. Vérifiez le lien avant tout changement.');
       return;
     }
+    // QW-125: do not complete a follow-up that changed after the clinician
+    // saw this worklist row. A same-patient match alone is not enough.
+    if (!matchesDisplayedFollowUpPlan(item.followUp, current.followUp)) {
+      window.alert('Le contrôle de suivi a été modifié depuis l’affichage. Actualisez la liste avant toute clôture.');
+      return;
+    }
     const completedPlan = completedFollowUpPlan(current.followUp);
     if (!completedPlan) {
       window.alert('Ce plan de suivi n’est plus ouvert ou sa date est invalide. Actualisez la liste.');
       return;
     }
     if (!window.confirm('Confirmer que ce contrôle de suivi a effectivement été réalisé ?')) return;
+    // Recheck after the modal: another tab can update the plan while the
+    // confirmation dialogue is open.
+    const latest = getConsultations().filter(record => record.id === current.id);
+    if (latest.length !== 1 || latest[0].patientId !== item.patientId ||
+        !matchesDisplayedFollowUpPlan(item.followUp, latest[0].followUp)) {
+      window.alert('Le suivi a changé pendant la confirmation. Actualisez la liste sans valider cette clôture.');
+      return;
+    }
     if (!updateConsultation(current.id, { followUp: completedPlan })) {
       window.alert('Enregistrement non confirmé : le contrôle reste à vérifier dans la liste.');
       return;
