@@ -76,6 +76,9 @@ jobs:
       - name: Verifier HELIOS Clinical Memory et Prevention (fictif)
         if: matrix.module == 'clinique'
         run: npm run test:helios-memory-prevention
+      - name: Verifier HELIOS Trends et Referral (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:helios-trends-referral
 
   coordination:
     name: Verifier le registre des modules

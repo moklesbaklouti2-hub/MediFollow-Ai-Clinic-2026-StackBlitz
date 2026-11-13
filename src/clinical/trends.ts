@@ -1,4 +1,5 @@
 import type { Consultation, Vitals } from '../types/medical';
+import { recordedDateTimestamp } from './medicalTimeline';
 
 // HELIOS Trends: compare the two most recent recorded numeric values for a
 // single unit. This is descriptive only; no thresholds, alerts or AI inference.
@@ -33,12 +34,22 @@ function numericReading(value: unknown): number | null {
 export function compareRecentVitals(
   consultations: readonly Pick<Consultation, 'id' | 'date' | 'vitals'>[],
 ): VitalComparison[] {
+  // QW-162/163: imported encounters with missing or duplicate identifiers
+  // cannot count as two distinct clinical observations.
+  const idCounts = new Map<string, number>();
+  for (const consultation of consultations) {
+    if (!consultation || typeof consultation.id !== 'string' || !consultation.id.trim()) continue;
+    idCounts.set(consultation.id, (idCounts.get(consultation.id) ?? 0) + 1);
+  }
   return COMPARED_VITALS.flatMap(({ key, label, unit }) => {
     const points: RecordedPoint[] = [];
     for (const consultation of consultations) {
+      if (!consultation || typeof consultation.id !== 'string' ||
+          idCounts.get(consultation.id) !== 1) continue;
       const date = consultation.date;
-      const timestamp = typeof date === 'string' ? Date.parse(date) : NaN;
-      if (!Number.isFinite(timestamp)) continue;
+      // QW-161: same calendar rules as the longitudinal consultation timeline.
+      const timestamp = recordedDateTimestamp(date);
+      if (timestamp === null) continue;
       const value = numericReading(consultation.vitals?.[key]);
       if (value === null) continue;
       points.push({ consultationId: consultation.id, date, timestamp, value });

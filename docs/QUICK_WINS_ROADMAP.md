@@ -245,6 +245,11 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-158 | S | HELIOS Clinical Memory : filtrer les consultations sans identifiant traçable, ordonner les diagnostics documentés de façon déterministe | branche de préparation | Test de provenance fictif, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-159 | S | HELIOS Prevention : refuser les âges importés décimaux ou impossibles sans inventer la valeur | branche de préparation | Tests âge fictif, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-160 | S | HELIOS Prevention : utiliser les dates cliniques strictes et le lien patient confirmé pour la dernière consultation documentée | branche de préparation | Tests multi-patients fictifs, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-161 | S | Trends utilise les dates de chronologie validées et écarte celles impossibles, sans déduction clinique | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-162 | S | Trends ignore les constantes issues de consultations sans identifiant textuel traçable | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-163 | S | Trends ne compte pas deux fois les consultations importées à identifiant dupliqué | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-164 | S | Referral choisit la dernière consultation via une date validée, et non Date.parse permissif | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-165 | S | Referral refuse les sources de consultation sans ID unique ou avec ID dupliqué | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

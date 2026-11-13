@@ -1454,3 +1454,11 @@
 - La CI #43528298479 a détecté un échec des fixtures QW-038 : elles ne contenaient aucun identifiant de consultation, alors que QW-160 exige désormais une source attribuable.
 - Correction limitée à `scripts/test-patient-linkage.ts` : identifiants fictifs uniques pour les visites valides et fixture supplémentaire sans identifiant datée plus tard que les autres, à exclure du calcul. Aucun relâchement du contrôle médical.
 - La suite HELIOS Clinical Memory/Prevention continue à s'exécuter après les tests de liaison. Nouvelle CI 11 jobs obligatoire sur SHA exact.
+
+
+### 2026-11-14 — QW-161 à QW-165 : provenance HELIOS Trends/Referral
+- HEAD de base : `79092e6898ce2b8d7aa6240c4a369e716c29e171`, workflow GitHub Actions 11/11 réussi (run 43528452459).
+- Trends : refuser dates impossibles/ambiguës avec `recordedDateTimestamp`, identifier les consultations non traçables et ne pas exploiter celles portant un identifiant dupliqué ; aucune interprétation médicale.
+- Referral : filtrer de manière analogue les dates et identifiants, puis choisir la dernière consultation fiable pour un aperçu **sans décision d'adressage**.
+- Test fictif `test:helios-trends-referral` ajouté à la commande `test:complete` et au workflow V2 ; aucune donnée réelle, réseau clinique ou nouveau fournisseur.
+- Changements limités à la branche de préparation. Compilation et tous les jobs CI du nouveau commit requis avant toute déclaration de succès.
