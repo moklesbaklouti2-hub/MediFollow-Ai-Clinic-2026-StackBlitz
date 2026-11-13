@@ -137,7 +137,7 @@ export function useMedicalData() {
     if (!hasRequiredConsultationDetails(consultation)) return null;
     // QW-120: a direct creation caller must not write an invalid HELIOS plan.
     if (!isWritableFollowUpPlan(consultation.followUp)) return null;
-    // QW-123: reject a missing, ambiguous or impossible consultation date
+    // QW-124: reject a missing, ambiguous or impossible consultation date
     // before it can enter the patient timeline.
     if (recordedDateTimestamp(consultation.date) === null) return null;
 
