@@ -287,6 +287,13 @@ export default function Prescriptions() {
       return;
     }
     if (current.status === 'cancelled') return;
+    // QW-111: unrecognized imported states must not reach an ordinary
+    // cancellation confirmation. Keep the record for manual reconciliation.
+    if (current.status !== 'dispensed' &&
+        !isDispensablePrescriptionStatus(current.status)) {
+      setSavedMessage('Annulation refusée : statut de l’ordonnance absent ou non reconnu. Vérifiez le dossier avant toute action ; aucun stock modifié.');
+      return;
+    }
     // QW-103: an unfinalized-looking order may still have actual stock
     // movements (for example after a failed post-dispense status update).
     // Do not claim there is no stock to return in this inconsistent state.
