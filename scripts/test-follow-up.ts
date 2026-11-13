@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
@@ -741,3 +741,39 @@ console.log('PASS QW-134: imported historical identity ambiguity cannot offer un
     'The consultation history must reuse the validated safe clinical date helpers.');
 }
 console.log('PASS QW-135: consultation history safely sorts and displays recorded dates.');
+
+
+// QW-136 — document-only display of malformed imported HELIOS objectives.
+// Valid text stays untouched; absent, non-textual or oversized values require
+// manual review instead of being presented as a documented clinical objective.
+{
+  const valid = { dueDate: '2026-11-20', status: 'planned', objective: 'Contrôle clinique fictif' };
+  const before = JSON.stringify(valid);
+  assert.equal(followUpObjectiveLabel(valid), valid.objective);
+  assert.equal(followUpObjectiveLabel({ ...valid, objective: 'x'.repeat(500) }), 'x'.repeat(500));
+  assert.equal(followUpObjectiveLabel({ ...valid, objective: '' }), 'Non précisé');
+  assert.equal(followUpObjectiveLabel({ ...valid, objective: '   ' }), 'Non précisé');
+  const malformed: unknown[] = [
+    undefined, null, [], {}, '', 0,
+    { dueDate: '2026-11-20', status: 'planned' },
+    { ...valid, objective: null },
+    { ...valid, objective: 12 },
+    { ...valid, objective: { note: 'non textuel' } },
+    { ...valid, objective: ['texte', 'importé'] },
+    { ...valid, objective: 'x'.repeat(501) },
+  ];
+  for (const plan of malformed) {
+    assert.equal(followUpObjectiveLabel(plan), 'Objectif de suivi à vérifier',
+      'Imported objective must not be silently coerced to documented text.');
+  }
+  assert.equal(JSON.stringify(valid), before, 'Read-only labels must not alter clinical records.');
+
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const history = ui.split('Historique des consultations (')[1] ?? '';
+  assert.ok(history.includes('followUpObjectiveLabel(item.followUp)') &&
+    history.includes('followUpDateLabel(item.followUp)') &&
+    history.includes('followUpStatusLabel(item.followUp)') &&
+    !history.includes('${item.followUp.objective}'),
+    'The historical view must use validated objective, date and status labels.');
+}
+console.log('PASS QW-136: historical imported HELIOS objectives are displayed without coercion.');

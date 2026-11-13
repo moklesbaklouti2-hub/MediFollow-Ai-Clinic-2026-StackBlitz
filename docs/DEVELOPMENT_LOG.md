@@ -1352,3 +1352,11 @@
 - **Correction :** réutilisation des helpers documentaires existants `orderRecordedNewest` et `displayRecordedDate` de QW-046 ; les dates non fiables restent visibles après les dates validées, sans écrire sur le dossier ni inférer une date manquante. Aucune nouvelle logique de date n'a été introduite.
 - **Tests fictifs ajoutés :** ordre décroissant, égalité stable sur ID, dates invalides placées après les dates valides, affichage explicite et absence de mutation ; contrat d'interface.
 - **Validation :** préparé, non validé. Compilation, `npm run test:follow-up`, tests complets et CI 11/11 sur le SHA exact à réaliser dans un environnement de test. Pas de patient réel, fusion, dépense ou déploiement.
+
+
+### 2026-11-13 — QW-136 : présentation sûre des objectifs de suivi importés (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. Aucun changement à `main` ni à la PR #2.
+- **Constat :** l'historique interpolait directement un objectif HELIOS importé (`item.followUp.objective`), même en cas de type non textuel, d'absence ou de longueur supérieure à la limite d'écriture.
+- **Correctif :** helper documentaire `followUpObjectiveLabel` : conserve les textes valides (jusqu'à 500 caractères), présente une chaîne vide ou blanche comme « Non précisé », et signale les valeurs absentes, invalides ou trop longues par « Objectif de suivi à vérifier ». Affichage uniquement, sans conversion implicite ni modification du dossier.
+- **Tests fictifs :** contenu valide, limite 500, vide, blanc, absent, objet, tableau, nombre, dépassement de 500, absence de mutation et branchement de l'historique aux helpers date/statut/objectifs.
+- **Validation :** préparation seulement. Exécuter `npm run test:follow-up`, la compilation et les 11 jobs CI sur le SHA exact avant toute validation clinique.

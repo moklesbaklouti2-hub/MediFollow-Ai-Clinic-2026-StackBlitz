@@ -62,6 +62,18 @@ export function followUpDateLabel(plan: unknown): string {
   return isValidFollowUpDate(date) ? date : 'Date de suivi à vérifier';
 }
 
+/**
+ * QW-136 — display an imported follow-up objective only when it is documented
+ * as valid text within the existing 500-character limit. Missing, malformed or
+ * oversized legacy values require human review; never coerce them to strings.
+ */
+export function followUpObjectiveLabel(plan: unknown): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return 'Objectif de suivi à vérifier';
+  const objective = (plan as { objective?: unknown }).objective;
+  if (typeof objective !== 'string' || objective.length > 500) return 'Objectif de suivi à vérifier';
+  return objective.trim().length ? objective : 'Non précisé';
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {
