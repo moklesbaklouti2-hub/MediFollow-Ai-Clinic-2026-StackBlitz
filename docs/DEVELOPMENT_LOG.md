@@ -1168,3 +1168,9 @@
 - Une nouvelle ordonnance en `draft` conserve un historique de validation vide : toute valeur `validatedAt` préremplie est refusée. Les statuts `dispensed`/`cancelled` et horodatages finaux restent interdits à la création.
 - Le formulaire habituel crée toujours des brouillons sans nécessiter de modification UI. Contrat QW-105 actualisé et scénarios synthétiques QW-109 ajoutés dans `scripts/test-patient-linkage.ts`.
 - **PRÉPARÉ NON VALIDÉ** : compilation, tests complets et GitHub Actions sur HEAD exact à réaliser dans Codespaces. Branche de préparation uniquement ; aucune modification de `main`, aucune donnée médicale réelle, aucune dépense ni déploiement.
+
+### 2026-11-13 — QW-110 : alerte de réconciliation avant nouvelle délivrance si des mouvements existent déjà
+- Situation : après une déduction réelle du stock suivie d'un échec de sauvegarde du statut `dispensed`, l'ordonnance peut rester affichée `draft` ou `validated`. Les garde-fous QW-103/104 empêchaient déjà certaines écritures, mais sans message explicite dans la fonction de délivrance.
+- Le parcours `dispenseSavedPrescription` vérifie désormais les mouvements de stock liés à l'ordonnance actuelle après le contrôle de son statut et **avant** toute sauvegarde des quantités ou appel à `dispenseInventoryItems`. Toute trace déjà enregistrée déclenche un refus lisible invitant à vérifier le journal et à réconcilier le statut.
+- Aucune réintégration ni nouvelle déduction automatique n'est effectuée ; aucune modification de la logique de stock. Un test de contrat de l'ordre des gardes et des scénarios purement fictifs sont ajoutés à `scripts/test-patient-linkage.ts`.
+- **PRÉPARÉ NON VALIDÉ** : compilation, tests d'exécution et 11 jobs GitHub Actions sur le HEAD exact restent à vérifier. Branche de préparation uniquement ; `main` et la PR d'audit sont préservées, aucune donnée réelle.
