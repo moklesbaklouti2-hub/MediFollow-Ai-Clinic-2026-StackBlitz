@@ -182,6 +182,8 @@
 
 | QW-116 | M | Vérifier au niveau du service de stock qu'une délivrance vise une ordonnance unique, un patient confirmé, le bon lien patient et un statut autorisé, sans casser le rejeu idempotent | branche de préparation | Tests de délivrance fictive, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-117 | S | Refuser une nouvelle délivrance si des retours ou autres mouvements orphelins sont déjà liés à l'ordonnance sans trace de délivrance d'origine ; conserver le rejeu idempotent | branche de préparation | Tests stock fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
