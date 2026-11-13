@@ -183,6 +183,13 @@ export default function Prescriptions() {
       setSavedMessage('Délivrance refusée : statut de l’ordonnance absent ou non reconnu. Vérification nécessaire ; aucun stock déduit.');
       return;
     }
+    // QW-110: a prior dispense may already have changed inventory even if
+    // its final prescription status write failed. Refuse before trying to
+    // save quantities again; reconcile the documentary state first.
+    if (prescriptionHasRecordedStockMovement(savedPrescription.id, getInventoryData().movements)) {
+      setSavedMessage('Délivrance suspendue : des mouvements de stock existent déjà pour cette ordonnance encore non délivrée. Vérifiez le journal et réconciliez le statut avant toute nouvelle action.');
+      return;
+    }
 
     const linkedMedications = medications.filter((item) => item.inventoryItemId);
     if (linkedMedications.length === 0) {
