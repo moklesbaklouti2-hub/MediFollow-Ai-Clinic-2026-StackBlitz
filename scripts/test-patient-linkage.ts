@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
-import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus } from '../src/services/prescriptionFinality.ts';
+import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -1515,3 +1515,41 @@ console.log('PASS QW-104: documented stock locks stale draft/validated prescript
     'All new prescription records must be checked before assigning an ID or writing storage.');
 }
 console.log('PASS QW-105: direct creation refuses terminal status and misleading timestamps.');
+
+// QW-106: preserve original audit time and require the lifecycle date to
+// accompany an explicit, valid status transition before any storage write.
+{
+  const nowIso = '2026-11-13T09:30:00.000Z';
+  const draft = { status: 'draft' as const };
+  const validated = { status: 'validated' as const };
+  const dispensed = { status: 'dispensed' as const };
+  const cancelled = { status: 'cancelled' as const };
+
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { advice: 'Fictif' }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { date: '2026-11-13' }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { savedAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(validated, { savedAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { validatedAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'validated', validatedAt: nowIso }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(validated, { status: 'validated', validatedAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { dispensedAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'dispensed' }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'dispensed', dispensedAt: 'illégal' }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'dispensed', dispensedAt: nowIso }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(validated, { status: 'dispensed', dispensedAt: nowIso }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { cancelledAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'cancelled' }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'cancelled', cancelledAt: nowIso }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(dispensed, { status: 'cancelled', cancelledAt: nowIso }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(cancelled, { status: 'cancelled', cancelledAt: nowIso }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(dispensed, { cancelledAt: nowIso }), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('preservesPrescriptionAuditTimestamps(currentPrescription, changes)') &&
+    update.indexOf('preservesPrescriptionAuditTimestamps(') < update.indexOf('savePrescriptions(updated)') &&
+    update.indexOf('preservesPrescriptionAuditTimestamps(') < update.indexOf('allowsFinalizedPrescriptionUpdate('),
+    'The central prescription hook must reject audit timestamp rewrites before persistence.');
+}
+console.log('PASS QW-106: creation timestamp immutable; finalized status changes require dated audit fields.');
