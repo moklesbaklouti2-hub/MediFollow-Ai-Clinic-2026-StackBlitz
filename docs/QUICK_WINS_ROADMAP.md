@@ -174,6 +174,8 @@
 
 | QW-112 | S | Distinguer en lecture seule les statuts d'ordonnance absents (dossiers anciens) des valeurs importées inconnues ou invalides | branche de préparation | Tests fictifs, compilation et CI exacte requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-113 | S | Refuser la création d'une ordonnance dont le nouvel identifiant existe déjà dans les ordonnances ou les traces de stock importées | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
