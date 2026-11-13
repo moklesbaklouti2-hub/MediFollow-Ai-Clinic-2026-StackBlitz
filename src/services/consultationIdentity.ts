@@ -100,3 +100,10 @@ export function preservesConsultationAuditTimestamps(
     !Object.prototype.hasOwnProperty.call(changes, 'createdAt') &&
     !Object.prototype.hasOwnProperty.call(changes, 'updatedAt'));
 }
+
+// QW-153..155: preserve malformed imported clinical text for reconciliation.
+// Optional historical fields may be absent; do not coerce objects to strings.
+export function hasEditableConsultationText(record: Pick<Consultation, 'specialty' | 'motif' | 'diagnosis'>): boolean {
+  return [record.specialty, record.motif, record.diagnosis].every(
+    value => value == null || typeof value === 'string');
+}

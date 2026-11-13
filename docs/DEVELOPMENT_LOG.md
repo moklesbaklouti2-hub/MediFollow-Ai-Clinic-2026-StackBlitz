@@ -1427,3 +1427,7 @@
 - **Correction ciblée :** actualiser les trois vérifications anciennes QW-032 (nom), QW-134 (nom) et QW-141 (motif) afin de vérifier les helpers `confirmedPatientNameLabel` et `consultationMotifLabel` réellement utilisés depuis QW-149/QW-151. Tests de comportement supplémentaires QW-152 ; aucune modification du code d'interface ou de stockage.
 - **Validation :** attendre la nouvelle CI 11/11 pour le SHA exact ; ne pas déduire un résultat vert de l'ancien workflow qui a échoué.
 - **Portée :** branche `prep-chronologie-2026-11-11-qw052-055` seulement. Ni `main`, ni audit/PR #2, ni déploiement ni données médicales réelles.
+
+
+### 2026-11-13 — QW-153 à QW-155 : protection des champs cliniques importés
+- Refuser l'ouverture de l'éditeur si spécialité, motif ou diagnostic importé n'est pas textuel ; conserver le dossier source. Tests fictifs ajoutés. Validation CI sur le SHA exact requise.

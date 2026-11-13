@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
-import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel } from '../src/services/consultationIdentity.ts';
+import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
 import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -1142,3 +1142,23 @@ console.log('PASS QW-151: imported patient names safely display across five clin
     'Historical identity tests must guard actual safe label contracts.');
 }
 console.log('PASS QW-152: legacy test assertions aligned with protected HELIOS labels.');
+
+
+// QW-153..155: protect the editor from non-text imported specialty, reason and diagnosis.
+{
+  const record = { specialty: 'ORL', motif: 'Motif fictif', diagnosis: '' };
+  assert.equal(hasEditableConsultationText(record), true);
+  for (const field of ['specialty', 'motif', 'diagnosis'] as const) {
+    for (const value of [{ text: 'fictif' }, ['fictif'], 12, false]) {
+      const malformed = { ...record, [field]: value };
+      const before = JSON.stringify(malformed);
+      assert.equal(hasEditableConsultationText(malformed as unknown as typeof record), false);
+      assert.equal(JSON.stringify(malformed), before);
+    }
+  }
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const editor = ui.split('function startEditing(')[1]?.split('function cancelEditing(')[0] ?? '';
+  assert.ok(editor.indexOf('if (!hasEditableConsultationText(item))') >= 0 &&
+    editor.indexOf('if (!hasEditableConsultationText(item))') < editor.indexOf('setEditingId(item.id)'));
+}
+console.log('PASS QW-153..155: malformed imported specialty, reason and diagnosis cannot enter editor.');

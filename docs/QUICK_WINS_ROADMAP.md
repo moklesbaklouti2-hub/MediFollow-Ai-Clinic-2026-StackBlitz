@@ -237,6 +237,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-150 | S | Protéger l'affichage des diagnostics historiques importés non textuels | branche de préparation | Tests fictifs et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
 | QW-151 | S | Protéger l'affichage des noms de patients importés non textuels dans les cinq listes | branche de préparation | Tests fictifs et CI 11/11 sur HEAD requis | PRÉPARÉ NON VALIDÉ |
 | QW-152 | S | Réparer les contrats de tests QW-032, QW-134 et QW-141 devenus obsolètes après la protection QW-149/QW-151 des noms et motifs importés, sans relâcher les garde-fous | branche de préparation | Échec réel GitHub Actions #43477900374 analysé ; revalidation CI 11/11 du SHA suivant requise | PRÉPARÉ NON VALIDÉ |
+| QW-153 | S | Protéger l'éditeur contre une valeur importée non textuelle : spécialité, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-154 | S | Protéger l'éditeur contre une valeur importée non textuelle : motif, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-155 | S | Protéger l'éditeur contre une valeur importée non textuelle : diagnostic, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

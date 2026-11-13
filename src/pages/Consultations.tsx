@@ -7,7 +7,7 @@ import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../services/patientSelectionGuard';
-import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel } from '../services/consultationIdentity';
+import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
 
@@ -376,6 +376,11 @@ export default function Consultations({
       window.alert('Cette consultation a été modifiée depuis l’affichage. Actualisez la liste avant de l’ouvrir.');
       return;
     }
+    // QW-153..155: malformed clinical text must remain intact for review.
+    if (!hasEditableConsultationText(item)) {
+      window.alert('Spécialité, motif ou diagnostic importé non textuel : vérifiez le dossier source avant toute modification.');
+      return;
+    }
     // QW-145: never silently reclassify an imported unknown status as
     // planned when the clinician edits an unrelated part of the consultation.
     if (hasUnknownImportedFollowUpStatus(item.followUp)) {
@@ -400,14 +405,14 @@ export default function Consultations({
     setEditingId(item.id);
     setPatientId(item.patientId);
     setSpecialty(item.specialty ?? '');
-    setMotif(item.motif);
+    setMotif(item.motif ?? '');
     setSymptoms(item.symptoms);
     setHistory(item.history);
     setTargetedInterview(item.targetedInterview ?? '');
     setVitals({ ...emptyVitals, ...item.vitals });
     setExamination(item.examination);
     setPhysicalExamination(item.physicalExamination ?? {});
-    setDiagnosis(item.diagnosis);
+    setDiagnosis(item.diagnosis ?? '');
     setPlan(item.plan);
     setFollowUpDate(editorFollowUpDate);
     setFollowUpObjective(editorFollowUpObjective);
