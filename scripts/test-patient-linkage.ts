@@ -1495,7 +1495,7 @@ console.log('PASS QW-104: documented stock locks stale draft/validated prescript
 {
   const iso = '2026-11-12T10:00:00.000Z';
   assert.equal(isCreatablePrescriptionStatus({ status: 'draft' }), true);
-  assert.equal(isCreatablePrescriptionStatus({ status: 'validated' }), true);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated' }), false); // QW-109: must be dated
   assert.equal(isCreatablePrescriptionStatus({ status: 'dispensed' }), false);
   assert.equal(isCreatablePrescriptionStatus({ status: 'cancelled' }), false);
   assert.equal(isCreatablePrescriptionStatus({ status: undefined }), false);
@@ -1627,3 +1627,38 @@ console.log('PASS QW-107: forward-only status transitions and no silent coercion
     'Central validation path must apply the timestamp requirement.');
 }
 console.log('PASS QW-108: a draft cannot become validated without its audit timestamp.');
+
+
+// QW-109 — creation of a validated prescription must contain an ISO audit
+// date; a draft must not claim that it was already validated.
+{
+  const iso = '2026-11-13T15:00:00.000Z';
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft' }), true);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft', validatedAt: iso }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'draft', validatedAt: null as unknown as string }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated' }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', validatedAt: '' }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', validatedAt: 'hier' }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', validatedAt: iso }), true);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', validatedAt: iso,
+    dispensedAt: iso }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'validated', validatedAt: iso,
+    cancelledAt: iso }), false);
+  assert.equal(isCreatablePrescriptionStatus({ status: 'cancelled', validatedAt: iso }), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = hook.split('const addPrescription = useCallback(')[1]
+    ?.split('const updatePrescription = useCallback(')[0] ?? '';
+  assert.ok(add.includes('isCreatablePrescriptionStatus(prescription)') &&
+    add.indexOf('isCreatablePrescriptionStatus(') < add.indexOf('savePrescriptions('),
+    'The central creation path must use the enhanced validation-date guard.');
+
+  const helper = readFileSync(new URL('../src/services/prescriptionFinality.ts', import.meta.url), 'utf8');
+  const create = helper.split('export function isCreatablePrescriptionStatus(')[1]
+    ?.split('// QW-106')[0] ?? '';
+  assert.ok(create.includes("prescription.status === 'draft'") &&
+    create.includes('prescription.validatedAt === undefined') &&
+    create.includes('Date.parse(validatedAt)'),
+    'A new validated prescription must have a dated validation audit trail.');
+}
+console.log('PASS QW-109: validated creation requires dated evidence; drafts remain undated.');
