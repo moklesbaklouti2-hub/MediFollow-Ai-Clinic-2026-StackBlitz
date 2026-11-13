@@ -1849,7 +1849,7 @@ console.log('PASS QW-115: stale editor warns before stock-linked prescription ed
 // a note, follow-up or diagnosis may not move it to a different patient file.
 {
   const original = { patientId: 'patient-clinique-fictif' };
-  assert.equal(preservesConsultationPatientLink(original, { motif: 'Suivi fictif' } as {patientId?: string}), true);
+  assert.equal(preservesConsultationPatientLink(original, {}), true);
   assert.equal(preservesConsultationPatientLink(original, { patientId: 'patient-clinique-fictif' }), true);
   assert.equal(preservesConsultationPatientLink(original, { patientId: 'autre-patient' }), false);
   assert.equal(preservesConsultationPatientLink(original, { patientId: '' }), false);
