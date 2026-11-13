@@ -1208,3 +1208,10 @@
 - Aucun mouvement de stock n'est déduit, réintégré ou effacé. La vérification centrale existante reste indépendante ; les formulaires ne réécrivent pas automatiquement d'archives incohérentes.
 - Test fictif QW-115 de l'ordre des vérifications UI, des références de mouvements et de la conservation du garde-fou central ajouté à `scripts/test-patient-linkage.ts`.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, autres tests et 11 jobs GitHub Actions sur HEAD exact à effectuer. Aucune modification de `main` ni de la PR d'audit ; aucune donnée patient réelle ni déploiement.
+
+### 2026-11-13 — QW-116 : vérifier l'ordonnance et le patient au niveau du service de délivrance de stock
+- Le formulaire contrôlait le statut et l'identité de l'ordonnance, mais un appel direct à `dispenseInventoryItems` pouvait encore déduire du stock avec un identifiant d'ordonnance inexistant, ambigu après import ou lié à un autre patient.
+- Garde-fou ajouté dans `src/services/storage.ts` avant toute allocation ou écriture : l'ordonnance doit être unique parmi les documents enregistrés, le patient doit être unique, le lien ordonnance–patient doit correspondre, et le statut doit être explicitement `draft` ou `validated`.
+- Le rejeu documentaire idempotent d'une ordonnance déjà `dispensed` reste accepté uniquement si elle possède une trace de délivrance et si l'ancien contrôle confirme exactement les produits, quantités, identifiants et patient. Les documents `cancelled`, inconnus ou `dispensed` sans mouvements restent refusés.
+- Les tests réels du service, sur stockage simulé entièrement fictif dans `scripts/test-inventory-dispense-regression.ts`, ont été adaptés pour fournir une ordonnance/patient fictifs, et de nouveaux cas de refus + rejeu sans nouvelle déduction ont été ajoutés.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:inventory-dispense`, `npm run test:complete`, et 11 jobs GitHub Actions à vérifier sur le SHA final dans Codespaces. Aucun patient réel, aucune dépense ni déploiement. `main` et PR d'audit inchangées.
