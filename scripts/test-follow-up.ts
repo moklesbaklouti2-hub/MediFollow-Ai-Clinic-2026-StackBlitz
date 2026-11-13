@@ -777,3 +777,31 @@ console.log('PASS QW-135: consultation history safely sorts and displays recorde
     'The historical view must use validated objective, date and status labels.');
 }
 console.log('PASS QW-136: historical imported HELIOS objectives are displayed without coercion.');
+
+
+// QW-137 — all three HELIOS worklists must use the existing safe objective
+// label, avoiding raw React object/array children from imported legacy plans.
+{
+  const imported = { dueDate: '2026-11-20', status: 'planned', objective: { note: 'fictif' } };
+  const before = JSON.stringify(imported);
+  assert.equal(followUpObjectiveLabel(imported), 'Objectif de suivi à vérifier');
+  assert.equal(followUpObjectiveLabel({ ...imported, objective: ['note fictive'] }),
+    'Objectif de suivi à vérifier');
+  assert.equal(followUpObjectiveLabel({ ...imported, objective: 'x'.repeat(501) }),
+    'Objectif de suivi à vérifier');
+  assert.equal(JSON.stringify(imported), before, 'Read-only display must not alter clinical data.');
+
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const parts: Array<[string, string]> = [
+    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item) => {', 'Historique des consultations ('],
+  ];
+  for (const [start, end] of parts) {
+    const segment = ui.split(start)[1]?.split(end)[0] ?? '';
+    assert.ok(segment.includes('<p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>') &&
+      !segment.includes("item.followUp?.objective || 'Non précisé'"),
+      'All follow-up worklists must protect imported objective values: ' + start);
+  }
+}
+console.log('PASS QW-137: three HELIOS follow-up worklists use safe imported objective labels.');

@@ -1360,3 +1360,11 @@
 - **Correctif :** helper documentaire `followUpObjectiveLabel` : conserve les textes valides (jusqu'à 500 caractères), présente une chaîne vide ou blanche comme « Non précisé », et signale les valeurs absentes, invalides ou trop longues par « Objectif de suivi à vérifier ». Affichage uniquement, sans conversion implicite ni modification du dossier.
 - **Tests fictifs :** contenu valide, limite 500, vide, blanc, absent, objet, tableau, nombre, dépassement de 500, absence de mutation et branchement de l'historique aux helpers date/statut/objectifs.
 - **Validation :** préparation seulement. Exécuter `npm run test:follow-up`, la compilation et les 11 jobs CI sur le SHA exact avant toute validation clinique.
+
+
+### 2026-11-13 — QW-137 : objectifs de suivi importés dans les trois listes HELIOS (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`, `main` et PR #2 inchangées.
+- **Constat :** malgré QW-136 dans l'historique, les trois listes de suivi rendaient directement `item.followUp?.objective || 'Non précisé'`. Un objectif importé non textuel pouvait perturber l'affichage React.
+- **Correction :** réutilisation du helper existant `followUpObjectiveLabel` dans les listes « à revoir », « dates à corriger » et « au-delà de 7 jours ». Pas de duplication de logique, modification de dossier ni changement de décision clinique.
+- **Tests fictifs ajoutés :** objet, tableau, objectif excessif, absence de mutation, contrat statique des trois listes.
+- **Statut :** préparé non validé. Tests réels, compilation et CI 11/11 sur le SHA exact encore nécessaires.

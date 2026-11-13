@@ -1393,7 +1393,7 @@ export default function Consultations({
               <div className="saved-consultation" key={'follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
-                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 {linkedPatient ? (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button type="button" className="consultation-save"
@@ -1431,7 +1431,7 @@ export default function Consultations({
               <div className="saved-consultation" key={'undated-follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Date de suivi absente ou invalide</span>
-                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 {linkedPatient ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
@@ -1462,7 +1462,7 @@ export default function Consultations({
               <div className="saved-consultation" key={'later-follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Suivi planifié : {item.followUp?.dueDate}</span>
-                <p><b>Objectif :</b> {item.followUp?.objective || 'Non précisé'}</p>
+                <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
                 {linkedPatient ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
