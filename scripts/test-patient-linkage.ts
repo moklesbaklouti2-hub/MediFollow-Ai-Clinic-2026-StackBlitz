@@ -2032,4 +2032,4 @@ console.log('PASS QW-122: new consultations require motif and specialty without 
   assert.ok(page.includes('addConsultation({ ...changes, date: new Date().toISOString() })'),
     'The normal consultation form continues to supply an unambiguous timestamp.');
 }
-console.log('PASS QW-123: malformed visit dates blocked at central clinical writes.');
+console.log('PASS QW-124: malformed visit dates blocked at central clinical writes.');
