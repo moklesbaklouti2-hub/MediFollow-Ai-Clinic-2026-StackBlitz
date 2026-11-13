@@ -374,7 +374,11 @@ console.log('PASS QW-078: imported ID ambiguity blocks follow-up edit and comple
     ?.split('const vitalFields:')[0] ?? '';
   assert.ok(saving.includes('const currentRecords = getConsultations().filter(record => record.id === editingId);') &&
     saving.includes('currentRecords.length !== 1 || currentRecords[0].patientId !== patientId') &&
-    saving.indexOf('currentRecords.length !== 1') < saving.indexOf('updateConsultation(editingId, changes)'),
+    // QW-131: the QW-127 revision argument is mandatory for clinician form edits.
+    // The old two-argument literal caused a false regression failure.
+    saving.indexOf('currentRecords.length !== 1') <
+      saving.indexOf('updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)') &&
+    !saving.includes('updateConsultation(editingId, changes)'),
     'Consultation update must refuse missing, duplicate or patient-reassigned records.');
 }
 console.log('PASS QW-079: stale patient reassignment cannot be silently persisted.');

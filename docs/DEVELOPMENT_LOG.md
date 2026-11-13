@@ -1313,3 +1313,10 @@
 - **Changement :** le hook central refuse maintenant une écriture avec `followUp.status = 'completed'` si la version clinique attendue est absente ou vide. Le contrôle de correspondance QW-127 reste actif avant l'écriture ; les autres modifications cliniques conservent le contrat antérieur. Le formulaire et la clôture rapide fournissent déjà une version attendue.
 - **Tests fictifs :** absence, nullité et chaîne vide de version ; version présente, modification ordinaire et plan absent ; absence de mutation, ordre des vérifications dans le hook, intégration statique des deux chemins d'interface.
 - **Limites :** protections et tests ajoutés, mais aucune compilation ni CI 11/11 sur le HEAD n'a été exécutée à cette étape. Ce contrôle de version du stockage local ne constitue pas un verrou transactionnel multi-onglet ni une validation pour les patients réels.
+
+
+### 2026-11-13 — QW-131 : réparer un faux échec dans le test des consultations (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`, `main` et PR #2 intacts.
+- **Constat :** le test QW-079 cherchait le littéral obsolète `updateConsultation(editingId, changes)` alors que le formulaire utilise depuis QW-127 `updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)`. L'ancien contrôle échouait artificiellement (position introuvable), empêchant de distinguer un vrai défaut d'un simple test périmé.
+- **Correction :** mettre à jour le contrat d'interface dans `scripts/test-follow-up.ts`, vérifier l'ordre du contrôle de patient et de l'écriture, et refuser un retour silencieux à l'appel à deux arguments. Aucun changement de code clinique ni de schéma de données.
+- **Vérification :** assertion statique ciblée appliquée au fichier actuel, conforme. Suite TypeScript, test réel `npm run test:follow-up`, build et GitHub CI 11/11 **non exécutés** sur ce commit ; pas de validation globale.
