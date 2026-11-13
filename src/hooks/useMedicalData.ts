@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { hasUniqueConsultationId, preservesConsultationPatientLink } from '../services/consultationIdentity';
+import { hasUniqueConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
@@ -158,6 +158,9 @@ export function useMedicalData() {
     if (!currentConsultation ||
         !hasConfirmedPatientSelection(currentConsultation.patientId, getMedicalData().patients) ||
         !preservesConsultationPatientLink(currentConsultation, changes)) return false;
+    // QW-119: creation date is immutable, and updatedAt is assigned only by
+    // the hook after validating a real clinical change.
+    if (!preservesConsultationAuditTimestamps(changes)) return false;
     const updated = currentConsultations.map((item) =>
       item.id === id
         ? {
