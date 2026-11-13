@@ -1299,3 +1299,10 @@
 - Les contrôles QW-125 des date, objectif, statut et lien patient sont conservés. En cas de refus, aucun suivi n'est déclaré comme terminé : un message demande de vérifier ou actualiser le dossier. Il ne s'agit pas d'un verrou transactionnel multi-utilisateurs.
 - Tests fictifs `scripts/test-follow-up.ts` : ordre des vérifications UI avant la sauvegarde, présence du contrôle dans le hook et cas où une note clinique change sans modification du suivi. Les anciens tests de contrats QW-125 et QW-127 ont été adaptés à l'appel à trois arguments. Aucune migration ni modification de données réelles.
 - **PRÉPARÉ NON VALIDÉ** : `npm run test:follow-up`, `npm run test:patient-linkage`, `npm run test:complete` et vérification des 11 jobs GitHub Actions requis sur le HEAD exact. Branche de préparation uniquement ; `main` et PR d'audit inchangées, aucun déploiement ni dépense.
+
+
+### 2026-11-13 — QW-129 : suivi HELIOS et version de la ligne affichée (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`, sans changement de `main` ni de la PR d'audit #2.
+- **Sécurité :** la clôture rapide refuse une consultation modifiée après l'affichage de la ligne, même si date, objectif et statut du suivi sont inchangés. Le contrôle de version clinique est répété après la boîte de confirmation, et la protection centrale QW-128 reste active pendant l'écriture.
+- **Tests :** scénarios fictifs de modification de diagnostic, modification du plan de suivi, changement du seul horodatage d'audit, absence de mutation et ordre des gardes UI. Aucun patient réel, envoi IA, automatisme de clôture ou délivrance de médicament.
+- **Validation :** préparé uniquement ; compilation, suite complète et 11 jobs CI sur le commit exact restent requis. Pas de fusion ni déploiement.

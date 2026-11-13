@@ -444,6 +444,14 @@ export default function Consultations({
       window.alert('Le contrôle de suivi a été modifié depuis l’affichage. Actualisez la liste avant toute clôture.');
       return;
     }
+    // QW-129: an unchanged follow-up alone does not prove the clinical row
+    // is still current. Reject an outdated worklist row before confirmation.
+    const displayedClinicalSnapshot = consultationClinicalSnapshot(item);
+    if (!displayedClinicalSnapshot ||
+        consultationClinicalSnapshot(current) !== displayedClinicalSnapshot) {
+      window.alert('Cette consultation a changé depuis l’affichage du suivi. Actualisez la liste avant de clôturer le contrôle.');
+      return;
+    }
     const completedPlan = completedFollowUpPlan(current.followUp);
     if (!completedPlan) {
       window.alert('Ce plan de suivi n’est plus ouvert ou sa date est invalide. Actualisez la liste.');
@@ -464,6 +472,12 @@ export default function Consultations({
     const latestClinicalSnapshot = consultationClinicalSnapshot(latest[0]);
     if (!latestClinicalSnapshot) {
       window.alert('Impossible de vérifier la version du dossier. Actualisez la liste avant de clôturer le suivi.');
+      return;
+    }
+    // Also refuse a change occurring while the confirmation modal is open.
+    // QW-128 still protects the final storage write after this read.
+    if (latestClinicalSnapshot !== displayedClinicalSnapshot) {
+      window.alert('La consultation a changé pendant la confirmation. Actualisez la liste avant toute clôture.');
       return;
     }
     if (!updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)) {

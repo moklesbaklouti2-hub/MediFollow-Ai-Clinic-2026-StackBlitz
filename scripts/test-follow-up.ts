@@ -526,3 +526,42 @@ console.log('PASS QW-125: stale HELIOS worklist rows cannot silently complete ch
     consultationClinicalSnapshot(updatedInAnotherTab));
 }
 console.log('PASS QW-128: HELIOS completion carries a full clinical revision guard.');
+
+
+// QW-129 — a worklist row is unsafe when any clinical field changes, even if
+// its follow-up plan is unchanged. Audit timestamps alone are not clinical edits.
+{
+  type ClinicalFixture = NonNullable<Parameters<typeof consultationClinicalSnapshot>[0]>;
+  const plan = { dueDate: '2026-11-20', objective: 'Suivi fictif', status: 'planned' as const };
+  const displayed = {
+    id: 'consultation-fictive-129', patientId: 'patient-fictif',
+    date: '2026-11-13T10:00:00.000Z', motif: 'Contrôle fictif',
+    diagnosis: 'Hypothèse fictive initiale', plan: 'Réévaluer',
+    followUp: plan, createdAt: '2026-11-13T10:00:00.000Z',
+    updatedAt: '2026-11-13T10:00:00.000Z',
+  } as ClinicalFixture;
+  const clinicalUpdate = { ...displayed, diagnosis: 'Hypothèse fictive modifiée' };
+  const planUpdate = { ...displayed, followUp: { ...plan, objective: 'Autre contrôle fictif' } };
+  const auditOnly = { ...displayed, updatedAt: '2026-11-14T10:00:00.000Z' };
+  const before = JSON.stringify(displayed);
+  assert.equal(matchesDisplayedFollowUpPlan(displayed.followUp, clinicalUpdate.followUp), true);
+  assert.notEqual(consultationClinicalSnapshot(displayed), consultationClinicalSnapshot(clinicalUpdate));
+  assert.notEqual(consultationClinicalSnapshot(displayed), consultationClinicalSnapshot(planUpdate));
+  assert.equal(consultationClinicalSnapshot(displayed), consultationClinicalSnapshot(auditOnly));
+  assert.equal(JSON.stringify(displayed), before, 'Snapshot comparisons must be read-only');
+
+  const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const completion = ui.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  const sourceAt = completion.indexOf('const displayedClinicalSnapshot = consultationClinicalSnapshot(item)');
+  const beforeConfirmAt = completion.indexOf('consultationClinicalSnapshot(current) !== displayedClinicalSnapshot');
+  const confirmAt = completion.indexOf('window.confirm(');
+  const afterConfirmAt = completion.indexOf('latestClinicalSnapshot !== displayedClinicalSnapshot');
+  const finalUpdateAt = completion.indexOf(
+    'updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)');
+  assert.ok(sourceAt >= 0 &&
+    beforeConfirmAt > sourceAt && beforeConfirmAt < confirmAt &&
+    afterConfirmAt > confirmAt && afterConfirmAt < finalUpdateAt,
+    'QW-129 requires full clinical version checks before and after confirmation');
+}
+console.log('PASS QW-129: stale HELIOS worklist clinical versions are rejected.');
