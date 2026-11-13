@@ -1662,3 +1662,29 @@ console.log('PASS QW-108: a draft cannot become validated without its audit time
     'A new validated prescription must have a dated validation audit trail.');
 }
 console.log('PASS QW-109: validated creation requires dated evidence; drafts remain undated.');
+
+// QW-110: a draft/validated-looking prescription may already have real
+// inventory movements after a failed post-dispense status write. Before any
+// new stock action the UI must explicitly stop and request reconciliation.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const dispense = source.split('function dispenseSavedPrescription()')[1]
+    ?.split('function handlePartialReturn(')[0] ?? '';
+  const traceGuard = dispense.indexOf(
+    'prescriptionHasRecordedStockMovement(savedPrescription.id, getInventoryData().movements)');
+  assert.ok(traceGuard >= 0 &&
+    dispense.includes('Délivrance suspendue : des mouvements de stock existent déjà') &&
+    dispense.includes('réconciliez le statut avant toute nouvelle action') &&
+    dispense.indexOf('isDispensablePrescriptionStatus(savedPrescription.status)') < traceGuard &&
+    traceGuard < dispense.indexOf('updatePrescription(') &&
+    traceGuard < dispense.indexOf('dispenseInventoryItems('),
+    'Already-recorded stock must trigger a clear reconciliation warning before persistence or dispensing.');
+  const events = [
+    { prescriptionId: 'rx-fictive' },
+    { prescriptionId: 'autre-ordonnance' },
+  ];
+  assert.equal(prescriptionHasRecordedStockMovement('rx-fictive', events), true);
+  assert.equal(prescriptionHasRecordedStockMovement('rx-sans-stock', events), false);
+  assert.equal(prescriptionHasRecordedStockMovement('', events), false);
+}
+console.log('PASS QW-110: pre-dispense reconciliation warning on stock history mismatch.');
