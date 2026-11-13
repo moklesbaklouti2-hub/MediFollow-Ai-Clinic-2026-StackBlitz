@@ -1180,3 +1180,10 @@
 - `cancelPrescription` refuse désormais immédiatement ces états et affiche un message demandant de vérifier le dossier. Ce contrôle intervient avant `window.confirm`, `cancelDispensedPrescriptionStock` et `updatePrescription` ; aucun stock n'est touché.
 - Les états explicites `draft`, `validated` et `dispensed` conservent leurs parcours précédents, sous réserve des gardes QW-091/098/103. Tests de contrats UI et statuts fictifs ajoutés à `scripts/test-patient-linkage.ts`.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:complete`, validation Codespaces et 11 jobs Actions restent à effectuer sur le SHA exact. Aucun patient réel, aucune modification de `main`, aucun déploiement.
+
+### 2026-11-13 — QW-112 : distinguer le statut réellement absent du statut importé invalide
+- La chronologie patient et la liste des ordonnances réutilisent `documentedPrescriptionStatus`. Le libellé « Statut non renseigné (ancien dossier) » ne s'applique désormais qu'au statut réellement absent (`undefined`).
+- Un statut explicitement `null`, inconnu ou malformé affiche « Statut inconnu ou invalide — vérification nécessaire » ; cela évite de masquer une anomalie de sauvegarde ou d'import sous un libellé de compatibilité historique.
+- Amélioration strictement informative : aucune écriture d'ordonnance, aucune délivrance, aucun mouvement de stock, aucune conversion automatique de l'état.
+- Les attentes QW-048 ont été ajustées et des tests fictifs QW-112 vérifient les états connus, manquants et invalides ainsi que la réutilisation du même helper dans l'historique.
+- **PRÉPARÉ NON VALIDÉ** : compilation, tests Codespaces et 11 jobs GitHub Actions à confirmer sur le SHA final. `main` et la PR d'audit restent inchangées ; aucune donnée réelle et aucun déploiement.
