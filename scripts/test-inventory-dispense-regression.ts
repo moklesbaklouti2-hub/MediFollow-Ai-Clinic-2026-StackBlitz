@@ -558,3 +558,71 @@ console.log('OK — ' + assertions + ' assertions sur les replays et la délivra
     'All direct stock calls must verify current prescription identity and status before writing.');
 }
 console.log('PASS QW-116: direct dispensing requires a confirmed, matching saved prescription.');
+
+// QW-117 — do not create a fresh stock deduction when the same saved
+// prescription already owns orphan movements but has no dispense original.
+{
+  const sampleIssue = issue([{ inventoryItemId: 'lot-a', quantity: 1 }]);
+  const orphanTypes = ['return', 'adjustment', 'receipt'] as const;
+  for (const kind of orphanTypes) {
+    reset();
+    const data = fixture();
+    data.movements.push({
+      id: 'historique-orphelin-' + kind,
+      itemId: 'lot-a',
+      itemName: 'Compresses test',
+      type: kind,
+      quantity: 1,
+      date: '2026-11-13T10:00:00.000Z',
+      prescriptionId: 'prescription-fictive',
+      patientId: 'patient-fictif',
+      ...(kind === 'return' ? { reversesMovementId: 'ancienne-délivrance-introuvable' } : {}),
+    });
+    records.set('medifollow-inventory', JSON.stringify(data));
+    writes = 0;
+    const before = JSON.stringify(getInventoryData());
+    const result = dispenseInventoryItems(sampleIssue);
+    assert.equal(result.success, false, 'Mouvement orphelin accepté : ' + kind);
+    assert.match(result.error ?? '', /mouvements de stock orphelins/i);
+    unchanged(before, 'orphelin ' + kind);
+  }
+
+  // An unrelated movement may remain in inventory without blocking a new,
+  // unrelated prescription.
+  reset();
+  const unrelated = fixture();
+  unrelated.movements.push({
+    id: 'autre-journal',
+    itemId: 'lot-c',
+    itemName: 'Seringues test',
+    type: 'adjustment',
+    quantity: 1,
+    date: '2026-11-13T10:00:00.000Z',
+    prescriptionId: 'autre-ordonnance',
+    patientId: 'patient-fictif',
+  });
+  records.set('medifollow-inventory', JSON.stringify(unrelated));
+  writes = 0;
+  assert.equal(dispenseInventoryItems(sampleIssue).success, true,
+    'Une trace sur une autre ordonnance ne doit pas bloquer la délivrance.');
+
+  // A documented original dispense remains safely replayable, with no new
+  // stock write, as established by the previous idempotency tests.
+  const snapshot = JSON.stringify(getInventoryData());
+  writes = 0;
+  assert.deepEqual(dispenseInventoryItems(sampleIssue),
+    { success: true, alreadyDispensed: true });
+  unchanged(snapshot, 'rejeu après contrôle des mouvements orphelins');
+
+  const source = readFileSync(new URL('../src/services/storage.ts', import.meta.url), 'utf8');
+  const dispense = source.split('export function dispenseInventoryItems(')[1]
+    ?.split('/** Enregistre un retour partiel')[0] ?? '';
+  const orphanGuard = dispense.indexOf(
+    'data.movements.some(movement => movement.prescriptionId === input.prescriptionId)');
+  assert.ok(orphanGuard > dispense.indexOf('if (existingDispenses.length > 0)') &&
+    orphanGuard > dispense.indexOf('alreadyDispensed: true') &&
+    orphanGuard < dispense.indexOf('const plannedMovements:') &&
+    orphanGuard < dispense.indexOf('saveInventoryData(data)'),
+    'Orphan journal check must run after replay and before stock allocations.');
+}
+console.log('PASS QW-117: orphan stock records block new dispensing, without breaking replay.');
