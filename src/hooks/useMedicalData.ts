@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { hasUniqueConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
+import { hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
@@ -129,20 +129,25 @@ export function useMedicalData() {
     consultation: Omit<Consultation, 'id' | 'createdAt' | 'updatedAt'>
   ) => {
     // The central write path must enforce the same identity rule as the UI.
-    if (!hasConfirmedPatientSelection(consultation.patientId, getMedicalData().patients)) return null;
+    const currentData = getMedicalData();
+    if (!hasConfirmedPatientSelection(consultation.patientId, currentData.patients)) return null;
     // QW-120: a direct creation caller must not write an invalid HELIOS plan.
     if (!isWritableFollowUpPlan(consultation.followUp)) return null;
-    const timestamp = new Date().toISOString();
 
+    // QW-121: a generated consultation ID may not collide with an existing
+    // clinical encounter, including one restored from an imported backup.
+    const newId = createId();
+    if (!isUnusedConsultationId(newId, currentData.consultations)) return null;
+    const timestamp = new Date().toISOString();
     const newConsultation: Consultation = {
       ...consultation,
-      id: createId(),
+      id: newId,
       createdAt: timestamp,
       updatedAt: timestamp,
     };
 
     const saved = saveConsultations([
-      ...getMedicalData().consultations,
+      ...currentData.consultations,
       newConsultation,
     ]);
 
