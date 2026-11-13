@@ -173,6 +173,10 @@ export function preservesPrescriptionAuditTimestamps(
 
   const has = (key: keyof Prescription) => Object.prototype.hasOwnProperty.call(changes, key);
 
+  // QW-108 — validating an existing draft must leave a dated audit trail;
+  // a status-only update must not silently mark a document validated.
+  if (current.status === 'draft' && changes.status === 'validated' &&
+      !has('validatedAt')) return false;
   if (has('validatedAt') &&
       (current.status !== 'draft' || changes.status !== 'validated' ||
        !isIsoTimestamp(changes.validatedAt))) return false;
