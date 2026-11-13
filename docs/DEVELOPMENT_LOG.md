@@ -1444,3 +1444,8 @@
 - Prevention : conserver uniquement des âges déclarés entiers plausibles, refuser les liens patients non confirmés et employer le même validateur chronologique strict ; pas de score médical ni de conseil automatique.
 - Nouveau jeu de tests fictifs `scripts/test-helios-memory-prevention.ts` ajouté à `package.json` et au job CI clinique. Ne jamais utiliser de données réelles.
 - Aucun changement `main`, branche d'audit, PR #2, déploiement ou dépenses. Valider compilation et 11 jobs sur le nouveau SHA exact avant d'annoncer une couleur.
+
+### 2026-11-14 — correction ciblée après test CI rouge HELIOS Prevention
+- GitHub Actions run #43528134476, job Tests / clinique, étape `test:helios-memory-prevention` : une consultation importée sans identifiant traçable (`id: 7`) était considérée comme la consultation la plus récente pour Prevention.
+- Correctif : HELIOS Prevention exige désormais un identifiant de consultation textuel non vide, en plus du lien patient et d'une date valide. Les fixtures QW-156..160 révèlent cette anomalie et restent actives.
+- Le code clinique/stock n'est pas modifié. Validation des 11 jobs sur le SHA suivant obligatoire.

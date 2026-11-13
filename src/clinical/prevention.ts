@@ -19,7 +19,7 @@ export type PreventionReview = {
 
 export function buildPreventionReview(
   patient: Pick<Patient, 'id' | 'age'>,
-  consultations: readonly Pick<Consultation, 'patientId' | 'date'>[],
+  consultations: readonly Pick<Consultation, 'id' | 'patientId' | 'date'>[],
 ): PreventionReview {
   // QW-159: retain only credible declared integer ages; never calculate
   // a missing age, or present a decimal/implausible import as documented.
@@ -35,7 +35,8 @@ export function buildPreventionReview(
     return { recordedAge: null, lastDatedConsultation: null, discussionTopics: PREVENTION_TOPICS };
   }
   for (const visit of consultations) {
-    if (!visit || visit.patientId !== patient.id) continue;
+    if (!visit || visit.patientId !== patient.id ||
+        typeof visit.id !== 'string' || !visit.id.trim()) continue;
     const timestamp = recordedDateTimestamp(visit.date);
     if (timestamp === null || timestamp <= lastTimestamp) continue;
     lastTimestamp = timestamp;
