@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
+import { consultationClinicalSnapshot, hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
@@ -2033,3 +2033,62 @@ console.log('PASS QW-122: new consultations require motif and specialty without 
     'The normal consultation form continues to supply an unambiguous timestamp.');
 }
 console.log('PASS QW-124: malformed visit dates blocked at central clinical writes.');
+
+// QW-126 — editing a previously opened consultation must not erase new clinical
+// information entered by another tab. Only synthetic patient records are used.
+{
+  const initial = {
+    id: 'consultation-fictive-version-1',
+    patientId: 'patient-fictif',
+    date: '2026-11-13T10:00:00.000Z',
+    motif: 'Contrôle clinique fictif',
+    symptoms: 'Aucun',
+    specialty: 'Médecine de famille',
+    history: '',
+    targetedInterview: '',
+    vitals: {},
+    examination: '',
+    diagnosis: '',
+    plan: '',
+    followUp: { dueDate: '2026-11-19', objective: 'Contrôle fictif', status: 'planned' },
+    createdAt: '2026-11-13T09:00:00.000Z',
+    updatedAt: '2026-11-13T10:00:00.000Z',
+  } as Consultation;
+  const unchanged = JSON.stringify(initial);
+  const opened = consultationClinicalSnapshot(initial);
+  assert.equal(typeof opened, 'string');
+  assert.equal(consultationClinicalSnapshot({ ...initial }), opened);
+  assert.equal(consultationClinicalSnapshot({ ...initial,
+    createdAt: '2026-11-14T09:00:00.000Z', updatedAt: '2026-11-14T10:00:00.000Z' }), opened,
+    'Volatile audit timestamps must not invalidate an otherwise unchanged imported clinical record.');
+  assert.notEqual(consultationClinicalSnapshot({ ...initial, symptoms: 'Symptôme nouveau fictif' }), opened);
+  assert.notEqual(consultationClinicalSnapshot({ ...initial, diagnosis: 'Autre hypothèse fictive' }), opened);
+  assert.notEqual(consultationClinicalSnapshot({ ...initial,
+    followUp: { ...initial.followUp!, objective: 'Nouvel objectif de suivi' } }), opened);
+  assert.notEqual(consultationClinicalSnapshot({ ...initial, patientId: 'autre-patient' }), opened);
+  assert.equal(consultationClinicalSnapshot(null), null);
+  assert.equal(consultationClinicalSnapshot({ ...initial, id: '' }), null);
+  assert.equal(JSON.stringify(initial), unchanged, 'Snapshot calculation cannot mutate the record.');
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const opening = page.split('function startEditing(')[1]
+    ?.split('function cancelEditing(')[0] ?? '';
+  const cancelling = page.split('function cancelEditing(')[1]
+    ?.split('function completeFollowUp(')[0] ?? '';
+  const saving = page.split('function saveConsultation()')[1]
+    ?.split('const vitalFields:')[0] ?? '';
+  const collisionCheck = opening.indexOf('snapshot !== consultationClinicalSnapshot(item)');
+  const capture = opening.indexOf('setEditingClinicalSnapshot(snapshot)');
+  const sourceCheck = saving.indexOf(
+    'consultationClinicalSnapshot(currentRecords[0]) !== editingClinicalSnapshot');
+  const save = saving.indexOf('updateConsultation(editingId, changes)');
+  assert.ok(page.includes('const [editingClinicalSnapshot, setEditingClinicalSnapshot]') &&
+    opening.includes('const current = currentConsultations.find(record => record.id === item.id)') &&
+    collisionCheck >= 0 && collisionCheck < capture &&
+    sourceCheck >= 0 && sourceCheck < save &&
+    saving.includes('setSaved(false);') &&
+    cancelling.includes('setEditingClinicalSnapshot(null)') &&
+    saving.includes('setEditingClinicalSnapshot(null)'),
+    'The form must refuse a stale clinical edit before persistence and clear its snapshot on exit.');
+}
+console.log('PASS QW-126: stale clinical consultation edits are refused without erasing unsaved text.');
