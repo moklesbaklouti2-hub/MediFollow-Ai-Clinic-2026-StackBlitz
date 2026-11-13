@@ -192,3 +192,29 @@ export function preservesPrescriptionAuditTimestamps(
 
   return true;
 }
+
+// QW-107 — never silently downgrade a validated order to draft, or
+// reclassify an imported order with an unknown status. Forward transitions
+// continue through the timestamp, stock and finality guards elsewhere.
+export function allowsPrescriptionStatusTransition(
+  current: Pick<Prescription, 'status'>,
+  changes: Partial<Prescription>,
+): boolean {
+  if (!current || !changes || typeof changes !== 'object' || Array.isArray(changes)) return false;
+  if (!Object.prototype.hasOwnProperty.call(changes, 'status')) return true;
+
+  switch (current.status) {
+    case 'draft':
+      return changes.status === 'draft' || changes.status === 'validated' ||
+        changes.status === 'dispensed' || changes.status === 'cancelled';
+    case 'validated':
+      return changes.status === 'validated' || changes.status === 'dispensed' ||
+        changes.status === 'cancelled';
+    case 'dispensed':
+      return changes.status === 'cancelled';
+    default:
+      // Cancelled, missing and unfamiliar imported statuses cannot be
+      // reclassified through an ordinary update.
+      return false;
+  }
+}
