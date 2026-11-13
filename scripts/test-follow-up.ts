@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
@@ -848,3 +848,81 @@ console.log('PASS QW-137: three HELIOS follow-up worklists use safe imported obj
     'Underlying persistence and editing guards must remain active independently.');
 }
 console.log('PASS QW-138: three HELIOS follow-up lists hide actions for duplicate encounter IDs.');
+
+
+// QW-139 — imported follow-up plans with invalid objectives are reviewable,
+// but cannot offer the quick completion button in the due worklist.
+{
+  const plan = { dueDate: '2026-11-18', status: 'planned', objective: 'Contrôle fictif' };
+  assert.equal(isWritableFollowUpPlan(plan), true);
+  for (const bad of [
+    { ...plan, objective: 1 },
+    { ...plan, objective: { note: 'fictive' } },
+    { ...plan, objective: 'x'.repeat(501) },
+  ]) assert.equal(isWritableFollowUpPlan(bad), false);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const due = page.split('dueFollowUps.map((item) => {')[1]
+    ?.split('{undatedFollowUps.length > 0 && (')[0] ?? '';
+  const guard = due.indexOf('isWritableFollowUpPlan(item.followUp)');
+  const outer = due.indexOf('{canActOnFollowUp ? (');
+  const gate = due.indexOf('{canCompleteFollowUp ? (');
+  const save = due.indexOf('onClick={() => completeFollowUp(item)}');
+  assert.ok(guard >= 0 && outer > guard && gate > outer && save > gate &&
+    due.includes('const canCompleteFollowUp = canActOnFollowUp &&') &&
+    due.includes('Plan de suivi incomplet ou invalide : vérifier les champs avant toute clôture.') &&
+    due.includes('onClick={() => startEditing(item)}'),
+    'Invalid imported plans must allow clinical review but hide quick completion.');
+}
+console.log('PASS QW-139: malformed HELIOS plans cannot offer misleading quick closure.');
+
+// QW-140 — an imported follow-up with an unknown status is displayed in its
+// own read-only review list. It is not silently counted as planned/completed.
+{
+  const plan = { dueDate: '2026-11-18', status: 'planned', objective: 'Contrôle fictif' };
+  const records = [
+    { id: 'legacy-z', followUp: { ...plan, status: 'unrecognized' } },
+    { id: 'normal-planned', followUp: plan },
+    { id: 'legacy-a', followUp: { dueDate: '2026-11-18', objective: 'Sans statut' } },
+    { id: 'normal-completed', followUp: { ...plan, status: 'completed' } },
+    { id: 'no-plan', followUp: undefined },
+    { id: 'null-plan', followUp: null },
+    { id: 'legacy-string', followUp: 'bad legacy plan' },
+  ];
+  const before = JSON.stringify(records);
+  const selected = selectUnknownStatusFollowUps(
+    records as unknown as Parameters<typeof selectUnknownStatusFollowUps>[0]);
+  assert.deepEqual(selected.map(item => item.id), ['legacy-a', 'legacy-string', 'legacy-z']);
+  assert.equal(JSON.stringify(records), before, 'Anomaly selection may not rewrite imports.');
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const anomalyUI = page.split('{unknownStatusFollowUps.length > 0 && (')[1]
+    ?.split('Historique des consultations (')[0] ?? '';
+  assert.ok(page.includes('const unknownStatusFollowUps = selectUnknownStatusFollowUps(consultations);') &&
+    anomalyUI.includes('unknownStatusFollowUps.map((item, index)') &&
+    anomalyUI.includes('followUpStatusLabel(item.followUp)') &&
+    anomalyUI.includes('followUpDateLabel(item.followUp)') &&
+    anomalyUI.includes('followUpObjectiveLabel(item.followUp)') &&
+    !anomalyUI.includes('onClick=') &&
+    !anomalyUI.includes('updateConsultation('),
+    'Unknown imported status should be visible for documentary review without actions.');
+}
+console.log('PASS QW-140: unknown imported HELIOS statuses remain visible and review-only.');
+
+// QW-141 — each follow-up worklist row provides the source consultation date
+// and reason, so a clinician can distinguish several controls for one patient.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const sections: Array<[string, string]> = [
+    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item) => {', '{unknownStatusFollowUps.length > 0 && ('],
+  ];
+  for (const [start, end] of sections) {
+    const ui = page.split(start)[1]?.split(end)[0] ?? '';
+    assert.ok(ui.includes('Consultation : {displayRecordedDate(item.date)} · Motif :') &&
+      ui.includes("item.motif.trim() || 'Non précisé'") &&
+      ui.includes('followUpObjectiveLabel(item.followUp)'),
+      'A planned follow-up must show its documented origin: ' + start);
+  }
+  assert.equal(displayRecordedDate('date importée invalide'), 'Date non renseignée');
+}
+console.log('PASS QW-141: three HELIOS worklists identify their source consultation.');

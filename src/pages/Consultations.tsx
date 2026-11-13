@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../services/consultationIdentity';
@@ -601,6 +601,8 @@ export default function Consultations({
   const dueFollowUps = filterFollowUpsByObjective(selectDueFollowUps(consultations, followUpToday), followUpSearch);
   const undatedFollowUps = filterFollowUpsByObjective(selectUndatedPlannedFollowUps(consultations), followUpSearch);
   const laterFollowUps = filterFollowUpsByObjective(selectLaterPlannedFollowUps(consultations, followUpToday), followUpSearch);
+  // QW-140: review-only historical anomalies, distinct from planned follow-ups.
+  const unknownStatusFollowUps = selectUnknownStatusFollowUps(consultations);
 
   const expressPatientMismatch = Boolean(expressPatientId && expressPatientId !== patientId);
   const selectedPatient = !expressPatientMismatch
@@ -1392,12 +1394,19 @@ export default function Consultations({
             // which follow-up action to apply. The row remains review-only.
             const canActOnFollowUp = Boolean(linkedPatient &&
               hasUniqueConsultationId(item.id, consultations));
+            // QW-139: malformed imported objectives require an editor review,
+            // not a misleading quick-completion button.
+            const canCompleteFollowUp = canActOnFollowUp &&
+              isWritableFollowUpPlan(item.followUp);
             const overdue = (item.followUp?.dueDate ?? '') < followUpToday;
             return (
               <div className="saved-consultation" key={'follow-up-' + item.id}>
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>{overdue ? 'En retard' : 'À revoir'} · {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
+                <p className="patient-hint">
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'}
+                </p>
                 {canActOnFollowUp ? (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     <button type="button" className="consultation-save"
@@ -1405,11 +1414,17 @@ export default function Consultations({
                       style={{ justifySelf: 'start', padding: '9px 13px' }}>
                       Ouvrir ce plan de suivi
                     </button>
-                    <button type="button" className="consultation-save"
-                      onClick={() => completeFollowUp(item)}
-                      style={{ justifySelf: 'start', padding: '9px 13px' }}>
-                      Marquer le contrôle effectué
-                    </button>
+                    {canCompleteFollowUp ? (
+                      <button type="button" className="consultation-save"
+                        onClick={() => completeFollowUp(item)}
+                        style={{ justifySelf: 'start', padding: '9px 13px' }}>
+                        Marquer le contrôle effectué
+                      </button>
+                    ) : (
+                      <p className="patient-hint">
+                        Plan de suivi incomplet ou invalide : vérifier les champs avant toute clôture.
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <p className="patient-hint">Identifiant de patient ou de consultation absent, dupliqué ou non confirmé : vérifiez le dossier avant toute action.</p>
@@ -1440,6 +1455,9 @@ export default function Consultations({
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Date de suivi absente ou invalide</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
+                <p className="patient-hint">
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'}
+                </p>
                 {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
@@ -1475,6 +1493,9 @@ export default function Consultations({
                 <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
                 <span>Suivi planifié : {item.followUp?.dueDate}</span>
                 <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
+                <p className="patient-hint">
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'}
+                </p>
                 {canActOnFollowUp ? (
                   <button type="button" className="consultation-save"
                     onClick={() => startEditing(item)}
@@ -1488,6 +1509,33 @@ export default function Consultations({
             );
           })}
         </details>
+      )}
+
+      {unknownStatusFollowUps.length > 0 && (
+        <div className="consultation-section" aria-label="HELIOS Follow-up : statuts importés à vérifier">
+          <h3>HELIOS Follow-up · statuts à vérifier ({unknownStatusFollowUps.length})</h3>
+          <p className="patient-hint">
+            Statut de suivi absent ou non reconnu dans des consultations importées.
+            Ces éléments sont présentés uniquement pour revue documentaire :
+            aucun contrôle ni aucune urgence n’est déduit et aucune action n’est proposée.
+          </p>
+          {unknownStatusFollowUps.map((item, index) => {
+            const linkedPatient = hasConfirmedPatientSelection(item.patientId, patients)
+              ? patients.find(patient => patient.id === item.patientId)
+              : undefined;
+            return (
+              <div className="saved-consultation" key={'unknown-status-follow-up-' + item.id + '-' + index}>
+                <strong>{linkedPatient?.name ?? 'Dossier patient non relié — identité à confirmer'}</strong>
+                <span>{followUpStatusLabel(item.followUp)} · {followUpDateLabel(item.followUp)}</span>
+                <p><b>Objectif :</b> {followUpObjectiveLabel(item.followUp)}</p>
+                <p className="patient-hint">
+                  Consultation : {displayRecordedDate(item.date)} · Motif : {item.motif.trim() || 'Non précisé'}
+                </p>
+                <p className="patient-hint">Vérifiez le statut dans le dossier source avant toute correction.</p>
+              </div>
+            );
+          })}
+        </div>
       )}
 
       <div className="consultation-section">

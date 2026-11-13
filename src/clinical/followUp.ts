@@ -74,6 +74,20 @@ export function followUpObjectiveLabel(plan: unknown): string {
   return objective.trim().length ? objective : 'Non précisé';
 }
 
+/**
+ * QW-140 — show legacy follow-ups with a documented but unknown status in a
+ * separate review-only list. An absent/null plan is not a follow-up at all.
+ * Never infer a planned control, completion, due date or clinical urgency.
+ */
+export function selectUnknownStatusFollowUps(
+  consultations: readonly Consultation[],
+): Consultation[] {
+  return consultations
+    .filter(item => item.followUp !== undefined && item.followUp !== null &&
+      followUpStatusLabel(item.followUp) === 'Statut de suivi à vérifier')
+    .sort((a, b) => String(a.id ?? '').localeCompare(String(b.id ?? '')));
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {

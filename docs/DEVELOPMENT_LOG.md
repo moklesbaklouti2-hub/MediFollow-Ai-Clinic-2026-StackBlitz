@@ -1376,3 +1376,12 @@
 - **Correctif :** conditionner les actions à la fois à un patient confirmé et à un ID de consultation unique grâce au helper existant `hasUniqueConsultationId` ; conserver les lignes en lecture seule avec une consigne claire de vérification. Les protections dans les handlers restent actives.
 - **Tests fictifs ajoutés :** ID unique, dupliqué, absent, vide, immutabilité et contrat UI sur les trois listes ; présence des garde-fous d'ouverture/clôture.
 - **Statut :** préparé, non validé. `npm run test:follow-up`, compilation et CI 11/11 sur le SHA exact à exécuter avant toute validation. Aucun dossier patient réel, déploiement ou dépense.
+
+
+### 2026-11-13 — lots parallèles QW-139 à QW-141 : fiabilité et productivité HELIOS (préparés)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`, commit commun atomique pour éviter les conflits de branches ; `main` et PR #2 inchangées.
+- **QW-139 :** dans la liste des contrôles à revoir, masquer « Marquer le contrôle effectué » si le plan importé n'est pas conforme à `isWritableFollowUpPlan`. Conserver le bouton d'ouverture pour permettre la correction par le médecin. Le handler garde ses contrôles indépendants.
+- **QW-140 :** afficher en lecture seule les suivis dont le statut importé est inconnu ou absent dans une liste distincte. Pas de reclassement automatique, de date inventée, de clôture ou de notification. Les dossiers sans plan de suivi sont exclus.
+- **QW-141 :** afficher la date de consultation via `displayRecordedDate` et le motif dans les trois listes planifiées pour distinguer des suivis de même patient, sans déduire de priorité médicale.
+- **Tests fictifs :** scénarios valides/malformés, sélection et immutabilité des imports, contrat de rendu des listes et absence d'actions sur statut inconnu.
+- **Statut :** trois lots préparés non validés. Exécuter `npm run test:follow-up`, `npm run build` et CI 11/11 sur le nouveau SHA avant validation ; aucun patient réel, aucune dépense ni déploiement.
