@@ -38,6 +38,19 @@ export function hasRequiredCompletionVersion(
     (typeof expectedClinicalSnapshot === 'string' && expectedClinicalSnapshot.length > 0);
 }
 
+/**
+ * QW-132 — a legacy or imported follow-up may carry a missing/unknown status.
+ * Only an explicitly recorded status can be shown as planned or completed.
+ * Read-only; no automatic transition or clinical interpretation.
+ */
+export function followUpStatusLabel(plan: unknown): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return 'Statut de suivi à vérifier';
+  const status = (plan as { status?: unknown }).status;
+  if (status === 'planned') return 'Contrôle prévu';
+  if (status === 'completed') return 'Contrôle effectué';
+  return 'Statut de suivi à vérifier';
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {

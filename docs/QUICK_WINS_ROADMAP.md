@@ -216,6 +216,7 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-129 | S | Refuser la clôture HELIOS depuis une liste obsolète si un champ clinique a changé depuis son affichage, avant et après confirmation, même avec un plan de suivi identique | branche de préparation | Tests fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-130 | S | Exiger une version clinique attendue pour tout enregistrement d'un suivi HELIOS « Terminé », y compris les appels directs au hook, sans bloquer les autres modifications | branche de préparation | Tests fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-131 | S | Réparer le contrat de test QW-079 devenu obsolète après l'ajout du contrôle de version clinique QW-127 ; vérifier que le formulaire conserve l'appel sécurisé à trois arguments et la validation du patient avant écriture | branche de préparation | Vérification statique ciblée conforme ; exécution TS/Codespaces et CI 11/11 sur HEAD exact requises | PRÉPARÉ NON VALIDÉ |
+| QW-132 | S | Éviter d'afficher comme « Contrôle prévu » un suivi HELIOS importé dont le statut est absent ou inconnu ; afficher explicitement « Statut de suivi à vérifier » dans l'historique sans altérer le dossier | branche de préparation | Tests fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

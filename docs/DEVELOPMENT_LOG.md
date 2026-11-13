@@ -1320,3 +1320,11 @@
 - **Constat :** le test QW-079 cherchait le littéral obsolète `updateConsultation(editingId, changes)` alors que le formulaire utilise depuis QW-127 `updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)`. L'ancien contrôle échouait artificiellement (position introuvable), empêchant de distinguer un vrai défaut d'un simple test périmé.
 - **Correction :** mettre à jour le contrat d'interface dans `scripts/test-follow-up.ts`, vérifier l'ordre du contrôle de patient et de l'écriture, et refuser un retour silencieux à l'appel à deux arguments. Aucun changement de code clinique ni de schéma de données.
 - **Vérification :** assertion statique ciblée appliquée au fichier actuel, conforme. Suite TypeScript, test réel `npm run test:follow-up`, build et GitHub CI 11/11 **non exécutés** sur ce commit ; pas de validation globale.
+
+
+### 2026-11-13 — QW-132 : statut de suivi non reconnu dans l'historique (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. `main` et PR #2 restent inchangées.
+- **Constat :** l'historique des consultations affichait « Contrôle prévu » pour tout suivi dont le statut n'était pas exactement `completed`, y compris les dossiers anciens avec statut absent/inconnu.
+- **Correction :** fonction pure `followUpStatusLabel` : `planned` → « Contrôle prévu », `completed` → « Contrôle effectué », tout statut absent/malformé/inconnu → « Statut de suivi à vérifier ». L'historique appelle cette fonction sans écriture, inférence clinique ni changement de plan.
+- **Tests fictifs :** statuts attendus, statut absent, statut importé inconnu, types invalides, immutabilité et contrat de rendu réel.
+- **Statut :** préparé, non validé. Compilation, tests réels en Codespaces et CI 11/11 sur le SHA exact nécessaires avant validation. Aucun patient réel, déploiement ni dépense.

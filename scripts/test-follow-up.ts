@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -609,3 +609,34 @@ console.log('PASS QW-129: stale HELIOS worklist clinical versions are rejected.'
     'Existing clinician completion and editing flows must forward clinical versions.');
 }
 console.log('PASS QW-130: HELIOS completed follow-up cannot bypass the central revision requirement.');
+
+
+// QW-132: imported/legacy follow-up status is never silently presented as
+// planned when its status field is absent, invalid, or malformed.
+{
+  const planned = { dueDate: '2026-11-20', objective: 'Contrôle fictif', status: 'planned' };
+  const completed = { ...planned, status: 'completed' };
+  const malformedCases: unknown[] = [
+    undefined, null, [], '', 0, {},
+    { dueDate: '2026-11-20', objective: 'Contrôle fictif' },
+    { ...planned, status: 'unexpected' },
+    { ...planned, status: '' },
+    { ...planned, status: null },
+    { ...planned, status: 1 },
+  ];
+  const before = JSON.stringify({ planned, completed, malformedCases });
+  assert.equal(followUpStatusLabel(planned), 'Contrôle prévu');
+  assert.equal(followUpStatusLabel(completed), 'Contrôle effectué');
+  for (const oldPlan of malformedCases) {
+    assert.equal(followUpStatusLabel(oldPlan), 'Statut de suivi à vérifier',
+      'Unrecognized imported status must not masquerade as planned.');
+  }
+  assert.equal(JSON.stringify({ planned, completed, malformedCases }), before,
+    'The read-only status label must not modify clinical records.');
+  const formSource = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const historySection = formSource.split('Historique des consultations (')[1] ?? '';
+  assert.ok(historySection.includes('followUpStatusLabel(item.followUp)') &&
+    !historySection.includes("item.followUp.status === 'completed' ? 'Contrôle effectué' : 'Contrôle prévu'"),
+    'The real consultation history must use the explicit three-state label.');
+}
+console.log('PASS QW-132: imported unknown HELIOS statuses shown as requiring review.');
