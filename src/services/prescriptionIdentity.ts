@@ -9,6 +9,20 @@ export function hasUniquePrescriptionId(
   return records.filter(record => record.id === id).length === 1;
 }
 
+/** QW-113 — a new prescription ID must not collide with a saved document or
+ * an orphaned stock movement from an imported archive. Neither source is
+ * changed or silently deduplicated. */
+export function isUnusedPrescriptionId(
+  id: unknown,
+  prescriptions: readonly Pick<Prescription, 'id'>[],
+  movements: readonly Pick<StockMovement, 'prescriptionId'>[],
+): id is string {
+  return typeof id === 'string' && id.trim().length > 0 &&
+    Array.isArray(prescriptions) && Array.isArray(movements) &&
+    !prescriptions.some(record => record?.id === id) &&
+    !movements.some(movement => movement?.prescriptionId === id);
+}
+
 /** Preserve inventory traceability even when a legacy prescription has no status. */
 export function prescriptionHasRecordedStockMovement(
   prescriptionId: unknown,
