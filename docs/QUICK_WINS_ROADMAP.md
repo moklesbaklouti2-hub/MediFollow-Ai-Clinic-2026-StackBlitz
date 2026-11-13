@@ -204,6 +204,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-123 | S | Harmoniser la clôture HELIOS avec la validation centrale des plans | branche de préparation | Tests fictifs et CI requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-124 | S | Refuser les dates cliniques impossibles ou ambiguës à la création d'une consultation et lors d'une correction explicite, avec le validateur partagé de la chronologie, sans bloquer les anciens dossiers autrement modifiés | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
