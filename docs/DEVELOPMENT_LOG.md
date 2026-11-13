@@ -1201,3 +1201,10 @@
 - Le formulaire `Prescriptions` refuse désormais une édition d'un statut absent ou invalide avec une explication demandant la vérification du dossier, sans appeler `updatePrescription`.
 - Tests de contrat sur les deux chemins et statuts synthétiques dans `scripts/test-patient-linkage.ts`. Aucune normalisation automatique des archives ni modification des mouvements de stock.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, tests complets et 11 jobs GitHub Actions à vérifier sur le HEAD final. Branche de préparation seule, `main` et PR d'audit inchangées, aucune donnée réelle.
+
+### 2026-11-13 — QW-115 : message explicite avant la modification d'une ordonnance dont le stock est déjà tracé
+- Le hook central `updatePrescription` interdisait déjà depuis QW-104 les modifications de contenu lorsqu'un mouvement de stock existe pour l'ordonnance. Toutefois, un ancien formulaire pouvait tenter la sauvegarde, puis n'afficher qu'un échec générique.
+- `savePrescription` relit désormais le journal d'inventaire et refuse immédiatement la modification d'une ordonnance `draft` ou `validated` si un mouvement de stock lui est rattaché, avant tout appel à `updatePrescription`. Le message indique que le journal et le statut doivent être réconciliés.
+- Aucun mouvement de stock n'est déduit, réintégré ou effacé. La vérification centrale existante reste indépendante ; les formulaires ne réécrivent pas automatiquement d'archives incohérentes.
+- Test fictif QW-115 de l'ordre des vérifications UI, des références de mouvements et de la conservation du garde-fou central ajouté à `scripts/test-patient-linkage.ts`.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `test:patient-linkage`, autres tests et 11 jobs GitHub Actions sur HEAD exact à effectuer. Aucune modification de `main` ni de la PR d'audit ; aucune donnée patient réelle ni déploiement.
