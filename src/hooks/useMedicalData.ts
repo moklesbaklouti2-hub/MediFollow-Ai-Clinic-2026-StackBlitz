@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { hasUniqueConsultationId } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
-import { allowsFinalizedPrescriptionUpdate, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
+import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 
 import type {
@@ -208,6 +208,8 @@ export function useMedicalData() {
     if (!hasUniquePrescriptionId(id, currentPrescriptions)) return false;
     const currentPrescription = currentPrescriptions.find(item => item.id === id);
     if (!currentPrescription || !preservesPrescriptionPatientId(currentPrescription, changes)) return false;
+    // QW-107: forbid backwards status changes and unknown-state coercion.
+    if (!allowsPrescriptionStatusTransition(currentPrescription, changes)) return false;
     // QW-106: protect creation time and lifecycle timestamps for every caller.
     if (!preservesPrescriptionAuditTimestamps(currentPrescription, changes)) return false;
     // QW-097: enforce finality at the storage boundary, not only in the form.
