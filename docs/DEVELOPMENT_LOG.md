@@ -1244,3 +1244,10 @@
 - Les deux chemins de sauvegarde du hook `useMedicalData` appliquent désormais la vérification avant toute écriture. Une modification sans nouveau `followUp` n'altère ni ne requalifie les anciens suivis importés, même s'ils nécessitent une révision humaine.
 - Tests synthétiques et contrats d'appel dans `scripts/test-follow-up.ts`. Aucun rappel patient automatique, aucun diagnostic généré ni changement du formulaire.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:follow-up`, `npm run test:complete` et 11 jobs GitHub Actions à contrôler sur le HEAD exact. Branche de préparation uniquement ; `main` et PR d'audit inchangées, pas de données patient réelles ni déploiement.
+
+### 2026-11-13 — QW-121 : empêcher la collision des identifiants de nouvelles consultations
+- Priorité cabinet : ce lot concerne les dossiers patients et la continuité des consultations, sans changement du module inventaire ni de la délivrance de médicaments.
+- Les parcours de modification et de suppression refusaient déjà les ID de consultation ambigus (QW-076/077), mais `addConsultation` n'écartait pas une collision éventuelle entre le nouvel ID généré et un ancien enregistrement, y compris importé.
+- Le helper pur `isUnusedConsultationId` dans `src/services/consultationIdentity.ts` vérifie qu'un ID généré est une chaîne non vide et n'est utilisé par aucune consultation de l'historique. Le hook `addConsultation` réutilise l'instantané des données médicales après vérification du patient et du plan de suivi HELIOS (QW-120), puis refuse toute collision avant `saveConsultations`.
+- Aucun dossier existant n'est renommé, supprimé, fusionné ou automatiquement corrigé. Les tests fictifs QW-121 couvrent les ID libres, anciens, dupliqués et invalides, ainsi que l'ordre des gardes. Le contrat antérieur QW-085 a été adapté au même instantané `currentData`.
+- **PRÉPARÉ NON VALIDÉ** : `npm run test:patient-linkage`, compilation, `npm run test:complete` et les 11 jobs GitHub Actions restent à vérifier sur le SHA exact. Branche de préparation uniquement ; `main` et PR d'audit inchangées, sans données patient réelles, déploiement ni dépense.
