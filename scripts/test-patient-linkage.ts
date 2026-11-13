@@ -1590,3 +1590,40 @@ console.log('PASS QW-106: creation timestamp immutable; finalized status changes
     'Validate the status transition centrally before any prescription write.');
 }
 console.log('PASS QW-107: forward-only status transitions and no silent coercion of imported states.');
+
+// QW-108: a draft may only become "validated" when its validation time
+// is explicitly recorded; unrelated edits and later finalisation are intact.
+{
+  const draft = { status: 'draft' as const };
+  const validated = { status: 'validated' as const };
+  const timestamp = '2026-11-13T15:00:00.000Z';
+
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { advice: 'Donnée fictive' }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft, { status: 'validated' }), false,
+    'Status-only draft validation would lose the audit timestamp.');
+  assert.equal(preservesPrescriptionAuditTimestamps(draft,
+    { status: 'validated', validatedAt: timestamp }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft,
+    { status: 'validated', validatedAt: '' }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(draft,
+    { status: 'validated', validatedAt: 'non valide' }), false);
+  assert.equal(preservesPrescriptionAuditTimestamps(validated, { advice: 'Donnée fictive' }), true);
+  assert.equal(preservesPrescriptionAuditTimestamps(validated,
+    { status: 'dispensed', dispensedAt: timestamp }), true);
+
+  const helper = readFileSync(new URL('../src/services/prescriptionFinality.ts', import.meta.url), 'utf8');
+  const audit = helper.split('export function preservesPrescriptionAuditTimestamps(')[1]
+    ?.split('// QW-107')[0] ?? '';
+  assert.ok(audit.includes("current.status === 'draft' && changes.status === 'validated'") &&
+    audit.includes("!has('validatedAt')") &&
+    audit.indexOf("!has('validatedAt')") < audit.indexOf("if (has('validatedAt')"),
+    'Validation without validatedAt must be rejected before persistence.');
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('preservesPrescriptionAuditTimestamps(currentPrescription, changes)') &&
+    update.indexOf('preservesPrescriptionAuditTimestamps(') < update.indexOf('savePrescriptions(updated)'),
+    'Central validation path must apply the timestamp requirement.');
+}
+console.log('PASS QW-108: a draft cannot become validated without its audit timestamp.');
