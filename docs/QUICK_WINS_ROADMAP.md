@@ -198,6 +198,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-120 | S | Refuser au niveau des créations et modifications de consultations les suivis HELIOS à date invalide, statut inconnu ou objectif trop long, sans altérer les dossiers sans suivi | branche de préparation | Tests de suivi fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-121 | S | Refuser la création d'une consultation si le nouvel identifiant est déjà présent dans l'historique clinique ou une sauvegarde importée ; préserver les dossiers existants | branche de préparation | Tests cliniques fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
