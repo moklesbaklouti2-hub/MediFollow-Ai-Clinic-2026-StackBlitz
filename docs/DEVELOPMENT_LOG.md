@@ -1236,3 +1236,11 @@
 - Le champ clinique `date`, date de la visite, reste distinct de l'horodatage d'audit et peut être corrigé normalement. Pas de changement d'interface, aucune modification des dossiers existants et aucune migration.
 - Scénarios synthétiques et contrat du chemin central ajoutés à `scripts/test-patient-linkage.ts`, sans données médicales réelles.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:patient-linkage`, `npm run test:complete` et contrôle des 11 jobs GitHub Actions sur le SHA final restent requis. Branche de préparation uniquement, `main` et PR d'audit inchangées, aucun déploiement ni dépense.
+
+### 2026-11-13 — QW-120 : vérifier les suivis HELIOS aux frontières de sauvegarde clinique
+- Réorientation cabinet confirmée : ce lot concerne les consultations et les contrôles de suivi clinique, non la délivrance de médicaments.
+- `prepareFollowUp` validait déjà les dates et objectifs dans le formulaire `Consultations`, mais un appel direct à `addConsultation` ou `updateConsultation` pouvait enregistrer une date impossible, un objectif de plus de 500 caractères ou un statut de suivi inconnu.
+- La nouvelle fonction pure `isWritableFollowUpPlan` vérifie une date civile réelle `YYYY-MM-DD`, un objectif textuel de 500 caractères maximum, et le statut explicite `planned` / `completed`. Une absence de suivi (`undefined`) reste acceptée pour les dossiers sans plan et la suppression explicite d'un plan.
+- Les deux chemins de sauvegarde du hook `useMedicalData` appliquent désormais la vérification avant toute écriture. Une modification sans nouveau `followUp` n'altère ni ne requalifie les anciens suivis importés, même s'ils nécessitent une révision humaine.
+- Tests synthétiques et contrats d'appel dans `scripts/test-follow-up.ts`. Aucun rappel patient automatique, aucun diagnostic généré ni changement du formulaire.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:follow-up`, `npm run test:complete` et 11 jobs GitHub Actions à contrôler sur le HEAD exact. Branche de préparation uniquement ; `main` et PR d'audit inchangées, pas de données patient réelles ni déploiement.
