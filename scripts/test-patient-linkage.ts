@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
+import { hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
@@ -1950,3 +1950,47 @@ console.log('PASS QW-119: clinical audit timestamps are immutable across direct 
     'The central creation path must check uniqueness after ID generation and before storage.');
 }
 console.log('PASS QW-121: creating consultations refuses already-used clinical IDs.');
+
+// QW-122 — new consultations require a documented clinical reason and
+// specialty at the central creation boundary, not just in the React form.
+{
+  const valid = { motif: 'Contrôle tensionnel fictif', specialty: 'Médecine de famille' };
+  assert.equal(hasRequiredConsultationDetails(valid), true);
+  assert.equal(hasRequiredConsultationDetails(
+    { motif: '  Contrôle fictif  ', specialty: '  Pédiatrie  ' }), true);
+  assert.equal(hasRequiredConsultationDetails({ motif: '', specialty: valid.specialty }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: '   ', specialty: valid.specialty }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: valid.motif, specialty: '' }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: valid.motif, specialty: '   ' }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: valid.motif }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: null as unknown as string,
+    specialty: valid.specialty }), false);
+  assert.equal(hasRequiredConsultationDetails({ motif: valid.motif,
+    specialty: 123 as unknown as string }), false);
+  assert.equal(hasRequiredConsultationDetails(null), false);
+  assert.equal(hasRequiredConsultationDetails(undefined), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = hook.split('const addConsultation = useCallback(')[1]
+    ?.split('const updateConsultation = useCallback(')[0] ?? '';
+  const patientAt = add.indexOf('hasConfirmedPatientSelection(consultation.patientId, currentData.patients)');
+  const clinicalAt = add.indexOf('hasRequiredConsultationDetails(consultation)');
+  const followAt = add.indexOf('isWritableFollowUpPlan(consultation.followUp)');
+  const createAt = add.indexOf('const newId = createId()');
+  const saveAt = add.indexOf('saveConsultations(');
+  assert.ok(patientAt >= 0 && clinicalAt > patientAt &&
+    clinicalAt < followAt && followAt < createAt && createAt < saveAt,
+    'The central creation path must reject missing clinical fields before allocating IDs or writing data.');
+
+  const source = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const saveForm = source.split('function saveConsultation()')[1]
+    ?.split('const vitalFields:')[0] ?? '';
+  assert.ok(saveForm.includes('!motif.trim() || (!editingId && !specialty)') &&
+    saveForm.includes('addConsultation({ ...changes, date: new Date().toISOString() })'),
+    'The existing consultation form must continue enforcing mandatory fields.');
+  const update = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  assert.ok(!update.includes('hasRequiredConsultationDetails('),
+    'Imported older consultations without specialty must remain editable.');
+}
+console.log('PASS QW-122: new consultations require motif and specialty without rewriting legacy visits.');
