@@ -172,6 +172,8 @@
 
 | QW-111 | S | Refuser immédiatement l'annulation d'une ordonnance au statut absent ou inconnu avant confirmation et traitement du stock | branche de préparation | Contrats fictifs, compilation et CI exacte à valider | PRÉPARÉ NON VALIDÉ |
 
+| QW-112 | S | Distinguer en lecture seule les statuts d'ordonnance absents (dossiers anciens) des valeurs importées inconnues ou invalides | branche de préparation | Tests fictifs, compilation et CI exacte requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
