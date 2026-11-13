@@ -180,6 +180,8 @@
 
 | QW-115 | S | Expliquer immédiatement le refus de modification d'une ordonnance avec mouvements de stock déjà enregistrés, avant toute sauvegarde de l'ancien formulaire | branche de préparation | Tests fictifs, compilation et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-116 | M | Vérifier au niveau du service de stock qu'une délivrance vise une ordonnance unique, un patient confirmé, le bon lien patient et un statut autorisé, sans casser le rejeu idempotent | branche de préparation | Tests de délivrance fictive, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
