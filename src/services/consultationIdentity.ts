@@ -1,4 +1,5 @@
 import type { Consultation } from '../types/medical';
+import { recordedDateTimestamp } from '../clinical/medicalTimeline';
 
 // A restored backup may contain colliding identifiers. A mutation by id is
 // permitted only when it identifies exactly one current consultation.
@@ -30,6 +31,13 @@ export function hasRequiredConsultationDetails(
   return Boolean(consultation &&
     typeof consultation.motif === 'string' && consultation.motif.trim().length > 0 &&
     typeof consultation.specialty === 'string' && consultation.specialty.trim().length > 0);
+}
+
+// QW-123 — use the exact same date recognition as the patient timeline so
+// direct clinical writers cannot create visits that immediately display as
+// undated. This accepts documented calendar dates or zone-qualified timestamps.
+export function hasDocumentedConsultationDate(value: unknown): boolean {
+  return recordedDateTimestamp(value) !== null;
 }
 
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
