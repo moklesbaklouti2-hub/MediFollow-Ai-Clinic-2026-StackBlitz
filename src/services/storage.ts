@@ -1,4 +1,7 @@
 import { resolveLegacyPatientId } from './patientLinkage';
+import { hasUniquePrescriptionId } from './prescriptionIdentity';
+import { hasConfirmedPatientSelection } from './patientSelectionGuard';
+import { isDispensablePrescriptionStatus } from './prescriptionFinality';
 import type {
   Patient,
   Consultation,
@@ -359,6 +362,27 @@ export function dispenseInventoryItems(input: {
     return { success: false, error: 'Délivrance refusée : ordonnance ou patient non identifié.' };
   }
   const data = getInventoryData();
+
+  // QW-116: protect the storage boundary, not just the React form. A direct
+  // stock-dispense caller must target exactly one saved prescription and
+  // exactly one confirmed patient, with a matching immutable patient link.
+  const medical = getMedicalData();
+  if (!hasUniquePrescriptionId(input.prescriptionId, medical.prescriptions) ||
+      !hasConfirmedPatientSelection(input.patientId, medical.patients)) {
+    return { success: false, error: 'Délivrance refusée : ordonnance ou patient absent, ambigu ou non confirmé.' };
+  }
+  const matchingPrescription = medical.prescriptions.find(row => row.id === input.prescriptionId);
+  if (!matchingPrescription || matchingPrescription.patientId !== input.patientId) {
+    return { success: false, error: 'Délivrance refusée : ordonnance liée à un autre patient.' };
+  }
+  // A finalized document may be checked for an idempotent replay only when
+  // its dispense journal already exists; a replay never deducts stock again.
+  const priorDispenseExists = data.movements.some(move =>
+    move.type === 'dispense' && move.prescriptionId === input.prescriptionId);
+  if (!isDispensablePrescriptionStatus(matchingPrescription.status) &&
+      !(matchingPrescription.status === 'dispensed' && priorDispenseExists)) {
+    return { success: false, error: 'Délivrance refusée : statut non autorisé pour une nouvelle sortie de stock.' };
+  }
 
   // Une seule ligne invalide bloque toute la délivrance : ne jamais déduire
   // silencieusement les autres articles d'une demande partiellement erronée.
