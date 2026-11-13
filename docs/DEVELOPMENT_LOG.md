@@ -1162,3 +1162,9 @@
 - Les règles QW-106 interdisant la réécriture de `savedAt` et l'utilisation d'horodatages invalides restent actives. Les modifications d'ordonnances déjà validées et la transition ultérieure vers la délivrance ne sont pas modifiées par ce lot.
 - Cas synthétiques ajoutés à `scripts/test-patient-linkage.ts` : refus sans date, refus de dates invalides, autorisation avec date ISO, compatibilité des autres usages, et contrat d'appel central.
 - **PRÉPARÉ, NON VALIDÉ** : aucune compilation ni exécution des tests ou des 11 jobs GitHub Actions sur le HEAD de préparation. Aucun changement de `main`, aucune donnée patient réelle, aucun déploiement.
+
+### 2026-11-13 — QW-109 : date de validation obligatoire dès la création d'une ordonnance validée
+- Cohérence avec QW-108 : `addPrescription` utilisait déjà le garde-fou central `isCreatablePrescriptionStatus` (QW-105), mais celui-ci autorisait un nouveau document au statut `validated` sans `validatedAt`. Désormais une nouvelle ordonnance validée exige une date de validation ISO exploitable.
+- Une nouvelle ordonnance en `draft` conserve un historique de validation vide : toute valeur `validatedAt` préremplie est refusée. Les statuts `dispensed`/`cancelled` et horodatages finaux restent interdits à la création.
+- Le formulaire habituel crée toujours des brouillons sans nécessiter de modification UI. Contrat QW-105 actualisé et scénarios synthétiques QW-109 ajoutés dans `scripts/test-patient-linkage.ts`.
+- **PRÉPARÉ NON VALIDÉ** : compilation, tests complets et GitHub Actions sur HEAD exact à réaliser dans Codespaces. Branche de préparation uniquement ; aucune modification de `main`, aucune donnée médicale réelle, aucune dépense ni déploiement.
