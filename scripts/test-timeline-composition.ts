@@ -46,7 +46,7 @@ const fixtures: Event[] = [
 
 const before = JSON.stringify(fixtures);
 const alpha = orderRecordedNewest(fixtures.filter(item => item.patientId === 'alpha'));
-assert.equal(alpha.length, 6, 'Current patient's initial selection must exclude other patients.');
+assert.equal(alpha.length, 6, "Current patient's initial selection must exclude other patients.");
 const checkSamePatient = (events: readonly Event[]) => {
   assert.ok(events.every(event => event.patientId === 'alpha'), 'No event may be taken from another patient.');
 };

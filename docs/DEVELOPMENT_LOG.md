@@ -1431,3 +1431,9 @@
 
 ### 2026-11-13 — QW-153 à QW-155 : protection des champs cliniques importés
 - Refuser l'ouverture de l'éditeur si spécialité, motif ou diagnostic importé n'est pas textuel ; conserver le dossier source. Tests fictifs ajoutés. Validation CI sur le SHA exact requise.
+
+
+### 2026-11-13 — Correctif de validation des tests chronologiques (suite au test complet réel)
+- `scripts/test-timeline-composition.ts` : réparer à la ligne 49 la chaîne littérale avec apostrophe de `patient's`, non échappée, qui provoquait `esbuild Transform failed` pendant `npm run test:complete`.
+- Ajouter explicitement `npm run test:timeline-contracts && npm run test:timeline-composition` au job clinique GitHub Actions V2, afin de faire échouer la CI si ces tests ne sont pas exécutables ou si leurs assertions échouent.
+- Portée : branche de préparation uniquement ; aucune modification clinique/production, ni `main`, ni PR #2. La validation est requise sur le nouveau SHA exact avant d'annoncer le vert.

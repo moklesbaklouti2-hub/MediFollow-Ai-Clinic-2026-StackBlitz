@@ -70,6 +70,9 @@ jobs:
       - name: Verifier HELIOS Follow-up et ses echeances (fictif)
         if: matrix.module == 'clinique'
         run: npm run test:follow-up
+      - name: Verifier les contrats et compositions de la chronologie (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:timeline-contracts && npm run test:timeline-composition
 
   coordination:
     name: Verifier le registre des modules
