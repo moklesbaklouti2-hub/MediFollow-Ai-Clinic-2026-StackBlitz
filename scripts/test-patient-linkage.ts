@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
-import { hasUniquePrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
+import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
@@ -1051,7 +1051,7 @@ console.log('PASS QW-085: central consultation creation requires unique patient.
   const source = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
   const add = source.split('const addPrescription = useCallback(')[1]
     ?.split('const updatePrescription = useCallback(')[0] ?? '';
-  assert.ok(add.includes('hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)') &&
+  assert.ok(add.includes('hasConfirmedPatientSelection(prescription.patientId, currentData.patients)') &&
     add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('createId()') &&
     add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('savePrescriptions('),
     'Prescription add must check unique patient identity before writing.');
@@ -1509,7 +1509,7 @@ console.log('PASS QW-104: documented stock locks stale draft/validated prescript
   const add = hook.split('const addPrescription = useCallback(')[1]
     ?.split('const updatePrescription = useCallback(')[0] ?? '';
   assert.ok(add.includes('isCreatablePrescriptionStatus(prescription)') &&
-    add.includes('hasConfirmedPatientSelection(prescription.patientId, getMedicalData().patients)') &&
+    add.includes('hasConfirmedPatientSelection(prescription.patientId, currentData.patients)') &&
     add.indexOf('isCreatablePrescriptionStatus(') < add.indexOf('createId()') &&
     add.indexOf('isCreatablePrescriptionStatus(') < add.indexOf('savePrescriptions('),
     'All new prescription records must be checked before assigning an ID or writing storage.');
@@ -1734,3 +1734,39 @@ console.log('PASS QW-111: cancelling unknown-status prescriptions fails closed b
     'The history must reuse the updated timeline label without a parallel classification.');
 }
 console.log('PASS QW-112: missing legacy and invalid imported statuses remain distinguishable.');
+
+
+// QW-113 — a newly allocated prescription ID must not collide with an
+// imported document OR an orphaned historical stock movement.
+{
+  const prescriptions = [{ id: 'ordonnance-ancienne' }, { id: 'ordonnance-dupliquée' },
+    { id: 'ordonnance-dupliquée' }];
+  const moves = [{ prescriptionId: 'ordonnance-stock-seul' },
+    { prescriptionId: 'autre-ordonnance' }];
+  assert.equal(isUnusedPrescriptionId('nouvelle-ordonnance', prescriptions, moves), true);
+  assert.equal(isUnusedPrescriptionId('ordonnance-ancienne', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('ordonnance-dupliquée', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('ordonnance-stock-seul', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('autre-ordonnance', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('  ', prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId(null, prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId(undefined, prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId(42, prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('id-isolé', [], []), true);
+  assert.equal(isUnusedPrescriptionId('id-isolé', null as unknown as typeof prescriptions, moves), false);
+  assert.equal(isUnusedPrescriptionId('id-isolé', prescriptions, null as unknown as typeof moves), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const add = hook.split('const addPrescription = useCallback(')[1]
+    ?.split('const updatePrescription = useCallback(')[0] ?? '';
+  const createAt = add.indexOf('const newId = createId()');
+  const checkAt = add.indexOf(
+    'isUnusedPrescriptionId(newId, currentData.prescriptions, getInventoryData().movements)');
+  assert.ok(createAt >= 0 && checkAt > createAt &&
+    checkAt < add.indexOf('const newPrescription: Prescription') &&
+    checkAt < add.indexOf('savePrescriptions(') &&
+    add.includes('...currentData.prescriptions'),
+    'New generated ID must be checked against current documents and stock trace before saving.');
+}
+console.log('PASS QW-113: new prescription IDs cannot reuse clinical or stock-trace identifiers.');
