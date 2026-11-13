@@ -212,6 +212,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-127 | S | Éviter l'écrasement d'une consultation modifiée après le contrôle du formulaire en comparant aussi sa version clinique au niveau du hook central | branche de préparation | Tests fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-128 | S | Transmettre au hook central la version clinique revérifiée avant de marquer un suivi HELIOS terminé, afin de refuser un changement intervenu entre la confirmation et la sauvegarde | branche de préparation | Tests de suivi fictifs, compilation et 11 jobs CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
