@@ -1,4 +1,5 @@
 import type { Consultation, Patient } from '../types/medical';
+import { recordedDateTimestamp } from './medicalTimeline';
 
 // HELIOS Clinical Memory — an on-device, read-only view of fields documented
 // by a clinician. No clinical inference, AI requests, writes or prescriptions.
@@ -40,6 +41,11 @@ export function buildClinicalMemory(
   patient: ClinicalMemoryPatient,
   consultations: readonly ClinicalMemoryVisit[],
 ): ClinicalMemoryPreview {
+  // QW-156: imported/missing IDs must not make unrelated records share a memory.
+  if (typeof patient.id !== 'string' || !patient.id.trim()) {
+    return { allergies: [], declaredTreatments: [], documentedDiagnoses: [],
+      documentedHistory: { medical: [], surgical: [], family: [] } };
+  }
   const rawAllergies = patient.clinicalHistory?.allergies;
   const allergies = (Array.isArray(rawAllergies) ? rawAllergies : [])
     .filter(item => item && typeof item.label === 'string' && item.label.trim())
@@ -58,20 +64,24 @@ export function buildClinicalMemory(
       return dose ? name + ' — ' + dose : name;
     });
 
+  // QW-157/158: accept only attributable clinical records and valid timeline
+  // dates. An invalid date is unknown, never silently normalized by Date.parse.
   const documentedDiagnoses = consultations
-    .filter(visit => visit.patientId === patient.id &&
+    .filter(visit => visit && visit.patientId === patient.id &&
+      typeof visit.id === 'string' && visit.id.trim().length > 0 &&
       typeof visit.diagnosis === 'string' && visit.diagnosis.trim().length > 0)
     .map(visit => ({
       consultationId: visit.id,
-      date: typeof visit.date === 'string' && Number.isFinite(Date.parse(visit.date))
-        ? visit.date : 'Date non renseignée',
+      date: recordedDateTimestamp(visit.date) !== null ? visit.date : 'Date non renseignée',
       label: visit.diagnosis.trim(),
     }))
     .sort((a, b) => {
-      const aTime = Date.parse(a.date), bTime = Date.parse(b.date);
-      const aSafe = Number.isFinite(aTime) ? aTime : -Infinity;
-      const bSafe = Number.isFinite(bTime) ? bTime : -Infinity;
-      return bSafe - aSafe || a.consultationId.localeCompare(b.consultationId);
+      const aTime = recordedDateTimestamp(a.date);
+      const bTime = recordedDateTimestamp(b.date);
+      // Unknown dates follow verified dates; the ID makes ties deterministic.
+      const byDate = aTime === null ? (bTime === null ? 0 : 1)
+        : bTime === null ? -1 : bTime - aTime;
+      return byDate || a.consultationId.localeCompare(b.consultationId);
     })
     .slice(0, 3);
 

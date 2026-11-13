@@ -1437,3 +1437,10 @@
 - `scripts/test-timeline-composition.ts` : réparer à la ligne 49 la chaîne littérale avec apostrophe de `patient's`, non échappée, qui provoquait `esbuild Transform failed` pendant `npm run test:complete`.
 - Ajouter explicitement `npm run test:timeline-contracts && npm run test:timeline-composition` au job clinique GitHub Actions V2, afin de faire échouer la CI si ces tests ne sont pas exécutables ou si leurs assertions échouent.
 - Portée : branche de préparation uniquement ; aucune modification clinique/production, ni `main`, ni PR #2. La validation est requise sur le nouveau SHA exact avant d'annoncer le vert.
+
+### 2026-11-14 — QW-156 à QW-160 : HELIOS Clinical Memory et Prevention (préparation nocturne)
+- Vérification du HEAD antérieur : `86efb719068b919daaf128e10e10110af3d54403`, 11 jobs GitHub Actions verts (run 43521686366).
+- Clinical Memory : rejeter les identifiants patients absents, filtrer diagnostics de consultations non attribuables, utiliser le validateur de chronologie pour les dates, placer les dates inconnues après les dates vérifiables et conserver un ordre stable.
+- Prevention : conserver uniquement des âges déclarés entiers plausibles, refuser les liens patients non confirmés et employer le même validateur chronologique strict ; pas de score médical ni de conseil automatique.
+- Nouveau jeu de tests fictifs `scripts/test-helios-memory-prevention.ts` ajouté à `package.json` et au job CI clinique. Ne jamais utiliser de données réelles.
+- Aucun changement `main`, branche d'audit, PR #2, déploiement ou dépenses. Valider compilation et 11 jobs sur le nouveau SHA exact avant d'annoncer une couleur.

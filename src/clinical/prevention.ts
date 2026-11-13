@@ -1,4 +1,5 @@
 import type { Consultation, Patient } from '../types/medical';
+import { recordedDateTimestamp } from './medicalTimeline';
 
 // HELIOS Prevention (first documentary pass):
 // discussion prompts only. No eligibility assessment, interval, risk score,
@@ -20,17 +21,23 @@ export function buildPreventionReview(
   patient: Pick<Patient, 'id' | 'age'>,
   consultations: readonly Pick<Consultation, 'patientId' | 'date'>[],
 ): PreventionReview {
+  // QW-159: retain only credible declared integer ages; never calculate
+  // a missing age, or present a decimal/implausible import as documented.
   const recordedAge = typeof patient.age === 'number' &&
-    Number.isFinite(patient.age) && patient.age >= 0
+    Number.isInteger(patient.age) && patient.age >= 0 && patient.age <= 130
     ? patient.age : null;
   let lastDatedConsultation: string | null = null;
   let lastTimestamp = -Infinity;
 
-  // Explicit patient-ID match, even if the caller already filtered records.
+  // QW-160: no other patient's appointment may influence documentary prevention.
+  // Use the same strict clinical date parser as the longitudinal timeline.
+  if (typeof patient.id !== 'string' || !patient.id.trim()) {
+    return { recordedAge: null, lastDatedConsultation: null, discussionTopics: PREVENTION_TOPICS };
+  }
   for (const visit of consultations) {
-    if (!visit || visit.patientId !== patient.id || typeof visit.date !== 'string') continue;
-    const timestamp = Date.parse(visit.date);
-    if (!Number.isFinite(timestamp) || timestamp <= lastTimestamp) continue;
+    if (!visit || visit.patientId !== patient.id) continue;
+    const timestamp = recordedDateTimestamp(visit.date);
+    if (timestamp === null || timestamp <= lastTimestamp) continue;
     lastTimestamp = timestamp;
     lastDatedConsultation = visit.date;
   }

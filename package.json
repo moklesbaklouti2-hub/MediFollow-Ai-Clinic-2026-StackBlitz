@@ -21,7 +21,8 @@
     "test:inventory-dispense": "tsx scripts/test-inventory-dispense-regression.ts",
     "test:patient-linkage": "tsx scripts/test-patient-linkage.ts",
     "test:follow-up": "tsx scripts/test-follow-up.ts",
-    "test:timeline-composition": "tsx scripts/test-timeline-composition.ts"
+    "test:timeline-composition": "tsx scripts/test-timeline-composition.ts",
+    "test:helios-memory-prevention": "tsx scripts/test-helios-memory-prevention.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",

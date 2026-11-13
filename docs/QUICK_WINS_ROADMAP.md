@@ -240,6 +240,11 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-153 | S | Protéger l'éditeur contre une valeur importée non textuelle : spécialité, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-154 | S | Protéger l'éditeur contre une valeur importée non textuelle : motif, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 | QW-155 | S | Protéger l'éditeur contre une valeur importée non textuelle : diagnostic, sans modifier le dossier source | branche de préparation | Tests fictifs et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-156 | S | HELIOS Clinical Memory : refuser toute association de diagnostics à un identifiant patient importé vide ou ambigu | branche de préparation | Test d'isolement fictif, CI 11/11 sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-157 | S | HELIOS Clinical Memory : ne pas convertir des dates de diagnostics impossibles ou ambiguës en dates médicales fiables | branche de préparation | Tests dates fictives, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-158 | S | HELIOS Clinical Memory : filtrer les consultations sans identifiant traçable, ordonner les diagnostics documentés de façon déterministe | branche de préparation | Test de provenance fictif, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-159 | S | HELIOS Prevention : refuser les âges importés décimaux ou impossibles sans inventer la valeur | branche de préparation | Tests âge fictif, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+| QW-160 | S | HELIOS Prevention : utiliser les dates cliniques strictes et le lien patient confirmé pour la dernière consultation documentée | branche de préparation | Tests multi-patients fictifs, CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

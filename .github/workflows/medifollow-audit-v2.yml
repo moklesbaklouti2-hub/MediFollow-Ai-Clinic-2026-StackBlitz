@@ -73,6 +73,9 @@ jobs:
       - name: Verifier les contrats et compositions de la chronologie (fictif)
         if: matrix.module == 'clinique'
         run: npm run test:timeline-contracts && npm run test:timeline-composition
+      - name: Verifier HELIOS Clinical Memory et Prevention (fictif)
+        if: matrix.module == 'clinique'
+        run: npm run test:helios-memory-prevention
 
   coordination:
     name: Verifier le registre des modules
