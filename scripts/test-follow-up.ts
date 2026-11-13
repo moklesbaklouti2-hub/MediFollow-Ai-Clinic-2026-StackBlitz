@@ -465,7 +465,7 @@ console.log('PASS QW-123: completion respects central follow-up validation.');
   const confirmation = completion.indexOf('window.confirm(');
   const secondCheck = completion.indexOf(
     'matchesDisplayedFollowUpPlan(item.followUp, latest[0].followUp)');
-  const update = completion.indexOf('updateConsultation(current.id, { followUp: completedPlan })');
+  const update = completion.indexOf('updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)');
   assert.ok(firstCheck > completion.indexOf('hasConfirmedPatientSelection(') &&
     firstCheck < confirmation &&
     completion.includes('const latest = getConsultations().filter(') &&
@@ -474,3 +474,53 @@ console.log('PASS QW-123: completion respects central follow-up validation.');
     'A stale follow-up must be refused both before and after confirmation, before update.');
 }
 console.log('PASS QW-125: stale HELIOS worklist rows cannot silently complete changed plans.');
+
+// QW-128 — follow-up completion must also check the latest entire clinical
+// record at the central storage boundary, not only the displayed follow-up.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const completion = page.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  const confirmAt = completion.indexOf('window.confirm(');
+  const latestAt = completion.indexOf('const latest = getConsultations().filter(');
+  const followUpGuardAt = completion.indexOf(
+    'matchesDisplayedFollowUpPlan(item.followUp, latest[0].followUp)');
+  const snapshotAt = completion.indexOf(
+    'const latestClinicalSnapshot = consultationClinicalSnapshot(latest[0])');
+  const validSnapshotAt = completion.indexOf('if (!latestClinicalSnapshot)');
+  const updateAt = completion.indexOf(
+    'updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)');
+  assert.ok(confirmAt >= 0 &&
+    latestAt > confirmAt &&
+    followUpGuardAt > latestAt &&
+    snapshotAt > followUpGuardAt &&
+    validSnapshotAt > snapshotAt &&
+    updateAt > validSnapshotAt &&
+    completion.includes('latest.length !== 1 || latest[0].patientId !== item.patientId'),
+    'HELIOS must forward the freshly checked clinical record version to the hook before completion.');
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const updateHook = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  const hookGuardAt = updateHook.indexOf(
+    'consultationClinicalSnapshot(currentConsultation) !== expectedClinicalSnapshot');
+  assert.ok(updateHook.includes('expectedClinicalSnapshot?: string') &&
+    hookGuardAt >= 0 && hookGuardAt < updateHook.indexOf('saveConsultations(updated)'),
+    'QW-127 central version checking must remain available for HELIOS completion.');
+
+  // A clinical note can change while the follow-up itself stays identical.
+  // The follow-up-only QW-125 check would pass, but the full snapshot differs.
+  const shownPlan = { dueDate: '2026-11-16', objective: 'Contrôle fictif', status: 'planned' as const };
+  const initiallyShown = { id: 'consultation-fictive-128', patientId: 'patient-fictif',
+    date: '2026-11-13T10:00:00.000Z', motif: 'Contrôle clinique',
+    symptoms: 'Symptômes fictifs', history: '', vitals: {}, examination: '',
+    diagnosis: '', plan: '', createdAt: '2026-11-13T10:00:00.000Z',
+    updatedAt: '2026-11-13T10:00:00.000Z', followUp: shownPlan };
+  const updatedInAnotherTab = { ...initiallyShown, diagnosis: 'Autre hypothèse fictive' };
+  assert.equal(matchesDisplayedFollowUpPlan(initiallyShown.followUp, updatedInAnotherTab.followUp), true);
+  // Use the existing snapshot helper (read-only) rather than a new clinical date rule.
+  const { consultationClinicalSnapshot } = await import('../src/services/consultationIdentity.ts');
+  assert.notEqual(consultationClinicalSnapshot(initiallyShown),
+    consultationClinicalSnapshot(updatedInAnotherTab));
+}
+console.log('PASS QW-128: HELIOS completion carries a full clinical revision guard.');
