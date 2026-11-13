@@ -208,6 +208,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-125 | S | Empêcher qu'une ancienne ligne de suivi HELIOS marque terminé un contrôle dont la date, l'objectif ou le statut ont changé ; vérifier à nouveau après confirmation | branche de préparation | Tests fictifs, compilation et 11 jobs CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-126 | S | Refuser l'enregistrement d'une consultation éditée depuis une ancienne version lorsque ses champs cliniques ont changé ailleurs, sans effacer la saisie non sauvegardée | branche de préparation | Tests de régression fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
