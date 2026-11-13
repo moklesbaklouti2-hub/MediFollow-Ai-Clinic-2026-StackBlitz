@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
+import { hasUniqueConsultationId, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
@@ -1844,3 +1844,34 @@ console.log('PASS QW-114: missing/invalid imported statuses are readonly until r
     'The QW-104 central storage guard remains in place independently of the new UI warning.');
 }
 console.log('PASS QW-115: stale editor warns before stock-linked prescription edits.');
+
+// QW-118 — a saved consultation belongs to one confirmed patient. Updating
+// a note, follow-up or diagnosis may not move it to a different patient file.
+{
+  const original = { patientId: 'patient-clinique-fictif' };
+  assert.equal(preservesConsultationPatientLink(original, { motif: 'Suivi fictif' } as {patientId?: string}), true);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: 'patient-clinique-fictif' }), true);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: 'autre-patient' }), false);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: '' }), false);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: '  ' }), false);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: undefined }), false);
+  assert.equal(preservesConsultationPatientLink(original, { patientId: null as unknown as string }), false);
+  assert.equal(preservesConsultationPatientLink({ patientId: '' }, {}), false);
+  assert.equal(preservesConsultationPatientLink(null, {}), false);
+  assert.equal(preservesConsultationPatientLink(original, null), false);
+  assert.equal(preservesConsultationPatientLink(original, [] as unknown as { patientId?: string }), false);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  const patientConfirm = update.indexOf(
+    'hasConfirmedPatientSelection(currentConsultation.patientId, getMedicalData().patients)');
+  const linkCheck = update.indexOf('preservesConsultationPatientLink(currentConsultation, changes)');
+  const save = update.indexOf('saveConsultations(updated)');
+  assert.ok(update.includes('hasUniqueConsultationId(id, currentConsultations)') &&
+    patientConfirm > update.indexOf('hasUniqueConsultationId(') &&
+    linkCheck > patientConfirm && linkCheck < save &&
+    update.includes('updatedAt: new Date().toISOString()'),
+    'Central clinical updates must preserve the patient link and update timestamp.');
+}
+console.log('PASS QW-118: saved consultations cannot be moved between patient records.');
