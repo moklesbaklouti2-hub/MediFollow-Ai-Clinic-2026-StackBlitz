@@ -166,6 +166,8 @@
 
 | QW-108 | S | Exiger l'horodatage validatedAt lors du passage d'une ordonnance existante de « brouillon » à « validée », pour conserver sa traçabilité | branche de préparation | Tests synthétiques, compilation et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-109 | S | Exiger un validatedAt ISO pour toute ordonnance créée directement « validée » et refuser un horodatage de validation prématuré sur un brouillon | branche de préparation | Contrats fictifs, compilation et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
