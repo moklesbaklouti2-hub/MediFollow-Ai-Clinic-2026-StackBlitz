@@ -21,3 +21,14 @@ export function preservesConsultationPatientLink(
   return typeof changes.patientId === 'string' && changes.patientId.trim().length > 0 &&
     changes.patientId === current.patientId;
 }
+
+// QW-119 — audit timestamps belong to the application, not to arbitrary
+// content-update callers. The recorded visit date is a separate clinical field
+// and may still be corrected through normal consultation editing.
+export function preservesConsultationAuditTimestamps(
+  changes: Partial<Pick<Consultation, 'createdAt' | 'updatedAt'>> | null | undefined,
+): boolean {
+  return Boolean(changes && typeof changes === 'object' && !Array.isArray(changes) &&
+    !Object.prototype.hasOwnProperty.call(changes, 'createdAt') &&
+    !Object.prototype.hasOwnProperty.call(changes, 'updatedAt'));
+}
