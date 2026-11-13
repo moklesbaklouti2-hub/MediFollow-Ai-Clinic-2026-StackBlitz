@@ -1770,3 +1770,42 @@ console.log('PASS QW-112: missing legacy and invalid imported statuses remain di
     'New generated ID must be checked against current documents and stock trace before saving.');
 }
 console.log('PASS QW-113: new prescription IDs cannot reuse clinical or stock-trace identifiers.');
+
+// QW-114: direct content edits must fail closed when the imported document has
+// no recognized status, even without a request to change that status.
+{
+  for (const status of ['draft', 'validated']) {
+    assert.equal(isDispensablePrescriptionStatus(status), true);
+  }
+  for (const status of [undefined, null, '', 'legacy', 'unknown', 42]) {
+    assert.equal(isDispensablePrescriptionStatus(status), false);
+  }
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  const storedStatusGuard = update.indexOf(
+    "!isDispensablePrescriptionStatus(currentPrescription.status)");
+  assert.ok(storedStatusGuard > 0 &&
+    update.includes("currentPrescription.status !== 'dispensed'") &&
+    storedStatusGuard > update.indexOf('allowsFinalizedPrescriptionUpdate(') &&
+    storedStatusGuard < update.indexOf('savePrescriptions(updated)'),
+    'Unknown-status imported prescriptions must not allow content-only central updates.');
+
+  const page = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const save = page.split('function savePrescription()')[1]
+    ?.split('function updateDispensedQuantity(')[0] ?? '';
+  const uiGuard = save.indexOf('!isDispensablePrescriptionStatus(current.status)');
+  assert.ok(uiGuard > 0 &&
+    save.includes('Modification refusée : statut de l’ordonnance absent ou non reconnu.') &&
+    uiGuard < save.indexOf('updatePrescription('),
+    'The editor must explain missing/unknown status before attempting storage writes.');
+
+  // QW-097's normal dispensed cancellation remains deliberately permitted
+  // through its own strictly documented exception.
+  assert.equal(allowsFinalizedPrescriptionUpdate(
+    { status: 'dispensed' }, {
+      status: 'cancelled', cancelledAt: '2026-11-13T15:00:00.000Z',
+    }), true);
+}
+console.log('PASS QW-114: missing/invalid imported statuses are readonly until reviewed.');
