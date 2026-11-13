@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, followUpStatusLabel } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, followUpStatusLabel, followUpDateLabel } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../services/consultationIdentity';
@@ -1493,7 +1493,7 @@ export default function Consultations({
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
                 {item.followUp && (
-                  <p><b>HELIOS Follow-up :</b> {item.followUp.dueDate} · {followUpStatusLabel(item.followUp)}
+                  <p><b>HELIOS Follow-up :</b> {followUpDateLabel(item.followUp)} · {followUpStatusLabel(item.followUp)}
                     {item.followUp.objective ? ` · ${item.followUp.objective}` : ''}</p>
                 )}
                 <button

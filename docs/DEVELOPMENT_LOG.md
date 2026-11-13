@@ -1328,3 +1328,11 @@
 - **Correction :** fonction pure `followUpStatusLabel` : `planned` → « Contrôle prévu », `completed` → « Contrôle effectué », tout statut absent/malformé/inconnu → « Statut de suivi à vérifier ». L'historique appelle cette fonction sans écriture, inférence clinique ni changement de plan.
 - **Tests fictifs :** statuts attendus, statut absent, statut importé inconnu, types invalides, immutabilité et contrat de rendu réel.
 - **Statut :** préparé, non validé. Compilation, tests réels en Codespaces et CI 11/11 sur le SHA exact nécessaires avant validation. Aucun patient réel, déploiement ni dépense.
+
+
+### 2026-11-13 — QW-133 : date du suivi HELIOS non fiable dans l'historique (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. `main` et la PR d'audit #2 n'ont pas été modifiées.
+- **Constat :** l'historique pouvait afficher un champ date vide, absent, impossible ou mal formé pour un suivi importé, sans avertissement explicite.
+- **Modification :** `followUpDateLabel` réutilise `isValidFollowUpDate`, conserve le format historique pour les dates valides et affiche « Date de suivi à vérifier » sinon. Le texte de statut QW-132 reste indépendant, aucune échéance n'est inférée. Aucune mutation ou correction automatique du dossier.
+- **Vérifications prévues :** dates fictives valides/bissextiles, formats invalides, date absente, type numérique, absence de mutation et contrat de rendu de l'historique.
+- **Statut :** préparé non validé. Exécuter `npm run test:follow-up`, `npm run build`, les tests hors ligne et la CI 11/11 sur le SHA exact dans un environnement adapté avant toute validation.

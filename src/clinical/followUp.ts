@@ -51,6 +51,17 @@ export function followUpStatusLabel(plan: unknown): string {
   return 'Statut de suivi à vérifier';
 }
 
+/**
+ * QW-133 — present an imported follow-up date only when it is a real
+ * YYYY-MM-DD calendar day. Preserve the source field unchanged, and do not
+ * infer an appointment or automatically create a missing date.
+ */
+export function followUpDateLabel(plan: unknown): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return 'Date de suivi à vérifier';
+  const date = (plan as { dueDate?: unknown }).dueDate;
+  return isValidFollowUpDate(date) ? date : 'Date de suivi à vérifier';
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {

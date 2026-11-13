@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -640,3 +640,35 @@ console.log('PASS QW-130: HELIOS completed follow-up cannot bypass the central r
     'The real consultation history must use the explicit three-state label.');
 }
 console.log('PASS QW-132: imported unknown HELIOS statuses shown as requiring review.');
+
+
+// QW-133: the clinical history must not render absent, impossible, or
+// malformed imported dates as though a real follow-up appointment existed.
+{
+  const planned = { dueDate: '2026-11-20', objective: 'Contrôle fictif', status: 'planned' };
+  const missingDate = { objective: 'Contrôle fictif', status: 'planned' };
+  const before = JSON.stringify({ planned, missingDate });
+  assert.equal(followUpDateLabel(planned), '2026-11-20');
+  assert.equal(followUpDateLabel({ ...planned, dueDate: '2024-02-29' }), '2024-02-29');
+  for (const bad of [undefined, null, [], '', {}, missingDate,
+    { ...planned, dueDate: '' },
+    { ...planned, dueDate: '2026-02-30' },
+    { ...planned, dueDate: '2026-13-01' },
+    { ...planned, dueDate: '20/11/2026' },
+    { ...planned, dueDate: '2026-11-20T00:00:00Z' },
+    { ...planned, dueDate: 20261120 },
+  ]) {
+    assert.equal(followUpDateLabel(bad), 'Date de suivi à vérifier',
+      'Invalid imported follow-up date must be visibly flagged');
+  }
+  assert.equal(JSON.stringify({ planned, missingDate }), before,
+    'Follow-up display helpers must not mutate clinical records.');
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const history = page.split('Historique des consultations (')[1] ?? '';
+  assert.ok(history.includes('followUpDateLabel(item.followUp)') &&
+    history.includes('followUpStatusLabel(item.followUp)') &&
+    !history.includes('{item.followUp.dueDate} · {followUpStatusLabel(item.followUp)}'),
+    'The real clinical history must distinguish invalid dates from documented appointments.');
+}
+console.log('PASS QW-133: HELIOS invalid imported follow-up dates flagged, never inferred.');
