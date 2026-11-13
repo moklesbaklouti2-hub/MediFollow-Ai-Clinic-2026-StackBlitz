@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { hasUniqueConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
+import { hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../src/services/consultationIdentity.ts';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
@@ -1034,7 +1034,7 @@ console.log('PASS QW-084: ambiguous deleted patient ID cannot be restored.');
   const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
   const add = hook.split('const addConsultation = useCallback(')[1]
     ?.split('const updateConsultation = useCallback(')[0] ?? '';
-  assert.ok(add.includes('hasConfirmedPatientSelection(consultation.patientId, getMedicalData().patients)') &&
+  assert.ok(add.includes('hasConfirmedPatientSelection(consultation.patientId, currentData.patients)') &&
     add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('createId()') &&
     add.indexOf('hasConfirmedPatientSelection(') < add.indexOf('saveConsultations('),
     'Consultation creation must refuse missing or duplicate patient IDs before writing.');
@@ -1910,3 +1910,43 @@ console.log('PASS QW-118: saved consultations cannot be moved between patient re
     'Ordinary consultation editing must not send audit timestamps.');
 }
 console.log('PASS QW-119: clinical audit timestamps are immutable across direct updates.');
+
+// QW-121 — consultation creation must refuse generated IDs already used by
+// past encounters. Imported duplicates remain untouched (no auto-repair).
+{
+  const imported = [
+    { id: 'consultation-existante' },
+    { id: 'consultation-dupliquée' },
+    { id: 'consultation-dupliquée' },
+  ];
+  const previous = JSON.stringify(imported);
+  assert.equal(isUnusedConsultationId('consultation-nouvelle', imported), true);
+  assert.equal(isUnusedConsultationId('consultation-existante', imported), false);
+  assert.equal(isUnusedConsultationId('consultation-dupliquée', imported), false);
+  assert.equal(isUnusedConsultationId('', imported), false);
+  assert.equal(isUnusedConsultationId('   ', imported), false);
+  assert.equal(isUnusedConsultationId(null, imported), false);
+  assert.equal(isUnusedConsultationId(undefined, imported), false);
+  assert.equal(isUnusedConsultationId(123, imported), false);
+  assert.equal(isUnusedConsultationId('consultation-nouvelle', []), true);
+  assert.equal(isUnusedConsultationId('consultation-nouvelle',
+    null as unknown as typeof imported), false);
+  assert.equal(JSON.stringify(imported), previous,
+    'Collision checking must not modify imported consultation records.');
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const create = hook.split('const addConsultation = useCallback(')[1]
+    ?.split('const updateConsultation = useCallback(')[0] ?? '';
+  const patientCheck = create.indexOf(
+    'hasConfirmedPatientSelection(consultation.patientId, currentData.patients)');
+  const followUpCheck = create.indexOf('isWritableFollowUpPlan(consultation.followUp)');
+  const createIdAt = create.indexOf('const newId = createId()');
+  const collisionCheck = create.indexOf(
+    'isUnusedConsultationId(newId, currentData.consultations)');
+  const writeAt = create.indexOf('saveConsultations(');
+  assert.ok(patientCheck >= 0 && followUpCheck > patientCheck &&
+    createIdAt > followUpCheck && collisionCheck > createIdAt &&
+    collisionCheck < writeAt && create.includes('...currentData.consultations'),
+    'The central creation path must check uniqueness after ID generation and before storage.');
+}
+console.log('PASS QW-121: creating consultations refuses already-used clinical IDs.');
