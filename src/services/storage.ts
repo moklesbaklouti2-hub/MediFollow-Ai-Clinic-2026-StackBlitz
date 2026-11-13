@@ -474,6 +474,17 @@ export function dispenseInventoryItems(input: {
     return { success: true, alreadyDispensed: true };
   }
 
+  // QW-117: a new dispensing operation cannot coexist with orphaned stock
+  // movements already linked to this prescription (for example an imported
+  // return with no original dispense). Such a journal requires reconciliation.
+  // Keep the legitimate idempotent replay above unchanged.
+  if (data.movements.some(movement => movement.prescriptionId === input.prescriptionId)) {
+    return {
+      success: false,
+      error: 'Délivrance refusée : mouvements de stock orphelins liés à cette ordonnance. Vérifiez et réconciliez le journal avant toute nouvelle sortie.',
+    };
+  }
+
   // Calculer toutes les allocations avant de modifier le moindre stock.
   const plannedMovements: Array<{ item: InventoryItem; quantity: number }> = [];
 
