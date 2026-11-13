@@ -206,6 +206,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-124 | S | Refuser les dates cliniques impossibles ou ambiguës à la création d'une consultation et lors d'une correction explicite, avec le validateur partagé de la chronologie, sans bloquer les anciens dossiers autrement modifiés | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-125 | S | Empêcher qu'une ancienne ligne de suivi HELIOS marque terminé un contrôle dont la date, l'objectif ou le statut ont changé ; vérifier à nouveau après confirmation | branche de préparation | Tests fictifs, compilation et 11 jobs CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
