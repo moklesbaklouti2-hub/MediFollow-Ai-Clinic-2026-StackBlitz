@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
+import { hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
@@ -131,6 +131,9 @@ export function useMedicalData() {
     // The central write path must enforce the same identity rule as the UI.
     const currentData = getMedicalData();
     if (!hasConfirmedPatientSelection(consultation.patientId, currentData.patients)) return null;
+    // QW-122: enforce mandatory clinical description at the persistence
+    // boundary; older consultations are not modified by this creation guard.
+    if (!hasRequiredConsultationDetails(consultation)) return null;
     // QW-120: a direct creation caller must not write an invalid HELIOS plan.
     if (!isWritableFollowUpPlan(consultation.followUp)) return null;
 
