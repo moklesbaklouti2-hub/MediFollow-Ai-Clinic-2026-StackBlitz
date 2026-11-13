@@ -1394,3 +1394,12 @@
 - **QW-144 :** afficher la spécialité source dans les quatre listes de suivi et l'historique avec libellé protecteur pour types importés non textuels.
 - **Tests fictifs :** dates, clés avec doublons, spécialités valides/inconnues, contrats UI et préservation des contrôles QW-032 et suivants.
 - **État réel :** préparé non validé. Compiler, exécuter `npm run test:follow-up` et obtenir la CI 11/11 sur le SHA exact avant toute validation. Pas de déploiement, de patient réel ni de dépense.
+
+
+### 2026-11-13 — lot groupé QW-145 à QW-147 : protection de l'éditeur HELIOS (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. Trois lots réversibles et atomiques ; `main` et PR #2 inchangées.
+- **QW-145 :** bloquer l'ouverture d'une consultation dont le statut de suivi importé est absent/inconnu, même depuis l'historique ; ne jamais reclasser involontairement le plan en `planned` lors d'une correction clinique sans rapport. Source toujours conservée.
+- **QW-146 :** un champ `date` ne reçoit plus de valeur importée invalide ou non textuelle. La proposition de mise à vide pour correction exige un consentement explicite préalable ; l'original reste intact jusqu'à sauvegarde manuelle.
+- **QW-147 :** un champ `objectif` ne reçoit plus d'objet/tableau ou de chaîne de plus de 500 caractères importée. La mise à vide proposée exige le même consentement, sans réécriture automatique.
+- **Tests fictifs ajoutés :** statut absent/inconnu, dates calendaires valides et invalides, champs textuels malformés/surdimensionnés, conservation des originaux et contrats des champs contrôlés.
+- **État :** préparé non validé. `npm run test:follow-up`, `npm run build` et les 11 jobs CI sur SHA exact indispensables avant validation. Aucun patient réel, déploiement ni dépense.

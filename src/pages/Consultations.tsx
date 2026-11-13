@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel } from '../services/consultationIdentity';
@@ -376,6 +376,23 @@ export default function Consultations({
       window.alert('Cette consultation a été modifiée depuis l’affichage. Actualisez la liste avant de l’ouvrir.');
       return;
     }
+    // QW-145: never silently reclassify an imported unknown status as
+    // planned when the clinician edits an unrelated part of the consultation.
+    if (hasUnknownImportedFollowUpStatus(item.followUp)) {
+      window.alert('Statut de suivi importé absent ou inconnu : vérifiez et réconciliez le dossier source avant toute modification.');
+      return;
+    }
+    // QW-146/147: date inputs and textareas accept only documented strings.
+    // Explicit consent is required before replacing non-conforming imported
+    // values in the editor; the persisted consultation stays untouched here.
+    const editorFollowUpDate = followUpEditorDate(item.followUp);
+    const editorFollowUpObjective = followUpEditorObjective(item.followUp);
+    if (item.followUp && (
+      editorFollowUpDate !== item.followUp.dueDate ||
+      editorFollowUpObjective !== item.followUp.objective
+    )) {
+      if (!window.confirm('Le suivi importé contient une date ou un objectif invalide. Ouvrir le formulaire avec ces champs remis à vide pour correction manuelle ? Le dossier original reste inchangé jusqu’à votre sauvegarde explicite.')) return;
+    }
     setExpressDraft('');
     setExpressFeedback('');
     setExpressPatientId(null);
@@ -392,8 +409,8 @@ export default function Consultations({
     setPhysicalExamination(item.physicalExamination ?? {});
     setDiagnosis(item.diagnosis);
     setPlan(item.plan);
-    setFollowUpDate(item.followUp?.dueDate ?? '');
-    setFollowUpObjective(item.followUp?.objective ?? '');
+    setFollowUpDate(editorFollowUpDate);
+    setFollowUpObjective(editorFollowUpObjective);
     setFollowUpCompleted(item.followUp?.status === 'completed');
     setSaved(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });

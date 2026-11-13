@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
@@ -112,7 +112,7 @@ const consultationUI = readFileSync(new URL('../src/pages/Consultations.tsx', im
 const dashboardUI = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
 assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjective, followUpCompleted)') &&
   consultationUI.includes('followUp: followUpPlan.followUp') &&
-  consultationUI.includes('setFollowUpDate(item.followUp?.dueDate') &&
+  consultationUI.includes('setFollowUpDate(editorFollowUpDate)') &&
   consultationUI.includes("setFollowUpCompleted(item.followUp?.status === 'completed')") &&
   consultationUI.includes('HELIOS Follow-up'),
   'The real consultation form must edit and persist follow-up plans.');
@@ -985,3 +985,74 @@ console.log('PASS QW-143: duplicate consultation IDs do not collide as React row
     !history.includes("item.specialty || 'Non précisée'"));
 }
 console.log('PASS QW-144: safe documented specialties in HELIOS and history.');
+
+
+// QW-145 — legacy unknown statuses are explicitly review-only; opening an
+// unrelated clinical edit must not silently reclassify them as planned.
+{
+  assert.equal(hasUnknownImportedFollowUpStatus(undefined), false);
+  assert.equal(hasUnknownImportedFollowUpStatus(null), false);
+  assert.equal(hasUnknownImportedFollowUpStatus({ status: 'planned' }), false);
+  assert.equal(hasUnknownImportedFollowUpStatus({ status: 'completed' }), false);
+  for (const plan of [{}, { status: 'unrecognized' }, [], 'legacy', { status: null }]) {
+    assert.equal(hasUnknownImportedFollowUpStatus(plan), true);
+  }
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const editor = page.split('function startEditing(')[1]?.split('function cancelEditing(')[0] ?? '';
+  const guard = editor.indexOf('if (hasUnknownImportedFollowUpStatus(item.followUp))');
+  const setting = editor.indexOf('setEditingId(item.id)');
+  assert.ok(guard >= 0 && setting > guard &&
+    editor.includes('Statut de suivi importé absent ou inconnu : vérifiez et réconciliez') &&
+    editor.includes('return;'),
+    'Imported status must be reviewed before editing can begin.');
+}
+console.log('PASS QW-145: no implicit reclassification of unknown imported follow-up statuses.');
+
+// QW-146 — a malformed imported date is not written to a controlled date input.
+{
+  const source = { dueDate: '2026-02-30', objective: 'Contrôle fictif', status: 'planned' };
+  const before = JSON.stringify(source);
+  assert.equal(followUpEditorDate({ ...source, dueDate: '2026-11-20' }), '2026-11-20');
+  assert.equal(followUpEditorDate({ ...source, dueDate: '2024-02-29' }), '2024-02-29');
+  for (const bad of [undefined, null, {}, [], source,
+    { ...source, dueDate: ['2026-11-20'] },
+    { ...source, dueDate: 20261120 },
+    { ...source, dueDate: '2026-11-20T00:00:00Z' },
+  ]) assert.equal(followUpEditorDate(bad), '');
+  assert.equal(JSON.stringify(source), before, 'Reading the date must not modify imported records.');
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const editor = page.split('function startEditing(')[1]?.split('function cancelEditing(')[0] ?? '';
+  assert.ok(editor.includes('const editorFollowUpDate = followUpEditorDate(item.followUp);') &&
+    editor.includes('editorFollowUpDate !== item.followUp.dueDate') &&
+    editor.includes('setFollowUpDate(editorFollowUpDate);') &&
+    editor.indexOf('window.confirm(') < editor.indexOf('setFollowUpDate(editorFollowUpDate)') &&
+    !editor.includes('setFollowUpDate(item.followUp?.dueDate'),
+    'A non-standard imported date requires consent before opening a normalized editor.');
+}
+console.log('PASS QW-146: imported invalid follow-up dates cannot enter date inputs.');
+
+// QW-147 — invalid imported objectives must not reach the editor textarea
+// without clinician acknowledgement of the proposed replacement.
+{
+  const source = { dueDate: '2026-11-20', objective: { legacy: 'fictif' }, status: 'planned' };
+  const before = JSON.stringify(source);
+  assert.equal(followUpEditorObjective({ ...source, objective: 'Note clinique fictive' }),
+    'Note clinique fictive');
+  assert.equal(followUpEditorObjective({ ...source, objective: '' }), '');
+  assert.equal(followUpEditorObjective({ ...source, objective: 'x'.repeat(500) }), 'x'.repeat(500));
+  for (const bad of [undefined, null, {}, [], source,
+    { ...source, objective: ['malformé'] },
+    { ...source, objective: 27 },
+    { ...source, objective: 'x'.repeat(501) },
+  ]) assert.equal(followUpEditorObjective(bad), '');
+  assert.equal(JSON.stringify(source), before);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const editor = page.split('function startEditing(')[1]?.split('function cancelEditing(')[0] ?? '';
+  assert.ok(editor.includes('const editorFollowUpObjective = followUpEditorObjective(item.followUp);') &&
+    editor.includes('editorFollowUpObjective !== item.followUp.objective') &&
+    editor.includes('setFollowUpObjective(editorFollowUpObjective);') &&
+    editor.indexOf('window.confirm(') < editor.indexOf('setFollowUpObjective(editorFollowUpObjective)') &&
+    !editor.includes('setFollowUpObjective(item.followUp?.objective'),
+    'Malformed objective must require explicit consent and a valid input string.');
+}
+console.log('PASS QW-147: invalid imported follow-up objectives cannot enter editor textarea.');

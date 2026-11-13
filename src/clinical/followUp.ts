@@ -99,6 +99,36 @@ export function followUpDueLabel(plan: unknown, today: string): string {
   return dueDate === today ? 'Aujourd’hui' : 'À venir';
 }
 
+/**
+ * QW-145 — unknown imported follow-up statuses require documentary
+ * reconciliation, never implicit conversion to a planned control on save.
+ * A record with no follow-up is not a malformed plan.
+ */
+export function hasUnknownImportedFollowUpStatus(plan: unknown): boolean {
+  return plan !== undefined && plan !== null &&
+    followUpStatusLabel(plan) === 'Statut de suivi à vérifier';
+}
+
+/**
+ * QW-146 — return only a valid civil date to a browser date input.
+ * A malformed imported source remains stored until explicit clinician save.
+ */
+export function followUpEditorDate(plan: unknown): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return '';
+  const date = (plan as { dueDate?: unknown }).dueDate;
+  return isValidFollowUpDate(date) ? date : '';
+}
+
+/**
+ * QW-147 — never pass an imported object, array or oversized objective to a
+ * controlled textarea. An intentional replacement requires clinician consent.
+ */
+export function followUpEditorObjective(plan: unknown): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return '';
+  const objective = (plan as { objective?: unknown }).objective;
+  return typeof objective === 'string' && objective.length <= 500 ? objective : '';
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {

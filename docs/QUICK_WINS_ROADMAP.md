@@ -229,6 +229,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-142 | S | Distinguer suivis en retard, aujourd'hui et à venir par date civile valide sans conclure à une urgence | branche de préparation | Tests fictifs ; build et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 | QW-143 | S | Distinguer les clés React des consultations importées aux ID dupliqués dans les cinq listes HELIOS/historique, sans mutation des dossiers | branche de préparation | Contrats UI fictifs ; build/CI requis | PRÉPARÉ NON VALIDÉ |
 | QW-144 | S | Afficher la spécialité source dans les quatre listes HELIOS et protéger l'historique des spécialités importées non textuelles | branche de préparation | Tests fictifs ; build/CI requis | PRÉPARÉ NON VALIDÉ |
+| QW-145 | S | Bloquer l'ouverture d'une consultation dont le suivi importé a un statut absent ou inconnu afin d'éviter sa reclassification implicite lors d'une édition clinique sans rapport | branche de préparation | Tests fictifs et garde-fou formulaire ; build et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+| QW-146 | S | Charger uniquement des dates civiles valides dans l'éditeur de suivi, avec confirmation explicite avant correction d'une date importée invalide | branche de préparation | Tests fictifs, contrat de consentement ; build/CI requis | PRÉPARÉ NON VALIDÉ |
+| QW-147 | S | Charger uniquement un objectif textuel de 500 caractères au plus dans l'éditeur et demander confirmation avant remplacement d'une valeur importée malformée | branche de préparation | Tests fictifs, contrat de consentement ; build/CI requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
