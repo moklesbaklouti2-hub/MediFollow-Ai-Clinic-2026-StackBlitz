@@ -9,6 +9,7 @@ import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
+import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
 
 
 const specialtyGroups = [
@@ -593,9 +594,9 @@ export default function Consultations({
     { key: 'glycemia', label: 'Glycémie', unit: 'g/L', placeholder: '1.00' },
   ];
 
-  const sortedConsultations = [...consultations].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  // QW-135: use the already validated clinical timeline order for imported
+  // visits; malformed dates remain visible after verified ones, with stable ties.
+  const sortedConsultations = orderRecordedNewest(consultations);
   const followUpToday = new Date().toLocaleDateString('sv-SE');
   const dueFollowUps = filterFollowUpsByObjective(selectDueFollowUps(consultations, followUpToday), followUpSearch);
   const undatedFollowUps = filterFollowUpsByObjective(selectUndatedPlannedFollowUps(consultations), followUpSearch);
@@ -1493,7 +1494,7 @@ export default function Consultations({
             return (
               <div className="saved-consultation" key={item.id}>
                 <strong>{linkedPatient?.name || 'Dossier patient non relié — identité à confirmer'}</strong>
-                <span>{new Date(item.date).toLocaleString('fr-FR')}</span>
+                <span>{displayRecordedDate(item.date)}</span>
                 <p><b>Spécialité :</b> {item.specialty || 'Non précisée'}</p>
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}

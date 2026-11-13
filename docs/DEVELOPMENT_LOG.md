@@ -1344,3 +1344,11 @@
 - **Correctif :** afficher un patient seulement si son identifiant est unique et confirmé ; n'offrir Modifier que si l'identifiant de consultation est également unique. Sinon montrer un message de liaison incertaine, sans associer par nom ni écrire dans les dossiers. La validation avant ouverture dans `startEditing` demeure active.
 - **Tests fictifs :** patient unique, doublon, identifiant absent, immutabilité ; vérification statique du rendu et du garde-fou d'ouverture.
 - **Statut :** préparé, non validé. Compilation, tests Codespaces et CI 11/11 sur le SHA exact requis. Aucun patient réel, dépense ou déploiement.
+
+
+### 2026-11-13 — QW-135 : chronologie sûre dans l'historique des consultations (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055` ; aucun changement sur `main` ou la PR #2.
+- **Constat :** l'historique des consultations utilisait `new Date(...)` directement pour trier et afficher des dates potentiellement malformées issues de sauvegardes anciennes.
+- **Correction :** réutilisation des helpers documentaires existants `orderRecordedNewest` et `displayRecordedDate` de QW-046 ; les dates non fiables restent visibles après les dates validées, sans écrire sur le dossier ni inférer une date manquante. Aucune nouvelle logique de date n'a été introduite.
+- **Tests fictifs ajoutés :** ordre décroissant, égalité stable sur ID, dates invalides placées après les dates valides, affichage explicite et absence de mutation ; contrat d'interface.
+- **Validation :** préparé, non validé. Compilation, `npm run test:follow-up`, tests complets et CI 11/11 sur le SHA exact à réaliser dans un environnement de test. Pas de patient réel, fusion, dépense ou déploiement.

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
+import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
 
@@ -705,3 +706,38 @@ console.log('PASS QW-133: HELIOS invalid imported follow-up dates flagged, never
     'The historical edit handler must still independently recheck identity.');
 }
 console.log('PASS QW-134: imported historical identity ambiguity cannot offer unsafe editing.');
+
+
+// QW-135: reuse the validated clinical-timeline date order and display in
+// consultation history. Unknown/imported invalid dates are retained but placed
+// after dated visits; the source records must not be modified.
+{
+  const imported = [
+    { id: 'unknown-b', date: '2026-02-30', motif: 'Ancienne note fictive B' },
+    { id: 'valid-early', date: '2026-11-01T09:00:00Z', motif: 'Contrôle fictif' },
+    { id: 'unknown-a', date: 'date ancienne invalide', motif: 'Ancienne note fictive A' },
+    { id: 'valid-later', date: '2026-11-13T08:00:00Z', motif: 'Autre contrôle fictif' },
+    { id: 'valid-tie', date: '2026-11-13T08:00:00Z', motif: 'Date égale fictive' },
+  ];
+  const original = JSON.stringify(imported);
+  const ordered = orderRecordedNewest(imported);
+  assert.deepEqual(ordered.map(item => item.id), [
+    'valid-later', 'valid-tie', 'valid-early', 'unknown-a', 'unknown-b',
+  ]);
+  assert.equal(JSON.stringify(imported), original, 'Sorting must not mutate historical records.');
+  assert.equal(recordedDateTimestamp(imported[0].date), null);
+  assert.equal(displayRecordedDate(imported[0].date), 'Date non renseignée');
+  assert.equal(displayRecordedDate(imported[2].date), 'Date non renseignée');
+  assert.notEqual(displayRecordedDate(imported[1].date), 'Date non renseignée');
+  assert.notEqual(displayRecordedDate(imported[3].date), 'Date non renseignée');
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const history = page.split('Historique des consultations (')[1] ?? '';
+  assert.ok(page.includes('const sortedConsultations = orderRecordedNewest(consultations);') &&
+    history.includes('displayRecordedDate(item.date)') &&
+    page.includes("from '../clinical/medicalTimeline'") &&
+    !history.includes("new Date(item.date).toLocaleString('fr-FR')") &&
+    !page.includes('new Date(b.date).getTime() - new Date(a.date).getTime()'),
+    'The consultation history must reuse the validated safe clinical date helpers.');
+}
+console.log('PASS QW-135: consultation history safely sorts and displays recorded dates.');
