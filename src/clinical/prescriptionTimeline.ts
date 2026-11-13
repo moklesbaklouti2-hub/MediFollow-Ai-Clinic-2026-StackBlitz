@@ -23,7 +23,11 @@ export function documentedPrescriptionStatus(status: unknown): string {
     case 'validated': return 'Validée (statut enregistré)';
     case 'dispensed': return 'Délivrance enregistrée (statut)';
     case 'cancelled': return 'Annulée — ne pas considérer comme active';
-    default: return 'Statut non renseigné (ancien dossier)';
+    // QW-112: preserve the legacy missing-status label for genuinely absent
+    // values, but flag explicit invalid/imported states for review.
+    default: return status === undefined
+      ? 'Statut non renseigné (ancien dossier)'
+      : 'Statut inconnu ou invalide — vérification nécessaire';
   }
 }
 
