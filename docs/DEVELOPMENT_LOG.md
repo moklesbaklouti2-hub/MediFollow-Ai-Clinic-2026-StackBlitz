@@ -1143,3 +1143,10 @@
 - Évite qu'un appel direct crée un document artificiellement présenté comme déjà délivré ou annulé sans passer par les contrôles de mouvements de stock. Le formulaire habituel, qui crée explicitement en `draft`, n'est pas modifié ; les anciens dossiers importés ne sont ni réécrits ni effacés.
 - Réutilisation de `isDispensablePrescriptionStatus` du lot QW-100 pour ne pas recopier la classification. Helper de création `isCreatablePrescriptionStatus` et tests synthétiques de dix cas avec contrat du hook ajoutés.
 - **PRÉPARÉ NON VALIDÉ** : compiler, exécuter `npm run test:complete`, puis confirmer les 11 jobs GitHub Actions sur le HEAD exact. Aucun changement de `main`, aucune donnée médicale réelle et aucun déploiement.
+
+### 2026-11-13 — QW-106 : préserver l'horodatage initial et les dates des changements de statut
+- `updatePrescription` refuse désormais toute tentative de réécriture du champ `savedAt` : la date d'enregistrement initiale reste inchangée même pour un appel direct au hook.
+- Les champs `validatedAt`, `dispensedAt` et `cancelledAt` ne peuvent être ajoutés qu'avec leur transition explicite vers le statut correspondant et avec une date ISO exploitable. Le passage à `dispensed` ou `cancelled` doit inclure respectivement son horodatage.
+- Le parcours existant d'enregistrement puis délivrance et le parcours d'annulation restent compatibles. Les protections de stock et d'identité QW-097 à QW-105 demeurent actives ; aucune transformation d'archives anciennes ni opération de stock.
+- Helper pur `preservesPrescriptionAuditTimestamps` et tests synthétiques des transitions + contrat du hook dans `scripts/test-patient-linkage.ts`.
+- **PRÉPARÉ, NON VALIDÉ :** `npm run test:complete` et les 11 jobs GitHub Actions restent à contrôler sur le HEAD exact dans Codespaces / CI. Pas de modification de `main`, pas de déploiement ni données patient réelles.
