@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
+import { consultationClinicalSnapshot, hasRequiredConsultationDetails, hasUniqueConsultationId, isUnusedConsultationId, preservesConsultationAuditTimestamps, preservesConsultationPatientLink } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
@@ -163,7 +163,8 @@ export function useMedicalData() {
 
   const updateConsultation = useCallback((
     id: string,
-    changes: Partial<Consultation>
+    changes: Partial<Consultation>,
+    expectedClinicalSnapshot?: string,
   ) => {
     const currentConsultations = getMedicalData().consultations;
     if (!hasUniqueConsultationId(id, currentConsultations)) return false;
@@ -173,6 +174,12 @@ export function useMedicalData() {
     if (!currentConsultation ||
         !hasConfirmedPatientSelection(currentConsultation.patientId, getMedicalData().patients) ||
         !preservesConsultationPatientLink(currentConsultation, changes)) return false;
+    // QW-127: a clinical edit may require its expected source revision.
+    // Check the same record snapshot immediately before persistence so a
+    // changed record is not overwritten after the form's earlier check.
+    // Two-argument calls (e.g. documented HELIOS completion) remain compatible.
+    if (expectedClinicalSnapshot !== undefined &&
+        consultationClinicalSnapshot(currentConsultation) !== expectedClinicalSnapshot) return false;
     // QW-119: creation date is immutable, and updatedAt is assigned only by
     // the hook after validating a real clinical change.
     if (!preservesConsultationAuditTimestamps(changes)) return false;
