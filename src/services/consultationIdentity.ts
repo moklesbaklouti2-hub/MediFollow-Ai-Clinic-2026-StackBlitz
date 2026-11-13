@@ -9,6 +9,18 @@ export function hasUniqueConsultationId(
   return records.filter(record => record.id === id).length === 1;
 }
 
+// QW-121 — newly generated consultation identifiers must be absent from
+// existing clinical history, including imported records with duplicate IDs.
+// Refuse the collision without deleting, merging or renaming archived visits.
+export function isUnusedConsultationId(
+  id: unknown,
+  records: readonly Pick<Consultation, 'id'>[],
+): id is string {
+  return typeof id === 'string' && id.trim().length > 0 &&
+    Array.isArray(records) &&
+    !records.some(record => record?.id === id);
+}
+
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
 // patient requires separate reviewed reconciliation, never a generic update.
 export function preservesConsultationPatientLink(
