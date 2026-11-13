@@ -179,7 +179,7 @@ export function useMedicalData() {
     // QW-120: only the newly supplied plan is checked. Legacy plans remain
     // unchanged when an unrelated part of the consultation is corrected.
     if (!isWritableFollowUpPlan(changes.followUp)) return false;
-    // QW-123: only a date explicitly supplied by the caller needs to pass
+    // QW-124: only a date explicitly supplied by the caller needs to pass
     // timeline validation; legacy undated visits remain otherwise editable.
     if (Object.prototype.hasOwnProperty.call(changes, 'date') &&
         recordedDateTimestamp(changes.date) === null) return false;
