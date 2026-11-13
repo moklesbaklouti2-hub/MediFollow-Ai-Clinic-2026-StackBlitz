@@ -458,8 +458,16 @@ export default function Consultations({
       window.alert('Le suivi a changé pendant la confirmation. Actualisez la liste sans valider cette clôture.');
       return;
     }
-    if (!updateConsultation(current.id, { followUp: completedPlan })) {
-      window.alert('Enregistrement non confirmé : le contrôle reste à vérifier dans la liste.');
+    // QW-128: pass the most recent verified clinical version through the
+    // central QW-127 guard. Rechecking only the follow-up does not catch an
+    // intervening update to another clinical field before persistence.
+    const latestClinicalSnapshot = consultationClinicalSnapshot(latest[0]);
+    if (!latestClinicalSnapshot) {
+      window.alert('Impossible de vérifier la version du dossier. Actualisez la liste avant de clôturer le suivi.');
+      return;
+    }
+    if (!updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)) {
+      window.alert('Enregistrement non confirmé : le suivi ou la consultation a peut-être changé. Actualisez la liste avant une nouvelle tentative.');
       return;
     }
     setSaved(false);
