@@ -1905,7 +1905,7 @@ console.log('PASS QW-118: saved consultations cannot be moved between patient re
   const save = page.split('function saveConsultation()')[1]
     ?.split('const vitalFields:')[0] ?? '';
   assert.ok(save.includes('const changes = {') &&
-    save.includes('updateConsultation(editingId, changes)') &&
+    save.includes('updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)') &&
     !save.includes('createdAt:') && !save.includes('updatedAt:'),
     'Ordinary consultation editing must not send audit timestamps.');
 }
@@ -2081,7 +2081,7 @@ console.log('PASS QW-124: malformed visit dates blocked at central clinical writ
   const capture = opening.indexOf('setEditingClinicalSnapshot(snapshot)');
   const sourceCheck = saving.indexOf(
     'consultationClinicalSnapshot(currentRecords[0]) !== editingClinicalSnapshot');
-  const save = saving.indexOf('updateConsultation(editingId, changes)');
+  const save = saving.indexOf('updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)');
   assert.ok(page.includes('const [editingClinicalSnapshot, setEditingClinicalSnapshot]') &&
     opening.includes('const current = currentConsultations.find(record => record.id === item.id)') &&
     collisionCheck >= 0 && collisionCheck < capture &&
@@ -2092,3 +2092,48 @@ console.log('PASS QW-124: malformed visit dates blocked at central clinical writ
     'The form must refuse a stale clinical edit before persistence and clear its snapshot on exit.');
 }
 console.log('PASS QW-126: stale clinical consultation edits are refused without erasing unsaved text.');
+
+// QW-127 — a form edit carries its source revision through the central
+// persistence hook. A second storage read can detect a clinical change that
+// happened after the UI checked the record and before the write.
+{
+  const record = {
+    id: 'consultation-fictive-127', patientId: 'patient-fictif',
+    date: '2026-11-13T10:00:00.000Z', motif: 'Contrôle fictif',
+    symptoms: '', history: '', vitals: {}, examination: '',
+    diagnosis: '', plan: '', createdAt: '2026-11-13T10:00:00.000Z',
+    updatedAt: '2026-11-13T10:00:00.000Z', specialty: 'Médecine de famille',
+  };
+  const opened = consultationClinicalSnapshot(record as unknown as Consultation);
+  const newer = { ...record, diagnosis: 'Hypothèse actualisée fictive' };
+  assert.equal(consultationClinicalSnapshot(record as unknown as Consultation), opened);
+  assert.notEqual(consultationClinicalSnapshot(newer as unknown as Consultation), opened);
+
+  const source = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = source.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  const expectedParam = update.indexOf('expectedClinicalSnapshot?: string');
+  const guard = update.indexOf(
+    'consultationClinicalSnapshot(currentConsultation) !== expectedClinicalSnapshot');
+  const write = update.indexOf('saveConsultations(updated)');
+  assert.ok(expectedParam >= 0 && guard > expectedParam && guard < write &&
+    update.includes('if (expectedClinicalSnapshot !== undefined &&') &&
+    update.includes('if (!hasUniqueConsultationId(id, currentConsultations)) return false;'),
+    'Central hook must reject a stale expected clinical revision before persisting.');
+
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const saving = page.split('function saveConsultation()')[1]
+    ?.split('const vitalFields:')[0] ?? '';
+  const formGuard = saving.indexOf(
+    'consultationClinicalSnapshot(currentRecords[0]) !== editingClinicalSnapshot');
+  const save = saving.indexOf(
+    'updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)');
+  assert.ok(formGuard >= 0 && save > formGuard &&
+    saving.includes('if (!saved) {') && saving.includes('setSaved(false);'),
+    'The UI must pass its initial revision to the central hook and preserve unsaved text on refusal.');
+  const completion = page.split('function completeFollowUp(')[1]
+    ?.split('function saveConsultation()')[0] ?? '';
+  assert.ok(completion.includes('updateConsultation(current.id, { followUp: completedPlan })'),
+    'Existing HELIOS completion remains compatible with optional revision checks.');
+}
+console.log('PASS QW-127: central consultation writes reject changed source revisions.');
