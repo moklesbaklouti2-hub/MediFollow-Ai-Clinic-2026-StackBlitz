@@ -202,6 +202,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-122 | S | Vérifier au niveau du hook la présence d'un motif et d'une spécialité avant toute création de consultation, sans imposer la règle aux anciens dossiers | branche de préparation | Tests de consultations fictives, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-123 | S | Harmoniser la clôture HELIOS avec la validation centrale des plans | branche de préparation | Tests fictifs et CI requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
