@@ -162,6 +162,8 @@
 
 | QW-106 | S | Rendre immutable la date initiale d'une ordonnance et refuser les horodatages de délivrance/annulation détachés du changement de statut | branche de préparation | Tests fictifs, compilation et CI 11/11 sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-107 | S | Interdire le retour du statut « validée » vers « brouillon » et la reclassification implicite de statuts importés inconnus | branche de préparation | Contrat de transitions et tests fictifs Codespaces/CI requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
