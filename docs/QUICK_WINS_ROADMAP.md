@@ -196,6 +196,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-119 | S | Rendre immuable la date de création d'une consultation et réserver sa date technique de modification au hook central, sans bloquer l'édition clinique ordinaire | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-120 | S | Refuser au niveau des créations et modifications de consultations les suivis HELIOS à date invalide, statut inconnu ou objectif trop long, sans altérer les dossiers sans suivi | branche de préparation | Tests de suivi fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
