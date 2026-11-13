@@ -1385,3 +1385,12 @@
 - **QW-141 :** afficher la date de consultation via `displayRecordedDate` et le motif dans les trois listes planifiées pour distinguer des suivis de même patient, sans déduire de priorité médicale.
 - **Tests fictifs :** scénarios valides/malformés, sélection et immutabilité des imports, contrat de rendu des listes et absence d'actions sur statut inconnu.
 - **Statut :** trois lots préparés non validés. Exécuter `npm run test:follow-up`, `npm run build` et CI 11/11 sur le nouveau SHA avant validation ; aucun patient réel, aucune dépense ni déploiement.
+
+
+### 2026-11-13 — lot groupé QW-142 à QW-144 : lisibilité clinique et imports (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055`. Trois lots atomiques et réversibles ; `main` et PR #2 inchangées.
+- **QW-142 :** différencier les suivis en retard, dus aujourd’hui et à venir selon la date civile documentée ; aucun triage médical déduit.
+- **QW-143 :** rendre les clés React distinctes (ID + index dans la liste) pour les trois listes de suivi et l'historique ; la liste d'anomalies avait déjà un index. Mise à jour des contrats de tests antérieurs dépendant des signatures de `.map`.
+- **QW-144 :** afficher la spécialité source dans les quatre listes de suivi et l'historique avec libellé protecteur pour types importés non textuels.
+- **Tests fictifs :** dates, clés avec doublons, spécialités valides/inconnues, contrats UI et préservation des contrôles QW-032 et suivants.
+- **État réel :** préparé non validé. Compiler, exécuter `npm run test:follow-up` et obtenir la CI 11/11 sur le SHA exact avant toute validation. Pas de déploiement, de patient réel ni de dépense.

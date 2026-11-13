@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
-import { consultationClinicalSnapshot, hasUniqueConsultationId } from '../src/services/consultationIdentity.ts';
+import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -122,7 +122,7 @@ assert.ok(dashboardUI.includes('summarizeFollowUps(clinicalConsultations,') &&
   dashboardUI.includes('onClick={onStartConsultation}'),
   'The dashboard must show follow-up counts and link to consultations.');
 assert.ok(consultationUI.includes('selectDueFollowUps(consultations, followUpToday)') &&
-  consultationUI.includes('dueFollowUps.map((item)') &&
+  consultationUI.includes('dueFollowUps.map((item, index)') &&
   consultationUI.includes('canActOnFollowUp ? (') &&
   consultationUI.includes('onClick={() => startEditing(item)}') &&
   consultationUI.includes('Dossier patient non relié — identité à confirmer'),
@@ -160,8 +160,8 @@ for (const scenario of followUpSelectionCases) {
   assert.equal(hasConfirmedPatientSelection(scenario.patientId, scenario.patients),
     scenario.allowed, 'Unsafe follow-up patient identity.');
 }
-const followUpListCode = consultationUI.split('dueFollowUps.map((item) => {')[1]
-  ?.split("key={'follow-up-' + item.id}")[0] ?? '';
+const followUpListCode = consultationUI.split('dueFollowUps.map((item, index) => {')[1]
+  ?.split("key={'follow-up-' + item.id + '-' + index}")[0] ?? '';
 assert.ok(followUpListCode.includes('hasConfirmedPatientSelection(item.patientId, patients)') &&
   followUpListCode.includes('patients.find(patient => patient.id === item.patientId)'),
   'A follow-up action must be hidden unless the patient ID is unique.');
@@ -793,9 +793,9 @@ console.log('PASS QW-136: historical imported HELIOS objectives are displayed wi
 
   const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
   const parts: Array<[string, string]> = [
-    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
-    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
-    ['laterFollowUps.map((item) => {', 'Historique des consultations ('],
+    ['dueFollowUps.map((item, index) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item, index) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item, index) => {', 'Historique des consultations ('],
   ];
   for (const [start, end] of parts) {
     const segment = ui.split(start)[1]?.split(end)[0] ?? '';
@@ -823,9 +823,9 @@ console.log('PASS QW-137: three HELIOS follow-up worklists use safe imported obj
 
   const ui = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
   const ranges: Array<[string, string]> = [
-    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
-    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
-    ['laterFollowUps.map((item) => {', 'Historique des consultations ('],
+    ['dueFollowUps.map((item, index) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item, index) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item, index) => {', 'Historique des consultations ('],
   ];
   for (const [start, end] of ranges) {
     const block = ui.split(start)[1]?.split(end)[0] ?? '';
@@ -861,7 +861,7 @@ console.log('PASS QW-138: three HELIOS follow-up lists hide actions for duplicat
     { ...plan, objective: 'x'.repeat(501) },
   ]) assert.equal(isWritableFollowUpPlan(bad), false);
   const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
-  const due = page.split('dueFollowUps.map((item) => {')[1]
+  const due = page.split('dueFollowUps.map((item, index) => {')[1]
     ?.split('{undatedFollowUps.length > 0 && (')[0] ?? '';
   const guard = due.indexOf('isWritableFollowUpPlan(item.followUp)');
   const outer = due.indexOf('{canActOnFollowUp ? (');
@@ -912,9 +912,9 @@ console.log('PASS QW-140: unknown imported HELIOS statuses remain visible and re
 {
   const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
   const sections: Array<[string, string]> = [
-    ['dueFollowUps.map((item) => {', '{undatedFollowUps.length > 0 && ('],
-    ['undatedFollowUps.map((item) => {', '{laterFollowUps.length > 0 && ('],
-    ['laterFollowUps.map((item) => {', '{unknownStatusFollowUps.length > 0 && ('],
+    ['dueFollowUps.map((item, index) => {', '{undatedFollowUps.length > 0 && ('],
+    ['undatedFollowUps.map((item, index) => {', '{laterFollowUps.length > 0 && ('],
+    ['laterFollowUps.map((item, index) => {', '{unknownStatusFollowUps.length > 0 && ('],
   ];
   for (const [start, end] of sections) {
     const ui = page.split(start)[1]?.split(end)[0] ?? '';
@@ -926,3 +926,62 @@ console.log('PASS QW-140: unknown imported HELIOS statuses remain visible and re
   assert.equal(displayRecordedDate('date importée invalide'), 'Date non renseignée');
 }
 console.log('PASS QW-141: three HELIOS worklists identify their source consultation.');
+
+
+// QW-142: short-range follow-up timing is a civil calendar label, not clinical urgency.
+{
+  const plan = { dueDate: '2026-11-13', objective: 'Contrôle fictif', status: 'planned' };
+  const before = JSON.stringify(plan);
+  assert.equal(followUpDueLabel({ ...plan, dueDate: '2026-11-12' }, '2026-11-13'), 'En retard');
+  assert.equal(followUpDueLabel(plan, '2026-11-13'), 'Aujourd’hui');
+  assert.equal(followUpDueLabel({ ...plan, dueDate: '2026-11-14' }, '2026-11-13'), 'À venir');
+  for (const value of [undefined, null, [], {}, { ...plan, dueDate: '2026-02-30' }]) {
+    assert.equal(followUpDueLabel(value, '2026-11-13'), 'Échéance à vérifier');
+  }
+  assert.equal(followUpDueLabel(plan, 'invalid'), 'Échéance à vérifier');
+  assert.equal(JSON.stringify(plan), before);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const due = page.split('dueFollowUps.map((item, index) => {')[1]
+    ?.split('{undatedFollowUps.length > 0 && (')[0] ?? '';
+  assert.ok(due.includes('followUpDueLabel(item.followUp, followUpToday)') &&
+    due.includes('followUpDateLabel(item.followUp)') &&
+    !due.includes("overdue ? 'En retard'"),
+    'Due list must distinguish past, today, and upcoming calendar dates.');
+}
+console.log('PASS QW-142: explicit civil-date labels for due HELIOS follow-ups.');
+
+// QW-143: duplicate imported clinical IDs must not collide as React sibling keys.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const entries: Array<[string, string]> = [
+    ['dueFollowUps.map((item, index) => {', "key={'follow-up-' + item.id + '-' + index}"],
+    ['undatedFollowUps.map((item, index) => {', "key={'undated-follow-up-' + item.id + '-' + index}"],
+    ['laterFollowUps.map((item, index) => {', "key={'later-follow-up-' + item.id + '-' + index}"],
+    ['unknownStatusFollowUps.map((item, index) => {', "key={'unknown-status-follow-up-' + item.id + '-' + index}"],
+    ['sortedConsultations.map((item, index) => {', "key={'history-consultation-' + item.id + '-' + index}"],
+  ];
+  for (const [iterator, expected] of entries) {
+    const row = page.split(iterator)[1]?.split('return (')[1] ?? '';
+    assert.ok(row.includes(expected), 'Missing collision-resistant key in ' + iterator);
+  }
+  const duplicate = [{ id: 'consultation-importée-fictive' }, { id: 'consultation-importée-fictive' }];
+  assert.equal(new Set(duplicate.map((item, index) => 'follow-up-' + item.id + '-' + index)).size, 2);
+}
+console.log('PASS QW-143: duplicate consultation IDs do not collide as React row keys.');
+
+// QW-144: specialty context in all four follow-up lists and the history is text-only.
+{
+  assert.equal(consultationSpecialtyLabel('Médecine de famille'), 'Médecine de famille');
+  assert.equal(consultationSpecialtyLabel(' ORL '), ' ORL ');
+  for (const value of ['', '   ', null, undefined]) assert.equal(consultationSpecialtyLabel(value), 'Non précisée');
+  for (const value of [11, [], ['ORL'], { specialty: 'ORL' }, true]) {
+    assert.equal(consultationSpecialtyLabel(value), 'Spécialité à vérifier');
+  }
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.equal(page.split('Spécialité : {consultationSpecialtyLabel(item.specialty)}').length - 1, 4,
+    'Three planned lists and the read-only review list must show the specialty.');
+  const history = page.split('Historique des consultations (')[1] ?? '';
+  assert.ok(history.includes('<p><b>Spécialité :</b> {consultationSpecialtyLabel(item.specialty)}</p>') &&
+    !history.includes("item.specialty || 'Non précisée'"));
+}
+console.log('PASS QW-144: safe documented specialties in HELIOS and history.');

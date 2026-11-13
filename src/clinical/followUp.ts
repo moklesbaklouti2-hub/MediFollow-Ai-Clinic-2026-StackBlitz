@@ -88,6 +88,17 @@ export function selectUnknownStatusFollowUps(
     .sort((a, b) => String(a.id ?? '').localeCompare(String(b.id ?? '')));
 }
 
+/**
+ * QW-142: calendar-only wording; never a prediction of clinical urgency.
+ */
+export function followUpDueLabel(plan: unknown, today: string): string {
+  if (!plan || typeof plan !== 'object' || Array.isArray(plan)) return 'Échéance à vérifier';
+  const dueDate = (plan as { dueDate?: unknown }).dueDate;
+  if (!isValidFollowUpDate(dueDate) || !isValidFollowUpDate(today)) return 'Échéance à vérifier';
+  if (dueDate < today) return 'En retard';
+  return dueDate === today ? 'Aujourd’hui' : 'À venir';
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {

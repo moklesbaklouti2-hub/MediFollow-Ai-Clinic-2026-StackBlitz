@@ -48,6 +48,15 @@ export function consultationClinicalSnapshot(
   }
 }
 
+/**
+ * QW-144: imported specialty is documentary text, not an inferred diagnosis.
+ */
+export function consultationSpecialtyLabel(value: unknown): string {
+  if (value === undefined || value === null || value === '') return 'Non précisée';
+  if (typeof value !== 'string') return 'Spécialité à vérifier';
+  return value.trim() ? value : 'Non précisée';
+}
+
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
 // patient requires separate reviewed reconciliation, never a generic update.
 export function preservesConsultationPatientLink(

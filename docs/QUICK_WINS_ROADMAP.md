@@ -226,6 +226,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-139 | S | Ne proposer la clôture rapide dans les contrôles HELIOS à revoir que si le plan importé est valide (objectif textuel de taille autorisée), tout en permettant son ouverture pour correction | branche de préparation | Tests fictifs ciblés ajoutés ; compilation et CI 11/11 sur SHA exact requises | PRÉPARÉ NON VALIDÉ |
 | QW-140 | S | Signaler séparément les statuts de suivi HELIOS importés absents ou inconnus, en lecture seule, sans inférer contrôle, échéance ni urgence | branche de préparation | Tests fictifs de sélection et contrat de liste ajoutés ; compilation/CI sur SHA exact requises | PRÉPARÉ NON VALIDÉ |
 | QW-141 | S | Identifier l'origine de chaque contrôle HELIOS dans les trois listes en affichant la date de consultation validée et le motif documenté | branche de préparation | Contrats d'affichage fictifs ajoutés ; compilation/CI sur SHA exact requises | PRÉPARÉ NON VALIDÉ |
+| QW-142 | S | Distinguer suivis en retard, aujourd'hui et à venir par date civile valide sans conclure à une urgence | branche de préparation | Tests fictifs ; build et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+| QW-143 | S | Distinguer les clés React des consultations importées aux ID dupliqués dans les cinq listes HELIOS/historique, sans mutation des dossiers | branche de préparation | Contrats UI fictifs ; build/CI requis | PRÉPARÉ NON VALIDÉ |
+| QW-144 | S | Afficher la spécialité source dans les quatre listes HELIOS et protéger l'historique des spécialités importées non textuelles | branche de préparation | Tests fictifs ; build/CI requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
