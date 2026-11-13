@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect, useState } from 'react';
-import { hasUniqueConsultationId } from '../services/consultationIdentity';
+import { hasUniqueConsultationId, preservesConsultationPatientLink } from '../services/consultationIdentity';
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
@@ -152,6 +152,12 @@ export function useMedicalData() {
   ) => {
     const currentConsultations = getMedicalData().consultations;
     if (!hasUniqueConsultationId(id, currentConsultations)) return false;
+    // QW-118: an existing consultation must remain in its confirmed patient
+    // file even when a caller bypasses the consultation form.
+    const currentConsultation = currentConsultations.find((item) => item.id === id);
+    if (!currentConsultation ||
+        !hasConfirmedPatientSelection(currentConsultation.patientId, getMedicalData().patients) ||
+        !preservesConsultationPatientLink(currentConsultation, changes)) return false;
     const updated = currentConsultations.map((item) =>
       item.id === id
         ? {
