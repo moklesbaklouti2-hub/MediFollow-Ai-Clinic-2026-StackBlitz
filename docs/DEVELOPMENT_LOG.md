@@ -1468,3 +1468,10 @@
 - La source des statistiques par spécialité ignore les consultations sans identifiant stable ou à identifiant dupliqué ; une consultation non datée reste comptée dans sa catégorie avec dernière date inconnue.
 - Les dates affichées passent par le validateur de chronologie, sans correction implicite des imports.
 - Scénarios fictifs ajoutés à `scripts/test-patient-linkage.ts`, exécuté par GitHub Actions. Aucun changement de `main`, PR d'audit ni déploiement. Validation 11/11 sur SHA exact requise.
+
+
+### 2026-11-14 — QW-168 à QW-170 : statistiques fiables
+- Base : `e25761cb7b90e75072613a8d40c3b7cea63854c6`, run GitHub Actions #43529211803, 11/11 jobs réussis.
+- Le calcul de HELIOS Activité ignore les consultations à ID manquant, non textuel ou dupliqué, tout en conservant le contrôle existant des patients confirmés.
+- Le tableau de bord précise que les exclusions concernent aussi l'identifiant de consultation. La suite fictive QW-045 est adaptée aux ID documentaires et enrichie d'un scénario de doublons, sans modifier les données sources.
+- CI obligatoire sur le SHA du commit. Aucun déploiement ni données réelles ; `main` et PR #2 préservés.

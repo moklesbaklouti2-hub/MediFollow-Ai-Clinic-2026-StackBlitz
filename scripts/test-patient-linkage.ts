@@ -508,12 +508,12 @@ console.log('PASS QW-044/166/167: synthetic specialty grouping, provenance and s
 // duplicated patient IDs; no diagnosis derivation or field mutations.
 const activityPatients = [{ id: 'a' }, { id: 'b' }, { id: 'dupe' }, { id: 'dupe' }];
 const activityVisits = [
-  { patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
-  { patientId: 'b', specialty: ' Cardiologie ', motif: 'Vertiges fictifs' },
-  { patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
-  { patientId: 'dupe', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
-  { patientId: 'absent', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
-  { patientId: 'b', specialty: '', motif: '  ' },
+  { id: 'act-1', patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
+  { id: 'act-2', patientId: 'b', specialty: ' Cardiologie ', motif: 'Vertiges fictifs' },
+  { id: 'act-3', patientId: 'a', specialty: 'Médecine de famille', motif: 'Consultation fictive' },
+  { id: 'act-4', patientId: 'dupe', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
+  { id: 'act-5', patientId: 'absent', specialty: 'Inconnue', motif: 'NE PAS COMPTER' },
+  { id: 'act-6', patientId: 'b', specialty: '', motif: '  ' },
 ];
 const activityOriginal = JSON.stringify(activityVisits);
 const activity = summarizeRecordedActivity(activityPatients, activityVisits);
@@ -542,7 +542,21 @@ assert.ok(dashboardActivitySource.includes('summarizeRecordedActivity(clinicalPa
   dashboardActivitySource.includes('pas des diagnostics validés') &&
   dashboardActivitySource.includes('Aucun envoi à une IA externe'),
   'Dashboard must present linked-only, descriptive activity and exclusion notice.');
-console.log('PASS QW-045: verified-patient activity counts, malformed links and UI contracts.');
+// QW-168..170: duplicate/missing imported encounter IDs must not inflate reports.
+const untrustedActivityVisits = [
+  ...activityVisits,
+  { id: 'collision', patientId: 'a', specialty: 'ORL', motif: 'Doublon A' },
+  { id: 'collision', patientId: 'b', specialty: 'ORL', motif: 'Doublon B' },
+  { id: '', patientId: 'a', specialty: 'ORL', motif: 'Sans ID' },
+];
+const untrustedOriginal = JSON.stringify(untrustedActivityVisits);
+const untrustedSummary = summarizeRecordedActivity(activityPatients, untrustedActivityVisits);
+assert.equal(untrustedSummary.included, 4);
+assert.equal(untrustedSummary.excluded, 5);
+assert.equal(untrustedSummary.specialties.some(row => row.label === 'ORL'), false);
+assert.ok(dashboardActivitySource.includes('identifiant de consultation non confirmé(s)'));
+assert.equal(JSON.stringify(untrustedActivityVisits), untrustedOriginal);
+console.log('PASS QW-045/168..170: verified-patient activity and non-ambiguous encounters only.');
 
 
 // QW-046 — Unified timeline dates: only explicit valid dates/timestamps rank

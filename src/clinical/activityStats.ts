@@ -3,7 +3,7 @@ import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard'
 
 // HELIOS activity: administrative counts of explicitly recorded fields only.
 // Orphan or ambiguous patient IDs must not enter these statistics.
-type ActivityConsultation = Pick<Consultation, 'patientId' | 'specialty' | 'motif'>;
+type ActivityConsultation = Pick<Consultation, 'id' | 'patientId' | 'specialty' | 'motif'>;
 type ActivityPatient = { id: string };
 export type ActivityCount = { label: string; count: number };
 export type ClinicalActivitySummary = {
@@ -32,8 +32,17 @@ export function summarizeRecordedActivity(
   const motifs = new Map<string, number>();
   let included = 0;
   let excluded = 0;
+  // QW-168/169: incomplete or duplicate imported encounter IDs are not
+  // distinct attributable consultations, even with a valid patient link.
+  const ids = new Map<string, number>();
   for (const visit of consultations) {
-    if (!visit || !hasConfirmedPatientSelection(visit.patientId, patients)) {
+    if (!visit || typeof visit.id !== 'string' || !visit.id.trim()) continue;
+    ids.set(visit.id, (ids.get(visit.id) ?? 0) + 1);
+  }
+  for (const visit of consultations) {
+    if (!visit || typeof visit.id !== 'string' ||
+        ids.get(visit.id) !== 1 ||
+        !hasConfirmedPatientSelection(visit.patientId, patients)) {
       excluded++;
       continue;
     }

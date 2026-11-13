@@ -252,6 +252,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-165 | S | Referral refuse les sources de consultation sans ID unique ou avec ID dupliqué | branche de préparation | Tests fictifs automatisés, 11 jobs CI requis sur le HEAD exact | PRÉPARÉ NON VALIDÉ |
 | QW-166 | S | Parcours spécialisés : exclure du comptage les consultations à identifiant absent ou dupliqué | branche de préparation | Tests fictifs ajoutés au contrôle CI clinique | PRÉPARÉ NON VALIDÉ |
 | QW-167 | S | Parcours spécialisés : afficher la dernière consultation uniquement si sa date est chronologiquement fiable | branche de préparation | Test dates impossibles et CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+| QW-168 | S | Statistiques HELIOS Activité : exclure des comptages les consultations sans identifiant traçable | branche de préparation | Tests fictifs ajoutés au job clinique | PRÉPARÉ NON VALIDÉ |
+| QW-169 | S | Statistiques HELIOS Activité : exclure les consultations importées avec identifiants dupliqués | branche de préparation | Tests fictifs, CI sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-170 | S | Clarifier dans Dashboard les exclusions pour lien patient ambigu ou identifiant consultation non confirmé | branche de préparation | Contrat UI et CI sur SHA exact | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

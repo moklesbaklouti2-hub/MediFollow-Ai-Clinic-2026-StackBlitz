@@ -384,7 +384,7 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             Statistiques descriptives des informations saisies :
             {data.clinicalActivity.included} consultation(s) avec dossier patient confirmé.
             {data.clinicalActivity.excluded > 0 && (
-              <> {data.clinicalActivity.excluded} document(s) sans identité confirmée exclu(s) des calculs.</>
+              <> {data.clinicalActivity.excluded} document(s) avec identité patient ou identifiant de consultation non confirmé(s), exclu(s) des calculs.</>
             )}
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12 }}>
