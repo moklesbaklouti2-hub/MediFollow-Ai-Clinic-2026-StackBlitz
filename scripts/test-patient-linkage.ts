@@ -2133,7 +2133,7 @@ console.log('PASS QW-126: stale clinical consultation edits are refused without 
     'The UI must pass its initial revision to the central hook and preserve unsaved text on refusal.');
   const completion = page.split('function completeFollowUp(')[1]
     ?.split('function saveConsultation()')[0] ?? '';
-  assert.ok(completion.includes('updateConsultation(current.id, { followUp: completedPlan })'),
+  assert.ok(completion.includes('updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)'),
     'Existing HELIOS completion remains compatible with optional revision checks.');
 }
 console.log('PASS QW-127: central consultation writes reject changed source revisions.');
