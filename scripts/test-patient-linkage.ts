@@ -1809,3 +1809,38 @@ console.log('PASS QW-113: new prescription IDs cannot reuse clinical or stock-tr
     }), true);
 }
 console.log('PASS QW-114: missing/invalid imported statuses are readonly until reviewed.');
+
+// QW-115: editing a stale draft/validated form must not submit changes if
+// actual inventory movements already exist for its saved prescription ID.
+{
+  const source = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const save = source.split('function savePrescription()')[1]
+    ?.split('function updateDispensedQuantity(')[0] ?? '';
+  const linkedGuard = save.indexOf(
+    'prescriptionHasRecordedStockMovement(current.id, getInventoryData().movements)');
+  const statusGuard = save.indexOf('!isDispensablePrescriptionStatus(current.status)');
+  const formUpdate = save.indexOf('updatePrescription(');
+  assert.ok(linkedGuard > 0 && statusGuard > 0 &&
+    linkedGuard > statusGuard &&
+    linkedGuard < formUpdate &&
+    save.includes('Modification suspendue : des mouvements de stock sont déjà liés à cette ordonnance.') &&
+    save.includes('réconciliez le statut avant toute correction.'),
+    'The form must warn about stock already recorded before rewriting prescription content.');
+
+  const movements = [{ prescriptionId: 'ordonnance-fictive' },
+    { prescriptionId: 'ordonnance-distincte' }];
+  assert.equal(prescriptionHasRecordedStockMovement('ordonnance-fictive', movements), true);
+  assert.equal(prescriptionHasRecordedStockMovement('ordonnance-absente', movements), false);
+  assert.equal(prescriptionHasRecordedStockMovement('', movements), false);
+  assert.equal(prescriptionHasRecordedStockMovement('ordonnance-fictive', []), false);
+  assert.equal(isDispensablePrescriptionStatus('draft'), true);
+  assert.equal(isDispensablePrescriptionStatus('validated'), true);
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updatePrescription = useCallback(')[1]
+    ?.split('const deletePrescription = useCallback(')[0] ?? '';
+  assert.ok(update.includes('allowsStockLinkedPrescriptionUpdate(currentPrescription, changes,') &&
+    update.indexOf('allowsStockLinkedPrescriptionUpdate(') < update.indexOf('savePrescriptions(updated)'),
+    'The QW-104 central storage guard remains in place independently of the new UI warning.');
+}
+console.log('PASS QW-115: stale editor warns before stock-linked prescription edits.');
