@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
@@ -377,3 +377,47 @@ console.log('PASS QW-078: imported ID ambiguity blocks follow-up edit and comple
     'Consultation update must refuse missing, duplicate or patient-reassigned records.');
 }
 console.log('PASS QW-079: stale patient reassignment cannot be silently persisted.');
+
+// QW-120: direct clinical writes cannot introduce invalid or invisible
+// HELIOS follow-ups even when the React consultation form is bypassed.
+{
+  const planned = { dueDate: '2026-11-16', objective: 'Contrôle tensionnel fictif', status: 'planned' };
+  const completed = { ...planned, status: 'completed' };
+  assert.equal(isWritableFollowUpPlan(undefined), true);
+  assert.equal(isWritableFollowUpPlan(planned), true);
+  assert.equal(isWritableFollowUpPlan(completed), true);
+  assert.equal(isWritableFollowUpPlan({ ...planned, objective: '' }), true);
+  assert.equal(isWritableFollowUpPlan({ ...planned, objective: 'x'.repeat(500) }), true);
+
+  for (const malformed of [
+    null, [], '', 0, {},
+    { ...planned, dueDate: '' },
+    { ...planned, dueDate: '2026-02-30' },
+    { ...planned, dueDate: '2026-11-16T00:00:00Z' },
+    { ...planned, objective: 'x'.repeat(501) },
+    { ...planned, objective: null },
+    { ...planned, status: 'unknown' },
+    { ...planned, status: undefined },
+  ]) {
+    assert.equal(isWritableFollowUpPlan(malformed), false,
+      'Invalid follow-up should be rejected: ' + JSON.stringify(malformed)?.slice(0, 80));
+  }
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const creation = hook.split('const addConsultation = useCallback(')[1]
+    ?.split('const updateConsultation = useCallback(')[0] ?? '';
+  const update = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  assert.ok(creation.includes('isWritableFollowUpPlan(consultation.followUp)') &&
+    creation.indexOf('isWritableFollowUpPlan(') < creation.indexOf('createId()') &&
+    creation.indexOf('isWritableFollowUpPlan(') < creation.indexOf('saveConsultations('),
+    'Creation must reject malformed follow-ups before assigning an ID or saving.');
+  assert.ok(update.includes('isWritableFollowUpPlan(changes.followUp)') &&
+    update.indexOf('isWritableFollowUpPlan(') < update.indexOf('saveConsultations(updated)'),
+    'Updates must reject a malformed supplied plan before changing stored clinical records.');
+
+  const form = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.ok(form.includes('prepareFollowUp(followUpDate, followUpObjective, followUpCompleted)'),
+    'The existing clinician form must continue to normalize and validate follow-ups.');
+}
+console.log('PASS QW-120: HELIOS follow-up plans validated before central clinical writes.');
