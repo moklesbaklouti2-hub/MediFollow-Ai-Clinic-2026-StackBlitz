@@ -10,6 +10,14 @@
 4. Un lot est **VALIDÉ** uniquement lorsque la CI des **11 jobs** est terminée, réussie et rattachée au `HEAD` exact. Ignorer tout SHA obsolète, run annulé ou encore en cours.
 5. Traiter un lot à la fois sur la même branche pour ne pas annuler les vérifications du précédent. Ne jamais fusionner `main`, déployer, utiliser de vraies données patients ou engager une dépense sans autorisation explicite.
 
+## Orientation cabinet médical — décision du 13 novembre 2026
+
+**Priorité confirmée :** MediFollow AI sert d'abord un cabinet de médecine de famille, et non une pharmacie. Les prochains lots rapides se concentrent sur le dossier médical, la consultation structurée, la continuité du suivi (notamment gériatrie, pédiatrie, prévention et maladies chroniques), HELIOS, la dictée médicale, les ordonnances/examens comme documents et l'ergonomie clinique.
+
+La gestion du stock reste un module secondaire pour les consommables, médicaments utilisés ponctuellement et matériel du cabinet. **Ne pas lancer de nouveaux lots courants consacrés à la délivrance de médicaments** ; n'y revenir que pour une anomalie critique de sécurité, une régression bloquante ou une demande explicite de l'utilisateur.
+
+**Ordre de traitement :** (1) petites corrections cliniques réellement distinctes et sécurisation dossier/consultation, (2) parcours de suivi et prévention, (3) qualité du copilote médical/voix et ergonomie, (4) fonctionnalités plus lourdes après tests. Tous les changements restent préparés sur la branche dédiée, sans patient réel, dépenses, déploiement ni fusion de `main`.
+
 ## Lots terminés et vérifiés
 
 | ID | Taille | Lot effectué | Commit final | CI GitHub Actions | Statut |
@@ -183,6 +191,8 @@
 | QW-116 | M | Vérifier au niveau du service de stock qu'une délivrance vise une ordonnance unique, un patient confirmé, le bon lien patient et un statut autorisé, sans casser le rejeu idempotent | branche de préparation | Tests de délivrance fictive, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
 | QW-117 | S | Refuser une nouvelle délivrance si des retours ou autres mouvements orphelins sont déjà liés à l'ordonnance sans trace de délivrance d'origine ; conserver le rejeu idempotent | branche de préparation | Tests stock fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
+| QW-118 | S | Sécuriser la modification centrale des consultations : garder l'association au patient confirmé et refuser les réaffectations silencieuses via le hook | branche de préparation | Tests cliniques fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
