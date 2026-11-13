@@ -1994,3 +1994,42 @@ console.log('PASS QW-121: creating consultations refuses already-used clinical I
     'Imported older consultations without specialty must remain editable.');
 }
 console.log('PASS QW-122: new consultations require motif and specialty without rewriting legacy visits.');
+
+// QW-123 — new/explicitly corrected visit dates must be usable by the
+// patient timeline; older imported records with missing dates stay editable
+// when callers only correct other clinical fields.
+{
+  for (const date of [
+    '2026-11-13', '2024-02-29',
+    '2026-11-13T09:00:00.000Z', '2026-11-13T10:00:00+01:00',
+  ]) {
+    assert.notEqual(recordedDateTimestamp(date), null, 'Expected valid visit date: ' + date);
+  }
+  for (const date of [
+    '', '  ', '2026-02-30', '2025-02-29', '2026-13-01',
+    '13/11/2026', '2026-11-13T10:00:00', 'non renseignée',
+    null, undefined, 20261113,
+  ]) {
+    assert.equal(recordedDateTimestamp(date), null, 'Invalid visit date: ' + String(date));
+  }
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const creation = hook.split('const addConsultation = useCallback(')[1]
+    ?.split('const updateConsultation = useCallback(')[0] ?? '';
+  const updating = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  const creationDateGuard = creation.indexOf('recordedDateTimestamp(consultation.date) === null');
+  const updatedDateGuard = updating.indexOf('recordedDateTimestamp(changes.date) === null');
+  assert.ok(creationDateGuard > creation.indexOf('hasRequiredConsultationDetails(consultation)') &&
+    creationDateGuard < creation.indexOf('const newId = createId()') &&
+    creationDateGuard < creation.indexOf('saveConsultations('),
+    'The creation hook must validate the encounter date before allocating or writing a record.');
+  assert.ok(updating.includes("Object.prototype.hasOwnProperty.call(changes, 'date')") &&
+    updatedDateGuard > updating.indexOf('preservesConsultationAuditTimestamps(changes)') &&
+    updatedDateGuard < updating.indexOf('saveConsultations(updated)'),
+    'Only explicitly edited encounter dates must be checked; legacy date gaps remain editable.');
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.ok(page.includes('addConsultation({ ...changes, date: new Date().toISOString() })'),
+    'The normal consultation form continues to supply an unambiguous timestamp.');
+}
+console.log('PASS QW-123: malformed visit dates blocked at central clinical writes.');
