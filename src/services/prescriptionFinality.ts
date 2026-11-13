@@ -155,3 +155,40 @@ export function isCreatablePrescriptionStatus(
     prescription.dispensedAt === undefined &&
     prescription.cancelledAt === undefined);
 }
+
+// QW-106 — record creation time is immutable, and finalisation timestamps
+// may only be set with their corresponding, explicit status transitions.
+// This helper is deliberately pure and makes no claim about physical supply.
+export function preservesPrescriptionAuditTimestamps(
+  current: Pick<Prescription, 'status'>,
+  changes: Partial<Prescription>,
+): boolean {
+  if (!current || !changes || typeof changes !== 'object' || Array.isArray(changes)) return false;
+  if (Object.prototype.hasOwnProperty.call(changes, 'savedAt')) return false;
+
+  const isIsoTimestamp = (value: unknown): value is string =>
+    typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) &&
+    Number.isFinite(Date.parse(value));
+
+  const has = (key: keyof Prescription) => Object.prototype.hasOwnProperty.call(changes, key);
+
+  if (has('validatedAt') &&
+      (current.status !== 'draft' || changes.status !== 'validated' ||
+       !isIsoTimestamp(changes.validatedAt))) return false;
+
+  if (has('dispensedAt') &&
+      (!isDispensablePrescriptionStatus(current.status) ||
+       changes.status !== 'dispensed' ||
+       !isIsoTimestamp(changes.dispensedAt))) return false;
+
+  if (has('cancelledAt') &&
+      (current.status === 'cancelled' || changes.status !== 'cancelled' ||
+       !isIsoTimestamp(changes.cancelledAt))) return false;
+
+  // Prevent terminal states without a dated audit trail.
+  if (changes.status === 'dispensed' && !has('dispensedAt')) return false;
+  if (changes.status === 'cancelled' && !has('cancelledAt')) return false;
+
+  return true;
+}
