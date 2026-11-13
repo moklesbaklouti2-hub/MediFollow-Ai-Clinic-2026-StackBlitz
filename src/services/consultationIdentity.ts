@@ -32,6 +32,22 @@ export function hasRequiredConsultationDetails(
     typeof consultation.specialty === 'string' && consultation.specialty.trim().length > 0);
 }
 
+// QW-126 — an edit opened from a patient dossier may not overwrite newer
+// clinical content entered in another tab. Normalize volatile audit timestamp
+// fallbacks from older imports, but include every clinical field and imported
+// extension in the comparison. This is a read-only, local snapshot.
+export function consultationClinicalSnapshot(
+  record: Consultation | null | undefined,
+): string | null {
+  if (!record || typeof record.id !== 'string' || !record.id.trim() ||
+      typeof record.patientId !== 'string' || !record.patientId.trim()) return null;
+  try {
+    return JSON.stringify({ ...record, createdAt: null, updatedAt: null });
+  } catch {
+    return null;
+  }
+}
+
 // QW-118 — preserve the clinical origin of a recorded visit. Changing the
 // patient requires separate reviewed reconciliation, never a generic update.
 export function preservesConsultationPatientLink(
