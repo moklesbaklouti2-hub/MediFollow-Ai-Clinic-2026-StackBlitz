@@ -147,13 +147,20 @@ export function allowsStockLinkedPrescriptionUpdate(
 // QW-105 — new clinical documents cannot be inserted with a fabricated
 // terminal status or timestamps of dispensing/cancellation. Imported records
 // are read separately and remain untouched.
+// QW-109 — a newly created validated document must already contain a
+// documented validation timestamp; draft documents must not claim one.
 export function isCreatablePrescriptionStatus(
-  prescription: Pick<Prescription, 'status' | 'dispensedAt' | 'cancelledAt'> | null | undefined,
+  prescription: Pick<Prescription, 'status' | 'validatedAt' | 'dispensedAt' | 'cancelledAt'> | null | undefined,
 ): boolean {
-  return Boolean(prescription &&
-    isDispensablePrescriptionStatus(prescription.status) &&
-    prescription.dispensedAt === undefined &&
-    prescription.cancelledAt === undefined);
+  if (!prescription || !isDispensablePrescriptionStatus(prescription.status) ||
+      prescription.dispensedAt !== undefined || prescription.cancelledAt !== undefined) return false;
+
+  if (prescription.status === 'draft') return prescription.validatedAt === undefined;
+
+  const validatedAt = prescription.validatedAt;
+  return typeof validatedAt === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(validatedAt) &&
+    Number.isFinite(Date.parse(validatedAt));
 }
 
 // QW-106 — record creation time is immutable, and finalisation timestamps
