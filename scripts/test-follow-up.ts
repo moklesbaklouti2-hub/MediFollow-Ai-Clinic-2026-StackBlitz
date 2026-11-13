@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
+import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../src/clinical/consultationExpress.ts';
 
@@ -513,13 +514,14 @@ console.log('PASS QW-125: stale HELIOS worklist rows cannot silently complete ch
   const shownPlan = { dueDate: '2026-11-16', objective: 'Contrôle fictif', status: 'planned' as const };
   const initiallyShown = { id: 'consultation-fictive-128', patientId: 'patient-fictif',
     date: '2026-11-13T10:00:00.000Z', motif: 'Contrôle clinique',
-    symptoms: 'Symptômes fictifs', history: '', vitals: {}, examination: '',
+    symptoms: 'Symptômes fictifs', history: '',
+    vitals: { systolic: '', diastolic: '', heartRate: '', spo2: '', temperature: '',
+      respiratoryRate: '', weight: '', height: '', glycemia: '' }, examination: '',
     diagnosis: '', plan: '', createdAt: '2026-11-13T10:00:00.000Z',
     updatedAt: '2026-11-13T10:00:00.000Z', followUp: shownPlan };
   const updatedInAnotherTab = { ...initiallyShown, diagnosis: 'Autre hypothèse fictive' };
   assert.equal(matchesDisplayedFollowUpPlan(initiallyShown.followUp, updatedInAnotherTab.followUp), true);
   // Use the existing snapshot helper (read-only) rather than a new clinical date rule.
-  const { consultationClinicalSnapshot } = await import('../src/services/consultationIdentity.ts');
   assert.notEqual(consultationClinicalSnapshot(initiallyShown),
     consultationClinicalSnapshot(updatedInAnotherTab));
 }
