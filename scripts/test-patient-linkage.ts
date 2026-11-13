@@ -609,9 +609,9 @@ const statusFixtures = [
   ['dispensed', 'Délivrance enregistrée (statut)'],
   ['cancelled', 'Annulée — ne pas considérer comme active'],
   [undefined, 'Statut non renseigné (ancien dossier)'],
-  [null, 'Statut non renseigné (ancien dossier)'],
-  ['unknown', 'Statut non renseigné (ancien dossier)'],
-  [42, 'Statut non renseigné (ancien dossier)'],
+  [null, 'Statut inconnu ou invalide — vérification nécessaire'],
+  ['unknown', 'Statut inconnu ou invalide — vérification nécessaire'],
+  [42, 'Statut inconnu ou invalide — vérification nécessaire'],
 ] as const;
 for (const [status, expected] of statusFixtures) {
   assert.equal(documentedPrescriptionStatus(status), expected);
@@ -1711,3 +1711,26 @@ console.log('PASS QW-110: pre-dispense reconciliation warning on stock history m
     'Imported unknown status must be rejected before confirming or updating inventory.');
 }
 console.log('PASS QW-111: cancelling unknown-status prescriptions fails closed before inventory work.');
+
+// QW-112: missing legacy status is not the same as explicitly invalid JSON
+// content. Both views share the same non-prescriptive, read-only helper.
+{
+  const legacy = documentedPrescriptionStatus(undefined);
+  const invalid = documentedPrescriptionStatus('invalid-imported-status');
+  assert.equal(legacy, 'Statut non renseigné (ancien dossier)');
+  assert.equal(invalid, 'Statut inconnu ou invalide — vérification nécessaire');
+  assert.equal(documentedPrescriptionStatus(null), invalid);
+  assert.equal(documentedPrescriptionStatus(''), invalid);
+  assert.equal(documentedPrescriptionStatus(42), invalid);
+  assert.equal(documentedPrescriptionStatus({ status: 'draft' }), invalid);
+  assert.notEqual(invalid, documentedPrescriptionStatus('draft'));
+  assert.notEqual(invalid, documentedPrescriptionStatus('validated'));
+  const source = readFileSync(new URL('../src/clinical/prescriptionTimeline.ts', import.meta.url), 'utf8');
+  assert.ok(source.includes('status === undefined') &&
+    source.includes('Statut inconnu ou invalide — vérification nécessaire'),
+    'An explicitly invalid imported status must be flagged, not presented as missing legacy data.');
+  const history = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  assert.ok(history.includes('Statut documentaire : {documentedPrescriptionStatus(item.status)}'),
+    'The history must reuse the updated timeline label without a parallel classification.');
+}
+console.log('PASS QW-112: missing legacy and invalid imported statuses remain distinguishable.');
