@@ -4,6 +4,7 @@ import { hasUniqueConsultationId, preservesConsultationAuditTimestamps, preserve
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
+import { isWritableFollowUpPlan } from '../clinical/followUp';
 
 import type {
   Patient,
@@ -129,6 +130,8 @@ export function useMedicalData() {
   ) => {
     // The central write path must enforce the same identity rule as the UI.
     if (!hasConfirmedPatientSelection(consultation.patientId, getMedicalData().patients)) return null;
+    // QW-120: a direct creation caller must not write an invalid HELIOS plan.
+    if (!isWritableFollowUpPlan(consultation.followUp)) return null;
     const timestamp = new Date().toISOString();
 
     const newConsultation: Consultation = {
@@ -161,6 +164,9 @@ export function useMedicalData() {
     // QW-119: creation date is immutable, and updatedAt is assigned only by
     // the hook after validating a real clinical change.
     if (!preservesConsultationAuditTimestamps(changes)) return false;
+    // QW-120: only the newly supplied plan is checked. Legacy plans remain
+    // unchanged when an unrelated part of the consultation is corrected.
+    if (!isWritableFollowUpPlan(changes.followUp)) return false;
     const updated = currentConsultations.map((item) =>
       item.id === id
         ? {
