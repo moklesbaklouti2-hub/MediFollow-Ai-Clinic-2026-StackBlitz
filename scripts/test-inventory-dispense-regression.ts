@@ -35,6 +35,15 @@ const fixture = (): InventoryData => ({
 });
 function reset() {
   records.set('medifollow-inventory', JSON.stringify(fixture()));
+  // QW-116: successful dispensing must have a saved, uniquely identified
+  // synthetic prescription and a real synthetic patient, not only string IDs.
+  records.set('medifollow-patients', JSON.stringify([
+    { id: 'patient-fictif', name: 'Patient fictif' },
+  ]));
+  records.set('medifollow-prescriptions', JSON.stringify([
+    { id: 'prescription-fictive', patientId: 'patient-fictif', status: 'draft',
+      date: '2026-11-13', medications: [], advice: '', savedAt: '2026-11-13T09:00:00.000Z' },
+  ]));
   writes = 0;
 }
 const issue = (items: Array<{ inventoryItemId: string; quantity: number }>) => ({
@@ -488,3 +497,64 @@ assert.ok(deleteCode.includes('canDeleteInventoryItem(item.id, data.movements, g
 console.log('OK — QW-026 : 10 cas fictifs de suppression et contrat UI de protection de traçabilité.');
 
 console.log('OK — ' + assertions + ' assertions sur les replays et la délivrance atomique (données fictives).');
+
+
+// QW-116: direct inventory calls must fail closed for missing, duplicated,
+// cross-patient or finalized prescriptions. All data and IDs are synthetic.
+{
+  const order = { id: 'prescription-fictive', patientId: 'patient-fictif',
+    status: 'draft', medications: [], advice: '', date: '2026-11-13',
+    savedAt: '2026-11-13T09:00:00.000Z' };
+  const baseIssue = issue([{ inventoryItemId: 'lot-a', quantity: 1 }]);
+  const failures: Array<[string, object[], object[], typeof baseIssue]> = [
+    ['ordonnance inexistante', [order], [{ id: 'patient-fictif' }],
+      { ...baseIssue, prescriptionId: 'absente' }],
+    ['ordonnance dupliquée', [order, { ...order }], [{ id: 'patient-fictif' }], baseIssue],
+    ['patient absent', [order], [], baseIssue],
+    ['patient dupliqué', [order], [{ id: 'patient-fictif' }, { id: 'patient-fictif' }], baseIssue],
+    ['patient différent', [order], [{ id: 'patient-fictif' }, { id: 'autre-patient' }],
+      { ...baseIssue, patientId: 'autre-patient' }],
+    ['ordonnance annulée', [{ ...order, status: 'cancelled' }], [{ id: 'patient-fictif' }], baseIssue],
+    ['ordonnance déjà délivrée sans trace', [{ ...order, status: 'dispensed' }], [{ id: 'patient-fictif' }], baseIssue],
+    ['statut non renseigné', [{ ...order, status: undefined }], [{ id: 'patient-fictif' }], baseIssue],
+    ['statut importé inconnu', [{ ...order, status: 'unknown' }], [{ id: 'patient-fictif' }], baseIssue],
+  ];
+  for (const [name, prescriptions, patients, request] of failures) {
+    reset();
+    records.set('medifollow-prescriptions', JSON.stringify(prescriptions));
+    records.set('medifollow-patients', JSON.stringify(patients));
+    const before = JSON.stringify(getInventoryData());
+    assert.equal(dispenseInventoryItems(request).success, false, name);
+    unchanged(before, name);
+  }
+
+  // Replaying a previously dispensed order never deducts stock again,
+  // including after its stored status has correctly become 'dispensed'.
+  reset();
+  assert.equal(dispenseInventoryItems(baseIssue).success, true);
+  records.set('medifollow-prescriptions', JSON.stringify([{ ...order, status: 'dispensed' }]));
+  const dispensedBefore = JSON.stringify(getInventoryData());
+  writes = 0;
+  assert.deepEqual(dispenseInventoryItems(baseIssue), {
+    success: true, alreadyDispensed: true,
+  });
+  unchanged(dispensedBefore, 'rejeu document délivré');
+
+  // An annulled order must remain blocked even if old dispense traces exist.
+  records.set('medifollow-prescriptions', JSON.stringify([{ ...order, status: 'cancelled' }]));
+  writes = 0;
+  assert.equal(dispenseInventoryItems(baseIssue).success, false);
+  unchanged(dispensedBefore, 'aucun rejeu document annulé');
+
+  const storageSource = readFileSync(new URL('../src/services/storage.ts', import.meta.url), 'utf8');
+  const dispense = storageSource.split('export function dispenseInventoryItems(')[1]
+    ?.split('/** Enregistre un retour partiel')[0] ?? '';
+  assert.ok(dispense.includes('hasUniquePrescriptionId(input.prescriptionId, medical.prescriptions)') &&
+    dispense.includes('hasConfirmedPatientSelection(input.patientId, medical.patients)') &&
+    dispense.includes('isDispensablePrescriptionStatus(matchingPrescription.status)') &&
+    dispense.indexOf('const medical = getMedicalData()') < dispense.indexOf('const plannedMovements:') &&
+    dispense.indexOf('isDispensablePrescriptionStatus(matchingPrescription.status)') <
+      dispense.indexOf('saveInventoryData(data)'),
+    'All direct stock calls must verify current prescription identity and status before writing.');
+}
+console.log('PASS QW-116: direct dispensing requires a confirmed, matching saved prescription.');
