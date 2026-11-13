@@ -518,8 +518,10 @@ export default function Consultations({
       followUp: followUpPlan.followUp,
     };
 
+    // QW-127: pass the version captured when editing began all the way to
+    // the central write boundary; do not trust only the earlier form check.
     const saved = editingId
-      ? updateConsultation(editingId, changes)
+      ? updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)
       : addConsultation({ ...changes, date: new Date().toISOString() });
 
     if (!saved) {
