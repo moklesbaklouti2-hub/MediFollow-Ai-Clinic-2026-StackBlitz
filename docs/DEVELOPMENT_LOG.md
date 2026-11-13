@@ -1229,3 +1229,10 @@
 - QW-118 ajoute `preservesConsultationPatientLink` dans `src/services/consultationIdentity.ts` et le branche dans `src/hooks/useMedicalData.ts`. Le patient d'origine doit toujours exister de façon unique. Les mises à jour ordinaires ne peuvent pas remplacer, effacer ou rendre ambigu `patientId`.
 - Le hook conserve l'édition clinique légitime, la vérification des IDs de consultation et l'horodatage `updatedAt` déjà en place. Aucune migration automatique de dossier ni donnée patient réelle.
 - Contrats fictifs et d'ordre des contrôles ajoutés à `scripts/test-patient-linkage.ts`. **PRÉPARÉ NON VALIDÉ :** `npm run test:patient-linkage`, compilation, `npm run test:complete` et 11 jobs GitHub Actions toujours à exécuter sur le HEAD exact. `main` inchangée, PR d'audit inchangée, pas de déploiement ni frais.
+
+### 2026-11-13 — QW-119 : protéger les horodatages d'audit d'une consultation
+- Le hook central `updateConsultation` protégeait déjà le lien patient (QW-118), mais acceptait des champs `createdAt` et `updatedAt` fournis directement dans `changes`. Une mise à jour pouvait ainsi effacer ou falsifier la date d'enregistrement originale, sans passer par le formulaire.
+- Le helper pur `preservesConsultationAuditTimestamps` dans `src/services/consultationIdentity.ts` refuse désormais toute présence explicite de `createdAt` ou `updatedAt` dans la modification ; le hook l'applique avant `saveConsultations`. `updatedAt` continue à être généré automatiquement par le hook, et `createdAt` reste inchangé.
+- Le champ clinique `date`, date de la visite, reste distinct de l'horodatage d'audit et peut être corrigé normalement. Pas de changement d'interface, aucune modification des dossiers existants et aucune migration.
+- Scénarios synthétiques et contrat du chemin central ajoutés à `scripts/test-patient-linkage.ts`, sans données médicales réelles.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:patient-linkage`, `npm run test:complete` et contrôle des 11 jobs GitHub Actions sur le SHA final restent requis. Branche de préparation uniquement, `main` et PR d'audit inchangées, aucun déploiement ni dépense.
