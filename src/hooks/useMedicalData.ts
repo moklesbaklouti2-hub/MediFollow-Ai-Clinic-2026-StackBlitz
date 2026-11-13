@@ -4,7 +4,7 @@ import { consultationClinicalSnapshot, hasRequiredConsultationDetails, hasUnique
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../services/prescriptionIdentity';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
-import { isWritableFollowUpPlan } from '../clinical/followUp';
+import { hasRequiredCompletionVersion, isWritableFollowUpPlan } from '../clinical/followUp';
 import { recordedDateTimestamp } from '../clinical/medicalTimeline';
 
 import type {
@@ -174,10 +174,12 @@ export function useMedicalData() {
     if (!currentConsultation ||
         !hasConfirmedPatientSelection(currentConsultation.patientId, getMedicalData().patients) ||
         !preservesConsultationPatientLink(currentConsultation, changes)) return false;
-    // QW-127: a clinical edit may require its expected source revision.
-    // Check the same record snapshot immediately before persistence so a
-    // changed record is not overwritten after the form's earlier check.
-    // Two-argument calls (e.g. documented HELIOS completion) remain compatible.
+    // QW-130: even a caller outside the HELIOS quick-completion button
+    // must supply the expected consultation version to mark follow-up done.
+    if (!hasRequiredCompletionVersion(changes.followUp, expectedClinicalSnapshot)) return false;
+    // QW-127: compare an explicitly supplied source version against the
+    // latest record before persistence. Other legacy two-argument updates
+    // remain compatible; completed follow-up writes cannot omit the version.
     if (expectedClinicalSnapshot !== undefined &&
         consultationClinicalSnapshot(currentConsultation) !== expectedClinicalSnapshot) return false;
     // QW-119: creation date is immutable, and updatedAt is assigned only by

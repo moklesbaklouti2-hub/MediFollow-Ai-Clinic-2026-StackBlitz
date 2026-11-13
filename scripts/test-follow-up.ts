@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot } from '../src/services/consultationIdentity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
@@ -565,3 +565,43 @@ console.log('PASS QW-128: HELIOS completion carries a full clinical revision gua
     'QW-129 requires full clinical version checks before and after confirmation');
 }
 console.log('PASS QW-129: stale HELIOS worklist clinical versions are rejected.');
+
+
+// QW-130: central HELIOS completion writes require the expected clinical
+// version even if they bypass the visible follow-up action.
+{
+  const planned = { dueDate: '2026-11-20', objective: 'Contrôle fictif', status: 'planned' as const };
+  const completed = { ...planned, status: 'completed' as const };
+  const before = JSON.stringify({ planned, completed });
+  for (const missingVersion of [undefined, null, '', 0, {}, false]) {
+    assert.equal(hasRequiredCompletionVersion(completed, missingVersion), false,
+      'A completed follow-up cannot be persisted without a source version.');
+  }
+  assert.equal(hasRequiredCompletionVersion(completed, 'verified-fictitious-clinical-snapshot'), true);
+  assert.equal(hasRequiredCompletionVersion(planned, undefined), true);
+  assert.equal(hasRequiredCompletionVersion(undefined, undefined), true);
+  assert.equal(hasRequiredCompletionVersion(null, undefined), true);
+  assert.equal(hasRequiredCompletionVersion({ ...planned, status: 'unexpected' }, undefined), true);
+  assert.equal(JSON.stringify({ planned, completed }), before,
+    'A guard must never modify its input documents.');
+
+  const hook = readFileSync(new URL('../src/hooks/useMedicalData.ts', import.meta.url), 'utf8');
+  const update = hook.split('const updateConsultation = useCallback(')[1]
+    ?.split('const deleteConsultation = useCallback(')[0] ?? '';
+  const versionRequiredAt = update.indexOf(
+    '!hasRequiredCompletionVersion(changes.followUp, expectedClinicalSnapshot)');
+  const snapshotComparedAt = update.indexOf(
+    'consultationClinicalSnapshot(currentConsultation) !== expectedClinicalSnapshot');
+  const writeAt = update.indexOf('saveConsultations(updated)');
+  assert.ok(versionRequiredAt >= 0 && snapshotComparedAt > versionRequiredAt &&
+    writeAt > snapshotComparedAt &&
+    hook.includes('hasRequiredCompletionVersion, isWritableFollowUpPlan'),
+    'The central hook must require and compare a clinical version before completed follow-up writes.');
+
+  const consultPage = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  assert.ok(consultPage.includes(
+    'updateConsultation(current.id, { followUp: completedPlan }, latestClinicalSnapshot)') &&
+    consultPage.includes('updateConsultation(editingId, changes, editingClinicalSnapshot ?? undefined)'),
+    'Existing clinician completion and editing flows must forward clinical versions.');
+}
+console.log('PASS QW-130: HELIOS completed follow-up cannot bypass the central revision requirement.');

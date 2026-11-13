@@ -1306,3 +1306,10 @@
 - **Sécurité :** la clôture rapide refuse une consultation modifiée après l'affichage de la ligne, même si date, objectif et statut du suivi sont inchangés. Le contrôle de version clinique est répété après la boîte de confirmation, et la protection centrale QW-128 reste active pendant l'écriture.
 - **Tests :** scénarios fictifs de modification de diagnostic, modification du plan de suivi, changement du seul horodatage d'audit, absence de mutation et ordre des gardes UI. Aucun patient réel, envoi IA, automatisme de clôture ou délivrance de médicament.
 - **Validation :** préparé uniquement ; compilation, suite complète et 11 jobs CI sur le commit exact restent requis. Pas de fusion ni déploiement.
+
+
+### 2026-11-13 — QW-130 : version attendue obligatoire pour la clôture HELIOS (préparé)
+- **Branche :** `prep-chronologie-2026-11-11-qw052-055` ; pas de modification de `main` ni de la PR #2 en brouillon.
+- **Changement :** le hook central refuse maintenant une écriture avec `followUp.status = 'completed'` si la version clinique attendue est absente ou vide. Le contrôle de correspondance QW-127 reste actif avant l'écriture ; les autres modifications cliniques conservent le contrat antérieur. Le formulaire et la clôture rapide fournissent déjà une version attendue.
+- **Tests fictifs :** absence, nullité et chaîne vide de version ; version présente, modification ordinaire et plan absent ; absence de mutation, ordre des vérifications dans le hook, intégration statique des deux chemins d'interface.
+- **Limites :** protections et tests ajoutés, mais aucune compilation ni CI 11/11 sur le HEAD n'a été exécutée à cette étape. Ce contrôle de version du stockage local ne constitue pas un verrou transactionnel multi-onglet ni une validation pour les patients réels.

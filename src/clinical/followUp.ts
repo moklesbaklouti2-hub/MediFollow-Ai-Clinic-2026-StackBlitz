@@ -22,6 +22,22 @@ export function isWritableFollowUpPlan(plan: unknown): boolean {
     (item.status === 'planned' || item.status === 'completed');
 }
 
+/**
+ * QW-130 — no caller may mark a stored HELIOS plan completed without the
+ * expected clinical version. Other edits and initial planning keep their
+ * previous behavior. The storage hook must independently compare the supplied
+ * version with the latest recorded consultation before writing.
+ */
+export function hasRequiredCompletionVersion(
+  followUp: unknown, expectedClinicalSnapshot: unknown,
+): boolean {
+  const status = followUp && typeof followUp === 'object' && !Array.isArray(followUp)
+    ? (followUp as Record<string, unknown>).status
+    : undefined;
+  return status !== 'completed' ||
+    (typeof expectedClinicalSnapshot === 'string' && expectedClinicalSnapshot.length > 0);
+}
+
 export function prepareFollowUp(
   dueDate: string, objective: string, completed: boolean,
 ): { valid: boolean; followUp?: ConsultationFollowUp } {
