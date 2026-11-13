@@ -273,3 +273,12 @@ export function filterFollowUpsByObjective<T extends Pick<Consultation, 'followU
   return rows.filter(item =>
     normalizeFollowUpObjectiveSearch(item.followUp?.objective).includes(needle));
 }
+
+// QW-171..173: editing another clinical field must not erase a malformed
+// imported follow-up; removing a valid plan needs an explicit user decision.
+export function followUpRemovalAction(
+  original: unknown, proposed: ConsultationFollowUp | undefined,
+): 'none' | 'confirm' | 'reconcile' {
+  if (proposed !== undefined || original === undefined || original === null) return 'none';
+  return isWritableFollowUpPlan(original) ? 'confirm' : 'reconcile';
+}

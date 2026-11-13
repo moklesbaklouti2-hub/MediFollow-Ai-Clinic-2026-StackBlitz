@@ -255,6 +255,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-168 | S | Statistiques HELIOS Activité : exclure des comptages les consultations sans identifiant traçable | branche de préparation | Tests fictifs ajoutés au job clinique | PRÉPARÉ NON VALIDÉ |
 | QW-169 | S | Statistiques HELIOS Activité : exclure les consultations importées avec identifiants dupliqués | branche de préparation | Tests fictifs, CI sur SHA exact | PRÉPARÉ NON VALIDÉ |
 | QW-170 | S | Clarifier dans Dashboard les exclusions pour lien patient ambigu ou identifiant consultation non confirmé | branche de préparation | Contrat UI et CI sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-171 | S | Refuser la suppression implicite d'un suivi importé malformé lors d'une modification clinique sans rapport | branche de préparation | Guard test fictif, CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+| QW-172 | S | Permettre la correction explicite d'un suivi importé tout en conservant les données sources avant sauvegarde | branche de préparation | Tests non-mutation, CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
+| QW-173 | S | Demander une confirmation distincte avant de supprimer un suivi HELIOS valide en vidant le formulaire | branche de préparation | Contrat UI et tests fictifs, CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

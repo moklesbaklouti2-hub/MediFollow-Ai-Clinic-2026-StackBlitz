@@ -4,7 +4,7 @@ import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
-import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective } from '../clinical/followUp';
+import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../services/consultationIdentity';
@@ -546,6 +546,22 @@ export default function Consultations({
     if (!followUpPlan.valid) {
       window.alert('Suivi HELIOS : date de contrôle invalide, ou objectif de plus de 500 caractères.');
       return;
+    }
+
+    // QW-171..173: clearing old form fields must never silently erase a
+    // malformed imported plan. A deliberate removal of a valid plan requires
+    // separate consent; the central clinical version check remains mandatory.
+    if (editingId) {
+      const stored = getConsultations().find(record => record.id === editingId);
+      const removal = followUpRemovalAction(stored?.followUp, followUpPlan.followUp);
+      if (removal === 'reconcile') {
+        window.alert('Le suivi importé contient des données invalides. Renseignez un suivi corrigé avant de sauvegarder : les champs vides ne peuvent pas effacer ce suivi.');
+        return;
+      }
+      if (removal === 'confirm' &&
+          !window.confirm('Confirmer la suppression du suivi HELIOS enregistré pour cette consultation ?')) {
+        return;
+      }
     }
 
     const changes = {

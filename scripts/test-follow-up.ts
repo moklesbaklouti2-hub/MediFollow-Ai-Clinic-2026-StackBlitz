@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
+import { isValidFollowUpDate, isWritableFollowUpPlan, prepareFollowUp, summarizeFollowUps, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, completedFollowUpPlan, matchesDisplayedFollowUpPlan, hasRequiredCompletionVersion, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction, countUndatedPlannedFollowUps, countLaterPlannedFollowUps, filterFollowUpsByObjective } from '../src/clinical/followUp.ts';
 import { getConsultations } from '../src/services/storage.ts';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../src/services/consultationIdentity.ts';
 import { orderRecordedNewest, displayRecordedDate, recordedDateTimestamp } from '../src/clinical/medicalTimeline.ts';
@@ -1162,3 +1162,28 @@ console.log('PASS QW-152: legacy test assertions aligned with protected HELIOS l
     editor.indexOf('if (!hasEditableConsultationText(item))') < editor.indexOf('setEditingId(item.id)'));
 }
 console.log('PASS QW-153..155: malformed imported specialty, reason and diagnosis cannot enter editor.');
+
+// QW-171..173 — explicit intent to clear documented follow-ups.
+{
+  const valid = { dueDate: '2026-11-22', objective: 'Contrôle fictif', status: 'planned' as const };
+  const malformed = { dueDate: '2026-02-30', objective: 'Valeur importée', status: 'planned' };
+  const unknownStatus = { dueDate: '2026-11-22', objective: 'Valeur importée', status: 'unknown' };
+  for (const current of [malformed, unknownStatus, { dueDate: 7 }, []]) {
+    const before = JSON.stringify(current);
+    assert.equal(followUpRemovalAction(current, undefined), 'reconcile');
+    assert.equal(JSON.stringify(current), before);
+  }
+  assert.equal(followUpRemovalAction(valid, undefined), 'confirm');
+  assert.equal(followUpRemovalAction(undefined, undefined), 'none');
+  assert.equal(followUpRemovalAction(null, undefined), 'none');
+  assert.equal(followUpRemovalAction(malformed, valid), 'none');
+  assert.equal(followUpRemovalAction(valid, valid), 'none');
+  const source = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const save = source.split('function saveConsultation()')[1]?.split('const changes = {')[0] ?? '';
+  assert.ok(save.includes('followUpRemovalAction(stored?.followUp, followUpPlan.followUp)') &&
+    save.includes("removal === 'reconcile'") &&
+    save.includes("removal === 'confirm'") &&
+    save.includes("window.confirm('Confirmer la suppression du suivi HELIOS"),
+    'The consultation editor must refuse implicit removal and confirm deliberate clearing.');
+}
+console.log('PASS QW-171..173: no implicit follow-up loss; validated removal requires consent.');

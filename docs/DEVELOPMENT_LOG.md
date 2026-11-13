@@ -1475,3 +1475,10 @@
 - Le calcul de HELIOS Activité ignore les consultations à ID manquant, non textuel ou dupliqué, tout en conservant le contrôle existant des patients confirmés.
 - Le tableau de bord précise que les exclusions concernent aussi l'identifiant de consultation. La suite fictive QW-045 est adaptée aux ID documentaires et enrichie d'un scénario de doublons, sans modifier les données sources.
 - CI obligatoire sur le SHA du commit. Aucun déploiement ni données réelles ; `main` et PR #2 préservés.
+
+
+### 2026-11-14 — QW-171 à QW-173 : prévention des pertes de suivi
+- Base `03af1bf1c099ec9b9f1ed2f718d6e0276e0edefd`, run CI #43529491624 vert 11/11.
+- Nouvelle classification pure `followUpRemovalAction` : pas de suppression en l'absence d'ancien suivi ; refus si ancien suivi importé invalide et formulaire vide ; confirmation distincte si un suivi existant valide est volontairement effacé.
+- L'éditeur ne sauvegarde jamais silencieusement la disparition d'un ancien suivi malformé. Une correction explicite vers un plan valide reste possible. Le contrôle de version clinique QW-127 n'est pas contourné.
+- Tests synthétiques ajoutés à `scripts/test-follow-up.ts`, déjà exécuté par GitHub Actions. Aucun déploiement ou donnée réelle, `main` et PR #2 inchangés.
