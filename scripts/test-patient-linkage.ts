@@ -1688,3 +1688,26 @@ console.log('PASS QW-109: validated creation requires dated evidence; drafts rem
   assert.equal(prescriptionHasRecordedStockMovement('', events), false);
 }
 console.log('PASS QW-110: pre-dispense reconciliation warning on stock history mismatch.');
+
+// QW-111: cancellation UI must fail closed on absent/unknown status, without
+// confirmation, stock returns or saving a misleading 'cancelled' state.
+{
+  for (const status of ['draft', 'validated']) {
+    assert.equal(isDispensablePrescriptionStatus(status), true);
+  }
+  for (const status of [undefined, null, 'legacy', 'annulée', 42]) {
+    assert.equal(isDispensablePrescriptionStatus(status), false);
+  }
+  const page = readFileSync(new URL('../src/pages/Prescriptions.tsx', import.meta.url), 'utf8');
+  const cancel = page.split('function cancelPrescription(')[1]
+    ?.split('function openPrescription(')[0] ?? '';
+  const statusGuard = cancel.indexOf('!isDispensablePrescriptionStatus(current.status)');
+  assert.ok(statusGuard > 0 &&
+    cancel.includes("current.status !== 'dispensed'") &&
+    cancel.includes('Annulation refusée : statut de l’ordonnance absent ou non reconnu.') &&
+    statusGuard < cancel.indexOf('window.confirm(') &&
+    statusGuard < cancel.indexOf('cancelDispensedPrescriptionStock(') &&
+    statusGuard < cancel.indexOf('updatePrescription('),
+    'Imported unknown status must be rejected before confirming or updating inventory.');
+}
+console.log('PASS QW-111: cancelling unknown-status prescriptions fails closed before inventory work.');
