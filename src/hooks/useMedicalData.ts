@@ -5,6 +5,7 @@ import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecorde
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../services/prescriptionFinality';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { isWritableFollowUpPlan } from '../clinical/followUp';
+import { recordedDateTimestamp } from '../clinical/medicalTimeline';
 
 import type {
   Patient,
@@ -136,6 +137,9 @@ export function useMedicalData() {
     if (!hasRequiredConsultationDetails(consultation)) return null;
     // QW-120: a direct creation caller must not write an invalid HELIOS plan.
     if (!isWritableFollowUpPlan(consultation.followUp)) return null;
+    // QW-123: reject a missing, ambiguous or impossible consultation date
+    // before it can enter the patient timeline.
+    if (recordedDateTimestamp(consultation.date) === null) return null;
 
     // QW-121: a generated consultation ID may not collide with an existing
     // clinical encounter, including one restored from an imported backup.
@@ -175,6 +179,10 @@ export function useMedicalData() {
     // QW-120: only the newly supplied plan is checked. Legacy plans remain
     // unchanged when an unrelated part of the consultation is corrected.
     if (!isWritableFollowUpPlan(changes.followUp)) return false;
+    // QW-123: only a date explicitly supplied by the caller needs to pass
+    // timeline validation; legacy undated visits remain otherwise editable.
+    if (Object.prototype.hasOwnProperty.call(changes, 'date') &&
+        recordedDateTimestamp(changes.date) === null) return false;
     const updated = currentConsultations.map((item) =>
       item.id === id
         ? {
