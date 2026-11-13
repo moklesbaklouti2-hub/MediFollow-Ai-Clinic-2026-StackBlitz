@@ -1156,3 +1156,9 @@
 - Les transitions prévues restent possibles : brouillon vers validée, délivrée ou annulée ; validée vers délivrée ou annulée ; délivrée vers annulée. Les conditions supplémentaires déjà définies (dates, mouvements de stock, lien patient, immutabilité) continuent à s'appliquer indépendamment.
 - Contrats synthétiques QW-107 ajoutés au fichier `scripts/test-patient-linkage.ts`, y compris les cas de rétrogradation, statut inconnu et appel direct au hook.
 - **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:complete` et résultats 11/11 des GitHub Actions restent à vérifier sur le HEAD exact. Aucun patient réel, `main` inchangée, pas de déploiement ni dépense.
+
+### 2026-11-13 — QW-108 : exiger la date de validation lors du passage de « brouillon » à « validée »
+- Le garde-fou central `preservesPrescriptionAuditTimestamps` impose désormais `validatedAt` lorsque le statut d'une ordonnance existante change de `draft` vers `validated`. Un simple `status: 'validated'` sans date est refusé avant toute sauvegarde.
+- Les règles QW-106 interdisant la réécriture de `savedAt` et l'utilisation d'horodatages invalides restent actives. Les modifications d'ordonnances déjà validées et la transition ultérieure vers la délivrance ne sont pas modifiées par ce lot.
+- Cas synthétiques ajoutés à `scripts/test-patient-linkage.ts` : refus sans date, refus de dates invalides, autorisation avec date ISO, compatibilité des autres usages, et contrat d'appel central.
+- **PRÉPARÉ, NON VALIDÉ** : aucune compilation ni exécution des tests ou des 11 jobs GitHub Actions sur le HEAD de préparation. Aucun changement de `main`, aucune donnée patient réelle, aucun déploiement.
