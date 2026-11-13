@@ -76,6 +76,19 @@ export function selectDueFollowUps(
     });
 }
 
+// QW-125: a follow-up action from a displayed worklist row must target
+// exactly the plan the clinician saw. Imported malformed plans stay review-only.
+export function matchesDisplayedFollowUpPlan(
+  displayed: ConsultationFollowUp | undefined,
+  current: ConsultationFollowUp | undefined,
+): boolean {
+  return Boolean(displayed && current &&
+    isWritableFollowUpPlan(displayed) && isWritableFollowUpPlan(current) &&
+    displayed.status === 'planned' && current.status === 'planned' &&
+    displayed.dueDate === current.dueDate &&
+    displayed.objective === current.objective);
+}
+
 /** Explicit clinician completion, never called automatically by a date change. */
 export function completedFollowUpPlan(
   plan: ConsultationFollowUp | undefined,
