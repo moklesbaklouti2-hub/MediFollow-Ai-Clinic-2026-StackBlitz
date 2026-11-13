@@ -164,6 +164,8 @@
 
 | QW-107 | S | Interdire le retour du statut « validée » vers « brouillon » et la reclassification implicite de statuts importés inconnus | branche de préparation | Contrat de transitions et tests fictifs Codespaces/CI requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-108 | S | Exiger l'horodatage validatedAt lors du passage d'une ordonnance existante de « brouillon » à « validée », pour conserver sa traçabilité | branche de préparation | Tests synthétiques, compilation et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
