@@ -194,6 +194,8 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 | QW-118 | S | Sécuriser la modification centrale des consultations : garder l'association au patient confirmé et refuser les réaffectations silencieuses via le hook | branche de préparation | Tests cliniques fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-119 | S | Rendre immuable la date de création d'une consultation et réserver sa date technique de modification au hook central, sans bloquer l'édition clinique ordinaire | branche de préparation | Tests fictifs, compilation et CI sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
