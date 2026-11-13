@@ -168,6 +168,8 @@
 
 | QW-109 | S | Exiger un validatedAt ISO pour toute ordonnance créée directement « validée » et refuser un horodatage de validation prématuré sur un brouillon | branche de préparation | Contrats fictifs, compilation et CI sur SHA exact requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-110 | S | Afficher un refus explicite et demander la réconciliation avant toute nouvelle délivrance si l'ordonnance non finalisée possède déjà des mouvements de stock | branche de préparation | Tests fictifs, compilation et CI 11/11 sur HEAD exact requis | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
