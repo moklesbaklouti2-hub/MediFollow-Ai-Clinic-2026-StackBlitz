@@ -1995,7 +1995,7 @@ console.log('PASS QW-121: creating consultations refuses already-used clinical I
 }
 console.log('PASS QW-122: new consultations require motif and specialty without rewriting legacy visits.');
 
-// QW-123 — new/explicitly corrected visit dates must be usable by the
+// QW-124 — new/explicitly corrected visit dates must be usable by the
 // patient timeline; older imported records with missing dates stay editable
 // when callers only correct other clinical fields.
 {
