@@ -122,6 +122,12 @@ export default function Prescriptions() {
         setSavedMessage('Modification refusée : statut de l’ordonnance absent ou non reconnu. Vérifiez le dossier avant de le corriger.');
         return;
       }
+      // QW-115: the stock journal may already contain movements even if the
+      // last dispense status write failed. Do not submit stale form changes.
+      if (prescriptionHasRecordedStockMovement(current.id, getInventoryData().movements)) {
+        setSavedMessage('Modification suspendue : des mouvements de stock sont déjà liés à cette ordonnance. Vérifiez le journal et réconciliez le statut avant toute correction.');
+        return;
+      }
     }
 
     const prescriptionData = {
