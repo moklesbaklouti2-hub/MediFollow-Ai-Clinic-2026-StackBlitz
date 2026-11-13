@@ -349,10 +349,11 @@ console.log('PASS QW-037: 12 numerical trend checks, immutable fixtures and UI c
 // not a preventive-care score or decision. All dates must belong to the
 // selected, uniquely identified patient and be parseable.
 const preventionVisits = [
-  { patientId: 'fictif-a', date: '2026-09-01' },
-  { patientId: 'fictif-b', date: '2026-12-01' },
-  { patientId: 'fictif-a', date: 'date inconnue' },
-  { patientId: 'fictif-a', date: '2026-11-01' },
+  { id: 'prev-old', patientId: 'fictif-a', date: '2026-09-01' },
+  { id: 'prev-other', patientId: 'fictif-b', date: '2026-12-01' },
+  { id: 'prev-unknown', patientId: 'fictif-a', date: 'date inconnue' },
+  { id: 'prev-latest', patientId: 'fictif-a', date: '2026-11-01' },
+  { id: '', patientId: 'fictif-a', date: '2026-12-12' },
 ];
 const preventionFixtureBefore = JSON.stringify(preventionVisits);
 const prevention = buildPreventionReview({ id: 'fictif-a', age: 47 } as never, preventionVisits);

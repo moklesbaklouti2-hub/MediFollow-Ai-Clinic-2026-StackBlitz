@@ -1449,3 +1449,8 @@
 - GitHub Actions run #43528134476, job Tests / clinique, étape `test:helios-memory-prevention` : une consultation importée sans identifiant traçable (`id: 7`) était considérée comme la consultation la plus récente pour Prevention.
 - Correctif : HELIOS Prevention exige désormais un identifiant de consultation textuel non vide, en plus du lien patient et d'une date valide. Les fixtures QW-156..160 révèlent cette anomalie et restent actives.
 - Le code clinique/stock n'est pas modifié. Validation des 11 jobs sur le SHA suivant obligatoire.
+
+### 2026-11-14 — réparation du contrat de tests QW-038 devenu obsolète
+- La CI #43528298479 a détecté un échec des fixtures QW-038 : elles ne contenaient aucun identifiant de consultation, alors que QW-160 exige désormais une source attribuable.
+- Correction limitée à `scripts/test-patient-linkage.ts` : identifiants fictifs uniques pour les visites valides et fixture supplémentaire sans identifiant datée plus tard que les autres, à exclure du calcul. Aucun relâchement du contrôle médical.
+- La suite HELIOS Clinical Memory/Prevention continue à s'exécuter après les tests de liaison. Nouvelle CI 11 jobs obligatoire sur SHA exact.
