@@ -1150,3 +1150,9 @@
 - Le parcours existant d'enregistrement puis délivrance et le parcours d'annulation restent compatibles. Les protections de stock et d'identité QW-097 à QW-105 demeurent actives ; aucune transformation d'archives anciennes ni opération de stock.
 - Helper pur `preservesPrescriptionAuditTimestamps` et tests synthétiques des transitions + contrat du hook dans `scripts/test-patient-linkage.ts`.
 - **PRÉPARÉ, NON VALIDÉ :** `npm run test:complete` et les 11 jobs GitHub Actions restent à contrôler sur le HEAD exact dans Codespaces / CI. Pas de modification de `main`, pas de déploiement ni données patient réelles.
+
+### 2026-11-13 — QW-107 : interdire les transitions régressives de statut d'ordonnance
+- Le hook `updatePrescription` applique désormais le nouveau garde-fou pur `allowsPrescriptionStatusTransition` avant toute écriture. Une ordonnance `validated` ne peut plus redevenir `draft`, et un dossier importé au statut manquant ou inconnu ne peut pas être reclassé silencieusement via une mise à jour ordinaire.
+- Les transitions prévues restent possibles : brouillon vers validée, délivrée ou annulée ; validée vers délivrée ou annulée ; délivrée vers annulée. Les conditions supplémentaires déjà définies (dates, mouvements de stock, lien patient, immutabilité) continuent à s'appliquer indépendamment.
+- Contrats synthétiques QW-107 ajoutés au fichier `scripts/test-patient-linkage.ts`, y compris les cas de rétrogradation, statut inconnu et appel direct au hook.
+- **PRÉPARÉ NON VALIDÉ** : compilation, `npm run test:complete` et résultats 11/11 des GitHub Actions restent à vérifier sur le HEAD exact. Aucun patient réel, `main` inchangée, pas de déploiement ni dépense.
