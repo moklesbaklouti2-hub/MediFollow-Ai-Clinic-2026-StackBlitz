@@ -116,6 +116,12 @@ export default function Prescriptions() {
         setSavedMessage('Modification refusée : ordonnance absente, annulée, délivrée ou dossier patient ambigu. Aucun document modifié.');
         return;
       }
+      // QW-114: a read-only imported record with a missing or unknown status
+      // cannot be edited silently; it needs explicit clinical review.
+      if (!isDispensablePrescriptionStatus(current.status)) {
+        setSavedMessage('Modification refusée : statut de l’ordonnance absent ou non reconnu. Vérifiez le dossier avant de le corriger.');
+        return;
+      }
     }
 
     const prescriptionData = {
