@@ -2283,3 +2283,15 @@ assert.equal(expressDraftPatientBinding(null, 42 as unknown as string, true), nu
 assert.equal(expressDraftPatientBinding(null, 'fictif-a', 'true' as unknown as boolean), null);
 assert.equal(expressDraftPatientBinding(null, 'fictif-a', true), 'fictif-a');
 console.log('PASS QW-202..204: meaningful Express fields and strict patient binding.');
+
+// QW-205..207: transferred Express text remains protected and transfer requires a prior binding.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const transfer = page.split('function applyExpressDraft()')[1]?.split('function resetExpressConsultation()')[0] ?? '';
+  const binding = transfer.indexOf('expressPatientId === null || expressDraftPatientBinding(expressPatientId, patientId, true) === null');
+  assert.ok(binding >= 0 && binding < transfer.indexOf('parseExpressDraft(expressDraft)') && binding < transfer.indexOf('setMotif(result.fields.motif)'));
+  const opening = page.split('function startEditing(')[1]?.split('function cancelEditing(')[0] ?? '';
+  const guard = opening.indexOf('if (expressPatientId !== null)');
+  assert.ok(guard >= 0 && guard < opening.indexOf('getConsultations()') && opening.slice(guard, opening.indexOf('getConsultations()')).includes('return;'));
+}
+console.log('PASS QW-205..207: explicit Express binding and protection after transfer.');

@@ -331,8 +331,8 @@ export default function Consultations({
       setExpressFeedback('Choisissez d’abord un dossier patient unique et une spécialité dans le formulaire.');
       return;
     }
-    if (expressPatientId && expressPatientId !== patientId) {
-      setExpressFeedback('Dossier patient changé : revenez au patient initial ou annulez la saisie.');
+    if (expressPatientId === null || expressDraftPatientBinding(expressPatientId, patientId, true) === null) {
+      setExpressFeedback('Liaison patient absente ou modifiée : revenez au patient initial ou réinitialisez la saisie.');
       return;
     }
     const result = parseExpressDraft(expressDraft);
@@ -363,6 +363,10 @@ export default function Consultations({
   function startEditing(item: (typeof consultations)[number]) {
     if (expressDraft.trim()) {
       window.alert('Une note express non transférée est en cours. Transférez-la ou réinitialisez explicitement la consultation avant d’ouvrir un autre dossier.');
+      return;
+    }
+    if (expressPatientId !== null) {
+      window.alert('Une consultation express est liée à un patient. Enregistrez-la ou réinitialisez-la explicitement avant d’ouvrir une autre consultation.');
       return;
     }
     const currentConsultations = getConsultations();

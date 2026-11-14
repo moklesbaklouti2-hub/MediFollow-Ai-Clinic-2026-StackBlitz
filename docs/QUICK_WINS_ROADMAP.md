@@ -296,9 +296,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-200 | S | Express : refuser les formatages invisibles supplémentaires | branche de préparation | CI 11/11 requise | VALIDÉ CI 43619053934 |
 | QW-201 | S | Tests fictifs Unicode et préservation des caractères valides | branche de préparation | CI 11/11 requise | VALIDÉ CI 43619053934 |
 
-| QW-202 | S | Express : refuser les champs composés uniquement de joiners et espaces | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-203 | S | Express : liaison patient strictement textuelle et confirmation booléenne | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-204 | S | Tests fictifs des champs et de la liaison stricte | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-202 | S | Express : refuser les champs composés uniquement de joiners et espaces | branche de préparation | CI 11/11 requise | VALIDÉ CI 43629815776 |
+| QW-203 | S | Express : liaison patient strictement textuelle et confirmation booléenne | branche de préparation | CI 11/11 requise | VALIDÉ CI 43629815776 |
+| QW-204 | S | Tests fictifs des champs et de la liaison stricte | branche de préparation | CI 11/11 requise | VALIDÉ CI 43629815776 |
+
+| QW-205 | S | Express : exiger une liaison préexistante avant transfert | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-206 | S | Express : protéger la consultation après transfert lors de l'ouverture d'une autre visite | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-207 | S | Contrats automatisés fictifs des deux protections | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

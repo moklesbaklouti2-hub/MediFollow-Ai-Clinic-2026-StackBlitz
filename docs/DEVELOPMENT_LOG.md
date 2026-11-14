@@ -1555,3 +1555,9 @@
 - QW-202 : refuser les champs constitués uniquement de joiners et d'espaces, sans supprimer les joiners des textes multilingues valides.
 - QW-203 : refuser les identifiants patients non textuels et les confirmations non booléennes dans le helper de liaison.
 - QW-204 : tests fictifs des deux protections et de la conservation des cas valides. Aucun changement du stockage ; CI du nouveau SHA requise.
+
+### 2026-11-14 — QW-205 à QW-207 : protection Express après transfert
+- Base `50b106e4fa8dc50346ecd2489c72d34cf75eb652`, run 43629815776 terminé avec 11/11 jobs réussis sur ce SHA.
+- QW-205 : exiger une liaison patient préexistante et valide avant transfert, même si un état UI inattendu laisse la liaison absente.
+- QW-206 : empêcher l'ouverture d'une autre consultation tant qu'une consultation Express reste liée, même après vidage de la note brute par transfert. Sauvegarde ou réinitialisation explicite nécessaire.
+- QW-207 : contrats automatisés fictifs de l'ordre des garde-fous dans test-patient-linkage. Aucun changement de stockage, aucune donnée réelle. CI du nouveau SHA requise.
