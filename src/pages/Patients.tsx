@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
+import { parsePatientAgeInput } from '../services/patientAge';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
 import { selectUniquePatient } from '../services/uniquePatientSelection';
 import { latestVitalReadings } from '../clinical/patientVitals';
 import { buildClinicalMemory } from '../clinical/clinicalMemory';
-import { compareRecentVitals } from '../clinical/trends';
+import { compareRecentVitals, buildRecordedVitalChartPoints } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
 import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
@@ -176,9 +177,9 @@ export default function Patients() {
       return;
     }
 
-    const numericAge = Number(age);
-    if (!Number.isFinite(numericAge) || numericAge < 0) {
-      alert('Veuillez saisir un âge valide.');
+    const numericAge = parsePatientAgeInput(age);
+    if (numericAge === null) {
+      alert('Veuillez saisir un âge entier valide entre 0 et 130 ans.');
       return;
     }
 
@@ -218,9 +219,9 @@ export default function Patients() {
       alert('Veuillez renseigner le nom et l’âge du patient.');
       return;
     }
-    const numericAge = Number(editAge);
-    if (!Number.isFinite(numericAge) || numericAge < 0) {
-      alert('Veuillez saisir un âge valide.');
+    const numericAge = parsePatientAgeInput(editAge);
+    if (numericAge === null) {
+      alert('Veuillez saisir un âge entier valide entre 0 et 130 ans.');
       return;
     }
     const saved = updatePatient(selected.id, {
@@ -289,18 +290,8 @@ export default function Patients() {
     unit: string,
     key: 'weight' | 'systolic' | 'diastolic' | 'glycemia' | 'heartRate' | 'spo2'
   ) {
-    const points = [...patientConsultations]
-      .reverse()
-      .map((consultation) => {
-        const raw = String(consultation.vitals[key] ?? '').trim().replace(',', '.');
-        const value = Number.parseFloat(raw);
-        return {
-          id: consultation.id,
-          date: consultation.date,
-          value,
-        };
-      })
-      .filter((point) => Number.isFinite(point.value));
+    // QW-180..182: never plot partial numbers, invalid dates or ambiguous IDs.
+    const points = buildRecordedVitalChartPoints(patientConsultations, key);
 
     if (points.length === 0) {
       return (
@@ -370,7 +361,7 @@ export default function Patients() {
         </div>
         <div className="patient-trend-dates">
           {coordinates.map((point) => (
-            <span key={point.id}>{new Date(point.date).toLocaleDateString('fr-FR')}</span>
+            <span key={point.id}>{displayDate(point.date)}</span>
           ))}
         </div>
         <p className="patient-trend-note">
@@ -467,7 +458,7 @@ export default function Patients() {
         <div className="patient-form">
           <h3>Nouveau dossier patient</h3>
           <input placeholder="Nom et prénom" value={name} onChange={(e) => setName(e.target.value)} />
-          <input placeholder="Âge" type="number" min="0" value={age} onChange={(e) => setAge(e.target.value)} />
+          <input placeholder="Âge" type="number" min="0" max="130" step="1" value={age} onChange={(e) => setAge(e.target.value)} />
           <input placeholder="Téléphone (facultatif)" value={phone} onChange={(e) => setPhone(e.target.value)} />
           <button className="patients-action" onClick={addNewPatient}>Enregistrer le patient</button>
         </div>
@@ -548,7 +539,7 @@ export default function Patients() {
             <div className="patient-form">
               <h3>Modifier les informations du patient</h3>
               <input placeholder="Nom et prénom" value={editName} onChange={(e) => setEditName(e.target.value)} />
-              <input placeholder="Âge" type="number" min="0" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
+              <input placeholder="Âge" type="number" min="0" max="130" step="1" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
               <input placeholder="Sexe" value={editSex} onChange={(e) => setEditSex(e.target.value)} />
               <input placeholder="Téléphone" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
               <input placeholder="Statut" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} />

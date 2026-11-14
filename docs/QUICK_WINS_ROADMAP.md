@@ -266,6 +266,11 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-177 | S | Rejeter les heures hors plage dans la chronologie clinique partagée | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-178 | S | Prevention : départager les dates de même instant de façon stable | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-179 | S | Tests fictifs de rollover et de fuseaux équivalents sans mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-180 | S | Graphiques Patients : rejeter les valeurs cliniques partielles et non numériques | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-181 | S | Graphiques Patients : ne tracer que des dates de consultation validées, avec affichage civil cohérent | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-182 | S | Graphiques Patients : exclure les consultations sans ID unique et conserver un ordre déterministe | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-183 | S | Création patient : limiter les âges saisis à un entier documenté entre 0 et 130 ans | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-184 | S | Modification patient : utiliser le même validateur d’âge que la création et protéger les imports anciens | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 

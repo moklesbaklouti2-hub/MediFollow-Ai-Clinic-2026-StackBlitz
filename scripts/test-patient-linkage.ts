@@ -3,6 +3,7 @@ import { consultationClinicalSnapshot, hasRequiredConsultationDetails, hasUnique
 import { hasUniquePrescriptionId, isUnusedPrescriptionId, prescriptionHasRecordedStockMovement, preservesPrescriptionPatientId } from '../src/services/prescriptionIdentity.ts';
 import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, allowsStockLinkedPrescriptionUpdate, hasDocumentedPrescriptionDispense, hasFullyDocumentedPrescriptionReturn, isCreatablePrescriptionStatus, isDeletablePrescriptionStatus, isDispensablePrescriptionStatus, preservesPrescriptionAuditTimestamps } from '../src/services/prescriptionFinality.ts';
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
+import { parsePatientAgeInput } from '../src/services/patientAge.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
 import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
 import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
@@ -2166,3 +2167,18 @@ console.log('PASS QW-126: stale clinical consultation edits are refused without 
     'Existing HELIOS completion remains compatible with optional revision checks.');
 }
 console.log('PASS QW-127: central consultation writes reject changed source revisions.');
+
+ 
+// QW-183/184: both administrative forms must reject fractional, absurd and
+// nonliteral ages; imported legacy ages remain untouched until clinician edit.
+for (const [input, expected] of [
+  ['0', 0], ['42', 42], ['130', 130], [' 42 ', 42],
+  ['131', null], ['500', null], ['42.5', null], ['-1', null],
+  ['1e2', null], ['+42', null], ['inconnu', null],
+  ['', null], [' ', null], [42, null],
+] as const) assert.equal(parsePatientAgeInput(input), expected);
+const patientAgePageSource = readFileSync(
+  new URL('../src/pages/Patients.tsx', import.meta.url), 'utf8');
+assert.equal((patientAgePageSource.match(/parsePatientAgeInput\((?:age|editAge)\)/g) ?? []).length, 2);
+assert.equal((patientAgePageSource.match(/type="number" min="0" max="130" step="1"/g) ?? []).length, 2);
+console.log('PASS QW-183..184: valid whole-number patient ages in both forms.');

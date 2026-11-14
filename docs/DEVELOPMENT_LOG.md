@@ -1496,3 +1496,10 @@
 - QW-178 : départager les dates Prevention représentant le même instant par identifiant stable, indépendamment de l'ordre des imports.
 - QW-179 : tests fictifs de rollover, fuseaux équivalents, ordre inversé et non-mutation dans la suite clinique existante.
 - Validation du nouveau SHA et essais manuels requis. Branche de préparation uniquement ; aucune donnée réelle, dépense ou déploiement.
+
+### 2026-11-14 — QW-180 à QW-184 : graphiques patient fiables et saisie d'âge
+- Base `d583e3efd91e48b7ba0aa3f6aad5d2a4a92b3409`, GitHub Actions run 43543922798 terminé 11/11 succès.
+- QW-180/182 : module Trends réutilisable pour les graphiques patient ; valeurs strictement numériques (ne pas interpréter `70 kg` comme `70`, `120/80` comme `120`), dates validées, exclusions d'ID absents/dupliqués et tri déterministe. Les dates de points sont affichées avec `displayRecordedDate`, sans date inventée.
+- QW-183/184 : les formulaires administratifs ajout/modification appliquent un parseur d'âge entier 0–130, sans réinterpréter automatiquement les valeurs des dossiers historiques.
+- Tests de non-régression fictifs dans les suites Trends/Referral et Patient Linkage existantes, déjà reliées aux tests CI. Aucune donnée réelle, aucun déploiement, aucune modification de main/audit/PR #2.
+- Ne considérer ce lot validé qu'après compilation et 11 jobs GitHub Actions sur le nouveau SHA exact.

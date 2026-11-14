@@ -1,6 +1,6 @@
 // QW-161..165: only synthetic visits. No storage, network, or medical decisions.
 import assert from 'node:assert/strict';
-import { compareRecentVitals } from '../src/clinical/trends.ts';
+import { compareRecentVitals, buildRecordedVitalChartPoints } from '../src/clinical/trends.ts';
 import { buildReferralSource } from '../src/clinical/referral.ts';
 import type { Consultation } from '../src/types/medical.ts';
 
@@ -51,3 +51,26 @@ assert.equal(buildReferralSource('fictif-a', referralVisits.slice(3)), null);
 assert.equal(JSON.stringify(referralVisits), originalReferral);
 console.log('PASS QW-161..165: strict chronology, unique provenance, isolated HELIOS Trends/Referral.');
 
+
+// QW-180..182: the patient chart must use the same strict source provenance
+// rules as documented HELIOS comparisons, not JavaScript parseFloat.
+const chart = buildRecordedVitalChartPoints(visits, 'weight');
+assert.deepEqual(chart.map(point => point.id), ['valid-a', 'valid-b']);
+assert.deepEqual(chart.map(point => point.value), [70, 72]);
+const partialVitals: VitalVisit[] = [
+  { id: 'unit', date: '2026-11-12', vitals: vitals('70 kg') },
+  { id: 'fraction', date: '2026-11-12', vitals: vitals('120/80') },
+  { id: 'empty', date: '2026-11-12', vitals: vitals('') },
+  { id: 'decimal', date: '2026-11-12', vitals: vitals('70,5') },
+  { id: 'invalid-clock', date: '2026-11-12T24:00:00Z', vitals: vitals('85') },
+];
+assert.deepEqual(buildRecordedVitalChartPoints(partialVitals, 'weight'),
+  [{ id: 'decimal', date: '2026-11-12', value: 70.5 }]);
+assert.deepEqual(buildRecordedVitalChartPoints([...visits].reverse(), 'weight'), chart);
+const patientPageSource = (await import('node:fs')).readFileSync(
+  new URL('../src/pages/Patients.tsx', import.meta.url), 'utf8');
+assert.ok(patientPageSource.includes('buildRecordedVitalChartPoints(patientConsultations, key)') &&
+  patientPageSource.includes('<span key={point.id}>{displayDate(point.date)}</span>') &&
+  !patientPageSource.includes('Number.parseFloat(raw)'),
+  'Patient charts must render only strict numeric/chronological documented data.');
+console.log('PASS QW-180..182: trustworthy vital charts and documented dates.');
