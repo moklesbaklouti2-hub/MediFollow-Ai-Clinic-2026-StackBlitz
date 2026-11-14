@@ -1537,3 +1537,9 @@
 - QW-193 : bloquer la sauvegarde si une note Express non vide reste à transférer ; éviter sa disparition silencieuse.
 - QW-194 : bloquer l’ouverture d’une consultation existante dans le même cas ; conserver le texte jusqu’au transfert ou à la réinitialisation explicite.
 - QW-195 : contrats automatisés des deux garde-fous dans la suite fictive existante. Aucun changement de stockage, aucune donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-14 — QW-196 à QW-198 : intégrité du texte Consultation Express
+- Base `a5a14c1f47bd5de9d389023b58fcf77759221083`, run 43597768022 terminé avec 11/11 jobs réussis.
+- QW-196 : refuser les caractères de contrôle invisibles et les commandes directionnelles explicites susceptibles de masquer du texte clinique, sans les supprimer silencieusement.
+- QW-197 : refuser les séparateurs de ligne non pris en charge ; conserver CR/LF et tabulations usuelles ainsi que les caractères de liaison utiles aux écritures multilingues.
+- QW-198 : tests fictifs de refus et de conservation du texte autorisé dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.

@@ -288,6 +288,10 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-194 | S | Express : préserver la note brute lors de l’ouverture d’une consultation existante | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-195 | S | Contrats automatisés des deux garde-fous Express | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-196 | S | Express : refuser les caractères de contrôle invisibles et directionnels explicites | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-197 | S | Express : refuser les séparateurs de ligne non pris en charge sans altérer le texte | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-198 | S | Tests fictifs des caractères interdits et du texte multilingue autorisé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 ## File de travail proposée (non commencée)
 
 | Priorité | ID | Taille estimative | Objectif précis | Critère de clôture |

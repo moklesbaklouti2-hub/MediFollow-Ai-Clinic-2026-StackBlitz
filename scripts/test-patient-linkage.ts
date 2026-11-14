@@ -2252,3 +2252,14 @@ for (const action of ['startEditing(item: (typeof consultations)[number])', 'sav
   assert.ok(guard.indexOf('if (expressDraft.trim()) {') < guard.indexOf('return;'));
 }
 console.log('PASS QW-193..195: pending Express note guards.');
+
+ 
+// QW-196..198: reject invisible controls and unsupported line boundaries.
+for (const character of ['\u0000', '\u001b', '\u0085', '\u200b', '\u2028', '\u2029', '\u202e', '\u2066', '\ufeff']) {
+  assert.equal(parseExpressDraft('Motif: Exemple' + character + ' fictif').valid, false);
+  assert.equal(parseExpressDraft(character + 'Motif: Exemple fictif').valid, false);
+}
+assert.deepEqual(parseExpressDraft('Motif:\tExemple fictif\r\nSymptômes: Céphalée'),
+  { valid: true, fields: { motif: 'Exemple fictif', symptoms: 'Céphalée' } });
+assert.equal(parseExpressDraft('Motif: مثال\u200cاختبار').valid, true);
+console.log('PASS QW-196..198: Express control characters and supported line boundaries.');
