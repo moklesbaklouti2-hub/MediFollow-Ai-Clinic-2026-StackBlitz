@@ -61,3 +61,16 @@ assert.deepEqual(buildClinicalMemory(patient, collisions), memory);
 assert.deepEqual(buildPreventionReview(patient, collisions), review);
 assert.equal(JSON.stringify(collisions), collisionSnapshot);
 console.log('PASS QW-174..176: duplicate consultation provenance excluded without mutation.');
+
+// QW-177..179: impossible clock rollover and deterministic equal instants.
+const clockVisits: MemoryVisit[] = [
+  { id: 'z-clock', patientId: patient.id, date: '2026-11-12T00:00:00Z', diagnosis: 'Valid Z' },
+  { id: 'a-clock', patientId: patient.id, date: '2026-11-12T01:00:00+01:00', diagnosis: 'Valid offset' },
+  { id: 'bad-clock', patientId: patient.id, date: '2026-11-13T24:00:00Z', diagnosis: 'Invalid clock' },
+];
+const clockSnapshot = JSON.stringify(clockVisits);
+assert.equal(buildPreventionReview(patient, clockVisits).lastDatedConsultation, clockVisits[1].date);
+assert.equal(buildPreventionReview(patient, [...clockVisits].reverse()).lastDatedConsultation, clockVisits[1].date);
+assert.equal(buildClinicalMemory(patient, clockVisits).documentedDiagnoses.find(row => row.consultationId === 'bad-clock')?.date, 'Date non renseignée');
+assert.equal(JSON.stringify(clockVisits), clockSnapshot);
+console.log('PASS QW-177..179: strict clock and deterministic prevention chronology.');

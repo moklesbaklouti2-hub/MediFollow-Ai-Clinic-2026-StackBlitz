@@ -263,6 +263,10 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-175 | S | Prevention : exclure les dates de consultations à ID dupliqué | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-176 | S | Tests de collisions inter-patients et non-mutation des deux aperçus | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-177 | S | Rejeter les heures hors plage dans la chronologie clinique partagée | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-178 | S | Prevention : départager les dates de même instant de façon stable | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-179 | S | Tests fictifs de rollover et de fuseaux équivalents sans mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)

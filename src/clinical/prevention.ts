@@ -28,6 +28,7 @@ export function buildPreventionReview(
     ? patient.age : null;
   let lastDatedConsultation: string | null = null;
   let lastTimestamp = -Infinity;
+  let lastId = '';
 
   // QW-160: no other patient's appointment may influence documentary prevention.
   // Use the same strict clinical date parser as the longitudinal timeline.
@@ -44,8 +45,10 @@ export function buildPreventionReview(
     if (!visit || visit.patientId !== patient.id ||
         typeof visit.id !== 'string' || idCounts.get(visit.id) !== 1) continue;
     const timestamp = recordedDateTimestamp(visit.date);
-    if (timestamp === null || timestamp <= lastTimestamp) continue;
+    if (timestamp === null || timestamp < lastTimestamp ||
+        (timestamp === lastTimestamp && visit.id >= lastId)) continue;
     lastTimestamp = timestamp;
+    lastId = visit.id;
     lastDatedConsultation = visit.date;
   }
 

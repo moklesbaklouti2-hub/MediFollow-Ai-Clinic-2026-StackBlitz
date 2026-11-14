@@ -1489,3 +1489,10 @@
 - Clinical Memory et Prevention excluent les identifiants de consultation dupliqués dans l'ensemble des consultations, y compris les collisions entre patients, avant de sélectionner les diagnostics ou la dernière date.
 - Tests fictifs ajoutés à la suite existante : doublons locaux et inter-patients, conservation des résultats fiables et non-mutation. Aucun changement des données sources ni décision clinique.
 - CI du nouveau SHA et essais manuels ultérieurs requis. Aucun déploiement, donnée réelle ou changement des branches protégées.
+
+### 2026-11-14 — QW-177 à QW-179 : chronologie clinique stricte
+- Base `b4b44f3c737b3e9de7502d9d06d7695c6e6edb0b`, run 43538215413 terminé, 11/11 jobs réussis.
+- QW-177 : rejeter les heures hors plage, notamment 24:00 que Date.parse normalise au lendemain, dans le validateur partagé.
+- QW-178 : départager les dates Prevention représentant le même instant par identifiant stable, indépendamment de l'ordre des imports.
+- QW-179 : tests fictifs de rollover, fuseaux équivalents, ordre inversé et non-mutation dans la suite clinique existante.
+- Validation du nouveau SHA et essais manuels requis. Branche de préparation uniquement ; aucune donnée réelle, dépense ou déploiement.

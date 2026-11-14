@@ -12,6 +12,9 @@ export function recordedDateTimestamp(value: unknown): number | null {
   }
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(text)) return null;
   if (!isValidFollowUpDate(text.slice(0, 10))) return null;
+  // Reject rollover at 24:00 and out-of-range clock components explicitly.
+  if (Number(text.slice(11, 13)) > 23 || Number(text.slice(14, 16)) > 59 ||
+      Number(text.slice(17, 19)) > 59) return null;
   const timestamp = Date.parse(text);
   return Number.isFinite(timestamp) ? timestamp : null;
 }
