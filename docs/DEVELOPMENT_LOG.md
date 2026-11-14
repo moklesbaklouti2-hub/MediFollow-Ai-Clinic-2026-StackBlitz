@@ -1543,3 +1543,9 @@
 - QW-196 : refuser les caractères de contrôle invisibles et les commandes directionnelles explicites susceptibles de masquer du texte clinique, sans les supprimer silencieusement.
 - QW-197 : refuser les séparateurs de ligne non pris en charge ; conserver CR/LF et tabulations usuelles ainsi que les caractères de liaison utiles aux écritures multilingues.
 - QW-198 : tests fictifs de refus et de conservation du texte autorisé dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-14 — QW-199 à QW-201 : intégrité Unicode Express
+- Base `20aba5bd834517e14d682f6d466183266405d0d8`, run 43602199770 : 11 jobs réussis, SHA retrouvé dans chacun des journaux.
+- QW-199 : refuser les demi-surrogates UTF-16 isolés sans altérer les caractères supplémentaires valides.
+- QW-200 : refuser les caractères de formatage invisibles supplémentaires (trait d’union conditionnel, word joiner, séparateurs invisibles), préserver les joiners arabes.
+- QW-201 : tests fictifs de refus et de conservation dans test-patient-linkage. Aucun changement de stockage. CI du nouveau SHA requise.

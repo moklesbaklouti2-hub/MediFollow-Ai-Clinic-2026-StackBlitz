@@ -34,6 +34,11 @@ export function parseExpressDraft(input: unknown): ExpressDraftResult {
   if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u061C\u200B\u200E\u200F\u2028-\u202E\u2066-\u2069\uFEFF]/u.test(input)) {
     return { valid: false, reason: 'La note contient un caractère de contrôle ou un séparateur non pris en charge. Vérifiez le texte avant le transfert.' };
   }
+  // Reject malformed UTF-16 and additional invisible formatting characters.
+  // Unicode mode preserves valid supplementary characters and Arabic joiners.
+  if (/[\uD800-\uDFFF\u00AD\u034F\u180E\u2060-\u2064\u206A-\u206F]/u.test(input)) {
+    return { valid: false, reason: 'La note contient un caractère Unicode non pris en charge. Vérifiez le texte avant le transfert.' };
+  }
   const lines = input.split(/\r\n|\n|\r/).map(s => s.trim()).filter(Boolean);
   const fields: ExpressFields = {};
   for (const line of lines) {

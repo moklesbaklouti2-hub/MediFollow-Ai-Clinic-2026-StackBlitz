@@ -2263,3 +2263,12 @@ assert.deepEqual(parseExpressDraft('Motif:\tExemple fictif\r\nSymptômes: Cépha
   { valid: true, fields: { motif: 'Exemple fictif', symptoms: 'Céphalée' } });
 assert.equal(parseExpressDraft('Motif: مثال\u200cاختبار').valid, true);
 console.log('PASS QW-196..198: Express control characters and supported line boundaries.');
+
+ 
+// QW-199..201: malformed UTF-16 and additional invisible formatting.
+for (const character of ['\uD800', '\uDC00', '\u00AD', '\u034F', '\u180E', '\u2060', '\u2063', '\u206A']) {
+  assert.equal(parseExpressDraft('Motif: Exemple' + character + ' fictif').valid, false);
+}
+assert.equal(parseExpressDraft('Motif: Exemple \u{1F642} fictif').valid, true);
+assert.equal(parseExpressDraft('Motif: مثال\u200dاختبار').valid, true);
+console.log('PASS QW-199..201: Unicode integrity in Express notes.');
