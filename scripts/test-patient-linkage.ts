@@ -2242,3 +2242,13 @@ const expressPage190 = readFileSync(new URL('../src/pages/Consultations.tsx', im
 assert.ok(expressPage190.includes('expressDraftPatientBinding(expressPatientId, patientId,') &&
   expressPage190.indexOf('setExpressPatientId(binding);') < expressPage190.indexOf('setExpressDraft(event.target.value);') &&
   expressPage190.includes('disabled={Boolean(editingId) || expressPatientMismatch || !expressDraft.trim()}'));
+
+// QW-193..195: raw Express text must not disappear on save or opening a record.
+for (const action of ['startEditing(item: (typeof consultations)[number])', 'saveConsultation()']) {
+  const start = expressPage190.indexOf('function ' + action + ' {');
+  assert.ok(start >= 0);
+  const guard = expressPage190.slice(start, start + 450);
+  assert.ok(guard.includes('if (expressDraft.trim()) {') && guard.includes('return;'), 'Pending Express note must block ' + action);
+  assert.ok(guard.indexOf('if (expressDraft.trim()) {') < guard.indexOf('return;'));
+}
+console.log('PASS QW-193..195: pending Express note guards.');

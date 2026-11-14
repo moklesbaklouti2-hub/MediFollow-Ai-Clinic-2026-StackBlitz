@@ -361,6 +361,10 @@ export default function Consultations({
   }
 
   function startEditing(item: (typeof consultations)[number]) {
+    if (expressDraft.trim()) {
+      window.alert('Une note express non transférée est en cours. Transférez-la ou réinitialisez explicitement la consultation avant d’ouvrir un autre dossier.');
+      return;
+    }
     const currentConsultations = getConsultations();
     if (!hasUniqueConsultationId(item.id, currentConsultations) ||
         currentConsultations.find(record => record.id === item.id)?.patientId !== item.patientId ||
@@ -511,6 +515,10 @@ export default function Consultations({
   }
 
   function saveConsultation() {
+    if (expressDraft.trim()) {
+      window.alert('Une note express non transférée est en cours. Transférez-la ou réinitialisez explicitement la consultation avant de sauvegarder.');
+      return;
+    }
     if (expressPatientId && expressPatientId !== patientId) {
       window.alert('Saisie express liée à un autre patient. Revenez au dossier initial ou annulez avant de sauvegarder.');
       return;

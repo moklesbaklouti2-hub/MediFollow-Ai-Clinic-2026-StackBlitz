@@ -1531,3 +1531,9 @@
 - QW-190 : lier la note dès la saisie au patient confirmé, et non seulement au transfert ; refuser toute réattribution implicite.
 - QW-191 : désactiver la saisie sans patient confirmé/spécialité et en cas de changement de patient ; conserver le brouillon jusqu'au retour ou à la réinitialisation explicite.
 - QW-192 : tests fictifs du helper et du contrat UI dans test-patient-linkage. Aucun changement du stockage, aucune donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-14 — QW-193 à QW-195 : conservation de la note Express non transférée
+- Base `e066e40883f8ff704310477b9aae89e8e68bc028`, run 43592945705 terminé avec 11/11 jobs réussis.
+- QW-193 : bloquer la sauvegarde si une note Express non vide reste à transférer ; éviter sa disparition silencieuse.
+- QW-194 : bloquer l’ouverture d’une consultation existante dans le même cas ; conserver le texte jusqu’au transfert ou à la réinitialisation explicite.
+- QW-195 : contrats automatisés des deux garde-fous dans la suite fictive existante. Aucun changement de stockage, aucune donnée réelle. CI du nouveau SHA requise.

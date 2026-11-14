@@ -284,6 +284,10 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-191 | S | Express : bloquer la saisie et le transfert en cas de patient changé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-192 | S | Tests fictifs de liaison du brouillon avant transfert | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-193 | S | Express : bloquer la sauvegarde tant que la note brute non vide n’est pas transférée | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-194 | S | Express : préserver la note brute lors de l’ouverture d’une consultation existante | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-195 | S | Contrats automatisés des deux garde-fous Express | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 ## File de travail proposée (non commencée)
 
 | Priorité | ID | Taille estimative | Objectif précis | Critère de clôture |
