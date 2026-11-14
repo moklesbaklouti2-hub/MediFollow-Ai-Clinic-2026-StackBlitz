@@ -193,6 +193,16 @@ export default function Consultations({
   useEffect(() => {
     if (commandActions.length === 0) return;
 
+    // A patient-changing voice batch must start with exactly one selection.
+    // Never let a rejected selection fall through to clinical field writes.
+    const selections = commandActions.filter(action => action.type === 'select_patient');
+    if (selections.length > 0 && (editingId !== null || expressPatientId !== null ||
+        selections.length !== 1 || commandActions[0].type !== 'select_patient')) {
+      setCommandFeedback('Sélection vocale refusée : terminez la consultation liée ou formulez une seule sélection patient en premier. Aucun champ modifié.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
     const normalize = (value: string) =>
       value.toLocaleLowerCase('fr')
         .normalize('NFD')
@@ -209,29 +219,31 @@ export default function Consultations({
         const requested = normalize(action.patientName);
         if (!requested) {
           feedback.push('Le nom du patient n’a pas été reconnu. Aucun patient n’a été sélectionné.');
-          continue;
+          break;
         }
-        const exact = patients.filter((patient) => normalize(patient.name) === requested);
+        const exact = patients.filter((patient) => typeof patient.name === 'string' && normalize(patient.name) === requested);
         const requestedWords = requested.split(' ').filter((word) => word.length > 1);
         const candidates = exact.length > 0
           ? exact
           : patients.filter((patient) => {
-              const name = normalize(patient.name);
+              const name = typeof patient.name === 'string' ? normalize(patient.name) : '';
+              if (!name) return false;
               return name.includes(requested) ||
                 requested.includes(name) ||
                 (requestedWords.length > 0 && requestedWords.every((word) => name.includes(word)));
             });
 
-        if (candidates.length === 1) {
+        if (candidates.length === 1 && hasConfirmedPatientSelection(candidates[0].id, patients)) {
           setPatientId(candidates[0].id);
           setSaved(false);
           applied += 1;
+          continue;
         } else if (candidates.length > 1) {
           feedback.push(`Plusieurs patients correspondent à « ${action.patientName} ». Précisez le nom complet.`);
         } else {
           feedback.push(`Patient « ${action.patientName} » introuvable. Aucun patient n'a été sélectionné.`);
         }
-        continue;
+        break;
       }
 
       if (action.type === 'set_consultation_field') {
@@ -294,7 +306,7 @@ export default function Consultations({
     if (applied > 0) feedback.unshift(`${applied} modification(s) appliquée(s) au formulaire de consultation. Vérifiez les champs avant l'enregistrement.`);
     setCommandFeedback(feedback.join(' '));
     onCommandActionsConsumed?.();
-  }, [commandActions, patients, onCommandActionsConsumed]);
+  }, [commandActions, patients, onCommandActionsConsumed, editingId, expressPatientId]);
 
   useEffect(() => {
     if (motif.trim().length < 3) {

@@ -1561,3 +1561,9 @@
 - QW-205 : exiger une liaison patient préexistante et valide avant transfert, même si un état UI inattendu laisse la liaison absente.
 - QW-206 : empêcher l'ouverture d'une autre consultation tant qu'une consultation Express reste liée, même après vidage de la note brute par transfert. Sauvegarde ou réinitialisation explicite nécessaire.
 - QW-207 : contrats automatisés fictifs de l'ordre des garde-fous dans test-patient-linkage. Aucun changement de stockage, aucune donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-208 à QW-210 : sélection patient vocale sûre
+- Base `7f51ea89f7399d8cf18fa97839fd39475d15f93b`, run 43640896256 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-208 : refuser les lots vocaux changeant de patient pendant une édition ou une liaison Express ; exiger une seule sélection en première position.
+- QW-209 : interrompre le lot si la sélection échoue, vérifier l'identifiant unique et ignorer les noms importés non textuels ou vides.
+- QW-210 : contrats automatisés de non-régression dans test-patient-linkage. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.

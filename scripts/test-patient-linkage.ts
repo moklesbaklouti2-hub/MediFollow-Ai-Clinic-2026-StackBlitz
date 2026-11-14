@@ -2295,3 +2295,17 @@ console.log('PASS QW-202..204: meaningful Express fields and strict patient bind
   assert.ok(guard >= 0 && guard < opening.indexOf('getConsultations()') && opening.slice(guard, opening.indexOf('getConsultations()')).includes('return;'));
 }
 console.log('PASS QW-205..207: explicit Express binding and protection after transfer.');
+
+// QW-208..210: patient-changing voice batches fail closed before clinical writes.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (commandActions.length === 0) return;')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const guard = voice.indexOf('selections.length > 0 && (editingId !== null || expressPatientId !== null ||');
+  assert.ok(guard >= 0 && guard < voice.indexOf('for (const action of commandActions)'));
+  assert.ok(voice.includes("selections.length !== 1 || commandActions[0].type !== 'select_patient'"));
+  const selection = voice.split("if (action.type === 'select_patient') {")[1]?.split("if (action.type === 'set_consultation_field')")[0] ?? '';
+  assert.ok(selection.includes('candidates.length === 1 && hasConfirmedPatientSelection(candidates[0].id, patients)'));
+  assert.ok(selection.includes('break;') && selection.trim().endsWith('break;\n      }'));
+  assert.ok(selection.includes("if (!name) return false;"));
+}
+console.log('PASS QW-208..210: voice patient selection guards.');
