@@ -11,7 +11,7 @@ import { compareRecentVitals, buildRecordedVitalChartPoints } from '../clinical/
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
 import { summarizeDocumentedSpecialties } from '../clinical/specialtyPathways';
-import { orderRecordedNewest, recordedDateTimestamp, displayRecordedDate } from '../clinical/medicalTimeline';
+import { orderRecordedNewest, displayRecordedDate } from '../clinical/medicalTimeline';
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import { filterRecordedEvents } from '../clinical/timelineFilter';
 import { searchRecordedEvents } from '../clinical/timelineSearch';

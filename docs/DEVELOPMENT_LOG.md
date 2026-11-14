@@ -1515,3 +1515,7 @@
 - GitHub Actions run 43570237126, job `Tests / clinique` rouge : ancien contrat statique QW-046 recherchait `recordedDateTimestamp` et `Object.create(null)` directement dans `Patients.tsx` après extraction de ces garde-fous dans `clinical/patientLastVisit.ts`.
 - Adapter le contrat pour contrôler à la fois l'appel UI au helper et la présence des contrôles réels dans le module réutilisable. Ne pas retirer les critères de protection, ne pas modifier les données ou les règles métier.
 - CI complète sur le nouveau SHA requise avant annonce VERT.
+
+### 2026-11-14 — réparation de compilation après extraction de la dernière visite
+- GitHub Actions #43570350766, compilation rouge : import `recordedDateTimestamp` devenu inutilisé dans `src/pages/Patients.tsx` après son déplacement dans le helper `patientLastVisit.ts`.
+- Suppression de l'import inemployé uniquement, aucune modification de la logique métier ni des tests. CI 11/11 requise sur nouveau SHA.
