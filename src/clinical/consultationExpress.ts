@@ -53,7 +53,7 @@ export function parseExpressDraft(input: unknown): ExpressDraftResult {
     }
     const field = LABELS[label];
     const value = pair[2].trim();
-    if (!value || value.length > MAX_FIELD_CHARS) {
+    if (!value || !value.replace(/[\u200C\u200D]/gu, '').trim() || value.length > MAX_FIELD_CHARS) {
       return { valid: false, reason: 'Un champ est vide ou dépasse 700 caractères.' };
     }
     if (Object.prototype.hasOwnProperty.call(fields, field)) {
@@ -76,6 +76,6 @@ export function expressWouldOverwrite(incoming: ExpressFields, existing: Express
 
 // Bind a note to its first confirmed patient, before any transfer to the form.
 export function expressDraftPatientBinding(boundPatientId: string | null, selectedPatientId: string, confirmed: boolean): string | null {
-  if (!confirmed || !selectedPatientId.trim() || (boundPatientId !== null && boundPatientId !== selectedPatientId)) return null;
+  if (confirmed !== true || typeof selectedPatientId !== 'string' || !selectedPatientId.trim() || (boundPatientId !== null && boundPatientId !== selectedPatientId)) return null;
   return boundPatientId ?? selectedPatientId;
 }

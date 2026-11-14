@@ -1549,3 +1549,9 @@
 - QW-199 : refuser les demi-surrogates UTF-16 isolés sans altérer les caractères supplémentaires valides.
 - QW-200 : refuser les caractères de formatage invisibles supplémentaires (trait d’union conditionnel, word joiner, séparateurs invisibles), préserver les joiners arabes.
 - QW-201 : tests fictifs de refus et de conservation dans test-patient-linkage. Aucun changement de stockage. CI du nouveau SHA requise.
+
+### 2026-11-14 — QW-202 à QW-204 : champs Express et liaison stricte
+- Base `da54338b1efdd8c27006551d867591e7f1c57967`, run 43619053934 : 11 jobs terminés avec succès, SHA retrouvé dans chaque journal.
+- QW-202 : refuser les champs constitués uniquement de joiners et d'espaces, sans supprimer les joiners des textes multilingues valides.
+- QW-203 : refuser les identifiants patients non textuels et les confirmations non booléennes dans le helper de liaison.
+- QW-204 : tests fictifs des deux protections et de la conservation des cas valides. Aucun changement du stockage ; CI du nouveau SHA requise.

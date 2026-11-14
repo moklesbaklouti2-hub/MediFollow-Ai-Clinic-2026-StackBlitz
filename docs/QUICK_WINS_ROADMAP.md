@@ -292,9 +292,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-197 | S | Express : refuser les séparateurs de ligne non pris en charge sans altérer le texte | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-198 | S | Tests fictifs des caractères interdits et du texte multilingue autorisé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
-| QW-199 | S | Express : refuser les séquences UTF-16 malformées | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-200 | S | Express : refuser les formatages invisibles supplémentaires | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-201 | S | Tests fictifs Unicode et préservation des caractères valides | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-199 | S | Express : refuser les séquences UTF-16 malformées | branche de préparation | CI 11/11 requise | VALIDÉ CI 43619053934 |
+| QW-200 | S | Express : refuser les formatages invisibles supplémentaires | branche de préparation | CI 11/11 requise | VALIDÉ CI 43619053934 |
+| QW-201 | S | Tests fictifs Unicode et préservation des caractères valides | branche de préparation | CI 11/11 requise | VALIDÉ CI 43619053934 |
+
+| QW-202 | S | Express : refuser les champs composés uniquement de joiners et espaces | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-203 | S | Express : liaison patient strictement textuelle et confirmation booléenne | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-204 | S | Tests fictifs des champs et de la liaison stricte | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

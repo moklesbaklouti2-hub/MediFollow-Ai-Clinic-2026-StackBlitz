@@ -2272,3 +2272,14 @@ for (const character of ['\uD800', '\uDC00', '\u00AD', '\u034F', '\u180E', '\u20
 assert.equal(parseExpressDraft('Motif: Exemple \u{1F642} fictif').valid, true);
 assert.equal(parseExpressDraft('Motif: مثال\u200dاختبار').valid, true);
 console.log('PASS QW-199..201: Unicode integrity in Express notes.');
+
+// QW-202..204: reject joiner-only values and malformed patient selection.
+for (const value of ['\u200c', '\u200d \u200c']) {
+  assert.equal(parseExpressDraft('Motif: ' + value).valid, false);
+  assert.equal(parseExpressDraft('Motif: Exemple fictif\nPlan: ' + value).valid, false);
+}
+assert.equal(parseExpressDraft('Motif: مثال\u200cاختبار').valid, true);
+assert.equal(expressDraftPatientBinding(null, 42 as unknown as string, true), null);
+assert.equal(expressDraftPatientBinding(null, 'fictif-a', 'true' as unknown as boolean), null);
+assert.equal(expressDraftPatientBinding(null, 'fictif-a', true), 'fictif-a');
+console.log('PASS QW-202..204: meaningful Express fields and strict patient binding.');
