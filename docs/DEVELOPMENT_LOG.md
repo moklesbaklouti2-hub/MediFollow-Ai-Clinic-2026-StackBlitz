@@ -1503,3 +1503,10 @@
 - QW-183/184 : les formulaires administratifs ajout/modification appliquent un parseur d'âge entier 0–130, sans réinterpréter automatiquement les valeurs des dossiers historiques.
 - Tests de non-régression fictifs dans les suites Trends/Referral et Patient Linkage existantes, déjà reliées aux tests CI. Aucune donnée réelle, aucun déploiement, aucune modification de main/audit/PR #2.
 - Ne considérer ce lot validé qu'après compilation et 11 jobs GitHub Actions sur le nouveau SHA exact.
+
+### 2026-11-14 — QW-185 à QW-187 : dernière visite fiable dans la liste Patients
+- Base `9e93565ad23d156c82970be2a86b9e0843e0ed10`, CI GitHub Actions run 43570034770 11/11 réussis.
+- Le tableau de patients attribue une dernière visite seulement si la source comporte un ID de consultation unique, un patient confirmé non dupliqué et une date valide.
+- Les ID importés qui ressemblent aux propriétés spéciales JavaScript restent protégés grâce au dictionnaire sans prototype. Résultat indépendant de l'ordre d'import, pas de mutation.
+- Nouveaux tests fictifs ajoutés à `scripts/test-patient-linkage.ts`, déjà couvert par la CI. Aucun déploiement, modification de `main`, PR #2, ni donnée réelle.
+- Exiger 11/11 succès sur le nouveau SHA avant validation.

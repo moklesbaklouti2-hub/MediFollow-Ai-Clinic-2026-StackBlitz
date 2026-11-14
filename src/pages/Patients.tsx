@@ -6,6 +6,7 @@ import PatientClinicalInfo from '../components/PatientClinicalInfo';
 import { selectUniquePatient } from '../services/uniquePatientSelection';
 import { latestVitalReadings } from '../clinical/patientVitals';
 import { buildClinicalMemory } from '../clinical/clinicalMemory';
+import { documentedLastVisitByPatient } from '../clinical/patientLastVisit';
 import { compareRecentVitals, buildRecordedVitalChartPoints } from '../clinical/trends';
 import { buildPreventionReview } from '../clinical/prevention';
 import { buildReferralSource } from '../clinical/referral';
@@ -150,18 +151,12 @@ export default function Patients() {
     timelineFilter === 'prescription' && timelineOrderKind !== 'all',
   ].filter(Boolean).length;
 
-  const lastVisitByPatient = useMemo(() => {
-    // Prototype-free map: imported patient IDs cannot shadow object keys.
-    const result: Record<string, string> = Object.create(null);
-    for (const consultation of orderRecordedNewest(consultations)) {
-      if (typeof consultation.patientId !== 'string' || !consultation.patientId.trim() ||
-          recordedDateTimestamp(consultation.date) === null) continue;
-      if (!Object.prototype.hasOwnProperty.call(result, consultation.patientId)) {
-        result[consultation.patientId] = consultation.date;
-      }
-    }
-    return result;
-  }, [consultations]);
+  // QW-185..187: do not show last visits from orphan, duplicate or
+  // ambiguously linked imported encounters.
+  const lastVisitByPatient = useMemo(
+    () => documentedLastVisitByPatient(patients, consultations),
+    [patients, consultations],
+  );
 
   // Each latest reading keeps the date of its own consultation.
   const latestVitals = selected ? latestVitalReadings(patientConsultations) : null;

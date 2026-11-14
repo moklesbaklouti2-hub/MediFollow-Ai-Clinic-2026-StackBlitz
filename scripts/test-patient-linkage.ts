@@ -15,6 +15,7 @@ import { buildReferralSource } from '../src/clinical/referral.ts';
 import { summarizeDocumentedSpecialties } from '../src/clinical/specialtyPathways.ts';
 import { summarizeRecordedActivity } from '../src/clinical/activityStats.ts';
 import { recordedDateTimestamp, orderRecordedNewest, displayRecordedDate } from '../src/clinical/medicalTimeline.ts';
+import { documentedLastVisitByPatient } from '../src/clinical/patientLastVisit.ts';
 import { documentedSupplementalOrders, documentedPrescriptionStatus } from '../src/clinical/prescriptionTimeline.ts';
 import { filterRecordedEvents } from '../src/clinical/timelineFilter.ts';
 import { searchRecordedEvents } from '../src/clinical/timelineSearch.ts';
@@ -2182,3 +2183,37 @@ const patientAgePageSource = readFileSync(
 assert.equal((patientAgePageSource.match(/parsePatientAgeInput\((?:age|editAge)\)/g) ?? []).length, 2);
 assert.equal((patientAgePageSource.match(/type="number" min="0" max="130" step="1"/g) ?? []).length, 2);
 console.log('PASS QW-183..184: valid whole-number patient ages in both forms.');
+
+
+// QW-185..187: the patient list must never attribute an imported duplicate,
+// orphan encounter or impossible date as a trustworthy last visit.
+const lastVisitPatients = [
+  { id: 'fictif-a' }, { id: 'fictif-b' }, { id: 'dup-patient' },
+  { id: 'dup-patient' }, { id: '__proto__' },
+];
+const lastVisitRecords = [
+  { id: 'visit-a1', patientId: 'fictif-a', date: '2026-11-01' },
+  { id: 'visit-a2', patientId: 'fictif-a', date: '2026-11-11' },
+  { id: 'visit-b', patientId: 'fictif-b', date: '2026-11-10' },
+  { id: 'dupl', patientId: 'fictif-a', date: '2026-11-13' },
+  { id: 'dupl', patientId: 'fictif-b', date: '2026-11-14' },
+  { id: '', patientId: 'fictif-a', date: '2026-11-14' },
+  { id: 'bad-date', patientId: 'fictif-a', date: '2026-02-30' },
+  { id: 'orphan', patientId: 'fictif-x', date: '2026-11-14' },
+  { id: 'ambiguous', patientId: 'dup-patient', date: '2026-11-14' },
+  { id: 'proto', patientId: '__proto__', date: '2026-11-09' },
+];
+const lastVisitSnapshot = JSON.stringify({ lastVisitPatients, lastVisitRecords });
+const lastVisits = documentedLastVisitByPatient(lastVisitPatients, lastVisitRecords);
+assert.equal(lastVisits['fictif-a'], '2026-11-11');
+assert.equal(lastVisits['fictif-b'], '2026-11-10');
+assert.equal(lastVisits['dup-patient'], undefined);
+assert.equal(lastVisits['fictif-x'], undefined);
+assert.equal(lastVisits['__proto__'], '2026-11-09');
+assert.equal(Object.getPrototypeOf(lastVisits), null);
+assert.deepEqual(documentedLastVisitByPatient(lastVisitPatients, lastVisitRecords.slice().reverse()), lastVisits);
+assert.equal(JSON.stringify({ lastVisitPatients, lastVisitRecords }), lastVisitSnapshot);
+assert.ok(patientAgePageSource.includes('documentedLastVisitByPatient(patients, consultations)'),
+  'Patient list must use the guarded, documented last-visit helper.');
+console.log('PASS QW-185..187: unique patient links and consultation provenance for last visit.');
+

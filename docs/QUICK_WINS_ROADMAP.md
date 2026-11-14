@@ -271,6 +271,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-182 | S | Graphiques Patients : exclure les consultations sans ID unique et conserver un ordre déterministe | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
 | QW-183 | S | Création patient : limiter les âges saisis à un entier documenté entre 0 et 130 ans | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
 | QW-184 | S | Modification patient : utiliser le même validateur d’âge que la création et protéger les imports anciens | branche de préparation | Tests fictifs et CI 11/11 requis sur SHA exact | PRÉPARÉ NON VALIDÉ |
+| QW-185 | S | Liste Patients : ne plus attribuer la dernière visite à un patient absent ou dupliqué | branche de préparation | Tests fictifs et CI 11/11 sur HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-186 | S | Liste Patients : exclure les dates issues de consultations sans identifiant unique | branche de préparation | Tests fictifs et CI 11/11 sur HEAD exact | PRÉPARÉ NON VALIDÉ |
+| QW-187 | S | Liste Patients : conserver un tri déterministe des dates valides et protéger les identifiants spéciaux | branche de préparation | Tests fictifs et CI 11/11 sur HEAD exact | PRÉPARÉ NON VALIDÉ |
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
