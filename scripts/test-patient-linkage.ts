@@ -584,11 +584,14 @@ for (const invalid of ['2026-02-30', '2026-02-29', 'date inconnue', '11/11/2026'
   assert.equal(displayRecordedDate(invalid), 'Date non renseignée');
 }
 assert.notEqual(displayRecordedDate('2026-11-11T09:00:00Z'), 'Date non renseignée');
+const lastVisitHelperSource = readFileSync(
+  new URL('../src/clinical/patientLastVisit.ts', import.meta.url), 'utf8');
 assert.ok(patientPageSource.includes('orderRecordedNewest(consultations.filter(') &&
   patientPageSource.includes('orderRecordedNewest(prescriptions.filter(') &&
   patientPageSource.includes('const medicalTimeline = useMemo(() => orderRecordedNewest([') &&
-  patientPageSource.includes('recordedDateTimestamp(consultation.date) === null') &&
-  patientPageSource.includes('Object.create(null)') &&
+  patientPageSource.includes('documentedLastVisitByPatient(patients, consultations)') &&
+  lastVisitHelperSource.includes('recordedDateTimestamp(visit.date) !== null') &&
+  lastVisitHelperSource.includes('Object.create(null)') &&
   patientPageSource.includes('Spécialité :</b>') &&
   patientPageSource.includes('displayRecordedDate(entry.date)'),
   'Unified timeline must sort safely, display specialties and reject invalid last-visit dates.');

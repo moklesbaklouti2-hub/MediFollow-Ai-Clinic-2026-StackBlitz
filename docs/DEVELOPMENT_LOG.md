@@ -1510,3 +1510,8 @@
 - Les ID importés qui ressemblent aux propriétés spéciales JavaScript restent protégés grâce au dictionnaire sans prototype. Résultat indépendant de l'ordre d'import, pas de mutation.
 - Nouveaux tests fictifs ajoutés à `scripts/test-patient-linkage.ts`, déjà couvert par la CI. Aucun déploiement, modification de `main`, PR #2, ni donnée réelle.
 - Exiger 11/11 succès sur le nouveau SHA avant validation.
+
+### 2026-11-14 — adaptation du contrat QW-046 à QW-185..187
+- GitHub Actions run 43570237126, job `Tests / clinique` rouge : ancien contrat statique QW-046 recherchait `recordedDateTimestamp` et `Object.create(null)` directement dans `Patients.tsx` après extraction de ces garde-fous dans `clinical/patientLastVisit.ts`.
+- Adapter le contrat pour contrôler à la fois l'appel UI au helper et la présence des contrôles réels dans le module réutilisable. Ne pas retirer les critères de protection, ne pas modifier les données ou les règles métier.
+- CI complète sur le nouveau SHA requise avant annonce VERT.
