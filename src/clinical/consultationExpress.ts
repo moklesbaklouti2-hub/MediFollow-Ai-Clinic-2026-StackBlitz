@@ -63,3 +63,9 @@ export function expressWouldOverwrite(incoming: ExpressFields, existing: Express
     typeof existing[field] === 'string' && existing[field]!.trim().length > 0
   );
 }
+
+// Bind a note to its first confirmed patient, before any transfer to the form.
+export function expressDraftPatientBinding(boundPatientId: string | null, selectedPatientId: string, confirmed: boolean): string | null {
+  if (!confirmed || !selectedPatientId.trim() || (boundPatientId !== null && boundPatientId !== selectedPatientId)) return null;
+  return boundPatientId ?? selectedPatientId;
+}

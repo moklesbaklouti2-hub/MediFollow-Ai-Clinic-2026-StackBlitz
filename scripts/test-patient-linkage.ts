@@ -2229,3 +2229,16 @@ for (const label of ['constructor', '__proto__', 'unknown']) {
 assert.deepEqual(parseExpressDraft('Motif: Note fictive\nSymptômes: Exemple'),
   { valid: true, fields: { motif: 'Note fictive', symptoms: 'Exemple' } });
 assert.equal(parseExpressDraft('Motif: A\nMOTIF: B').valid, false);
+
+// QW-190..192: bind the raw note before transfer; switching patients cannot rebind it.
+const { expressDraftPatientBinding } = await import('../src/clinical/consultationExpress.ts');
+assert.equal(expressDraftPatientBinding(null, 'fictif-a', true), 'fictif-a');
+assert.equal(expressDraftPatientBinding(null, 'fictif-a', false), null);
+assert.equal(expressDraftPatientBinding(null, '', true), null);
+assert.equal(expressDraftPatientBinding('fictif-a', 'fictif-b', true), null);
+assert.equal(expressDraftPatientBinding('fictif-a', 'fictif-a', true), 'fictif-a');
+assert.equal(expressDraftPatientBinding('fictif-a', 'fictif-a', false), null);
+const expressPage190 = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+assert.ok(expressPage190.includes('expressDraftPatientBinding(expressPatientId, patientId,') &&
+  expressPage190.indexOf('setExpressPatientId(binding);') < expressPage190.indexOf('setExpressDraft(event.target.value);') &&
+  expressPage190.includes('disabled={Boolean(editingId) || expressPatientMismatch || !expressDraft.trim()}'));

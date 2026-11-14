@@ -1525,3 +1525,9 @@
 - Base `992efa40bbddb7f114826a88f5dc7fcb5466932e`, run 43570446545 terminé avec 11/11 jobs réussis.
 - Le parseur de note refuse les libellés hérités de Object.prototype (constructor, __proto__) comme tout libellé inconnu, avant de construire le brouillon. Aucun changement de sauvegarde ou stockage.
 - Tests fictifs dans test-patient-linkage : refus des libellés hérités/inconnus, acceptation des libellés français autorisés et refus des doublons. CI du nouveau SHA requise ; essais manuels non exécutés.
+
+### 2026-11-14 — QW-190 à QW-192 : liaison du brouillon Express avant transfert
+- Base `ffe8105c8e3494f5fa4752036513ec1966d34580`, run 43573899102 terminé 11/11 succès.
+- QW-190 : lier la note dès la saisie au patient confirmé, et non seulement au transfert ; refuser toute réattribution implicite.
+- QW-191 : désactiver la saisie sans patient confirmé/spécialité et en cas de changement de patient ; conserver le brouillon jusqu'au retour ou à la réinitialisation explicite.
+- QW-192 : tests fictifs du helper et du contrat UI dans test-patient-linkage. Aucun changement du stockage, aucune donnée réelle. CI du nouveau SHA requise.

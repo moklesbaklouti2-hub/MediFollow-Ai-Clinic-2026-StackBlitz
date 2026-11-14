@@ -280,6 +280,10 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-188 | S | Consultation Express : refuser les libellés hérités du prototype JavaScript | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 | QW-189 | S | Tests fictifs de liste fermée des libellés Express et doublons | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
+| QW-190 | S | Express : lier le brouillon brut au patient confirmé dès la saisie | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-191 | S | Express : bloquer la saisie et le transfert en cas de patient changé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-192 | S | Tests fictifs de liaison du brouillon avant transfert | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 ## File de travail proposée (non commencée)
 
 | Priorité | ID | Taille estimative | Objectif précis | Critère de clôture |

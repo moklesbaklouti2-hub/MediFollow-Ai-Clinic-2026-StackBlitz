@@ -8,7 +8,7 @@ import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, sel
 import { getConsultations } from '../services/storage';
 import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../services/consultationIdentity';
-import { parseExpressDraft, expressWouldOverwrite, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
+import { parseExpressDraft, expressWouldOverwrite, expressDraftPatientBinding, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
 
 
@@ -966,15 +966,22 @@ export default function Consultations({
             <textarea id="helios-express-draft" value={expressDraft}
               maxLength={MAX_EXPRESS_DRAFT_CHARS}
               placeholder={'Motif: Vertiges fictifs\\nSymptômes: Depuis 2 jours\\nHistoire: Traitement fictif\\nDiagnostic: À déterminer\\nPlan: À discuter'}
-              onChange={event => { setExpressDraft(event.target.value); setExpressFeedback(''); }}
-              rows={5} disabled={Boolean(editingId)} />
+              onChange={event => {
+                const binding = expressDraftPatientBinding(expressPatientId, patientId,
+                  hasConfirmedPatientSelection(patientId, patients) && Boolean(specialty));
+                if (binding === null) return;
+                setExpressPatientId(binding);
+                setExpressDraft(event.target.value);
+                setExpressFeedback('');
+              }}
+              rows={5} disabled={Boolean(editingId) || expressPatientMismatch || !hasConfirmedPatientSelection(patientId, patients) || !specialty} />
             <p className="patient-hint">
               Une ligne par champ : Motif, Symptômes, Histoire, Diagnostic, Plan.
               Sélectionnez d'abord un patient unique et une spécialité ci-dessous.
               Les valeurs existantes ne seront jamais écrasées. Validez et relisez les champs avant d'enregistrer.
             </p>
             <button type="button" className="consultation-save" onClick={applyExpressDraft}
-              disabled={Boolean(editingId) || !expressDraft.trim()}>
+              disabled={Boolean(editingId) || expressPatientMismatch || !expressDraft.trim()}>
               Préremplir les champs — sans enregistrer
             </button>
             {expressFeedback && <p role="status" className="patient-hint">{expressFeedback}</p>}
