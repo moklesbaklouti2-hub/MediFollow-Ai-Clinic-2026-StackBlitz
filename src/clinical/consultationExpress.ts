@@ -36,10 +36,12 @@ export function parseExpressDraft(input: unknown): ExpressDraftResult {
     if (!pair) {
       return { valid: false, reason: 'Chaque ligne doit commencer par un libellé suivi de deux-points.' };
     }
-    const field = LABELS[normalizeLabel(pair[1])];
-    if (!field) {
+    const label = normalizeLabel(pair[1]);
+    // Only explicitly declared labels are accepted, never inherited properties.
+    if (!Object.prototype.hasOwnProperty.call(LABELS, label)) {
       return { valid: false, reason: 'Libellé inconnu : utilisez Motif, Symptômes, Histoire, Diagnostic ou Plan.' };
     }
+    const field = LABELS[label];
     const value = pair[2].trim();
     if (!value || value.length > MAX_FIELD_CHARS) {
       return { valid: false, reason: 'Un champ est vide ou dépasse 700 caractères.' };

@@ -2220,3 +2220,12 @@ assert.ok(patientAgePageSource.includes('documentedLastVisitByPatient(patients, 
   'Patient list must use the guarded, documented last-visit helper.');
 console.log('PASS QW-185..187: unique patient links and consultation provenance for last visit.');
 
+
+// QW-188..189: unknown inherited labels must never enter an Express draft.
+const { parseExpressDraft } = await import('../src/clinical/consultationExpress.ts');
+for (const label of ['constructor', '__proto__', 'unknown']) {
+  assert.equal(parseExpressDraft(`Motif: Note fictive\n${label}: Texte fictif`).valid, false);
+}
+assert.deepEqual(parseExpressDraft('Motif: Note fictive\nSymptômes: Exemple'),
+  { valid: true, fields: { motif: 'Note fictive', symptoms: 'Exemple' } });
+assert.equal(parseExpressDraft('Motif: A\nMOTIF: B').valid, false);

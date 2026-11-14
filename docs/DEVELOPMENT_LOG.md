@@ -1519,3 +1519,9 @@
 ### 2026-11-14 — réparation de compilation après extraction de la dernière visite
 - GitHub Actions #43570350766, compilation rouge : import `recordedDateTimestamp` devenu inutilisé dans `src/pages/Patients.tsx` après son déplacement dans le helper `patientLastVisit.ts`.
 - Suppression de l'import inemployé uniquement, aucune modification de la logique métier ni des tests. CI 11/11 requise sur nouveau SHA.
+
+
+### 2026-11-14 — QW-188 à QW-189 : liste fermée Consultation Express
+- Base `992efa40bbddb7f114826a88f5dc7fcb5466932e`, run 43570446545 terminé avec 11/11 jobs réussis.
+- Le parseur de note refuse les libellés hérités de Object.prototype (constructor, __proto__) comme tout libellé inconnu, avant de construire le brouillon. Aucun changement de sauvegarde ou stockage.
+- Tests fictifs dans test-patient-linkage : refus des libellés hérités/inconnus, acceptation des libellés français autorisés et refus des doublons. CI du nouveau SHA requise ; essais manuels non exécutés.

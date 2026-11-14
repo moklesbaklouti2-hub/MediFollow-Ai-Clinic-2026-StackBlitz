@@ -277,6 +277,9 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
+| QW-188 | S | Consultation Express : refuser les libellés hérités du prototype JavaScript | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-189 | S | Tests fictifs de liste fermée des libellés Express et doublons | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 ## File de travail proposée (non commencée)
 
 | Priorité | ID | Taille estimative | Objectif précis | Critère de clôture |
