@@ -1482,3 +1482,10 @@
 - Nouvelle classification pure `followUpRemovalAction` : pas de suppression en l'absence d'ancien suivi ; refus si ancien suivi importé invalide et formulaire vide ; confirmation distincte si un suivi existant valide est volontairement effacé.
 - L'éditeur ne sauvegarde jamais silencieusement la disparition d'un ancien suivi malformé. Une correction explicite vers un plan valide reste possible. Le contrôle de version clinique QW-127 n'est pas contourné.
 - Tests synthétiques ajoutés à `scripts/test-follow-up.ts`, déjà exécuté par GitHub Actions. Aucun déploiement ou donnée réelle, `main` et PR #2 inchangés.
+
+
+### 2026-11-14 — QW-174 à QW-176 : provenance Clinical Memory et Prevention
+- Base `4dae3ade6313ae751dea82e68a7f96053e5b6141`, run 43529739112 terminé avec 11/11 jobs réussis.
+- Clinical Memory et Prevention excluent les identifiants de consultation dupliqués dans l'ensemble des consultations, y compris les collisions entre patients, avant de sélectionner les diagnostics ou la dernière date.
+- Tests fictifs ajoutés à la suite existante : doublons locaux et inter-patients, conservation des résultats fiables et non-mutation. Aucun changement des données sources ni décision clinique.
+- CI du nouveau SHA et essais manuels ultérieurs requis. Aucun déploiement, donnée réelle ou changement des branches protégées.

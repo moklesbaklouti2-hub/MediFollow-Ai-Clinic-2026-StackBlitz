@@ -34,9 +34,15 @@ export function buildPreventionReview(
   if (typeof patient.id !== 'string' || !patient.id.trim()) {
     return { recordedAge: null, lastDatedConsultation: null, discussionTopics: PREVENTION_TOPICS };
   }
+  const idCounts = new Map<string, number>();
+  for (const visit of consultations) {
+    if (visit && typeof visit.id === 'string' && visit.id.trim()) {
+      idCounts.set(visit.id, (idCounts.get(visit.id) ?? 0) + 1);
+    }
+  }
   for (const visit of consultations) {
     if (!visit || visit.patientId !== patient.id ||
-        typeof visit.id !== 'string' || !visit.id.trim()) continue;
+        typeof visit.id !== 'string' || idCounts.get(visit.id) !== 1) continue;
     const timestamp = recordedDateTimestamp(visit.date);
     if (timestamp === null || timestamp <= lastTimestamp) continue;
     lastTimestamp = timestamp;

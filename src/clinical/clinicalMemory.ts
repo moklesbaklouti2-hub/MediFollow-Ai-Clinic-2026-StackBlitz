@@ -66,9 +66,15 @@ export function buildClinicalMemory(
 
   // QW-157/158: accept only attributable clinical records and valid timeline
   // dates. An invalid date is unknown, never silently normalized by Date.parse.
+  const idCounts = new Map<string, number>();
+  for (const visit of consultations) {
+    if (visit && typeof visit.id === 'string' && visit.id.trim()) {
+      idCounts.set(visit.id, (idCounts.get(visit.id) ?? 0) + 1);
+    }
+  }
   const documentedDiagnoses = consultations
     .filter(visit => visit && visit.patientId === patient.id &&
-      typeof visit.id === 'string' && visit.id.trim().length > 0 &&
+      typeof visit.id === 'string' && idCounts.get(visit.id) === 1 &&
       typeof visit.diagnosis === 'string' && visit.diagnosis.trim().length > 0)
     .map(visit => ({
       consultationId: visit.id,

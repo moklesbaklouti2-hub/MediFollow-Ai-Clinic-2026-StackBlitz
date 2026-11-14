@@ -47,3 +47,17 @@ assert.equal(buildPreventionReview({ ...patient, id: '' }, visits).lastDatedCons
 assert.equal(buildPreventionReview({ ...patient, id: '' }, visits).recordedAge, null);
 assert.equal(JSON.stringify({ patient, visits }), before, 'Prevention must not mutate documentary inputs.');
 console.log('PASS QW-156..160: patient isolation, verified chronology, deterministic memory and prevention.');
+
+// QW-174..176: ambiguous IDs are excluded globally, even across patients.
+const collisions: MemoryVisit[] = [
+  ...visits,
+  { id: 'duplicate-local', patientId: patient.id, date: '2026-11-12', diagnosis: 'Ambiguous local A' },
+  { id: 'duplicate-local', patientId: patient.id, date: '2026-11-13', diagnosis: 'Ambiguous local B' },
+  { id: 'duplicate-cross', patientId: patient.id, date: '2026-11-14', diagnosis: 'Ambiguous cross-patient' },
+  { id: 'duplicate-cross', patientId: 'patient-fictif-b', date: '2026-11-14', diagnosis: '' },
+];
+const collisionSnapshot = JSON.stringify(collisions);
+assert.deepEqual(buildClinicalMemory(patient, collisions), memory);
+assert.deepEqual(buildPreventionReview(patient, collisions), review);
+assert.equal(JSON.stringify(collisions), collisionSnapshot);
+console.log('PASS QW-174..176: duplicate consultation provenance excluded without mutation.');

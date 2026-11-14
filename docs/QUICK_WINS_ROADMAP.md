@@ -259,6 +259,10 @@ La gestion du stock reste un module secondaire pour les consommables, médicamen
 | QW-172 | S | Permettre la correction explicite d'un suivi importé tout en conservant les données sources avant sauvegarde | branche de préparation | Tests non-mutation, CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 | QW-173 | S | Demander une confirmation distincte avant de supprimer un suivi HELIOS valide en vidant le formulaire | branche de préparation | Contrat UI et tests fictifs, CI 11/11 requis | PRÉPARÉ NON VALIDÉ |
 
+| QW-174 | S | Clinical Memory : exclure les diagnostics à ID de consultation dupliqué | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-175 | S | Prevention : exclure les dates de consultations à ID dupliqué | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-176 | S | Tests de collisions inter-patients et non-mutation des deux aperçus | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+
 Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà dans `docs/DEVELOPMENT_LOG.md`. Ne pas les ajouter comme « tâches à refaire ».
 
 ## File de travail proposée (non commencée)
