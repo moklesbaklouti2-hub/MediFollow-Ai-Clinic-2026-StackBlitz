@@ -232,6 +232,10 @@ export default function Consultations({
 
     for (const action of commandActions) {
       if (action.type === 'select_patient') {
+        if (typeof action.patientName !== 'string') {
+          feedback.push('Nom patient vocal invalide. Aucune sélection effectuée.');
+          break;
+        }
         const requested = normalize(action.patientName);
         if (!requested) {
           feedback.push('Le nom du patient n’a pas été reconnu. Aucun patient n’a été sélectionné.');
@@ -263,6 +267,10 @@ export default function Consultations({
       }
 
       if (action.type === 'set_consultation_field') {
+        if (typeof action.value !== 'string' || !action.value.trim()) {
+          feedback.push('Valeur vocale vide ou invalide : champ non modifié.');
+          continue;
+        }
         const value = action.value;
         if (action.field === 'specialty') {
           const options = specialtyGroups.flatMap((group) => group.options).concat('Autre spécialité');
@@ -305,8 +313,12 @@ export default function Consultations({
           'respiratoryRate', 'weight', 'height', 'glycemia',
         ];
         if (allowedVitals.includes(action.field)) {
+          if (typeof action.value !== 'string') {
+            feedback.push('Valeur numérique vocale invalide.');
+            continue;
+          }
           const numericValue = action.value.trim().replace(',', '.');
-          if (!/^-?\d+(\.\d+)?$/.test(numericValue)) {
+          if (!/^-?\d+(\.\d+)?$/.test(numericValue) || !Number.isFinite(Number(numericValue))) {
             feedback.push(`Valeur « ${action.value} » invalide pour ${action.field}. Une valeur numérique est attendue.`);
           } else {
             setVitals((previous) => ({ ...previous, [action.field]: numericValue }));

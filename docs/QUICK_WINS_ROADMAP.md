@@ -308,9 +308,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-209 | S | Interrompre le lot vocal après sélection patient échouée ou ambiguë | branche de préparation | CI 11/11 requise | VALIDÉ CI 43655812293 |
 | QW-210 | S | Contrats automatisés des garde-fous vocaux | branche de préparation | CI 11/11 requise | VALIDÉ CI 43655812293 |
 
-| QW-211 | S | Voix : protéger le brouillon ordinaire contre la réattribution | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-212 | S | Voix : exiger un patient unique et un champ propre autorisé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-213 | S | Contrats fictifs des protections du brouillon vocal | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-211 | S | Voix : protéger le brouillon ordinaire contre la réattribution | branche de préparation | CI 11/11 requise | VALIDÉ CI 43679317765 |
+| QW-212 | S | Voix : exiger un patient unique et un champ propre autorisé | branche de préparation | CI 11/11 requise | VALIDÉ CI 43679317765 |
+| QW-213 | S | Contrats fictifs des protections du brouillon vocal | branche de préparation | CI 11/11 requise | VALIDÉ CI 43679317765 |
+
+| QW-214 | S | Voix : refuser un nom patient non textuel | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-215 | S | Voix : refuser les valeurs vides, non textuelles ou numériques non finies | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-216 | S | Contrats automatisés des valeurs vocales | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

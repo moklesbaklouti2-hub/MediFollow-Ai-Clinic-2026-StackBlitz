@@ -2325,3 +2325,15 @@ console.log('PASS QW-208..210: voice patient selection guards.');
   assert.ok(voice.includes('Object.prototype.hasOwnProperty.call(setters, action.field) ? setters[action.field] : undefined'));
 }
 console.log('PASS QW-211..213: voice draft protection and closed field dispatch.');
+
+// QW-214..216: reject malformed voice payloads before normalization or writes.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (commandActions.length === 0) return;')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  assert.ok(voice.indexOf("typeof action.patientName !== 'string'") >= 0);
+  assert.ok(voice.indexOf("typeof action.patientName !== 'string'") < voice.indexOf('normalize(action.patientName)'));
+  assert.ok(voice.includes("typeof action.value !== 'string' || !action.value.trim()"));
+  assert.ok(voice.includes('!Number.isFinite(Number(numericValue))'));
+  assert.ok(voice.indexOf("typeof action.value !== 'string'", voice.indexOf("if (action.type === 'set_vital')")) < voice.indexOf('action.value.trim().replace'));
+}
+console.log('PASS QW-214..216: malformed voice values rejected.');

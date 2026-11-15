@@ -1573,3 +1573,9 @@
 - QW-211 : refuser une sélection vocale si le formulaire ordinaire contient déjà des données cliniques, y compris constantes, examen structuré ou suivi.
 - QW-212 : refuser les écritures vocales sans sélection patient unique confirmée et limiter les setters aux propriétés propres du registre.
 - QW-213 : contrats statiques automatisés fictifs dans test-patient-linkage ; aucune modification du stockage, aucune donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-214 à QW-216 : validation des valeurs vocales
+- Base `9d5b6d0b901e4bf961f8ea69667cffa2662a2019`, run 43679317765 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-214 : refuser un nom patient vocal non textuel avant normalisation et interrompre le lot.
+- QW-215 : refuser les valeurs cliniques vocales vides/non textuelles et les constantes non textuelles ou non finies avant écriture dans le formulaire.
+- QW-216 : contrats statiques automatisés dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.
