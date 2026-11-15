@@ -219,6 +219,13 @@ export default function Consultations({
       return;
     }
 
+    // A voice write must not cross the patient binding of an existing Express draft.
+    if (expressPatientId !== null && expressPatientId !== patientId) {
+      setCommandFeedback('Liaison Express différente du patient courant : aucune modification vocale appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
     const normalize = (value: string) =>
       value.toLocaleLowerCase('fr')
         .normalize('NFD')
@@ -272,6 +279,10 @@ export default function Consultations({
           continue;
         }
         const value = action.value;
+        if (typeof action.field !== 'string') {
+          feedback.push('Champ vocal invalide : aucune modification de ce champ.');
+          continue;
+        }
         if (action.field === 'specialty') {
           const options = specialtyGroups.flatMap((group) => group.options).concat('Autre spécialité');
           const requested = normalize(value);
@@ -312,6 +323,10 @@ export default function Consultations({
           'systolic', 'diastolic', 'heartRate', 'spo2', 'temperature',
           'respiratoryRate', 'weight', 'height', 'glycemia',
         ];
+        if (typeof action.field !== 'string') {
+          feedback.push('Constante vocale invalide.');
+          continue;
+        }
         if (allowedVitals.includes(action.field)) {
           if (typeof action.value !== 'string') {
             feedback.push('Valeur numérique vocale invalide.');

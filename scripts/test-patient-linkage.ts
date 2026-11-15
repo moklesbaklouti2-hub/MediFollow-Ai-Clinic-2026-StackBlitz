@@ -2337,3 +2337,20 @@ console.log('PASS QW-211..213: voice draft protection and closed field dispatch.
   assert.ok(voice.indexOf("typeof action.value !== 'string'", voice.indexOf("if (action.type === 'set_vital')")) < voice.indexOf('action.value.trim().replace'));
 }
 console.log('PASS QW-214..216: malformed voice values rejected.');
+
+// QW-217..219: reject cross-patient Express writes and non-textual field keys.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (commandActions.length === 0) return;')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const binding = voice.indexOf('if (expressPatientId !== null && expressPatientId !== patientId)');
+  assert.ok(binding >= 0 && binding < voice.indexOf('for (const action of commandActions)'));
+  assert.ok(voice.slice(binding, voice.indexOf('const normalize', binding)).includes('return;'));
+  const field = voice.split("if (action.type === 'set_consultation_field')")[1]?.split("if (action.type === 'set_vital')")[0] ?? '';
+  const vital = voice.split("if (action.type === 'set_vital')")[1] ?? '';
+  for (const [section, dispatch] of [[field, 'const setters'], [vital, 'allowedVitals.includes(action.field)']]) {
+    const guard = section.indexOf("typeof action.field !== 'string'");
+    assert.ok(guard >= 0 && guard < section.indexOf(dispatch));
+    assert.ok(section.slice(guard, section.indexOf(dispatch)).includes('continue;'));
+  }
+}
+console.log('PASS QW-217..219: Express patient binding and textual voice field keys.');

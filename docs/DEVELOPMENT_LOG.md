@@ -1579,3 +1579,9 @@
 - QW-214 : refuser un nom patient vocal non textuel avant normalisation et interrompre le lot.
 - QW-215 : refuser les valeurs cliniques vocales vides/non textuelles et les constantes non textuelles ou non finies avant écriture dans le formulaire.
 - QW-216 : contrats statiques automatisés dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-217 à QW-219 : liaison Express et clés vocales
+- Base `9c09ee0658f0ebe32cfca4f919f952be21229270`, run 43687992793 : 11/11 jobs terminés avec succès, SHA retrouvé dans chaque journal.
+- QW-217 : bloquer les écritures vocales si la liaison Express diffère du patient courant.
+- QW-218 : refuser les clés de champs et constantes non textuelles avant dispatch, sans coercition implicite.
+- QW-219 : contrats statiques automatisés dans test-patient-linkage. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.
