@@ -14,3 +14,16 @@ export function hasValidVoiceClinicalPayload(action: unknown): boolean {
   }
   return false;
 }
+
+ // Resolve only explicit specialty labels or the exact ORL alias.
+export function resolveVoiceSpecialty(value: string, options: readonly string[]): string | undefined {
+  const normalize = (text: string) => text.toLocaleLowerCase('fr').normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+  const requested = normalize(value);
+  if (!requested) return undefined;
+  if (requested === 'orl' || requested === 'oto rhino laryngologie') {
+    return options.find(option => option === 'Oto-rhino-laryngologie (ORL)');
+  }
+  const matches = options.filter(option => normalize(option) === requested);
+  return matches.length === 1 ? matches[0] : undefined;
+}

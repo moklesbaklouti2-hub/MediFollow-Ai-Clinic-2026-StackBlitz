@@ -1603,3 +1603,9 @@
 - QW-226 : vérifier tous les champs textuels autorisés et valeurs non vides avant toute sélection ou écriture, plutôt que poursuivre après un champ invalide.
 - QW-227 : prévalider toutes les clés de constantes et leur syntaxe numérique finie avant toute mutation du formulaire.
 - QW-228 : tests fictifs exécutables du helper et contrat d'ordre UI. Les spécialités non reconnues et les autres erreurs sémantiques restent traitées par le dispatch existant ; ce n'est pas une transaction atomique générale. Aucun stockage modifié. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-229 à QW-231 : prévalidation des spécialités vocales
+- Base `9199d2dc0c829d770a7bf9b9e8b02e7869226451`, run 43739059397 terminé 11/11 succès, SHA vérifié dans chaque journal.
+- QW-229 : refuser le lot entier si une spécialité est inconnue avant toute mutation.
+- QW-230 : remplacer la reconnaissance ORL par sous-chaîne par des alias exacts et refuser les libellés ambigus.
+- QW-231 : tests fictifs du résolveur et ordre du garde UI. Aucun stockage modifié. CI du nouveau SHA requise.

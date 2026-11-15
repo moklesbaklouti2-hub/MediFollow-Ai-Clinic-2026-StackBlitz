@@ -328,9 +328,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-224 | S | Voix : refuser les types non cliniques avant dispatch | branche de préparation | CI 11/11 requise | VALIDÉ CI 43722432120 |
 | QW-225 | S | Tests fictifs de normalisation et contrat de types | branche de préparation | CI 11/11 requise | VALIDÉ CI 43722432120 |
 
-| QW-226 | S | Voix : prévalider tous les champs textuels du lot avant mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-227 | S | Voix : prévalider toutes les constantes du lot avant mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-228 | S | Tests fictifs de prévalidation et ordre du dispatch | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-226 | S | Voix : prévalider tous les champs textuels du lot avant mutation | branche de préparation | CI 11/11 requise | VALIDÉ CI 43739059397 |
+| QW-227 | S | Voix : prévalider toutes les constantes du lot avant mutation | branche de préparation | CI 11/11 requise | VALIDÉ CI 43739059397 |
+| QW-228 | S | Tests fictifs de prévalidation et ordre du dispatch | branche de préparation | CI 11/11 requise | VALIDÉ CI 43739059397 |
+
+| QW-229 | S | Voix : prévalidation des spécialités avant mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-230 | S | Voix : alias ORL exacts et spécialités ambiguës refusées | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-231 | S | Tests fictifs du résolveur et ordre du garde | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

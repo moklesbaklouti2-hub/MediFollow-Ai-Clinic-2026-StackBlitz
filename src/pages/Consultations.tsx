@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { hasValidVoiceClinicalPayload } from '../clinical/voiceClinicalPayload';
+import { hasValidVoiceClinicalPayload, resolveVoiceSpecialty } from '../clinical/voiceClinicalPayload';
 import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
@@ -253,13 +253,13 @@ export default function Consultations({
       return;
     }
 
-    const normalize = (value: string) =>
-      value.toLocaleLowerCase('fr')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9 ]/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const specialtyOptions = specialtyGroups.flatMap(group => group.options).concat('Autre spécialité');
+    if (commandActions.some(action => action.type === 'set_consultation_field' &&
+        action.field === 'specialty' && !resolveVoiceSpecialty(action.value, specialtyOptions))) {
+      setCommandFeedback('Spécialité vocale non reconnue : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
 
     const feedback: string[] = [];
     let applied = 0;
@@ -306,11 +306,7 @@ export default function Consultations({
           continue;
         }
         if (action.field === 'specialty') {
-          const options = specialtyGroups.flatMap((group) => group.options).concat('Autre spécialité');
-          const requested = normalize(value);
-          const specialtyValue = requested === 'orl' || requested.includes('oto rhino')
-            ? 'Oto-rhino-laryngologie (ORL)'
-            : options.find((option) => normalize(option) === requested);
+          const specialtyValue = resolveVoiceSpecialty(value, specialtyOptions);
           if (!specialtyValue) {
             feedback.push(`Spécialité « ${value} » non reconnue. Le champ n'a pas été modifié.`);
           } else {

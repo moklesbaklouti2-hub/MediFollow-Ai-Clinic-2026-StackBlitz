@@ -2417,3 +2417,22 @@ console.log('PASS QW-223..225: multilingual voice identity and closed clinical a
   assert.ok(voice.slice(preflight, voice.indexOf('const selections')).includes('return;'));
 }
 console.log('PASS QW-226..228: clinical voice payload preflight.');
+
+ // QW-229..231: specialty preflight and exact ORL aliases.
+{
+  const { resolveVoiceSpecialty } = await import('../src/clinical/voiceClinicalPayload.ts');
+  const options = ['Médecine de famille', 'Oto-rhino-laryngologie (ORL)', 'Cardiologie'];
+  assert.equal(resolveVoiceSpecialty('ORL', options), options[1]);
+  assert.equal(resolveVoiceSpecialty('oto rhino laryngologie', options), options[1]);
+  assert.equal(resolveVoiceSpecialty('medecine de famille', options), options[0]);
+  assert.equal(resolveVoiceSpecialty('pas oto rhino', options), undefined);
+  assert.equal(resolveVoiceSpecialty('inconnue', options), undefined);
+  assert.equal(resolveVoiceSpecialty('ORL', ['Cardiologie']), undefined);
+  assert.equal(resolveVoiceSpecialty('cardiologie', ['Cardiologie', 'CARDIOLOGIE']), undefined);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (!Array.isArray(commandActions))')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const guard = voice.indexOf('!resolveVoiceSpecialty(action.value, specialtyOptions)');
+  assert.ok(guard >= 0 && guard < voice.indexOf('for (const action of commandActions)'));
+  assert.ok(voice.slice(guard, voice.indexOf('const feedback: string[]')).includes('return;'));
+}
+console.log('PASS QW-229..231: specialty preflight and exact aliases.');
