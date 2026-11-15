@@ -304,9 +304,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-206 | S | Express : protéger la consultation après transfert lors de l'ouverture d'une autre visite | branche de préparation | CI 11/11 requise | VALIDÉ CI 43640896256 |
 | QW-207 | S | Contrats automatisés fictifs des deux protections | branche de préparation | CI 11/11 requise | VALIDÉ CI 43640896256 |
 
-| QW-208 | S | Refuser les lots vocaux changeant de patient pendant une édition ou liaison Express | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-209 | S | Interrompre le lot vocal après sélection patient échouée ou ambiguë | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-210 | S | Contrats automatisés des garde-fous vocaux | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-208 | S | Refuser les lots vocaux changeant de patient pendant une édition ou liaison Express | branche de préparation | CI 11/11 requise | VALIDÉ CI 43655812293 |
+| QW-209 | S | Interrompre le lot vocal après sélection patient échouée ou ambiguë | branche de préparation | CI 11/11 requise | VALIDÉ CI 43655812293 |
+| QW-210 | S | Contrats automatisés des garde-fous vocaux | branche de préparation | CI 11/11 requise | VALIDÉ CI 43655812293 |
+
+| QW-211 | S | Voix : protéger le brouillon ordinaire contre la réattribution | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-212 | S | Voix : exiger un patient unique et un champ propre autorisé | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-213 | S | Contrats fictifs des protections du brouillon vocal | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

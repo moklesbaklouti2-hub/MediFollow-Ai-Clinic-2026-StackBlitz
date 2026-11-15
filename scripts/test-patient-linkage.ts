@@ -2309,3 +2309,19 @@ console.log('PASS QW-205..207: explicit Express binding and protection after tra
   assert.ok(selection.includes("if (!name) return false;"));
 }
 console.log('PASS QW-208..210: voice patient selection guards.');
+
+// QW-211..213: ordinary drafts, unconfirmed patient and inherited field names.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (commandActions.length === 0) return;')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const loop = voice.indexOf('for (const action of commandActions)');
+  for (const guard of ['if (selections.length > 0 && hasDraftContent)', 'if (selections.length === 0 && !hasConfirmedPatientSelection(patientId, patients))']) {
+    const index = voice.indexOf(guard);
+    assert.ok(index >= 0 && index < loop);
+    assert.ok(voice.slice(index, voice.indexOf('}', index)).includes('return;'));
+  }
+  assert.ok(voice.includes("Object.values(vitals).some(value => value !== '')"));
+  assert.ok(voice.includes('Object.keys(physicalExamination).length > 0'));
+  assert.ok(voice.includes('Object.prototype.hasOwnProperty.call(setters, action.field) ? setters[action.field] : undefined'));
+}
+console.log('PASS QW-211..213: voice draft protection and closed field dispatch.');

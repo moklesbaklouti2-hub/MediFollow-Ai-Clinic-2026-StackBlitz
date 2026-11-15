@@ -203,6 +203,22 @@ export default function Consultations({
       return;
     }
 
+    // Do not reattribute an ordinary unsaved draft by voice, either.
+    const hasDraftContent = Boolean(specialty || motif || symptoms || history || targetedInterview ||
+      examination || diagnosis || plan || followUpDate || followUpObjective || followUpCompleted ||
+      expressDraft || Object.values(vitals).some(value => value !== '') ||
+      Object.keys(physicalExamination).length > 0);
+    if (selections.length > 0 && hasDraftContent) {
+      setCommandFeedback('Sélection vocale refusée : terminez ou réinitialisez le brouillon clinique avant de sélectionner un patient. Aucun champ modifié.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+    if (selections.length === 0 && !hasConfirmedPatientSelection(patientId, patients)) {
+      setCommandFeedback('Aucun dossier patient unique confirmé : aucune modification vocale appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
     const normalize = (value: string) =>
       value.toLocaleLowerCase('fr')
         .normalize('NFD')
@@ -271,7 +287,7 @@ export default function Consultations({
             diagnosis: setDiagnosis,
             plan: setPlan,
           };
-          const setter = setters[action.field];
+          const setter = Object.prototype.hasOwnProperty.call(setters, action.field) ? setters[action.field] : undefined;
           if (setter) {
             setter(value);
             setSaved(false);
@@ -306,7 +322,7 @@ export default function Consultations({
     if (applied > 0) feedback.unshift(`${applied} modification(s) appliquée(s) au formulaire de consultation. Vérifiez les champs avant l'enregistrement.`);
     setCommandFeedback(feedback.join(' '));
     onCommandActionsConsumed?.();
-  }, [commandActions, patients, onCommandActionsConsumed, editingId, expressPatientId]);
+  }, [commandActions, patients, onCommandActionsConsumed, editingId, expressPatientId, patientId, specialty, motif, symptoms, history, targetedInterview, examination, diagnosis, plan, followUpDate, followUpObjective, followUpCompleted, expressDraft, vitals, physicalExamination]);
 
   useEffect(() => {
     if (motif.trim().length < 3) {

@@ -1567,3 +1567,9 @@
 - QW-208 : refuser les lots vocaux changeant de patient pendant une édition ou une liaison Express ; exiger une seule sélection en première position.
 - QW-209 : interrompre le lot si la sélection échoue, vérifier l'identifiant unique et ignorer les noms importés non textuels ou vides.
 - QW-210 : contrats automatisés de non-régression dans test-patient-linkage. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-211 à QW-213 : intégrité du brouillon vocal
+- Base `da553bc0ea36e86544f94bde5ed6f386c4cf93ae`, run 43655812293 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-211 : refuser une sélection vocale si le formulaire ordinaire contient déjà des données cliniques, y compris constantes, examen structuré ou suivi.
+- QW-212 : refuser les écritures vocales sans sélection patient unique confirmée et limiter les setters aux propriétés propres du registre.
+- QW-213 : contrats statiques automatisés fictifs dans test-patient-linkage ; aucune modification du stockage, aucune donnée réelle. CI du nouveau SHA requise.
