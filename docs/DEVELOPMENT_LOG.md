@@ -1597,3 +1597,9 @@
 - QW-223 : préserver les lettres arabes, accents et ponctuation significative lors de la comparaison vocale ; refuser les caractères invisibles et noms invalides. Normalisation NFC et casse uniquement, espaces ordinaires regroupés.
 - QW-224 : rejeter intégralement les lots cliniques contenant un type inconnu ou une navigation avant toute écriture.
 - QW-225 : tests fictifs exécutables de normalisation et contrat de dispatch ; aucun stockage modifié. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-226 à QW-228 : prévalidation des valeurs du lot vocal
+- Base `68a978a4fc52b2a3ada8f457c71c492957154498`, run 43722432120 terminé avec 11/11 jobs réussis sur ce SHA.
+- QW-226 : vérifier tous les champs textuels autorisés et valeurs non vides avant toute sélection ou écriture, plutôt que poursuivre après un champ invalide.
+- QW-227 : prévalider toutes les clés de constantes et leur syntaxe numérique finie avant toute mutation du formulaire.
+- QW-228 : tests fictifs exécutables du helper et contrat d'ordre UI. Les spécialités non reconnues et les autres erreurs sémantiques restent traitées par le dispatch existant ; ce n'est pas une transaction atomique générale. Aucun stockage modifié. CI du nouveau SHA requise.

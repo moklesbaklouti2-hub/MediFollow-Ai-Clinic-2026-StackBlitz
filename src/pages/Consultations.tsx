@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { hasValidVoiceClinicalPayload } from '../clinical/voiceClinicalPayload';
 import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
@@ -208,6 +209,13 @@ export default function Consultations({
     if (commandActions.some(action => action.type !== 'select_patient' &&
         action.type !== 'set_consultation_field' && action.type !== 'set_vital')) {
       setCommandFeedback('Type de commande clinique non autorisé : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
+    // Preflight every payload before selection or field writes; no partial application on malformed payloads.
+    if (!commandActions.every(hasValidVoiceClinicalPayload)) {
+      setCommandFeedback('Lot vocal contenant un champ ou une valeur invalide : aucune modification appliquée.');
       onCommandActionsConsumed?.();
       return;
     }

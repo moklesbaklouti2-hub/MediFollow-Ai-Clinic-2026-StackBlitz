@@ -2389,3 +2389,31 @@ for (const name of ['A\u202e B', 'A\u200b B', 'A\uD800', '123', 'A/B', null]) {
   assert.ok(voice.includes('normalizeVoicePatientName(patient.name)'));
 }
 console.log('PASS QW-223..225: multilingual voice identity and closed clinical action types.');
+
+ 
+// QW-226..228: reject malformed payloads before any selection or field mutation.
+{
+  const { hasValidVoiceClinicalPayload } = await import('../src/clinical/voiceClinicalPayload.ts');
+  for (const action of [
+    { type: 'set_consultation_field', field: 'constructor', value: 'Fictif' },
+    { type: 'set_consultation_field', field: 'motif', value: ' ' },
+    { type: 'set_consultation_field', field: 'motif', value: 42 },
+    { type: 'set_vital', field: 'unknown', value: '80' },
+    { type: 'set_vital', field: 'heartRate', value: '80abc' },
+    { type: 'set_vital', field: 'heartRate', value: '9'.repeat(400) },
+    { type: 'select_patient', patientName: '' },
+  ]) assert.equal(hasValidVoiceClinicalPayload(action), false);
+  const valid = [
+    { type: 'select_patient', patientName: 'Patient fictif' },
+    { type: 'set_consultation_field', field: 'motif', value: 'Exemple fictif' },
+    { type: 'set_vital', field: 'temperature', value: '37,2' },
+  ];
+  assert.equal(valid.every(hasValidVoiceClinicalPayload), true);
+  assert.equal([...valid, { type: 'set_vital', field: 'weight', value: 'NaN' }].every(hasValidVoiceClinicalPayload), false);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (!Array.isArray(commandActions))')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const preflight = voice.indexOf('if (!commandActions.every(hasValidVoiceClinicalPayload))');
+  assert.ok(preflight >= 0 && preflight < voice.indexOf('for (const action of commandActions)'));
+  assert.ok(voice.slice(preflight, voice.indexOf('const selections')).includes('return;'));
+}
+console.log('PASS QW-226..228: clinical voice payload preflight.');
