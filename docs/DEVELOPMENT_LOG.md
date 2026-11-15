@@ -1591,3 +1591,9 @@
 - QW-220 : refuser un lot non tableau ou contenant une action nulle/non objet/sans type textuel avant tout dispatch.
 - QW-221 : exiger le nom patient normalisé complet, supprimer la sélection par sous-chaîne susceptible de viser un autre dossier.
 - QW-222 : contrats statiques automatisés dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-223 à QW-225 : identité vocale multilingue et types fermés
+- Base `e49300690ce764db0a046176b71ccb36fb5935a2`, run 43711657426 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-223 : préserver les lettres arabes, accents et ponctuation significative lors de la comparaison vocale ; refuser les caractères invisibles et noms invalides. Normalisation NFC et casse uniquement, espaces ordinaires regroupés.
+- QW-224 : rejeter intégralement les lots cliniques contenant un type inconnu ou une navigation avant toute écriture.
+- QW-225 : tests fictifs exécutables de normalisation et contrat de dispatch ; aucun stockage modifié. CI du nouveau SHA requise.

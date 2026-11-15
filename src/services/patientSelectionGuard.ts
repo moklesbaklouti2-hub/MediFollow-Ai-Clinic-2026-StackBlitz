@@ -22,3 +22,13 @@ export function confirmedPatientNameLabel(patient: unknown): string {
   if (typeof name !== 'string' || name.trim().length === 0) return 'Nom du patient à vérifier';
   return name;
 }
+
+
+// Voice identity must not discard letters from non-Latin names or collapse
+// distinct accents/punctuation. NFC only reconciles canonical equivalents.
+export function normalizeVoicePatientName(value: unknown): string {
+  if (typeof value !== 'string' || /[\p{C}\p{Default_Ignorable_Code_Point}]/u.test(value)) return '';
+  const name = value.normalize('NFC').toLocaleLowerCase('fr').normalize('NFC')
+    .replace(/ +/g, ' ').trim();
+  return /^[\p{L}\p{M}\p{N} '\u2019-]+$/u.test(name) && /\p{L}/u.test(name) ? name : '';
+}

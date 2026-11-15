@@ -5,7 +5,7 @@ import { allowsFinalizedPrescriptionUpdate, allowsPrescriptionStatusTransition, 
 import { resolveLegacyPatientId } from '../src/services/patientLinkage.ts';
 import { parsePatientAgeInput } from '../src/services/patientAge.ts';
 import { countUnlinkedClinicalRecords } from '../src/services/recordIntegrity.ts';
-import { hasConfirmedPatientSelection } from '../src/services/patientSelectionGuard.ts';
+import { hasConfirmedPatientSelection, normalizeVoicePatientName } from '../src/services/patientSelectionGuard.ts';
 import { selectUniquePatient } from '../src/services/uniquePatientSelection.ts';
 import { latestVitalReadings } from '../src/clinical/patientVitals.ts';
 import { buildClinicalMemory } from '../src/clinical/clinicalMemory.ts';
@@ -2331,7 +2331,7 @@ console.log('PASS QW-211..213: voice draft protection and closed field dispatch.
   const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
   const voice = page.split('if (commandActions.length === 0) return;')[1]?.split('}, [commandActions, patients')[0] ?? '';
   assert.ok(voice.indexOf("typeof action.patientName !== 'string'") >= 0);
-  assert.ok(voice.indexOf("typeof action.patientName !== 'string'") < voice.indexOf('normalize(action.patientName)'));
+  assert.ok(voice.indexOf("typeof action.patientName !== 'string'") < voice.indexOf('normalizeVoicePatientName(action.patientName)'));
   assert.ok(voice.includes("typeof action.value !== 'string' || !action.value.trim()"));
   assert.ok(voice.includes('!Number.isFinite(Number(numericValue))'));
   assert.ok(voice.indexOf("typeof action.value !== 'string'", voice.indexOf("if (action.type === 'set_vital')")) < voice.indexOf('action.value.trim().replace'));
@@ -2367,3 +2367,25 @@ console.log('PASS QW-217..219: Express patient binding and textual voice field k
   assert.ok(!selection.includes('name.includes(requested)') && !selection.includes('requested.includes(name)'));
 }
 console.log('PASS QW-220..222: malformed voice batches and exact patient name contract.');
+
+
+// QW-223..225: fictional multilingual identities and closed clinical dispatch.
+assert.equal(normalizeVoicePatientName('  ÉXEMPLE  FICTIF  '), 'éxemple fictif');
+assert.equal(normalizeVoicePatientName('E\u0301xemple fictif'), 'éxemple fictif');
+assert.notEqual(normalizeVoicePatientName('Éxemple fictif'), normalizeVoicePatientName('Exemple fictif'));
+assert.notEqual(normalizeVoicePatientName('مثال A'), normalizeVoicePatientName('اختبار A'));
+assert.equal(normalizeVoicePatientName('مثال A'), 'مثال a');
+assert.notEqual(normalizeVoicePatientName('Exemple-Fictif'), normalizeVoicePatientName('Exemple Fictif'));
+for (const name of ['A\u202e B', 'A\u200b B', 'A\uD800', '123', 'A/B', null]) {
+  assert.equal(normalizeVoicePatientName(name), '');
+}
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (!Array.isArray(commandActions))')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const guard = voice.indexOf("commandActions.some(action => action.type !== 'select_patient'");
+  assert.ok(guard >= 0 && guard < voice.indexOf('commandActions.filter'));
+  assert.ok(voice.slice(guard, voice.indexOf('commandActions.filter')).includes('return;'));
+  assert.ok(voice.includes('normalizeVoicePatientName(action.patientName)'));
+  assert.ok(voice.includes('normalizeVoicePatientName(patient.name)'));
+}
+console.log('PASS QW-223..225: multilingual voice identity and closed clinical action types.');

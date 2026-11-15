@@ -6,7 +6,7 @@ import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
-import { hasConfirmedPatientSelection, confirmedPatientNameLabel } from '../services/patientSelectionGuard';
+import { hasConfirmedPatientSelection, confirmedPatientNameLabel, normalizeVoicePatientName } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, expressDraftPatientBinding, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
@@ -204,6 +204,14 @@ export default function Consultations({
       return;
     }
 
+    // Unknown or navigation actions do not belong in a clinical batch.
+    if (commandActions.some(action => action.type !== 'select_patient' &&
+        action.type !== 'set_consultation_field' && action.type !== 'set_vital')) {
+      setCommandFeedback('Type de commande clinique non autorisé : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
     // A patient-changing voice batch must start with exactly one selection.
     // Never let a rejected selection fall through to clinical field writes.
     const selections = commandActions.filter(action => action.type === 'select_patient');
@@ -254,14 +262,14 @@ export default function Consultations({
           feedback.push('Nom patient vocal invalide. Aucune sélection effectuée.');
           break;
         }
-        const requested = normalize(action.patientName);
+        const requested = normalizeVoicePatientName(action.patientName);
         if (!requested) {
           feedback.push('Le nom du patient n’a pas été reconnu. Aucun patient n’a été sélectionné.');
           break;
         }
         // Require a complete normalized name; substring matches can select the wrong patient.
         const candidates = patients.filter((patient) => {
-          const name = typeof patient.name === 'string' ? normalize(patient.name) : '';
+          const name = normalizeVoicePatientName(patient.name);
           if (!name) return false;
           return name === requested;
         });
