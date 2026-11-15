@@ -191,7 +191,18 @@ export default function Consultations({
   const differentialPopupTriggered = useRef(false);
 
   useEffect(() => {
+    if (!Array.isArray(commandActions)) {
+      setCommandFeedback('Lot vocal invalide : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
     if (commandActions.length === 0) return;
+    if (commandActions.some(action => !action || typeof action !== 'object' ||
+        typeof action.type !== 'string')) {
+      setCommandFeedback('Commande vocale malformée : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
 
     // A patient-changing voice batch must start with exactly one selection.
     // Never let a rejected selection fall through to clinical field writes.
@@ -248,17 +259,12 @@ export default function Consultations({
           feedback.push('Le nom du patient n’a pas été reconnu. Aucun patient n’a été sélectionné.');
           break;
         }
-        const exact = patients.filter((patient) => typeof patient.name === 'string' && normalize(patient.name) === requested);
-        const requestedWords = requested.split(' ').filter((word) => word.length > 1);
-        const candidates = exact.length > 0
-          ? exact
-          : patients.filter((patient) => {
-              const name = typeof patient.name === 'string' ? normalize(patient.name) : '';
-              if (!name) return false;
-              return name.includes(requested) ||
-                requested.includes(name) ||
-                (requestedWords.length > 0 && requestedWords.every((word) => name.includes(word)));
-            });
+        // Require a complete normalized name; substring matches can select the wrong patient.
+        const candidates = patients.filter((patient) => {
+          const name = typeof patient.name === 'string' ? normalize(patient.name) : '';
+          if (!name) return false;
+          return name === requested;
+        });
 
         if (candidates.length === 1 && hasConfirmedPatientSelection(candidates[0].id, patients)) {
           setPatientId(candidates[0].id);

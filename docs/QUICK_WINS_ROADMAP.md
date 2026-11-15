@@ -316,9 +316,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-215 | S | Voix : refuser les valeurs vides, non textuelles ou numériques non finies | branche de préparation | CI 11/11 requise | VALIDÉ CI 43687992793 |
 | QW-216 | S | Contrats automatisés des valeurs vocales | branche de préparation | CI 11/11 requise | VALIDÉ CI 43687992793 |
 
-| QW-217 | S | Voix : bloquer les écritures si la liaison Express diffère du patient courant | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-218 | S | Voix : refuser les clés de champs et constantes non textuelles | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-219 | S | Contrats automatisés de liaison et de clés vocales | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-217 | S | Voix : bloquer les écritures si la liaison Express diffère du patient courant | branche de préparation | CI 11/11 requise | VALIDÉ CI 43696931281 |
+| QW-218 | S | Voix : refuser les clés de champs et constantes non textuelles | branche de préparation | CI 11/11 requise | VALIDÉ CI 43696931281 |
+| QW-219 | S | Contrats automatisés de liaison et de clés vocales | branche de préparation | CI 11/11 requise | VALIDÉ CI 43696931281 |
+
+| QW-220 | S | Voix : refuser les lots malformés avant dispatch | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-221 | S | Voix : exiger le nom patient normalisé complet | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-222 | S | Contrats automatisés des lots et noms vocaux | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

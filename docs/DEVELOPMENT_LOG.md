@@ -1585,3 +1585,9 @@
 - QW-217 : bloquer les écritures vocales si la liaison Express diffère du patient courant.
 - QW-218 : refuser les clés de champs et constantes non textuelles avant dispatch, sans coercition implicite.
 - QW-219 : contrats statiques automatisés dans test-patient-linkage. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-220 à QW-222 : lots vocaux malformés et sélection exacte
+- Base `353cbad4f1ae69b4e2c0bb1afc8645364114eba1`, run 43696931281 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-220 : refuser un lot non tableau ou contenant une action nulle/non objet/sans type textuel avant tout dispatch.
+- QW-221 : exiger le nom patient normalisé complet, supprimer la sélection par sous-chaîne susceptible de viser un autre dossier.
+- QW-222 : contrats statiques automatisés dans test-patient-linkage. Aucun changement du stockage ni donnée réelle. CI du nouveau SHA requise.

@@ -2354,3 +2354,16 @@ console.log('PASS QW-214..216: malformed voice values rejected.');
   }
 }
 console.log('PASS QW-217..219: Express patient binding and textual voice field keys.');
+
+// QW-220..222: malformed batches fail before dispatch; partial patient names never select.
+{
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (!Array.isArray(commandActions))')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const malformed = voice.indexOf('commandActions.some(action => !action');
+  assert.ok(malformed >= 0 && malformed < voice.indexOf('commandActions.filter'));
+  assert.ok(voice.slice(malformed, voice.indexOf('commandActions.filter')).includes('return;'));
+  const selection = voice.split("if (action.type === 'select_patient') {")[1]?.split("if (action.type === 'set_consultation_field')")[0] ?? '';
+  assert.ok(selection.includes('return name === requested;'));
+  assert.ok(!selection.includes('name.includes(requested)') && !selection.includes('requested.includes(name)'));
+}
+console.log('PASS QW-220..222: malformed voice batches and exact patient name contract.');
