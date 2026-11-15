@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { hasValidVoiceClinicalPayload, resolveVoiceSpecialty } from '../clinical/voiceClinicalPayload';
+import { hasDistinctVoiceClinicalTargets, hasValidVoiceClinicalPayload, resolveVoiceSpecialty } from '../clinical/voiceClinicalPayload';
 import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
@@ -216,6 +216,12 @@ export default function Consultations({
     // Preflight every payload before selection or field writes; no partial application on malformed payloads.
     if (!commandActions.every(hasValidVoiceClinicalPayload)) {
       setCommandFeedback('Lot vocal contenant un champ ou une valeur invalide : aucune modification appliquée.');
+      onCommandActionsConsumed?.();
+      return;
+    }
+
+    if (!hasDistinctVoiceClinicalTargets(commandActions)) {
+      setCommandFeedback('Lot vocal incomplet ou cible répétée : aucune modification appliquée.');
       onCommandActionsConsumed?.();
       return;
     }

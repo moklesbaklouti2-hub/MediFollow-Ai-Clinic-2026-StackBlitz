@@ -1609,3 +1609,9 @@
 - QW-229 : refuser le lot entier si une spécialité est inconnue avant toute mutation.
 - QW-230 : remplacer la reconnaissance ORL par sous-chaîne par des alias exacts et refuser les libellés ambigus.
 - QW-231 : tests fictifs du résolveur et ordre du garde UI. Aucun stockage modifié. CI du nouveau SHA requise.
+
+### 2026-11-15 — QW-232 à QW-234 : intégrité des cibles vocales
+- Base `f0bcfd13b9111dfe82e236d46b73c8a22f4750d0`, run 43755270924 terminé avec 11/11 jobs réussis, workflow associé au SHA exact via API.
+- QW-232 : refuser les cibles répétées dans un lot vocal avant toute mutation (pas de remplacement implicite par la dernière valeur).
+- QW-233 : refuser les tableaux creux dont les méthodes some/every ignorent les trous.
+- QW-234 : tests fictifs exécutables et contrat d'ordre UI. Aucun stockage modifié. CI du nouveau SHA requise.

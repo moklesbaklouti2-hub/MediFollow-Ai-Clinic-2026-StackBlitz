@@ -27,3 +27,16 @@ export function resolveVoiceSpecialty(value: string, options: readonly string[])
   const matches = options.filter(option => normalize(option) === requested);
   return matches.length === 1 ? matches[0] : undefined;
 }
+
+ // Reject sparse batches and repeated targets before dispatch: no implicit last-write-wins.
+export function hasDistinctVoiceClinicalTargets(actions: readonly unknown[]): boolean {
+  const targets = new Set<string>();
+  for (const action of actions) {
+    if (!hasValidVoiceClinicalPayload(action)) return false;
+    const { type, field } = action as Record<string, unknown>;
+    const target = type === 'select_patient' ? 'patient' : String(type) + ':' + String(field);
+    if (targets.has(target)) return false;
+    targets.add(target);
+  }
+  return true;
+}

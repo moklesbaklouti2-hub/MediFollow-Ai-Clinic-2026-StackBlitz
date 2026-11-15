@@ -2436,3 +2436,25 @@ console.log('PASS QW-226..228: clinical voice payload preflight.');
   assert.ok(voice.slice(guard, voice.indexOf('const feedback: string[]')).includes('return;'));
 }
 console.log('PASS QW-229..231: specialty preflight and exact aliases.');
+
+ // QW-232..234: reject sparse arrays and repeated targets before any mutation.
+{
+  const { hasDistinctVoiceClinicalTargets } = await import('../src/clinical/voiceClinicalPayload.ts');
+  const motif = { type: 'set_consultation_field', field: 'motif', value: 'Fictif' };
+  const vital = { type: 'set_vital', field: 'heartRate', value: '80' };
+  const patient = { type: 'select_patient', patientName: 'Patient fictif' };
+  assert.equal(hasDistinctVoiceClinicalTargets([patient, motif, vital]), true);
+  assert.equal(hasDistinctVoiceClinicalTargets([motif, { ...motif, value: 'Autre fictif' }]), false);
+  assert.equal(hasDistinctVoiceClinicalTargets([vital, { ...vital, value: '90' }]), false);
+  assert.equal(hasDistinctVoiceClinicalTargets([patient, patient]), false);
+  assert.equal(hasDistinctVoiceClinicalTargets(new Array(2)), false);
+  const sparse = [motif, vital];
+  delete sparse[0];
+  assert.equal(hasDistinctVoiceClinicalTargets(sparse), false);
+  const page = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
+  const voice = page.split('if (!Array.isArray(commandActions))')[1]?.split('}, [commandActions, patients')[0] ?? '';
+  const guard = voice.indexOf('if (!hasDistinctVoiceClinicalTargets(commandActions))');
+  assert.ok(guard >= 0 && guard < voice.indexOf('const selections') && guard < voice.indexOf('for (const action of commandActions)'));
+  assert.ok(voice.slice(guard, voice.indexOf('const selections')).includes('return;'));
+}
+console.log('PASS QW-232..234: dense voice batches and unique targets.');
