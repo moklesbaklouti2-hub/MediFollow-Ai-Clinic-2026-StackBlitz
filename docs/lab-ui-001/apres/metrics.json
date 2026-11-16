@@ -1,0 +1,1046 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 116.28125
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 116.296875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 129.28125
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 145.1875
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 142.140625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 104.890625
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 141.5625
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 137.953125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 137.234375
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 434.484375
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 434.484375
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 116.28125
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 116.296875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 129.28125
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 145.1875
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 142.140625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 104.890625
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 141.5625
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 137.953125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 137.234375
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 302.453125
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 824.96875
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 434.484375
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 143.046875
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 143.046875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 156.046875
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 171.9375
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 168.90625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 122.28125
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 168.328125
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 164.703125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 164
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 236.5
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 236.5
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 143.046875
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 143.046875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 156.046875
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 171.9375
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 168.90625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 122.28125
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 168.328125
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 164.703125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 164
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 160
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 429
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 236.5
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 291
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 291
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 291
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 196.546875
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 196.546875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 209.546875
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 225.4375
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 222.40625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 170.5
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 221.828125
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 218.203125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 217.5
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 291
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "errors": [],
+    "overflow": false,
+    "fields": [
+      {
+        "id": "consultation-patient",
+        "height": 45,
+        "width": 291
+      },
+      {
+        "id": "consultation-specialty",
+        "height": 45,
+        "width": 291
+      },
+      {
+        "id": "consultation-reason",
+        "height": 50,
+        "width": 291
+      },
+      {
+        "id": "consultation-vital-systolic",
+        "height": 50,
+        "width": 196.546875
+      },
+      {
+        "id": "consultation-vital-diastolic",
+        "height": 50,
+        "width": 196.546875
+      },
+      {
+        "id": "consultation-vital-heartRate",
+        "height": 50,
+        "width": 209.546875
+      },
+      {
+        "id": "consultation-vital-spo2",
+        "height": 50,
+        "width": 225.4375
+      },
+      {
+        "id": "consultation-vital-temperature",
+        "height": 50,
+        "width": 222.40625
+      },
+      {
+        "id": "consultation-vital-respiratoryRate",
+        "height": 50,
+        "width": 170.5
+      },
+      {
+        "id": "consultation-vital-weight",
+        "height": 50,
+        "width": 221.828125
+      },
+      {
+        "id": "consultation-vital-height",
+        "height": 50,
+        "width": 218.203125
+      },
+      {
+        "id": "consultation-vital-glycemia",
+        "height": 50,
+        "width": 217.5
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "pex-status-general-generalAppearance",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-consciousness",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-orientation",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-hydration",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-nutrition",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "pex-status-general-skinColor",
+        "height": 45,
+        "width": 201
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "SUMMARY",
+        "height": 54.5,
+        "width": 231
+      },
+      {
+        "id": "follow-up-date",
+        "height": 52,
+        "width": 291
+      }
+    ],
+    "duplicateIds": []
+  }
+]
