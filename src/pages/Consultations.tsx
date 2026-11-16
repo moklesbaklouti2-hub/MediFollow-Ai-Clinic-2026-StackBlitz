@@ -4,6 +4,7 @@ import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/u
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
+import '../consultation-form.css';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
@@ -775,7 +776,7 @@ export default function Consultations({
 
 
   return (
-    <section className="consultation-page">
+    <section className="consultation-page lab-consultation-form">
       <style>{`
         .consultation-page {
           display:grid;
@@ -1403,8 +1404,9 @@ export default function Consultations({
                   onChange={(e) => updateVital(field.key, e.target.value)}
                   placeholder={field.placeholder}
                   aria-label={field.label}
+                  aria-describedby={"consultation-unit-" + field.key}
                 />
-                <span>{field.unit}</span>
+                <span id={"consultation-unit-" + field.key}>{field.unit}</span>
               </div>
             </div>
           ))}
