@@ -533,3 +533,121 @@ body { background: var(--color-background); }
   padding: 7px 11px; background: transparent;
   color: var(--color-text); font-size: 11px; font-weight: 750;
 }
+
+
+/* SCREENSHOT REVIEW 2026-11-16 — dashboard visual polish */
+/* Keep the medical content prominent on a tablet, with readable metric labels. */
+#root .app.premium-clinical-app .main > .premium-topbar {
+  min-height: 106px !important;
+  padding: 17px clamp(18px, 2vw, 28px) !important;
+  margin-bottom: 18px !important;
+}
+#root .app.premium-clinical-app .premium-topbar h1 {
+  font-size: clamp(25px, 2vw, 32px) !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-hero {
+  min-height: 192px !important;
+  padding: 22px clamp(23px, 2.6vw, 34px) !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-hero-art .mf-brain-art {
+  width: min(100%, 330px) !important;
+  max-height: 188px !important;
+  object-fit: contain;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-stats {
+  gap: 13px !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat {
+  min-height: 151px !important;
+  padding: 17px 17px 15px !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-kicker {
+  color: #b7dbf4 !important;
+  font-size: 10px !important;
+  letter-spacing: .075em !important;
+  font-weight: 850 !important;
+  line-height: 1.35 !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-label {
+  color: #eff8ff !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-foot {
+  color: #b3d2ed !important;
+  font-size: 10.5px !important;
+}
+#root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat strong {
+  color: #ffffff !important;
+  font-size: clamp(30px, 2.7vw, 36px) !important;
+  line-height: 1.07 !important;
+}
+.app.premium-clinical-app .sidebar .sidebar-section-label {
+  font-size: 10px !important;
+  color: #a4bfd7 !important;
+}
+.app.premium-clinical-app .sidebar .premium-nav-item {
+  font-size: 13px !important;
+  letter-spacing: .003em;
+}
+.app.premium-clinical-app .sidebar .doctor-info small,
+.app.premium-clinical-app .sidebar .sidebar-helios-action small {
+  font-size: 11px !important;
+}
+
+/* Smaller, predictable assistant footprint so the floating orb obscures less content.
+   The full conversation still opens in the existing panel. */
+@media (min-width: 701px) {
+  #root .app.premium-clinical-app .mf-orb-assistant {
+    right: 9px !important;
+    bottom: 9px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-launcher {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-caption {
+    font-size: 8px !important;
+    letter-spacing: 1px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-panel {
+    bottom: 92px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-insight-bubble {
+    bottom: 93px !important;
+  }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-hero {
+    min-height: 180px !important;
+    padding: 20px 23px !important;
+  }
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-kicker {
+    font-size: 9px !important;
+  }
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-label {
+    font-size: 12px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-launcher {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+  }
+}
+@media (max-width: 700px) {
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-hero {
+    min-height: 165px !important;
+    padding: 18px !important;
+  }
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-kicker {
+    font-size: 9px !important;
+  }
+  #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat-label {
+    font-size: 12px !important;
+  }
+  #root .app.premium-clinical-app .mf-orb-launcher {
+    width: 67px !important;
+    height: 67px !important;
+  }
+}
