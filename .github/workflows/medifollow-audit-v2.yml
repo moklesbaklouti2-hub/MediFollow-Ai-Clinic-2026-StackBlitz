@@ -6,6 +6,7 @@ on:
     branches:
       - audit-stabilisation-2026-11-10
       - prep-chronologie-2026-11-11-qw052-055
+      - design/premium-clinical-ui-2026-11-16
 
 
 permissions:
@@ -29,6 +30,8 @@ jobs:
         run: npm install --ignore-scripts --no-audit --no-fund
       - name: Compiler
         run: npm run build
+      - name: Vérifier le contrat visuel MediFollow Premium
+        run: npm run test:clinical-premium
       - name: Compiler le mode d'essai connexion medecin (jamais deploye)
         env:
           VITE_DOCTOR_AUTH_MODE: integration-test
