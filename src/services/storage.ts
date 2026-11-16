@@ -46,16 +46,25 @@ export const DEFAULT_SETTINGS: DoctorSettings = {
 // ---------- OUTILS INTERNES ----------
 
 function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  try {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  } catch {
+    // Some browsers deny access to the storage property itself, before getItem.
+    return false;
+  }
 }
 
 function reportStorageError(key: string, error: unknown): void {
   console.error(`MediFollow : erreur d'enregistrement (${key})`, error);
 
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, {
-      detail: { key },
-    }));
+    try {
+      window.dispatchEvent(new CustomEvent(STORAGE_ERROR_EVENT, {
+        detail: { key },
+      }));
+    } catch {
+      // Reporting a failed save must not throw a second exception.
+    }
   }
 }
 
@@ -104,7 +113,7 @@ function readObject<T>(key: string, fallback: T): T {
 }
 
 function writeData(key: string, value: unknown): boolean {
-  if (!isBrowser()) return false;
+  if (typeof window === 'undefined') return false;
 
   try {
     const serialized = JSON.stringify(value);

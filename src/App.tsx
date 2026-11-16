@@ -15,6 +15,7 @@ import Prescriptions from './pages/Prescriptions';
 import Inventory from './pages/Inventory';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
+import { readInitialThemePreference, persistThemePreference, normalizeThemePreference } from './services/themeStorage';
 import OrbAssistant from './components/OrbAssistant';
 import type { ClinicalReasoningAnalysis } from './hooks/useClinicalReasoning';
 import type { VoiceCommandAction } from './types/medical';
@@ -64,15 +65,8 @@ function App() {
 
   // ---------- THÈME ----------
 
-  const [themePreference, setThemePreference] = useState(() => {
-    const migrationKey = 'medifollow-theme-v2-initialized';
-    if (!localStorage.getItem(migrationKey)) {
-      localStorage.setItem('medifollow-theme', 'dark');
-      localStorage.setItem(migrationKey, 'true');
-      return 'dark';
-    }
-    return localStorage.getItem('medifollow-theme') || 'dark';
-  });
+  const [themePreference, setThemePreference] = useState(readInitialThemePreference);
+  const [themePersistenceFailed, setThemePersistenceFailed] = useState(false);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
@@ -94,7 +88,7 @@ function App() {
       mediaQuery.addEventListener('change', applyTheme);
     }
 
-    localStorage.setItem('medifollow-theme', themePreference);
+    setThemePersistenceFailed(!persistThemePreference(themePreference));
 
     return () => {
       mediaQuery.removeEventListener('change', applyTheme);
@@ -282,7 +276,7 @@ function App() {
         return (
           <Settings
             themePreference={themePreference}
-            onThemeChange={setThemePreference}
+            onThemeChange={(value) => setThemePreference(normalizeThemePreference(value))}
           />
         );
 
@@ -311,6 +305,9 @@ function App() {
 
       <main className="main" id="contenu-principal">
         <Header title={active} onOpenCopilot={() => setActive('Copilote IA')} />
+        {themePersistenceFailed && (
+          <p className="clinical-storage-alert" role="status">Le thème reste modifiable pour cette session, mais sa préférence n’a pas pu être enregistrée dans le navigateur.</p>
+        )}
         {storageWarning && (
           <div className="clinical-storage-alert" role="alert">
             <strong>Attention — stockage non confirmé</strong>
