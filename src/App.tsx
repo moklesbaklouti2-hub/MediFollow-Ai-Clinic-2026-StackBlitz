@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './mobile-navigation.css';
 import './clinical-premium.css';
+import './dossier-essentiel.css';
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -296,7 +297,7 @@ function App() {
   // ---------- RENDU PRINCIPAL ----------
 
   return (
-    <div className="app premium-clinical-app">
+    <div className="app premium-clinical-app" data-appearance="dossier-essentiel">
       <a className="premium-skip-link" href="#contenu-principal">Aller au contenu principal</a>
       <Sidebar
         active={active}
