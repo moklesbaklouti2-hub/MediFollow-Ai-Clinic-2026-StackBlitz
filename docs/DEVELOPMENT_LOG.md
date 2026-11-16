@@ -1615,3 +1615,9 @@
 - QW-232 : refuser les cibles répétées dans un lot vocal avant toute mutation (pas de remplacement implicite par la dernière valeur).
 - QW-233 : refuser les tableaux creux dont les méthodes some/every ignorent les trous.
 - QW-234 : tests fictifs exécutables et contrat d'ordre UI. Aucun stockage modifié. CI du nouveau SHA requise.
+
+### 2026-11-16 — QW-235 à QW-237 : intégrité des valeurs vocales
+- Base `fc1c2ffddd314dd547945376fec83a5be372b839`, run 43761027913 terminé avec 11/11 jobs réussis sur SHA exact, vérifiés via API check-runs.
+- QW-235 : refuser les propriétés héritées et les tableaux utilisés comme actions cliniques.
+- QW-236 : refuser les caractères de contrôle, Unicode malformé et champs composés uniquement de joiners dans les valeurs textuelles vocales ; préserver le texte multilingue valide.
+- QW-237 : tests fictifs exécutables de refus et de conservation. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.

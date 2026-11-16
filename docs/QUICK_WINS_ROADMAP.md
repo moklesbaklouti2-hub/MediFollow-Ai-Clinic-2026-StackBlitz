@@ -336,9 +336,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-230 | S | Voix : alias ORL exacts et spécialités ambiguës refusées | branche de préparation | CI 11/11 requise | VALIDÉ CI 43755270924 |
 | QW-231 | S | Tests fictifs du résolveur et ordre du garde | branche de préparation | CI 11/11 requise | VALIDÉ CI 43755270924 |
 
-| QW-232 | S | Voix : refuser les cibles répétées avant mutation | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-233 | S | Voix : refuser les tableaux creux | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-234 | S | Tests fictifs des cibles et de l'ordre du garde | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-232 | S | Voix : refuser les cibles répétées avant mutation | branche de préparation | CI 11/11 requise | VALIDÉ CI 43761027913 |
+| QW-233 | S | Voix : refuser les tableaux creux | branche de préparation | CI 11/11 requise | VALIDÉ CI 43761027913 |
+| QW-234 | S | Tests fictifs des cibles et de l'ordre du garde | branche de préparation | CI 11/11 requise | VALIDÉ CI 43761027913 |
+
+| QW-235 | S | Voix : refuser les propriétés héritées et actions tableaux | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-236 | S | Voix : intégrité Unicode des valeurs textuelles cliniques | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-237 | S | Tests fictifs de propriétés et Unicode vocal | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

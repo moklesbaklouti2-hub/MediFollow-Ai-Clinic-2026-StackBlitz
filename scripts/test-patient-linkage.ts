@@ -2458,3 +2458,22 @@ console.log('PASS QW-229..231: specialty preflight and exact aliases.');
   assert.ok(voice.slice(guard, voice.indexOf('const selections')).includes('return;'));
 }
 console.log('PASS QW-232..234: dense voice batches and unique targets.');
+
+ 
+// QW-235..237: own payload properties and visible, well-formed clinical text.
+{
+  const { hasValidVoiceClinicalPayload, hasDistinctVoiceClinicalTargets } = await import('../src/clinical/voiceClinicalPayload.ts');
+  const motif = { type: 'set_consultation_field', field: 'motif', value: 'Fictif' };
+  assert.equal(hasValidVoiceClinicalPayload(Object.create(motif)), false);
+  assert.equal(hasValidVoiceClinicalPayload(Object.assign(Object.create({ value: 'Fictif' }), { type: motif.type, field: motif.field })), false);
+  assert.equal(hasValidVoiceClinicalPayload(Object.assign([], motif)), false);
+  assert.equal(hasValidVoiceClinicalPayload(Object.assign(Object.create({ patientName: 'Fictif' }), { type: 'select_patient' })), false);
+  for (const value of ['\u200C\u200D', 'Fictif\u202E', 'Fictif\u0000', 'Fictif\uD800', 'Fictif\u2060']) {
+    assert.equal(hasValidVoiceClinicalPayload({ ...motif, value }), false);
+    assert.equal(hasDistinctVoiceClinicalTargets([{ ...motif, value }]), false);
+  }
+  for (const value of ['Fictif\nSuite', 'أ\u200Dب', 'Fictif 😀']) {
+    assert.equal(hasValidVoiceClinicalPayload({ ...motif, value }), true);
+  }
+}
+console.log('PASS QW-235..237: own voice payload properties and Unicode integrity.');
