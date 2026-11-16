@@ -6,6 +6,8 @@
   padding:20px clamp(14px,3vw,44px) 104px !important;
 }
 #root [data-navigation='n3'] .n3-workspace-header {
+  position:relative;
+  z-index:1400;
   display:flex;
   align-items:center;
   flex-wrap:wrap;
@@ -48,6 +50,8 @@
 #root [data-navigation='n3'] .n3-navigation button:hover {background:var(--de-soft);}
 #root [data-navigation='n3'] .n3-menu-toggle {display:none;border-color:var(--de-line);}
 #root [data-navigation='n3'] #contenu-principal .n3-patient-context {
+  position:relative;
+  z-index:1400;
   display:flex;
   align-items:center;
   flex-wrap:wrap;
