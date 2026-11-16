@@ -1,0 +1,24 @@
+{
+  "protocol_version": 1,
+  "lot": "SWC-001",
+  "repository": "moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz",
+  "coordination_branch": "coordination/github-sandwich-relay-2026-11-16",
+  "target_branch": "design/premium-clinical-ui-2026-11-16",
+  "reference_sha": "7749eb9a0deb9796989a76793948b0a7eafd4578",
+  "pull_request": 6,
+  "implementation_branch": "swc-001/theme-storage-safety",
+  "last_observed_head_sha": "686fee0664419779f4aa08446cfe0fa878203d46",
+  "last_verified_ci": {
+    "run_id": 43957531483,
+    "sha": "686fee0664419779f4aa08446cfe0fa878203d46",
+    "jobs_passed": 11,
+    "jobs_total": 11
+  },
+  "stage": "AUDIT_CLAUDE_REQUIS",
+  "claude_audit_for_head_sha": null,
+  "merge_allowed": false,
+  "main_modified_by_relay": false,
+  "auto_trigger_installed": false,
+  "document_updated_by": "ChatGPT based on user-provided Claude/Codex reports and GitHub checks",
+  "notes": "Status snapshot, not a live synchronized status. Re-fetch the PR SHA before acting."
+}
