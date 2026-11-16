@@ -186,8 +186,9 @@ export default function PhysicalExaminationEditor({ value = {}, onChange }: Prop
             const current = value[section.key]?.[finding.key];
             return (
               <div className="pex-row" key={finding.key}>
-                <label>{finding.label}</label>
+                <label htmlFor={"pex-status-" + section.key + "-" + finding.key}>{finding.label}</label>
                 <select
+                  id={"pex-status-" + section.key + "-" + finding.key}
                   aria-label={`Statut : ${finding.label}`}
                   value={current?.status ?? 'not_recorded'}
                   onChange={(event) => updateFinding(section.key, finding.key, { status: event.target.value as ExamFindingStatus })}
@@ -197,6 +198,7 @@ export default function PhysicalExaminationEditor({ value = {}, onChange }: Prop
                   ))}
                 </select>
                 <textarea
+                  id={"pex-observations-" + section.key + "-" + finding.key}
                   aria-label={`Constatations et commentaires : ${finding.label}`}
                   rows={2}
                   placeholder="Valeur, constatations et commentaires…"
