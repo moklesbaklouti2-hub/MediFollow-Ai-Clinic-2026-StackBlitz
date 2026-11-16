@@ -25,7 +25,8 @@
     "test:timeline-composition": "tsx scripts/test-timeline-composition.ts",
     "test:helios-memory-prevention": "tsx scripts/test-helios-memory-prevention.ts",
     "test:helios-trends-referral": "tsx scripts/test-helios-trends-referral.ts",
-    "test:clinical-premium": "node scripts/test-clinical-premium.mjs"
+    "test:clinical-premium": "node scripts/test-clinical-premium.mjs",
+    "test:lab-ui": "node scripts/test-lab-ui-consultation-fields.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
