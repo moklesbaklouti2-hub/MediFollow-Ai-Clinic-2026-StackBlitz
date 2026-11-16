@@ -3,8 +3,9 @@ import './App.css';
 import './mobile-navigation.css';
 import './clinical-premium.css';
 import './dossier-essentiel.css';
+import './navigation-n3.css';
 
-import Sidebar from './components/Sidebar';
+import WorkspaceNavigation from './components/WorkspaceNavigation';
 import Header from './components/Header';
 
 import Dashboard from './pages/Dashboard';
@@ -297,9 +298,9 @@ function App() {
   // ---------- RENDU PRINCIPAL ----------
 
   return (
-    <div className="app premium-clinical-app" data-appearance="dossier-essentiel">
+    <div className="app premium-clinical-app" data-appearance="dossier-essentiel" data-navigation="n3">
       <a className="premium-skip-link" href="#contenu-principal">Aller au contenu principal</a>
-      <Sidebar
+      <WorkspaceNavigation
         active={active}
         onNavigate={setActive}
       />

@@ -4,6 +4,7 @@ import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/u
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
+import PatientContextBar from '../components/PatientContextBar';
 import '../consultation-form.css';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
@@ -1009,6 +1010,12 @@ export default function Consultations({
         }
       `}</style>
 
+      <PatientContextBar patients={patients} patientId={patientId} links={[
+        { label: 'Consultation', target: 'consultation-patient' },
+        { label: 'Examen', target: 'n3-consultation-exam' },
+        { label: 'Historique', target: 'n3-consultation-history' },
+      ]} />
+
       {commandFeedback && (
         <div role="status" style={{ padding: '11px 14px', borderRadius: 10, border: '1px solid var(--border,#dce4e8)', background: 'var(--surface,#fff)', fontSize: 13, lineHeight: 1.5 }}>
           {commandFeedback}
@@ -1414,7 +1421,7 @@ export default function Consultations({
       </div>
 
       <div className="consultation-section">
-        <h3>04 · Examen physique</h3>
+        <h3 id="n3-consultation-exam" tabIndex={-1}>04 · Examen physique</h3>
 
         <div
           style={{
@@ -1681,7 +1688,7 @@ export default function Consultations({
       )}
 
       <div className="consultation-section">
-        <h3>Historique des consultations ({consultations.length})</h3>
+        <h3 id="n3-consultation-history" tabIndex={-1}>Historique des consultations ({consultations.length})</h3>
         {sortedConsultations.length === 0 ? (
           <p>Aucune consultation enregistrée pour le moment.</p>
         ) : (
