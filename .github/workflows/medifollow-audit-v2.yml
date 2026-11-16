@@ -2,6 +2,9 @@ name: MediFollow AI - controles independants V2
 
 # Automated checks only. No code-writing AI, deployment, secrets, or production data.
 on:
+  pull_request:
+    branches:
+      - design/premium-clinical-ui-2026-11-16
   push:
     branches:
       - audit-stabilisation-2026-11-10
@@ -32,6 +35,8 @@ jobs:
         run: npm run build
       - name: Vérifier le contrat visuel MediFollow Premium
         run: npm run test:clinical-premium
+      - name: Vérifier le thème sans stockage navigateur
+        run: npm run test:theme-storage
       - name: Compiler le mode d'essai connexion medecin (jamais deploye)
         env:
           VITE_DOCTOR_AUTH_MODE: integration-test
