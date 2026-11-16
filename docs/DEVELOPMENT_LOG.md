@@ -1627,3 +1627,11 @@
 - QW-238 : réutiliser le normaliseur d'identité existant dès le précontrôle du lot, sans modifier la résolution patient.
 - QW-239 : refuser les caractères invisibles ou de contrôle autour des constantes vocales avant trim ; conserver espaces ASCII et syntaxe numérique existante. Pas de nouvelle règle de plausibilité médicale.
 - QW-240 : tests fictifs exécutables des identités et constantes, y compris rejet du lot. Aucun stockage modifié. CI du nouveau SHA requise.
+
+
+### 2026-11-16 — QW-241 : couverture complète des tests locaux HELIOS
+- Base : `232c4a6f226488db2525f4cbee9898ef1a9ce61b` (QW-238 à 240, CI 11/11 confirmée sur run 43892873917).
+- Écart constaté : GitHub Actions exécute `test:helios-memory-prevention`, mais `npm run test:complete` local l'omet alors que la suite inclut déjà Trends/Referral.
+- QW-241 : ajouter le test HELIOS Clinical Memory/Prevention au script `test:complete` de `package.json`. Aucun changement de règle clinique, d'interface, de stockage ou de fournisseur IA.
+- Validation à confirmer : exécuter `npm run test:complete` dans Codespaces après synchronisation, vérifier `PASS QW-156..160`, `PASS QW-174..176` et `PASS QW-177..179`, ainsi que le code retour 0. Vérifier aussi la CI 11/11 sur le SHA final. Ne pas annoncer VERT avant ces contrôles.
+- Branche de préparation uniquement ; aucun patient réel, déploiement, fusion de `main` ou dépense.
