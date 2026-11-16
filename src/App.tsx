@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './mobile-navigation.css';
+import './clinical-premium.css';
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -301,42 +302,20 @@ function App() {
   // ---------- RENDU PRINCIPAL ----------
 
   return (
-    <div className="app">
+    <div className="app premium-clinical-app">
+      <a className="premium-skip-link" href="#contenu-principal">Aller au contenu principal</a>
       <Sidebar
         active={active}
         onNavigate={setActive}
       />
 
-      <main className="main">
-        <Header title={active} />
+      <main className="main" id="contenu-principal">
+        <Header title={active} onOpenCopilot={() => setActive('Copilote IA')} />
         {storageWarning && (
-          <div
-            role="alert"
-            style={{
-              margin: '12px 0',
-              padding: '13px 15px',
-              border: '1px solid #d97777',
-              borderRadius: '10px',
-              background: '#fff1f1',
-              color: '#9f3030',
-              fontSize: '13px',
-              lineHeight: 1.5,
-            }}
-          >
+          <div className="clinical-storage-alert" role="alert">
             <strong>Attention — stockage non confirmé</strong>
-            <p style={{ margin: '5px 0 10px' }}>{storageWarning}</p>
-            <button
-              type="button"
-              onClick={() => setStorageWarning('')}
-              style={{
-                border: '1px solid currentColor',
-                borderRadius: '7px',
-                padding: '6px 10px',
-                background: 'transparent',
-                color: 'inherit',
-                cursor: 'pointer',
-              }}
-            >
+            <p>{storageWarning}</p>
+            <button type="button" onClick={() => setStorageWarning('')}>
               Fermer
             </button>
           </div>
