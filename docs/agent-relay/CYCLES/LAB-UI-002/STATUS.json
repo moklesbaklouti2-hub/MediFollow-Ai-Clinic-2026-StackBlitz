@@ -1,0 +1,19 @@
+{
+  "protocol_version": 1,
+  "lot": "LAB-UI-002",
+  "origin": "ChatGPT temporary design coordination while Claude free quota unavailable",
+  "repository": "moklesbaklouti2-hub/MediFollow-Ai-Clinic-2026-StackBlitz",
+  "coordination_branch": "coordination/github-sandwich-relay-2026-11-16",
+  "experiment_branch": "experiment/claude-ui-fields-2026-11-16",
+  "experiment_baseline_sha": "686fee0664419779f4aa08446cfe0fa878203d46",
+  "codex_work_branch": "lab-ui-002/consultation-fields",
+  "issue_number": 8,
+  "stage": "READY_FOR_CODEX_TASK",
+  "codex_task_launched": false,
+  "pr_created": false,
+  "main_modified": false,
+  "swc001_merged": false,
+  "claude_review_pending": true,
+  "automatic_bridge_active": false,
+  "notes": "Creating issue and plans does not launch Codex. User must run task in Codex Cloud unless an authenticated action becomes available."
+}
