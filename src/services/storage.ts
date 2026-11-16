@@ -46,7 +46,12 @@ export const DEFAULT_SETTINGS: DoctorSettings = {
 // ---------- OUTILS INTERNES ----------
 
 function isBrowser(): boolean {
-  return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  try {
+    return typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+  } catch {
+    // Some browsers deny access to the storage property itself, before getItem.
+    return false;
+  }
 }
 
 function reportStorageError(key: string, error: unknown): void {

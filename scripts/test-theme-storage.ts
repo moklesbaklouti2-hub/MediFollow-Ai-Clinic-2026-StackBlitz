@@ -1,9 +1,11 @@
 import assert from 'node:assert/strict';
 import { readInitialThemePreference, persistThemePreference } from '../src/services/themeStorage.ts';
+import { getPatients, getSettings, getInventoryData } from '../src/services/storage.ts';
 
 const themeKey = 'medifollow-theme';
 const migrationKey = 'medifollow-theme-v2-initialized';
 const records = new Map<string, string>();
+Object.defineProperty(globalThis, 'window', { configurable: true, value: {} });
 function installStorage(getItem = (key: string) => records.get(key) ?? null,
   setItem = (key: string, value: string) => { records.set(key, value); }) {
   Object.defineProperty(globalThis, 'localStorage', {
@@ -32,6 +34,11 @@ for (const name of ['SecurityError', 'QuotaExceededError', 'Error']) {
   Object.defineProperty(globalThis, 'localStorage', { configurable: true, get: fail });
   assert.equal(readInitialThemePreference(), 'dark', name + ': storage getter');
   assert.equal(persistThemePreference('light'), false);
+  // App reads these services before its theme initializer. Denied property
+  // access must take the existing unavailable-storage path, without any writes.
+  assert.deepEqual(getPatients(), []);
+  assert.equal(getSettings().themePreference, 'dark');
+  assert.deepEqual(getInventoryData().items, []);
 
   installStorage(fail);
   assert.equal(readInitialThemePreference(), 'dark', name + ': getItem');
