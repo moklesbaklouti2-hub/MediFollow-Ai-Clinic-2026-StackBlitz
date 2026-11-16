@@ -1621,3 +1621,9 @@
 - QW-235 : refuser les propriétés héritées et les tableaux utilisés comme actions cliniques.
 - QW-236 : refuser les caractères de contrôle, Unicode malformé et champs composés uniquement de joiners dans les valeurs textuelles vocales ; préserver le texte multilingue valide.
 - QW-237 : tests fictifs exécutables de refus et de conservation. Aucun changement de stockage ni donnée réelle. CI du nouveau SHA requise.
+
+### 2026-11-16 — QW-238 à QW-240 : cohérence du précontrôle vocal
+- Base `dd871acde3d1e1b7e26509bce062029f56c9f251`, run 43887223719 : 11/11 jobs terminés avec succès, SHA retrouvé dans chacun des journaux.
+- QW-238 : réutiliser le normaliseur d'identité existant dès le précontrôle du lot, sans modifier la résolution patient.
+- QW-239 : refuser les caractères invisibles ou de contrôle autour des constantes vocales avant trim ; conserver espaces ASCII et syntaxe numérique existante. Pas de nouvelle règle de plausibilité médicale.
+- QW-240 : tests fictifs exécutables des identités et constantes, y compris rejet du lot. Aucun stockage modifié. CI du nouveau SHA requise.

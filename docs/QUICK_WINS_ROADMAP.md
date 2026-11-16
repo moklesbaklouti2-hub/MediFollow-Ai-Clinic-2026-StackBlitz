@@ -340,9 +340,13 @@ Les corrections de l'inventaire antérieures à ces deux lots se trouvent déjà
 | QW-233 | S | Voix : refuser les tableaux creux | branche de préparation | CI 11/11 requise | VALIDÉ CI 43761027913 |
 | QW-234 | S | Tests fictifs des cibles et de l'ordre du garde | branche de préparation | CI 11/11 requise | VALIDÉ CI 43761027913 |
 
-| QW-235 | S | Voix : refuser les propriétés héritées et actions tableaux | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-236 | S | Voix : intégrité Unicode des valeurs textuelles cliniques | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
-| QW-237 | S | Tests fictifs de propriétés et Unicode vocal | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-235 | S | Voix : refuser les propriétés héritées et actions tableaux | branche de préparation | CI 11/11 requise | VALIDÉ CI 43887223719 |
+| QW-236 | S | Voix : intégrité Unicode des valeurs textuelles cliniques | branche de préparation | CI 11/11 requise | VALIDÉ CI 43887223719 |
+| QW-237 | S | Tests fictifs de propriétés et Unicode vocal | branche de préparation | CI 11/11 requise | VALIDÉ CI 43887223719 |
+
+| QW-238 | S | Voix : normaliseur d'identité partagé dès le précontrôle | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-239 | S | Voix : refuser les caractères invisibles autour des constantes | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
+| QW-240 | S | Tests fictifs de cohérence du précontrôle | branche de préparation | CI 11/11 requise | PRÉPARÉ NON VALIDÉ |
 
 ## File de travail proposée (non commencée)
 

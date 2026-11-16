@@ -1,3 +1,5 @@
+import { normalizeVoicePatientName } from '../services/patientSelectionGuard';
+
 // Preflight only: reject malformed clinical payloads before any form mutation.
 const textFields = new Set(['specialty', 'motif', 'symptoms', 'history', 'targetedInterview', 'examination', 'diagnosis', 'plan']);
 const vitalFields = new Set(['systolic', 'diastolic', 'heartRate', 'spo2', 'temperature', 'respiratoryRate', 'weight', 'height', 'glycemia']);
@@ -7,7 +9,7 @@ export function hasValidVoiceClinicalPayload(action: unknown): boolean {
   const own = (key: string) => Object.prototype.hasOwnProperty.call(action, key);
   if (!own('type')) return false;
   const { type, field, value, patientName } = action as Record<string, unknown>;
-  if (type === 'select_patient') return own('patientName') && typeof patientName === 'string' && Boolean(patientName.trim());
+  if (type === 'select_patient') return own('patientName') && Boolean(normalizeVoicePatientName(patientName));
   if (!own('field') || !own('value')) return false;
   if (typeof field !== 'string' || typeof value !== 'string' || !value.trim()) return false;
   if (type === 'set_consultation_field') {
@@ -16,6 +18,8 @@ export function hasValidVoiceClinicalPayload(action: unknown): boolean {
       !/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F\u061C\u200B\u200E\u200F\u2028-\u202E\u2066-\u2069\uFEFF\uD800-\uDFFF\u00AD\u034F\u180E\u2060-\u2064\u206A-\u206F]/u.test(value);
   }
   if (type === 'set_vital') {
+    // Do not silently strip control characters or invisible Unicode from a numeric value.
+    if (!/^[ 0-9,.-]+$/.test(value)) return false;
     const numeric = value.trim().replace(',', '.');
     return vitalFields.has(field) && /^-?\d+(\.\d+)?$/.test(numeric) && Number.isFinite(Number(numeric));
   }

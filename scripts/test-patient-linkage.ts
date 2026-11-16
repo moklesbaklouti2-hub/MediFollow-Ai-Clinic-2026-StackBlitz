@@ -2477,3 +2477,25 @@ console.log('PASS QW-232..234: dense voice batches and unique targets.');
   }
 }
 console.log('PASS QW-235..237: own voice payload properties and Unicode integrity.');
+
+ 
+// QW-238..240: identity preflight shares the exact normalizer; vital input is visible ASCII.
+{
+  const { hasValidVoiceClinicalPayload, hasDistinctVoiceClinicalTargets } = await import('../src/clinical/voiceClinicalPayload.ts');
+  for (const patientName of ['123', 'A/B', 'A\u202E B', 'A\u200B', 'A\uD800', '\u200D']) {
+    assert.equal(hasValidVoiceClinicalPayload({ type: 'select_patient', patientName }), false);
+  }
+  for (const patientName of ['Éxemple fictif', 'مثال A', '  Patient fictif  ']) {
+    assert.equal(hasValidVoiceClinicalPayload({ type: 'select_patient', patientName }), true);
+  }
+  const vital = { type: 'set_vital', field: 'temperature', value: '37,2' };
+  const motif = { type: 'set_consultation_field', field: 'motif', value: 'Fictif' };
+  for (const value of ['\uFEFF37', '37\n', '\t37', '37\u00A0', '37\u200B']) {
+    assert.equal(hasValidVoiceClinicalPayload({ ...vital, value }), false);
+    assert.equal(hasDistinctVoiceClinicalTargets([motif, { ...vital, value }]), false);
+  }
+  for (const value of ['37,2', ' 37.2 ', '-1']) {
+    assert.equal(hasValidVoiceClinicalPayload({ ...vital, value }), true);
+  }
+}
+console.log('PASS QW-238..240: shared identity preflight and visible vital syntax.');
