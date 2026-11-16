@@ -15,7 +15,7 @@ import Prescriptions from './pages/Prescriptions';
 import Inventory from './pages/Inventory';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
-import { readInitialThemePreference, persistThemePreference } from './services/themeStorage';
+import { readInitialThemePreference, persistThemePreference, normalizeThemePreference } from './services/themeStorage';
 import OrbAssistant from './components/OrbAssistant';
 import type { ClinicalReasoningAnalysis } from './hooks/useClinicalReasoning';
 import type { VoiceCommandAction } from './types/medical';
@@ -276,7 +276,7 @@ function App() {
         return (
           <Settings
             themePreference={themePreference}
-            onThemeChange={setThemePreference}
+            onThemeChange={(value) => setThemePreference(normalizeThemePreference(value))}
           />
         );
 
@@ -306,7 +306,7 @@ function App() {
       <main className="main" id="contenu-principal">
         <Header title={active} onOpenCopilot={() => setActive('Copilote IA')} />
         {themePersistenceFailed && (
-          <p role="status">Le thème reste modifiable pour cette session, mais sa préférence n’a pas pu être enregistrée dans le navigateur.</p>
+          <p className="clinical-storage-alert" role="status">Le thème reste modifiable pour cette session, mais sa préférence n’a pas pu être enregistrée dans le navigateur.</p>
         )}
         {storageWarning && (
           <div className="clinical-storage-alert" role="alert">

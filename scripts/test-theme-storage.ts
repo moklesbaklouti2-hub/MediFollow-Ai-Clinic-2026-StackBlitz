@@ -68,4 +68,17 @@ for (const name of ['SecurityError', 'QuotaExceededError', 'Error']) {
 installStorage();
 assert.equal(persistThemePreference('light'), true);
 assert.equal(readInitialThemePreference(), 'light');
+
+// Compatibility: v2 migration is retried until its marker is saved. Even after
+// a partial migration and a session choice, retry still sets dark as before.
+records.clear();
+installStorage(undefined, (key, value) => {
+  if (key === migrationKey) throw new DOMException('Fictional quota', 'QuotaExceededError');
+  records.set(key, value);
+});
+assert.equal(readInitialThemePreference(), 'dark');
+assert.equal(persistThemePreference('light'), true);
+installStorage();
+assert.equal(readInitialThemePreference(), 'dark');
+assert.equal(records.get(migrationKey), 'true');
 console.log('PASS theme storage: migration, dark/light/auto, throwing getter/read/writes and recovery.');
