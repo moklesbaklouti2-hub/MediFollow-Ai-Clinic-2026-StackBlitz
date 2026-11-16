@@ -101,14 +101,18 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
       </nav>
 
       <div className="sidebar-lower">
-        <div className="sidebar-motto-card">
-          <div className="sidebar-motto-art" aria-hidden="true">
-            <span className="motto-cross">✚</span>
-            <span className="motto-pulse">⌁</span>
-          </div>
-          <p>Ensemble pour votre santé</p>
-          <span className="sidebar-motto-line" />
-        </div>
+        <button
+          type="button"
+          className="sidebar-helios-action"
+          onClick={() => onNavigate('Copilote IA')}
+          aria-label="Ouvrir HELIOS, le copilote clinique"
+        >
+          <span className="sidebar-helios-mark" aria-hidden="true">✦</span>
+          <span>
+            <strong>HELIOS</strong>
+            <small>Copilote clinique</small>
+          </span>
+        </button>
 
         <div className="sidebar-security-note">
           <span aria-hidden="true">◈</span>
