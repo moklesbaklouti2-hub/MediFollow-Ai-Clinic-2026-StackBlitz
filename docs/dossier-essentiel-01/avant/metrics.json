@@ -1,0 +1,538 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "copilot-consultation-context",
+        "height": 42
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "",
+        "height": 43
+      },
+      {
+        "id": "",
+        "height": 43
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "copilot-consultation-context",
+        "height": 42
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "",
+        "height": 43
+      },
+      {
+        "id": "",
+        "height": 43
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "copilot-consultation-context",
+        "height": 42
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "",
+        "height": 43
+      },
+      {
+        "id": "",
+        "height": 43
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "copilot-consultation-context",
+        "height": 42
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [
+      {
+        "id": "",
+        "height": 43
+      },
+      {
+        "id": "",
+        "height": 43
+      }
+    ],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(241, 246, 252)",
+    "headingFont": "Manrope, Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(13, 32, 51)",
+    "headingFont": "Inter, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+    "smallFields": [],
+    "duplicateIds": []
+  }
+]
