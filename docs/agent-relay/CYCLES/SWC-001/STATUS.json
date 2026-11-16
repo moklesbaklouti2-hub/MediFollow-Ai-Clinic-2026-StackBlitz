@@ -14,11 +14,36 @@
     "jobs_passed": 11,
     "jobs_total": 11
   },
-  "stage": "AUDIT_CLAUDE_REQUIS",
-  "claude_audit_for_head_sha": null,
+  "stage": "VALIDATION_HUMAINE",
+  "claude_audit_for_head_sha": "686fee0664419779f4aa08446cfe0fa878203d46",
   "merge_allowed": false,
   "main_modified_by_relay": false,
   "auto_trigger_installed": false,
   "document_updated_by": "ChatGPT based on user-provided Claude/Codex reports and GitHub checks",
-  "notes": "Status snapshot, not a live synchronized status. Re-fetch the PR SHA before acting."
+  "notes": "SHA de la PR à revérifier à chaque action; audit et CI sur 686fee0. Ne pas fusionner ni démarrer SWC-002 avant validation humaine et décision explicite.",
+  "claude_audit_verdict": "ACCEPTER",
+  "chatgpt_technical_arbitration": "ACCEPTER_SOUS_RESERVES",
+  "chatgpt_verified_ci": {
+    "run_id": 43957531483,
+    "sha": "686fee0664419779f4aa08446cfe0fa878203d46",
+    "jobs_passed": 11,
+    "jobs_total": 11,
+    "job_id": 133615935703,
+    "test_storage_regression": true,
+    "test_storage_regression_passed": 4,
+    "test_storage_regression_failed": 0
+  },
+  "human_validation_required": [
+    "Tablette Android : vérifier bandeau d'alerte sur stockage refusé, et changement de thème",
+    "Aucune donnée patient réelle"
+  ],
+  "next_lot_allowed": false,
+  "audit_transcription_source": "User provided Claude audit in conversation; transcribed by ChatGPT, not a Claude-authored GitHub commit",
+  "unresolved_minor_findings": [
+    "Style du bandeau thème",
+    "Migration v2 partielle",
+    "Dispatch événement après écriture confirmée peut renvoyer faux échec",
+    "Fallbacks divergents de thème",
+    "Autres accès directs au stockage/écouteur initial à inventorier"
+  ]
 }
