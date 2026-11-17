@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "pageComparisons": 64,
+  "dashboardClinicalComparisons": 8,
+  "comparisonScreenshots": 176,
+  "extraScreenshots": 12,
+  "onePagePdfExports": 3,
+  "syntheticWriteWorkflows": 3,
+  "portraitNavigationCases": 4,
+  "reflowCases": 2,
+  "storageFailureModes": 2,
+  "contrastPageCases": 16,
+  "fieldStatesMeasured": 800,
+  "buttonStatesMeasured": 1168,
+  "nativeChromeZoomTested": false
+}

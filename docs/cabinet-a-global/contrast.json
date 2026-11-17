@@ -1,0 +1,82 @@
+[
+  {
+    "theme": "light",
+    "page": "dashboard",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "patients",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "consultations",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "helios",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "ordonnances",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "protocoles",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "inventaire",
+    "failures": []
+  },
+  {
+    "theme": "light",
+    "page": "parametres",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "dashboard",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "patients",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "consultations",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "helios",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "ordonnances",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "protocoles",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "inventaire",
+    "failures": []
+  },
+  {
+    "theme": "dark",
+    "page": "parametres",
+    "failures": []
+  }
+]

@@ -1,0 +1,9 @@
+Running navigation.py
+PASS navigation.py
+Running actions.py
+PASS actions.py
+Running check-contrast.py
+PASS check-contrast.py
+Running capture.py apres
+PASS capture.py
+PASS full real-browser suite on unchanged application sources

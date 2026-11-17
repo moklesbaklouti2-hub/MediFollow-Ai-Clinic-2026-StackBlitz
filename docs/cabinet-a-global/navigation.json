@@ -1,0 +1,102 @@
+[
+  {
+    "viewport": "701x1280",
+    "theme": "light",
+    "routes": 8,
+    "nativeModalTabAndEscapeFocus": true,
+    "browserChromeFocusStops": 1,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "closeButtonAndBackdrop": true,
+    "orientationWhileOpen": true,
+    "scrollReset": true,
+    "assistantPanelFits": true,
+    "dataUnchanged": true,
+    "pageErrors": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "routes": 8,
+    "nativeModalTabAndEscapeFocus": true,
+    "browserChromeFocusStops": 1,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "closeButtonAndBackdrop": true,
+    "orientationWhileOpen": true,
+    "scrollReset": true,
+    "assistantPanelFits": true,
+    "dataUnchanged": true,
+    "pageErrors": []
+  },
+  {
+    "viewport": "900x1280",
+    "theme": "light",
+    "routes": 8,
+    "nativeModalTabAndEscapeFocus": true,
+    "browserChromeFocusStops": 1,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "closeButtonAndBackdrop": true,
+    "orientationWhileOpen": true,
+    "scrollReset": true,
+    "assistantPanelFits": true,
+    "dataUnchanged": true,
+    "pageErrors": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "routes": 8,
+    "nativeModalTabAndEscapeFocus": true,
+    "browserChromeFocusStops": 1,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "closeButtonAndBackdrop": true,
+    "orientationWhileOpen": true,
+    "scrollReset": true,
+    "assistantPanelFits": true,
+    "dataUnchanged": true,
+    "pageErrors": []
+  },
+  {
+    "viewport": "640x400",
+    "theme": "light",
+    "routes": 8,
+    "reflowEquivalent200": true
+  },
+  {
+    "viewport": "640x400",
+    "theme": "dark",
+    "routes": 8,
+    "reflowEquivalent200": true
+  },
+  {
+    "automaticTheme": true,
+    "preferencePreserved": true,
+    "storageAlertVisibleBeforeContent": true,
+    "dataUnchanged": true,
+    "light": "rgb(255, 248, 240)",
+    "dark": "rgb(20, 33, 28)"
+  },
+  {
+    "mode": "theme-writes",
+    "sessionThemeUsable": true,
+    "persistenceWarningVisible": true,
+    "pageErrors": []
+  },
+  {
+    "mode": "storage-getter",
+    "sessionThemeUsable": true,
+    "persistenceWarningVisible": true,
+    "pageErrors": []
+  }
+]
