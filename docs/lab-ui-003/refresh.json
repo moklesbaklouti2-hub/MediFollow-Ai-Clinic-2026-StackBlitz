@@ -1,0 +1,21 @@
+{
+  "customRefreshEvent": "medifollow:data-updated",
+  "before": [
+    "2",
+    "5",
+    "2",
+    "1",
+    "1"
+  ],
+  "afterSyntheticUpdate": [
+    "3",
+    "6",
+    "2",
+    "1",
+    "1"
+  ],
+  "restored": true,
+  "recentListAndStockUpdated": true,
+  "lateKpiMatchesFollowup": true,
+  "pageErrors": []
+}

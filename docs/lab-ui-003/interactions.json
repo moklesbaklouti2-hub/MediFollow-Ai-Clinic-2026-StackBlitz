@@ -1,0 +1,846 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      },
+      {
+        "action": "Bienvenue: Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Bienvenue: Patients",
+        "target": "Patients"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(187, 73, 57)",
+      "color": "rgb(255, 255, 255)",
+      "paper": "rgb(255, 252, 248)"
+    },
+    "primaryContrast": 5.09,
+    "controls": [
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 176.5,
+        "height": 118
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 140.4,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 301.265625,
+        "y": 595.015625,
+        "width": 298.15625,
+        "height": 437.5625
+      },
+      {
+        "x": 617.421875,
+        "y": 595.015625,
+        "width": 298.15625,
+        "height": 437.5625
+      },
+      {
+        "x": 933.578125,
+        "y": 595.015625,
+        "width": 298.15625,
+        "height": 437.5625
+      }
+    ]
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(57, 220, 196)",
+      "color": "rgb(7, 20, 36)",
+      "paper": "rgb(17, 36, 58)"
+    },
+    "primaryContrast": 10.76,
+    "controls": [
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 176.5,
+        "height": 118
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 140.4,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 140.4,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 301.265625,
+        "y": 589.03125,
+        "width": 298.15625,
+        "height": 437.5625
+      },
+      {
+        "x": 617.421875,
+        "y": 589.03125,
+        "width": 298.15625,
+        "height": 437.5625
+      },
+      {
+        "x": 933.578125,
+        "y": 589.03125,
+        "width": 298.15625,
+        "height": 437.5625
+      }
+    ]
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(187, 73, 57)",
+      "color": "rgb(255, 255, 255)",
+      "paper": "rgb(255, 252, 248)"
+    },
+    "primaryContrast": 5.09,
+    "controls": [
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 167,
+        "height": 123.4
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 155.7,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 242,
+        "y": 866.546875,
+        "width": 253.5,
+        "height": 475.5625
+      },
+      {
+        "x": 513.5,
+        "y": 866.546875,
+        "width": 253.5,
+        "height": 475.5625
+      },
+      {
+        "x": 242,
+        "y": 1360.109375,
+        "width": 525,
+        "height": 288.03125
+      }
+    ]
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(57, 220, 196)",
+      "color": "rgb(7, 20, 36)",
+      "paper": "rgb(17, 36, 58)"
+    },
+    "primaryContrast": 10.76,
+    "controls": [
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 167,
+        "height": 123.4
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 155.7,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 155.7,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 242,
+        "y": 859.859375,
+        "width": 253.5,
+        "height": 475.5625
+      },
+      {
+        "x": 513.5,
+        "y": 859.859375,
+        "width": 253.5,
+        "height": 475.5625
+      },
+      {
+        "x": 242,
+        "y": 1353.421875,
+        "width": 525,
+        "height": 288.03125
+      }
+    ]
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Tableau de bord"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Patients"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Consultations"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Param\u00e8tres"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(187, 73, 57)",
+      "color": "rgb(255, 255, 255)",
+      "paper": "rgb(255, 252, 248)"
+    },
+    "primaryContrast": 5.09,
+    "controls": [
+      {
+        "label": "Toutes les pages",
+        "width": 299,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 157.5,
+        "height": 119.4
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 138.5,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 10,
+        "y": 1299.484375,
+        "width": 325,
+        "height": 312.875
+      },
+      {
+        "x": 10,
+        "y": 1626.359375,
+        "width": 325,
+        "height": 433.5625
+      },
+      {
+        "x": 10,
+        "y": 2073.921875,
+        "width": 325,
+        "height": 284.03125
+      }
+    ]
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "routes": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations"
+      },
+      {
+        "action": "Patients",
+        "target": "Patients"
+      },
+      {
+        "action": "HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ordonnances",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Protocoles",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Inventaire",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Ouvrir HELIOS",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Tableau de bord"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Patients"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Consultations"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Copilote IA"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Ordonnances"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Protocoles m\u00e9dicaux"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Inventaire"
+      },
+      {
+        "action": "Menu mobile",
+        "target": "Param\u00e8tres"
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "primaryColors": {
+      "background": "rgb(57, 220, 196)",
+      "color": "rgb(7, 20, 36)",
+      "paper": "rgb(17, 36, 58)"
+    },
+    "primaryContrast": 10.76,
+    "controls": [
+      {
+        "label": "Toutes les pages",
+        "width": 299,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation",
+        "width": 175.5,
+        "height": 44
+      },
+      {
+        "label": "Patients",
+        "width": 84.5,
+        "height": 44
+      },
+      {
+        "label": "Contr\u00f4les en retard\n1\nDates de contr\u00f4le valides",
+        "width": 157.5,
+        "height": 119.4
+      },
+      {
+        "label": "Ouvrir HELIOS",
+        "width": 128.0,
+        "height": 44
+      },
+      {
+        "label": "Ouvrir les consultations",
+        "width": 190.3,
+        "height": 44
+      },
+      {
+        "label": "Nouvelle consultation\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Patients\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "HELIOS\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Ordonnances\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Protocoles\n\u2192",
+        "width": 138.5,
+        "height": 64
+      },
+      {
+        "label": "Inventaire\n\u2192",
+        "width": 138.5,
+        "height": 64
+      }
+    ],
+    "mainPanels": [
+      {
+        "x": 10,
+        "y": 1277.890625,
+        "width": 325,
+        "height": 312.875
+      },
+      {
+        "x": 10,
+        "y": 1604.765625,
+        "width": 325,
+        "height": 433.5625
+      },
+      {
+        "x": 10,
+        "y": 2052.328125,
+        "width": 325,
+        "height": 284.03125
+      }
+    ]
+  }
+]

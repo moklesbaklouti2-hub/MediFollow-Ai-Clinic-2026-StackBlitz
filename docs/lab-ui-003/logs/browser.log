@@ -1,0 +1,7 @@
+1280 800 light PASS 10 routes
+1280 800 dark PASS 8 routes
+800 1280 light PASS 8 routes
+800 1280 dark PASS 8 routes
+360 740 light PASS 16 routes
+360 740 dark PASS 16 routes
+PASS: routes, focus, clinical data, mobile menu, 200% equivalent reflow and auto theme.
