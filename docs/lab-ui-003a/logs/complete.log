@@ -1,0 +1,434 @@
+
+> medifollow-ai@1.0.0 test:complete
+> npm run build && npm run test:theme-storage && npm run test:clinical-premium && npm run test:all-offline && npm run test:timeline-contracts && npm run test:timeline-composition && npm run test:helios-memory-prevention && npm run test:helios-trends-referral && npm run test:dashboard-layout
+
+
+> medifollow-ai@1.0.0 build
+> tsc -b && vite build
+
+vite v6.4.6 building for production...
+transforming...
+✓ 122 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     0.47 kB │ gzip:   0.30 kB
+dist/assets/index-BDsALkMy.css    218.76 kB │ gzip:  39.87 kB
+dist/assets/index-DsgSgr3T.js   1,464.06 kB │ gzip: 408.16 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 22.29s
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:theme-storage
+> tsx scripts/test-theme-storage.ts && tsx scripts/test-storage-regression.ts
+
+PASS theme storage: migration, dark/light/auto, throwing getter/read/writes and recovery.
+MediFollow : erreur d'enregistrement (medifollow-patients) DOMException [SecurityError]: Fictional denial
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at get (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:12:44)
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:120:5)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:16:16)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.start (node:internal/test_runner/test:1262:17)
+    at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+MediFollow : erreur d'enregistrement (medifollow-patients) DOMException [QuotaExceededError]: Fictional quota
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at Object.setItem (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:45:43)
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:120:18)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:50:18)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    at Test.postRun (node:internal/test_runner/test:1542:19)
+    at Test.run (node:internal/test_runner/test:1467:12)
+MediFollow : erreur d'enregistrement (medifollow-patients) Error: Vérification après écriture échouée.
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:124:31)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:50:18)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    at Test.postRun (node:internal/test_runner/test:1542:19)
+    at Test.run (node:internal/test_runner/test:1467:12)
+    at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+MediFollow : erreur d'enregistrement (medifollow-patients) DOMException [SecurityError]: Fictional read denial
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at Object.getItem (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:41:46)
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:123:22)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:50:18)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    at Test.postRun (node:internal/test_runner/test:1542:19)
+    at Test.run (node:internal/test_runner/test:1467:12)
+MediFollow : erreur d'enregistrement (medifollow-patients) DOMException [SecurityError]: Fictional denial
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at get (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:62:53)
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:120:5)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:71:16)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    at Test.postRun (node:internal/test_runner/test:1542:19)
+    at Test.run (node:internal/test_runner/test:1467:12)
+MediFollow : erreur d'enregistrement (medifollow-patients) DOMException [SecurityError]: Fictional denial
+    at new DOMException (node:internal/per_context/domexception:76:18)
+    at get (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:62:53)
+    at writeData (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:120:5)
+    at savePatients (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/src/services/storage.ts:169:10)
+    at TestContext.<anonymous> (/workspace/MediFollow-Ai-Clinic-2026-StackBlitz/scripts/test-storage-regression.ts:77:18)
+    at Test.runInAsyncScope (node:async_hooks:227:14)
+    at Test.run (node:internal/test_runner/test:1402:25)
+    at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    at Test.postRun (node:internal/test_runner/test:1542:19)
+    at Test.run (node:internal/test_runner/test:1467:12)
+✔ B1: denied storage reports one error only when a save is attempted (12.265997ms)
+✔ M1: corrupt stored theme falls back to dark (0.344807ms)
+✔ writes: normal, read-only, ignored and unverifiable saves report exact events (32.456154ms)
+✔ SSR does not touch storage or notify; failed notification cannot throw again (1.09836ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 61.604376
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:clinical-premium
+> node scripts/test-clinical-premium.mjs
+
+PASS UI-PREMIUM-001: shell, modules, themes, responsiveness and safe prototype labels.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:all-offline
+> npm run test:ai-resilience && npm run test:clinical-regression && npm run test:medical-dictionary && npm run test:medical-speech && npm run test:inventory-dispense && npm run test:patient-linkage && npm run test:follow-up
+
+
+> medifollow-ai@1.0.0 test:ai-resilience
+> tsx server/ai/test-resilience.ts
+
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA cloudflare temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA groq temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA cloudflare temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+Fournisseur IA openrouter temporairement indisponible pour la tâche chat; tentative du fournisseur suivant.
+OK — 8 scénarios de robustesse du routeur IA validés sans appels externes.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:clinical-regression
+> tsx server/ai/test-clinical-regression.ts
+
+SCÉNARIO FICTIF PRÊT — ORL 
+SCÉNARIO FICTIF PRÊT — Cardiologie 
+SCÉNARIO FICTIF PRÊT — Pédiatrie 
+SCÉNARIO FICTIF PRÊT — Urgences (alerte attendue)
+OK — 7 tests de déclencheurs cliniques (accents, formes décomposées et contrôles négatifs).
+OK — 8 assertions de cohérence entre réponses au copilote et alertes thoraciques.
+OK — 6 contrôles contre les rappels redondants après interrogatoire ciblé.
+OK — 12 mentions thoraciques niées, positives ou incertaines contrôlées.
+OK — 8 tests de lecture tensionnelle avec ou sans mmHg.
+OK — 11 scénarios de douleur thoracique au pluriel, négations et mention positive indépendante.
+OK — 9 scénarios fictifs de complétude des antécédents et traitements.
+OK — 13 assertions pour le refus des réponses cliniques IA périmées.
+OK — 4 contrôles contractuels : absence de transfert du brouillon ciblé après sauvegarde.
+OK — 3 routes cliniques non stockables et erreurs de parseur JSON assainies (requêtes fictives).
+OK — 7 cas de classification et 1 contrat du gestionnaire réel.
+OK — 13 cas de validation de prompts et 2 contrats de routes IA sans coercition.
+OK — 12 contrôles fictifs de la limite de longueur chat et du garde HTTP 413.
+OK — 9 erreurs fictives × 3 opérations IA sans fuite dans les logs, et 4 vérifications de liaison.
+OK — 8 pages vocales valides, 10 entrées invalides et 1 contrat de route filtré.
+OK — QW-021 : 14 entrées fictives et 2 contrôles des routes du chat.
+OK — QW-022 : 13 formats historiques fictifs et 2 contrats du chat.
+OK — QW-023 : 18 historiques fictifs et 2 contrats de la route chat.
+OK — Vérifications statiques des routes et 4 scénarios cliniques préparés.
+NOTE — La qualité des réponses cliniques nécessite encore des tests réels du modèle et une revue médicale.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:medical-dictionary
+> tsx scripts/test-medical-dictionary.ts
+
+OK — 239 entrées lexicales contrôlées, 4 termes essentiels présents.
+NOTE — Contrôle structurel uniquement : ni exactitude clinique ni qualité de reconnaissance vocale validées.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:medical-speech
+> tsx scripts/test-medical-speech-regression.ts
+
+OK : 174 assertions sur les fonctions réelles de correction médicale et le contrat vocal Orb (sans navigateur).
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:inventory-dispense
+> tsx scripts/test-inventory-dispense-regression.ts
+
+OK — QW-026 : 10 cas fictifs de suppression et contrat UI de protection de traçabilité.
+OK — 346 assertions sur les replays et la délivrance atomique (données fictives).
+PASS QW-116: direct dispensing requires a confirmed, matching saved prescription.
+PASS QW-117: orphan stock records block new dispensing, without breaking replay.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:patient-linkage
+> tsx scripts/test-patient-linkage.ts
+
+PASS : sélection patient confirmée pour consultations et ordonnances (données fictives).
+PASS: QW-033 nine synthetic patient selections and visible fail-closed UI contract.
+PASS QW-034: nine synthetic vital provenance checks and actual Patient UI contract.
+PASS QW-035: 11 tests fictifs de mémoire documentaire et de liaison UI.
+PASS QW-036: 10 fictional history group and UI regression checks.
+PASS QW-037: 12 numerical trend checks, immutable fixtures and UI contract.
+PASS QW-038: 10 synthetic prevention-document checks and UI contract.
+PASS QW-039: 10 fictional referral provenance and UI checks.
+PASS QW-040: 11 fictional local-document and UI checks.
+PASS QW-041: 4 official source links, HTTPS allowlist and UI safety contract.
+PASS QW-044/166/167: synthetic specialty grouping, provenance and strict dates.
+PASS QW-045/168..170: verified-patient activity and non-ambiguous encounters only.
+PASS QW-046: fictional timeline date ordering, unknown dates, specialty and patient UI contracts.
+PASS QW-047: synthetic laboratory/radiology/other order provenance and UI contracts.
+PASS QW-048: synthetic cancelled/draft/dispensed prescription statuses and timeline contract.
+PASS QW-049: synthetic medical timeline event filters and patient UI contracts.
+PASS QW-050: accent-insensitive local timeline search and UI contracts.
+PASS QW-051: synthetic documentary prescription status filters and patient UI contracts.
+PASS QW-052: inclusive UTC civil-date timeline filters and UI contract.
+PASS QW-053: documented specialty-only patient timeline filtering and UI contract.
+PASS QW-054: long timeline display limit, full-history option and no mutation.
+PASS QW-055: explicit reset of timeline controls and safe patient switching.
+PASS QW-056: patient timeline documentation completeness counters and no mutation.
+PASS QW-063: pure chronological sort, unknown dates last and UI contract.
+PASS QW-064: synthetic unknown-date filter, no mutation and UI contract.
+PASS QW-065: documentary-only gap review and immutable, patient-scoped UI contract.
+PASS QW-066: prescribed order category read-only filter, legacy meds and no mutation.
+PASS QW-069: timeline memoization source contract.
+PASS: legacy document linkage, 10 orphan records detected, visible dashboard warning and zero storage mutations.
+PASS QW-076: duplicate/missing consultation identifiers refuse update.
+PASS QW-077: ambiguous consultation IDs cannot trigger deletion.
+PASS QW-080: duplicate prescription ID rejected on update.
+PASS QW-081: duplicated prescription ID cannot trigger deletion.
+PASS QW-082: duplicate patient ID blocks update before persistence.
+PASS QW-083: patient deletion fails closed on imported duplicate IDs.
+PASS QW-084: ambiguous deleted patient ID cannot be restored.
+PASS QW-085: central consultation creation requires unique patient.
+PASS QW-086: central prescription creation guarded by patient identity.
+PASS QW-087: inventory movement links prevent prescription deletion.
+PASS QW-088: blocked prescription delete gets explicit UI feedback.
+PASS QW-089: prescription patient ownership cannot change silently.
+PASS QW-090: reject ambiguous/wrong-patient dispense before stock write.
+PASS QW-091: cancel dispensed prescription checks current identity before stock return.
+PASS QW-092: a stale or cross-patient partial return cannot bypass ownership checks.
+PASS QW-093: historical prescription editing cannot load a stale or ambiguous patient document.
+PASS QW-094: central deletion cannot erase cancelled or dispensed orders without movements.
+PASS QW-095: cancelled orders cannot trigger dispensing or stock deduction.
+PASS QW-096: stale form cannot edit dispensed or cancelled prescriptions.
+PASS QW-097: finalized prescription content immutable; explicit cancellation remains possible.
+PASS QW-098: all returns fully documented before cancelling dispensed order.
+PASS QW-099: unknown imported statuses cannot be deleted as drafts.
+PASS QW-100: only explicit draft/validated statuses permit inventory dispensing.
+PASS QW-101: history consistently labels recorded prescription statuses.
+PASS QW-102: untraced, ambiguous or cross-patient stock cannot certify dispensing.
+PASS QW-103: non-dispensed status cannot hide recorded stock during cancellation.
+PASS QW-104: documented stock locks stale draft/validated prescription content.
+PASS QW-105: direct creation refuses terminal status and misleading timestamps.
+PASS QW-106: creation timestamp immutable; finalized status changes require dated audit fields.
+PASS QW-107: forward-only status transitions and no silent coercion of imported states.
+PASS QW-108: a draft cannot become validated without its audit timestamp.
+PASS QW-109: validated creation requires dated evidence; drafts remain undated.
+PASS QW-110: pre-dispense reconciliation warning on stock history mismatch.
+PASS QW-111: cancelling unknown-status prescriptions fails closed before inventory work.
+PASS QW-112: missing legacy and invalid imported statuses remain distinguishable.
+PASS QW-113: new prescription IDs cannot reuse clinical or stock-trace identifiers.
+PASS QW-114: missing/invalid imported statuses are readonly until reviewed.
+PASS QW-115: stale editor warns before stock-linked prescription edits.
+PASS QW-118: saved consultations cannot be moved between patient records.
+PASS QW-119: clinical audit timestamps are immutable across direct updates.
+PASS QW-121: creating consultations refuses already-used clinical IDs.
+PASS QW-122: new consultations require motif and specialty without rewriting legacy visits.
+PASS QW-124: malformed visit dates blocked at central clinical writes.
+PASS QW-126: stale clinical consultation edits are refused without erasing unsaved text.
+PASS QW-127: central consultation writes reject changed source revisions.
+PASS QW-183..184: valid whole-number patient ages in both forms.
+PASS QW-185..187: unique patient links and consultation provenance for last visit.
+PASS QW-193..195: pending Express note guards.
+PASS QW-196..198: Express control characters and supported line boundaries.
+PASS QW-199..201: Unicode integrity in Express notes.
+PASS QW-202..204: meaningful Express fields and strict patient binding.
+PASS QW-205..207: explicit Express binding and protection after transfer.
+PASS QW-208..210: voice patient selection guards.
+PASS QW-211..213: voice draft protection and closed field dispatch.
+PASS QW-214..216: malformed voice values rejected.
+PASS QW-217..219: Express patient binding and textual voice field keys.
+PASS QW-220..222: malformed voice batches and exact patient name contract.
+PASS QW-223..225: multilingual voice identity and closed clinical action types.
+PASS QW-226..228: clinical voice payload preflight.
+PASS QW-229..231: specialty preflight and exact aliases.
+PASS QW-232..234: dense voice batches and unique targets.
+PASS QW-235..237: own voice payload properties and Unicode integrity.
+PASS QW-238..240: shared identity preflight and visible vital syntax.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:follow-up
+> tsx scripts/test-follow-up.ts
+
+PASS HELIOS Follow-up QW-032: 8 synthetic identities and 2 actual UI contracts.
+PASS QW-042: fictional labelled-note parsing, conflict and UI guard checks.
+PASS QW-043: confirmed reset plus fail-closed AI, UI and save contracts.
+PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.
+PASS QW-070: documentary count of undated planned follow-ups.
+PASS QW-071: future follow-up horizon is displayed without status mutation.
+PASS QW-072: read-only invalid-date worklist and confirmed-identity edit action.
+PASS QW-073: reviewable future plans sorted by recorded date, with identity safeguards.
+PASS QW-074: follow-up horizons partition and dashboard/list agreement.
+PASS QW-075: local objective search, three worklists and non-mutation.
+PASS QW-078: imported ID ambiguity blocks follow-up edit and completion actions.
+PASS QW-079: stale patient reassignment cannot be silently persisted.
+PASS QW-120: HELIOS follow-up plans validated before central clinical writes.
+PASS QW-123: completion respects central follow-up validation.
+PASS QW-125: stale HELIOS worklist rows cannot silently complete changed plans.
+PASS QW-128: HELIOS completion carries a full clinical revision guard.
+PASS QW-129: stale HELIOS worklist clinical versions are rejected.
+PASS QW-130: HELIOS completed follow-up cannot bypass the central revision requirement.
+PASS QW-132: imported unknown HELIOS statuses shown as requiring review.
+PASS QW-133: HELIOS invalid imported follow-up dates flagged, never inferred.
+PASS QW-134: imported historical identity ambiguity cannot offer unsafe editing.
+PASS QW-135: consultation history safely sorts and displays recorded dates.
+PASS QW-136: historical imported HELIOS objectives are displayed without coercion.
+PASS QW-137: three HELIOS follow-up worklists use safe imported objective labels.
+PASS QW-138: three HELIOS follow-up lists hide actions for duplicate encounter IDs.
+PASS QW-139: malformed HELIOS plans cannot offer misleading quick closure.
+PASS QW-140: unknown imported HELIOS statuses remain visible and review-only.
+PASS QW-141: three HELIOS worklists identify their source consultation.
+PASS QW-142: explicit civil-date labels for due HELIOS follow-ups.
+PASS QW-143: duplicate consultation IDs do not collide as React row keys.
+PASS QW-144: safe documented specialties in HELIOS and history.
+PASS QW-145: no implicit reclassification of unknown imported follow-up statuses.
+PASS QW-146: imported invalid follow-up dates cannot enter date inputs.
+PASS QW-147: invalid imported follow-up objectives cannot enter editor textarea.
+PASS QW-148: invalid imported IDs cannot crash HELIOS follow-up sorting.
+PASS QW-149: safe clinical reason display in HELIOS and history.
+PASS QW-150: malformed historical diagnoses remain readable for review.
+PASS QW-151: imported patient names safely display across five clinical lists.
+PASS QW-152: legacy test assertions aligned with protected HELIOS labels.
+PASS QW-153..155: malformed imported specialty, reason and diagnosis cannot enter editor.
+PASS QW-171..173: no implicit follow-up loss; validated removal requires consent.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:timeline-contracts
+> node scripts/test-timeline-active-filter-contract.mjs && node scripts/test-timeline-results-accessibility-contract.mjs && node scripts/test-timeline-date-help-contract.mjs && node scripts/test-timeline-show-all-contract.mjs && node scripts/test-timeline-search-help-contract.mjs && node scripts/test-timeline-suite-contract.mjs
+
+QW-057 synthetic UI contract OK
+QW-058 synthetic accessibility contract OK
+QW-059 synthetic date help contract OK
+QW-061/QW-067 synthetic show-all and post-filter chronological limit contract OK
+QW-062 synthetic search help contract OK
+QW-060 synthetic grouped test wiring contract OK
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:timeline-composition
+> tsx scripts/test-timeline-composition.ts
+
+QW-068 PASS: synthetic patient-isolated chronology, category/status/date/search/specialty/sort/limit composition.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:helios-memory-prevention
+> tsx scripts/test-helios-memory-prevention.ts
+
+PASS QW-156..160: patient isolation, verified chronology, deterministic memory and prevention.
+PASS QW-174..176: duplicate consultation provenance excluded without mutation.
+PASS QW-177..179: strict clock and deterministic prevention chronology.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:helios-trends-referral
+> tsx scripts/test-helios-trends-referral.ts
+
+PASS QW-161..165: strict chronology, unique provenance, isolated HELIOS Trends/Referral.
+PASS QW-180..182: trustworthy vital charts and documented dates.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+
+> medifollow-ai@1.0.0 test:dashboard-layout
+> tsx --tsconfig tsconfig.app.json scripts/test-dashboard-warm-layout.tsx
+
+PASS LAB-UI-003: original loaders/calculations and App behavior frozen; five real KPIs, honest empty states, identity/follow-up/stock warnings, escaped read-only recents, six real shortcuts and scoped CSS. Browser geometry remains a separate check.
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

@@ -1,0 +1,19 @@
+{
+  "reflow": [
+    {
+      "theme": "light",
+      "viewport": "640x400",
+      "reflowEquivalent200": true
+    },
+    {
+      "theme": "dark",
+      "viewport": "640x400",
+      "reflowEquivalent200": true
+    }
+  ],
+  "automaticTheme": {
+    "light": "rgb(255, 252, 248)",
+    "dark": "rgb(17, 36, 58)",
+    "preferencePreserved": true
+  }
+}

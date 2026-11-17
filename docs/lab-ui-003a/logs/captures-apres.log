@@ -1,0 +1,16 @@
+apres vide 1280 800 light PASS
+apres vide 1280 800 dark PASS
+apres vide 800 1280 light PASS
+apres vide 800 1280 dark PASS
+apres vide 360 740 light PASS
+apres vide 360 740 dark PASS
+apres vide 1648 928 light PASS
+apres vide 1648 928 dark PASS
+apres fictif 1280 800 light PASS
+apres fictif 1280 800 dark PASS
+apres fictif 800 1280 light PASS
+apres fictif 800 1280 dark PASS
+apres fictif 360 740 light PASS
+apres fictif 360 740 dark PASS
+apres fictif 1648 928 light PASS
+apres fictif 1648 928 dark PASS

@@ -114,7 +114,12 @@ assert.deepEqual(countUnlinkedClinicalRecords(
   [{ patientId: 'ghost' }, { patientId: 'ok' }],
 ), { consultations: 2, prescriptions: 1 });
 assert.deepEqual(countUnlinkedClinicalRecords([], [], []), { consultations: 0, prescriptions: 0 });
-const dashboardSource = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
+// LAB-UI-003 extracts the real rendered panels; retain every existing assertion
+// across the container and its imported presentation components.
+const dashboardSource = [
+  readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/components/dashboard/DashboardPanels.tsx', import.meta.url), 'utf8'),
+].join('\n');
 assert.ok(dashboardSource.includes('countUnlinkedClinicalRecords(clinicalPatients, clinicalConsultations, getPrescriptions())') &&
   dashboardSource.includes('const clinicalPatients = getPatients();') &&
   dashboardSource.includes('const clinicalConsultations = getConsultations();') &&
@@ -536,7 +541,7 @@ assert.deepEqual(summarizeRecordedActivity([], []), {
   included: 0, excluded: 0, specialties: [], motifs: [],
 });
 assert.equal(summarizeRecordedActivity([], activityVisits).excluded, activityVisits.length);
-const dashboardActivitySource = readFileSync('src/pages/Dashboard.tsx', 'utf8');
+const dashboardActivitySource = dashboardSource;
 assert.ok(dashboardActivitySource.includes('summarizeRecordedActivity(clinicalPatients, clinicalConsultations)') &&
   dashboardActivitySource.includes('HELIOS Activité — statistiques descriptives') &&
   dashboardActivitySource.includes('data.clinicalActivity.excluded') &&

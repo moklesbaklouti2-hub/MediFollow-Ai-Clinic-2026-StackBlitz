@@ -109,7 +109,11 @@ assert.equal(completedFollowUpPlan({
 }), null);
 
 const consultationUI = readFileSync(new URL('../src/pages/Consultations.tsx', import.meta.url), 'utf8');
-const dashboardUI = readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8');
+// Keep the original contracts after extracting Dashboard presentation panels.
+const dashboardUI = [
+  readFileSync(new URL('../src/pages/Dashboard.tsx', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/components/dashboard/DashboardPanels.tsx', import.meta.url), 'utf8'),
+].join('\n');
 assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjective, followUpCompleted)') &&
   consultationUI.includes('followUp: followUpPlan.followUp') &&
   consultationUI.includes('setFollowUpDate(editorFollowUpDate)') &&

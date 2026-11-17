@@ -4,6 +4,7 @@ import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
 import { summarizeFollowUps, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../clinical/followUp';
 import { summarizeRecordedActivity, type ClinicalActivitySummary } from '../clinical/activityStats';
 import type { InventoryData } from '../types/medical';
+import { WelcomeBanner, MobileDashboardNavigation, OverviewKpi, AgendaPanel, RecentConsultationsPanel, HeliosPanel, ActivityChartPanel, FollowUpPanel, DataIntegrityNotice, ClinicalActivityPanel, LatestVitalsPanel, InventoryPanel, QuickPathways, type DashboardPage } from '../components/dashboard/DashboardPanels';
 
 type DashboardProps = {
   patientCount: number;
@@ -11,6 +12,7 @@ type DashboardProps = {
   onStartConsultation: () => void;
   onOpenCopilot: () => void;
   onOpenPatients: () => void;
+  onNavigate: (page: DashboardPage) => void;
 };
 
 type PatientRecord = {
@@ -19,7 +21,7 @@ type PatientRecord = {
   status?: string;
 };
 
-type ConsultationRecord = {
+export type ConsultationRecord = {
   id: string;
   date: string;
   patient: string;
@@ -39,7 +41,7 @@ type ConsultationRecord = {
 
 type PrescriptionRecord = { id: string; date?: string };
 
-type DashboardData = {
+export type DashboardData = {
   patients: PatientRecord[];
   consultations: ConsultationRecord[];
   prescriptions: PrescriptionRecord[];
@@ -83,139 +85,7 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   };
 }
 
-function BrainArtwork() {
-  return (
-    <svg
-      className="mf-brain-art mf-medical-ai-art"
-      viewBox="0 0 320 250"
-      role="img"
-      aria-label="Illustration tridimensionnelle d’un noyau d’intelligence médicale relié à un réseau de données"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <defs>
-        <radialGradient id="mfAiAtmosphere">
-          <stop offset="0" stopColor="#38e9e1" stopOpacity=".25" />
-          <stop offset=".62" stopColor="#168fc7" stopOpacity=".10" />
-          <stop offset="1" stopColor="#168fc7" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id="mfAiRing" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#d9ffff" stopOpacity=".9" />
-          <stop offset=".35" stopColor="#55e7e5" stopOpacity=".72" />
-          <stop offset=".72" stopColor="#238fc5" stopOpacity=".28" />
-          <stop offset="1" stopColor="#8af8f1" stopOpacity=".82" />
-        </linearGradient>
-        <radialGradient id="mfAiGlass" cx="34%" cy="24%" r="78%">
-          <stop offset="0" stopColor="#245b7d" />
-          <stop offset=".48" stopColor="#103958" />
-          <stop offset="1" stopColor="#061c36" />
-        </radialGradient>
-        <linearGradient id="mfAiCross" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#ffffff" />
-          <stop offset=".45" stopColor="#a9fff7" />
-          <stop offset="1" stopColor="#35cbdc" />
-        </linearGradient>
-        <filter id="mfAiBlur" x="-100%" y="-100%" width="300%" height="300%">
-          <feGaussianBlur stdDeviation="11" />
-        </filter>
-        <filter id="mfAiSoftGlow" x="-80%" y="-80%" width="260%" height="260%">
-          <feGaussianBlur stdDeviation="3.5" />
-        </filter>
-      </defs>
-
-      <ellipse cx="160" cy="125" rx="142" ry="112" fill="url(#mfAiAtmosphere)" />
-      <ellipse cx="160" cy="220" rx="76" ry="9" fill="#21d6df" opacity=".16" filter="url(#mfAiBlur)" />
-
-      <g fill="none" strokeLinecap="round">
-        <ellipse cx="160" cy="119" rx="119" ry="69" stroke="#69e9ed" strokeOpacity=".24" strokeWidth="1.3" transform="rotate(-23 160 119)" />
-        <ellipse cx="160" cy="119" rx="111" ry="83" stroke="#8df9f0" strokeOpacity=".20" strokeWidth="1.2" transform="rotate(36 160 119)" />
-        <ellipse cx="160" cy="119" rx="91" ry="103" stroke="#48c9e5" strokeOpacity=".17" strokeWidth="1" transform="rotate(72 160 119)" />
-        <path d="M43 119h35l15-13 12 26 13-19h25" stroke="#56e6e4" strokeOpacity=".48" strokeWidth="1.8" />
-        <path d="M217 119h18l12-15 12 27 11-12h17" stroke="#56e6e4" strokeOpacity=".48" strokeWidth="1.8" />
-        <path d="M160 22v27M160 190v29M65 58l22 19M255 58l-22 19M64 180l24-17M256 180l-24-17" stroke="#8cf7f0" strokeOpacity=".42" strokeWidth="1.5" />
-      </g>
-
-      <g fill="none" stroke="#57dce7" strokeOpacity=".42" strokeWidth="1.4">
-        <path d="M66 77L101 91L111 67M254 77L219 91L209 67M65 164L102 151L111 174M255 164L218 151L209 174" />
-        <path d="M111 67L132 57M209 67L188 57M111 174L132 184M209 174L188 184" />
-      </g>
-
-      <g fill="#aafff8" stroke="#1b789c" strokeWidth="2">
-        <circle cx="65" cy="77" r="4.5" />
-        <circle cx="255" cy="77" r="4.5" />
-        <circle cx="65" cy="164" r="4.5" />
-        <circle cx="255" cy="164" r="4.5" />
-        <circle cx="160" cy="22" r="4.5" />
-        <circle cx="160" cy="219" r="4.5" />
-        <circle cx="111" cy="67" r="3.2" />
-        <circle cx="209" cy="67" r="3.2" />
-        <circle cx="111" cy="174" r="3.2" />
-        <circle cx="209" cy="174" r="3.2" />
-      </g>
-
-      <circle cx="160" cy="119" r="65" fill="#29dce1" opacity=".22" filter="url(#mfAiBlur)" />
-      <circle cx="160" cy="119" r="58" fill="none" stroke="url(#mfAiRing)" strokeWidth="2.4" />
-      <circle cx="160" cy="119" r="51" fill="url(#mfAiGlass)" stroke="#83f6ef" strokeOpacity=".72" strokeWidth="1.5" />
-      <circle cx="160" cy="119" r="43" fill="none" stroke="#a2fff7" strokeOpacity=".13" strokeWidth="1" />
-      <path d="M124 91a45 45 0 0 1 57-14" fill="none" stroke="#ffffff" strokeOpacity=".42" strokeWidth="2.2" strokeLinecap="round" />
-
-      <g filter="url(#mfAiSoftGlow)" opacity=".65" fill="#68fff0">
-        <rect x="151" y="85" width="18" height="68" rx="4" />
-        <rect x="126" y="110" width="68" height="18" rx="4" />
-      </g>
-      <g fill="url(#mfAiCross)">
-        <rect x="152" y="87" width="16" height="64" rx="3.5" />
-        <rect x="128" y="111" width="64" height="16" rx="3.5" />
-      </g>
-      <path d="M160 91v56M132 119h56" stroke="#ffffff" strokeOpacity=".48" strokeWidth="1" strokeLinecap="round" />
-      <circle cx="160" cy="119" r="3" fill="#ffffff" />
-
-      <g fill="none" stroke="#b5fff9" strokeWidth="1.4" strokeOpacity=".8">
-        <path d="M45 119h20M255 119h20M160 26v18M160 194v21" />
-      </g>
-      <g fill="#e2ffff">
-        <circle cx="45" cy="119" r="2.2" />
-        <circle cx="275" cy="119" r="2.2" />
-        <circle cx="160" cy="26" r="2.2" />
-        <circle cx="160" cy="215" r="2.2" />
-      </g>
-    </svg>
-  );
-}
-function DoctorRobotArtwork() {
-  return (
-    <svg className="mf-doctor-robot" viewBox="0 0 260 290" role="img" aria-label="Robot assistant médical en blouse blanche avec stéthoscope">
-      <defs>
-        <linearGradient id="mfRobotCoat" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#ffffff"/><stop offset=".55" stopColor="#d9f2ff"/><stop offset="1" stopColor="#8ec9e8"/></linearGradient>
-        <linearGradient id="mfRobotMetal" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#b9fbff"/><stop offset=".5" stopColor="#24c8f2"/><stop offset="1" stopColor="#1472bf"/></linearGradient>
-        <radialGradient id="mfRobotAura"><stop stopColor="#00dfff" stopOpacity=".34"/><stop offset="1" stopColor="#00dfff" stopOpacity="0"/></radialGradient>
-        <filter id="mfRobotGlow"><feGaussianBlur stdDeviation="7"/></filter>
-      </defs>
-      <ellipse cx="130" cy="152" rx="119" ry="132" fill="url(#mfRobotAura)"/>
-      <ellipse cx="130" cy="271" rx="75" ry="10" fill="#00b9ed" opacity=".24" filter="url(#mfRobotGlow)"/>
-      <path d="M104 66V48M156 66V48" stroke="#7beaff" strokeWidth="6" strokeLinecap="round"/>
-      <circle cx="104" cy="43" r="7" fill="#0d5e93" stroke="#a8f6ff" strokeWidth="3"/>
-      <circle cx="156" cy="43" r="7" fill="#0d5e93" stroke="#a8f6ff" strokeWidth="3"/>
-      <rect x="77" y="58" width="106" height="94" rx="35" fill="url(#mfRobotMetal)" stroke="#9af5ff" strokeWidth="3"/>
-      <rect x="87" y="70" width="86" height="66" rx="25" fill="#082b50" stroke="#4fdcf8" strokeWidth="2"/>
-      <ellipse cx="111" cy="101" rx="8" ry="11" fill="#b5fbff"/>
-      <ellipse cx="149" cy="101" rx="8" ry="11" fill="#b5fbff"/>
-      <path d="M113 120q17 13 34 0" fill="none" stroke="#4ce7e0" strokeWidth="3" strokeLinecap="round"/>
-      <circle cx="92" cy="112" r="4" fill="#00e6c3"/><circle cx="168" cy="112" r="4" fill="#00e6c3"/>
-      <path d="M64 177q7-25 34-29h64q27 4 34 29l18 82H46Z" fill="url(#mfRobotCoat)" stroke="#bcecff" strokeWidth="3"/>
-      <path d="M99 151l31 33 31-33-10 108h-42Z" fill="#f8fdff" stroke="#b5dff4" strokeWidth="2"/>
-      <path d="M130 184v74" stroke="#8bbbd5" strokeWidth="2"/>
-      <path d="M95 163q-23 28-25 74M165 163q23 28 25 74" fill="none" stroke="#9bcce5" strokeWidth="4" strokeLinecap="round"/>
-      <path d="M103 169q-13 15-13 40t16 29q15 7 24-10" fill="none" stroke="#118fc4" strokeWidth="5" strokeLinecap="round"/>
-      <circle cx="130" cy="228" r="9" fill="#0c5684" stroke="#65eaff" strokeWidth="3"/>
-      <path d="M130 219v-9q0-8 9-8h8" fill="none" stroke="#168fc7" strokeWidth="4" strokeLinecap="round"/>
-      <path d="M115 188h10v13h-10z" fill="#168fc7" opacity=".75"/>
-      <path d="M139 188h10v13h-10z" fill="#168fc7" opacity=".75"/>
-      <circle cx="130" cy="17" r="3" fill="#b5fbff"/><circle cx="36" cy="115" r="3" fill="#6feaff"/><circle cx="218" cy="92" r="3" fill="#00e6c3"/>
-    </svg>
-  );
-}
-
-export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot, onOpenPatients }: DashboardProps) {
+export default function Dashboard({ patientCount, consultationCount, onStartConsultation, onOpenCopilot, onOpenPatients, onNavigate }: DashboardProps) {
   const [data, setData] = useState<DashboardData>(() => loadDashboardData(patientCount, consultationCount));
   const [inventory, setInventory] = useState<InventoryData>(() => getInventoryData());
 
@@ -285,265 +155,33 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
   ];
 
   return (
-    <section className="dashboard mf-dashboard-page">
-      <div className="mf-dashboard">
-        <section className="mf-hero">
-          <div className="mf-hero-copy">
-            <span className="mf-eyebrow">PLATEFORME D'INTELLIGENCE MÉDICALE</span>
-            <h2>MediFollow <em>AI</em></h2>
-            <p>Ensemble pour votre santé.<br />L'intelligence au service du soin.</p>
-            <div className="mf-hero-meta"><span className="mf-live-dot" /> Votre espace clinique · {monthName}</div>
-          </div>
-          <div className="mf-hero-art" aria-hidden="true">
-            <div className="mf-hero-orbit mf-hero-orbit-one" />
-            <div className="mf-hero-orbit mf-hero-orbit-two" />
-            <div className="mf-hero-ecg">⌁</div>
-            <BrainArtwork />
-          </div>
-          <div className="mf-hero-badge">✦ &nbsp; CLINICAL AI WORKSPACE</div>
-        </section>
-
-        <section className="mf-stats" aria-label="Indicateurs du cabinet">
-          <article className="mf-stat mf-stat-blue">
-            <div className="mf-stat-top"><span className="mf-stat-icon">♙</span><span className="mf-stat-kicker">BASE PATIENTS</span></div>
-            <strong>{data.patients.length.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Patients inscrits</span>
-            <div className="mf-stat-foot"><span>Dossiers patients</span><i>●</i></div>
-          </article>
-          <article className="mf-stat mf-stat-teal">
-            <div className="mf-stat-top"><span className="mf-stat-icon">✚</span><span className="mf-stat-kicker">ACTIVITÉ DU MOIS</span></div>
-            <strong>{currentMonth.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Consultations ce mois</span>
-            <div className="mf-stat-foot"><span>{monthName}</span><i>●</i></div>
-          </article>
-          <article className="mf-stat mf-stat-violet">
-            <div className="mf-stat-top"><span className="mf-stat-icon">▤</span><span className="mf-stat-kicker">PRESCRIPTIONS</span></div>
-            <strong>{data.prescriptions.length.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Ordonnances émises</span>
-            <div className="mf-stat-foot"><span>Historique enregistré</span><i>●</i></div>
-          </article>
-          <article className="mf-stat mf-stat-amber">
-            <div className="mf-stat-top"><span className="mf-stat-icon">◷</span><span className="mf-stat-kicker">SUIVI CLINIQUE</span></div>
-            <strong>{followUpCount.toLocaleString('fr-FR')}</strong>
-            <span className="mf-stat-label">Suivi des patients</span>
-            <div className="mf-stat-foot"><span>Dossiers actifs ou en suivi</span><i>●</i></div>
-          </article>
-        </section>
-
-        <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="HELIOS Follow-up : échéances de suivi">
-          <div className="mf-panel-heading">
-            <div><span className="mf-panel-overline">HELIOS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
-          </div>
-          <p style={{ margin: 0 }}>
-            <strong>{data.followUpConsultations.overdue}</strong> en retard ·{' '}
-            <strong>{data.followUpConsultations.today}</strong> aujourd’hui ·{' '}
-            <strong>{data.followUpConsultations.nextSevenDays}</strong> dans les 7 jours
-          </p>
-          <p style={{ fontSize: 12, margin: '8px 0 0' }}>
-            <strong>{data.laterPlannedFollowUps}</strong> contrôle(s) planifié(s) à plus de 7 jours, non inclus dans les échéances ci-dessus.
-          </p>
-          <p style={{ fontSize: 12, margin: '8px 0 0' }}>
-            Contrôles effectués exclus des échéances. Aucun message automatique aux patients.
-          </p>
-          {data.undatedPlannedFollowUps > 0 && (
-            <p role="status" style={{ fontSize: 12, margin: '8px 0 0' }}>
-              {data.undatedPlannedFollowUps} contrôle(s) planifié(s) sans date valide, exclus des échéances ci-dessus. Date à vérifier dans le dossier.
-            </p>
-          )}
-          <button type="button" onClick={onStartConsultation} style={{ marginTop: 10 }}>
-            Ouvrir les consultations
-          </button>
-        </section>
-
-        {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
-          <section className="mf-panel" role="alert" aria-label="Documents sans dossier patient confirmé"
-            style={{ marginBottom: 18, padding: 18, borderColor: '#bd7c13' }}>
-            <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
-              Attention — documents cliniques sans dossier patient confirmé
-            </strong>
-            <p style={{ margin: 0 }}>
-              {data.unlinkedConsultations} consultation(s) et {data.unlinkedPrescriptions} ordonnance(s)
-              nécessitent une vérification de l’identité du patient.
-            </p>
-            <p style={{ fontSize: 13, margin: '8px 0 0' }}>
-              Aucun rapprochement automatique n’est effectué pour les homonymes.
-              Vérifiez les documents dans Consultations et Ordonnances avant toute décision clinique.
-            </p>
-          </section>
-        )}
-
-        <section className="mf-panel" style={{ marginBottom: 18, padding: 18, display: 'grid', gap: 12 }}
-          aria-label="HELIOS Activité — statistiques descriptives">
-          <div className="mf-panel-heading">
-            <div>
-              <span className="mf-panel-overline">HELIOS ACTIVITÉ</span>
-              <h3>Consultations par spécialité et motif</h3>
-            </div>
-          </div>
-          <p style={{ margin: 0, fontSize: 12 }}>
-            Statistiques descriptives des informations saisies :
-            {data.clinicalActivity.included} consultation(s) avec dossier patient confirmé.
-            {data.clinicalActivity.excluded > 0 && (
-              <> {data.clinicalActivity.excluded} document(s) avec identité patient ou identifiant de consultation non confirmé(s), exclu(s) des calculs.</>
-            )}
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12 }}>
-            {([
-              { title: 'Par spécialité', items: data.clinicalActivity.specialties },
-              { title: 'Par motif enregistré', items: data.clinicalActivity.motifs },
-            ] as const).map((group) => (
-              <div key={group.title} style={{ padding: 12, borderRadius: 10,
-                border: '1px solid var(--color-border)' }}>
-                <strong>{group.title}</strong>
-                {group.items.length === 0 ? <p>Aucune consultation reliée.</p> : (
-                  <ul style={{ margin: '8px 0 0', paddingLeft: 18, display: 'grid', gap: 6 }}>
-                    {group.items.slice(0, 5).map((item) => (
-                      <li key={item.label}>
-                        {item.label} : <strong>{item.count}</strong>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {group.items.length > 5 && <small>Cinq catégories les plus fréquentes affichées.</small>}
-              </div>
-            ))}
-          </div>
-          <p style={{ margin: 0, fontSize: 11 }}>
-            Ces chiffres représentent des saisies administratives, pas des diagnostics validés ni une prévalence médicale.
-            Les données non renseignées restent visibles comme telles. Aucun envoi à une IA externe.
-          </p>
-        </section>
-
-        <section className="mf-panel" style={{ marginBottom: 18, padding: 20, display: 'grid', gap: 16 }}>
-          <div className="mf-panel-heading">
-            <div><span className="mf-panel-overline">GESTION DU CABINET</span><h3>État de l’inventaire</h3></div>
-            <span className="mf-panel-chip">{inventory.items.length} article(s)</span>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(145px,1fr))', gap: 10 }}>
-            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Valeur estimée du stock</small>
-              <strong style={{ display: 'block', fontSize: 22, marginTop: 6 }}>{inventoryEstimatedValue.toLocaleString('fr-TN', { minimumFractionDigits: 3, maximumFractionDigits: 3 })} DT</strong>
-              <small style={{ color: 'var(--color-text-secondary)' }}>{inventoryValueIncomplete ? 'Estimation partielle : coûts manquants' : 'Calculée à partir des coûts unitaires saisis'}</small>
-            </div>
-            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Stocks bas</small>
-              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryLow.length ? '#c45c36' : 'inherit' }}>{inventoryLow.length}</strong>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Article(s) au seuil ou en dessous</small>
-            </div>
-            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Articles périmés</small>
-              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpired.length ? '#d94b4b' : 'inherit' }}>{inventoryExpired.length}</strong>
-              <small style={{ color: 'var(--color-text-secondary)' }}>À isoler du stock disponible</small>
-            </div>
-            <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Péremption ≤ 90 jours</small>
-              <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpiring.length ? '#bd7c13' : 'inherit' }}>{inventoryExpiring.length}</strong>
-              <small style={{ color: 'var(--color-text-secondary)' }}>Lots à surveiller</small>
-            </div>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 16 }}>
-            <div>
-              <strong style={{ fontSize: 14 }}>Alertes prioritaires</strong>
-              {inventoryLow.length + inventoryExpired.length + inventoryExpiring.length === 0
-                ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucune alerte de stock actuellement.</p>
-                : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
-                    {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: '#d94b4b' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: '#c45c36' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: '#bd7c13' }))].slice(0, 6).map(alert => (
-                      <div key={alert.item.id + alert.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
-                        <span>{alert.item.name} · {alert.item.batchNumber ? 'Lot ' + alert.item.batchNumber : 'Lot sans numéro'}</span>
-                        <strong style={{ color: alert.color, whiteSpace: 'nowrap' }}>{alert.label}</strong>
-                      </div>
-                    ))}
-                  </div>}
-            </div>
-            <div>
-              <strong style={{ fontSize: 14 }}>Derniers mouvements</strong>
-              {recentStockMovements.length === 0
-                ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucun mouvement enregistré.</p>
-                : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
-                    {recentStockMovements.map(movement => (
-                      <div key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
-                        <span>{movement.itemName}<small style={{ display: 'block', color: 'var(--color-text-secondary)' }}>{movement.reason || movement.type} · {new Date(movement.date).toLocaleDateString('fr-FR')}</small></span>
-                        <strong style={{ whiteSpace: 'nowrap', color: movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '#d97757' : '#159b7b' }}>{movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '−' : '+'}{Math.abs(movement.quantity)}</strong>
-                      </div>
-                    ))}
-                  </div>}
-            </div>
-          </div>
-          <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11 }}>La valeur est indicative et ne comprend que les articles dont le coût d’achat unitaire est renseigné. Les alertes sont calculées lot par lot.</p>
-        </section>
-
-        <section className="mf-dashboard-grid">
-          <article className="mf-panel mf-chart-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">ANALYSE DE L'ACTIVITÉ</span><h3>Graphique des consultations</h3></div><span className="mf-panel-chip">6 derniers mois</span></div>
-            <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Historique réel</span></div>
-            <div className="mf-chart-wrap">
-              <svg viewBox="0 0 520 150" preserveAspectRatio="none" aria-label="Graphique des consultations mensuelles">
-                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#12dfff" stopOpacity=".42"/><stop offset="1" stopColor="#12dfff" stopOpacity="0"/></linearGradient></defs>
-                {[28, 58, 88, 118].map(y => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline"/>)}
-                <polygon points={`20,130 ${chartPoints.map(p => `${p.x},${p.y}`).join(' ')} 488,130`} className="mf-chart-area"/>
-                <polyline points={chartPoints.map(p => `${p.x},${p.y}`).join(' ')} className="mf-chart-line"/>
-                {chartPoints.map(p => <circle key={p.label} cx={p.x} cy={p.y} r="5" className="mf-chart-point"/>)}
-              </svg>
-            </div>
-            <div className="mf-chart-labels">{chartPoints.map(point => <span key={point.label}>{point.label}<b>{point.count}</b></span>)}</div>
-          </article>
-
-          <article className="mf-panel mf-appointments-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">AGENDA CLINIQUE</span><h3>Prochains rendez-vous</h3></div><span className="mf-panel-count">—</span></div>
-            <div className="mf-empty-state mf-appointment-empty"><span>◷</span><strong>Aucun rendez-vous planifié</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p></div>
-          </article>
-
-          <article className="mf-panel mf-quick-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
-            <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
-          </article>
-
-          <article className="mf-copilot-card">
-            <div className="mf-copilot-copy">
-              <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
-              <h3>Votre Copilote IA</h3>
-              <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
-              <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
-              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
-            </div>
-            <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
-          </article>
-
-          <article className="mf-panel mf-indicators-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">DONNÉES CLINIQUES</span><h3>Indicateurs cliniques clés</h3></div><span className="mf-panel-chip">Dernière consultation</span></div>
-            <div className="mf-indicators-grid">
-              {indicators.map(item => (
-                <div className={`mf-indicator mf-indicator-${item.tone}`} key={item.label}>
-                  <span className="mf-indicator-icon">{item.icon}</span>
-                  <div><small>{item.label}</small><strong>{item.value}<em>{item.unit}</em></strong></div>
-                </div>
-              ))}
-            </div>
-            <p className="mf-indicator-note">Valeurs issues de la dernière consultation contenant des constantes renseignées. « — » signifie non renseigné.</p>
-          </article>
-        </section>
-
-        <section className="mf-panel mf-recent-panel">
-          <div className="mf-panel-heading"><div><span className="mf-panel-overline">HISTORIQUE CLINIQUE</span><h3>Consultations récentes</h3></div><span className="mf-panel-count">{recentConsultations.length}</span></div>
-          {recentConsultations.length === 0 ? (
-            <div className="mf-empty-state"><span>◷</span><strong>Aucune consultation enregistrée</strong><p>Vos consultations récentes apparaîtront ici.</p></div>
-          ) : (
-            <div className="mf-activity-list">
-              {recentConsultations.map((item, index) => (
-                <div className="mf-activity-item" key={item.id}>
-                  <span className={`mf-activity-avatar mf-avatar-${index % 4}`}>{(item.patient || '?').trim().charAt(0).toUpperCase()}</span>
-                  <div className="mf-activity-copy"><strong>{item.patient}</strong><span>{item.motif || 'Motif non renseigné'}</span><small>{new Date(item.date).toLocaleDateString('fr-FR')}</small></div>
-                  <span className="mf-activity-arrow">↗</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        <footer className="mf-dashboard-footer"><span>◈ &nbsp; Sécurité & confidentialité</span><i/><strong>MediFollow AI</strong><span>Ensemble pour votre santé <b>♡</b></span></footer>
-      </div>
+    <section className="warm-dashboard" data-dashboard-layout="warm-003" aria-label="Tableau de bord du cabinet">
+      <MobileDashboardNavigation onNavigate={onNavigate} />
+      <WelcomeBanner date={now} onStartConsultation={onStartConsultation} onOpenPatients={onOpenPatients} />
+      <section className="wd-kpis" aria-label="Indicateurs du cabinet">
+        <OverviewKpi label="Patients inscrits" value={data.patients.length} note="Dossiers patients" tone="sage" icon="patients" />
+        <OverviewKpi label="Consultations ce mois" value={currentMonth} note={monthName} tone="peach" icon="consultation" />
+        <OverviewKpi label="Ordonnances émises" value={data.prescriptions.length} note="Historique enregistré" tone="rose" icon="prescription" />
+        <OverviewKpi label="Suivi des patients" value={followUpCount} note="Dossiers actifs ou en suivi" tone="cream" icon="follow-up" />
+        <OverviewKpi label="Contrôles en retard" href="#dashboard-follow-up" value={data.followUpConsultations.overdue} note="Dates de contrôle valides" tone="rose" icon="overdue" />
+      </section>
+      <DataIntegrityNotice data={data} />
+      <section className="wd-operational-grid" aria-label="Agenda, consultations récentes et HELIOS">
+        <AgendaPanel />
+        <RecentConsultationsPanel recentConsultations={recentConsultations} />
+        <HeliosPanel onOpenCopilot={onOpenCopilot} />
+      </section>
+      <section className="wd-follow-grid" aria-label="Activité du cabinet et échéances de suivi">
+        <ActivityChartPanel chartPoints={chartPoints} />
+        <FollowUpPanel data={data} onStartConsultation={onStartConsultation} />
+      </section>
+      <section className="wd-detail-grid" aria-label="Informations cliniques et gestion du cabinet">
+        <ClinicalActivityPanel data={data} />
+        <LatestVitalsPanel indicators={indicators} />
+        <InventoryPanel inventory={inventory} inventoryLow={inventoryLow} inventoryExpired={inventoryExpired} inventoryExpiring={inventoryExpiring} inventoryEstimatedValue={inventoryEstimatedValue} inventoryValueIncomplete={inventoryValueIncomplete} recentStockMovements={recentStockMovements} />
+      </section>
+      <QuickPathways onStartConsultation={onStartConsultation} onOpenPatients={onOpenPatients} onOpenCopilot={onOpenCopilot} onNavigate={onNavigate} />
+      <footer className="wd-footer"><span>Sécurité &amp; confidentialité</span><strong>MediFollow AI</strong><span>Ensemble pour votre santé</span></footer>
     </section>
   );
 }

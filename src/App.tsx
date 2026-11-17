@@ -3,6 +3,7 @@ import './App.css';
 import './mobile-navigation.css';
 import './clinical-premium.css';
 import './warm-clinical.css';
+import './dashboard-warm-layout.css';
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -235,6 +236,7 @@ function App() {
             onStartConsultation={() => setActive('Consultations')}
             onOpenCopilot={() => setActive('Copilote IA')}
             onOpenPatients={() => setActive('Patients')}
+            onNavigate={setActive}
           />
         );
 
@@ -289,6 +291,7 @@ function App() {
             onStartConsultation={() => setActive('Consultations')}
             onOpenCopilot={() => setActive('Copilote IA')}
             onOpenPatients={() => setActive('Patients')}
+            onNavigate={setActive}
           />
         );
     }
