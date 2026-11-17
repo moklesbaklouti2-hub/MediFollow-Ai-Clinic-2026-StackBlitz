@@ -29,6 +29,7 @@ import type { TimelineDisplayLimit } from '../clinical/timelineLimit';
 import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatusFilter';
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
 import LocalDocumentReader from '../components/LocalDocumentReader';
+import PatientContextBar from '../components/PatientContextBar';
 
 export default function Patients() {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
@@ -425,6 +426,11 @@ export default function Patients() {
         }
       `}</style>
 
+      <PatientContextBar patients={patients} patientId={selectedId} links={[
+        { label: 'Dossier', target: 'n3-patient-record' },
+        { label: 'Chronologie et documents', target: 'n3-patient-timeline' },
+      ]} onClose={() => changeSelectedPatient(null)} />
+
       <header className="patients-heading">
         <div>
           <h2>Gestion des patients</h2>
@@ -514,7 +520,7 @@ export default function Patients() {
       {selected && (
         <div className="patient-detail">
           <div className="patient-detail-heading">
-            <h3>Dossier médical · {selected.name}</h3>
+            <h3 id="n3-patient-record" tabIndex={-1}>Dossier médical · {selected.name}</h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               <button className="patient-view" onClick={beginEditPatient}>Modifier le patient</button>
               <button className="patient-delete" onClick={handleDeletePatient}>Supprimer le dossier</button>
@@ -754,7 +760,7 @@ export default function Patients() {
             )}
           </section>
 
-          <h3 className="patient-section-title">Chronologie médicale</h3>
+          <h3 className="patient-section-title" id="n3-patient-timeline" tabIndex={-1}>Chronologie médicale</h3>
           <p className="patient-empty-history" role="status" aria-live="polite" aria-atomic="true" aria-label="Résultats de la chronologie">
             {pagedMedicalTimeline.length} affichés / {qualityFilteredMedicalTimeline.length} correspondants / {medicalTimeline.length} au total
           </p>

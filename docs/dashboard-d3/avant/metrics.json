@@ -1,0 +1,500 @@
+[
+  {
+    "dataset": "fictif",
+    "viewport": "1280x800",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "800x1280",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "360x740",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "360x740",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS2Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS4Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS2Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE1Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov4"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire1 article(s)Valeur estim\u00e9e du stock7,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "1280x800",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "800x1280",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "360x740",
+    "theme": "light",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  },
+  {
+    "dataset": "vide",
+    "viewport": "360x740",
+    "theme": "dark",
+    "overflow": false,
+    "stats": [
+      "\u2659BASE PATIENTS0Patients inscritsDossiers patients\u25cf",
+      "\u271aACTIVIT\u00c9 DU MOIS0Consultations ce moisnovembre 2026\u25cf",
+      "\u25a4PRESCRIPTIONS0Ordonnances \u00e9misesHistorique enregistr\u00e9\u25cf",
+      "\u25f7SUIVI CLINIQUE0Suivi des patientsDossiers actifs ou en suivi\u25cf"
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "alerts": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "appointments": [
+      "AGENDA CLINIQUEProchains rendez-vous\u2014\u25f7Aucun rendez-vous planifi\u00e9Les rendez-vous appara\u00eetront ici lorsque le calendrier sera activ\u00e9."
+    ],
+    "duplicateIds": []
+  }
+]
