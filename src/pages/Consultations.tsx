@@ -6,6 +6,7 @@ import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/m
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import PatientContextBar from '../components/PatientContextBar';
 import '../consultation-form.css';
+import '../consultation-fields-f1.css';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
@@ -777,7 +778,7 @@ export default function Consultations({
 
 
   return (
-    <section className="consultation-page lab-consultation-form">
+    <section className="consultation-page lab-consultation-form" data-field-design="f1">
       <style>{`
         .consultation-page {
           display:grid;

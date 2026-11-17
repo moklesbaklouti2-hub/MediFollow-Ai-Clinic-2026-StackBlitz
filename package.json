@@ -28,6 +28,7 @@
     "test:clinical-premium": "node scripts/test-clinical-premium.mjs",
     "test:lab-ui": "node scripts/test-lab-ui-consultation-fields.mjs && npm run test:navigation-n3 && npm run test:dashboard-d3",
     "test:dashboard-d3": "node scripts/test-dashboard-d3.mjs",
+    "test:fields-f1:browser": "python3 scripts/test-fields-f1-browser.py",
     "test:navigation-n3": "tsx --tsconfig tsconfig.app.json scripts/test-navigation-n3.tsx"
   },
   "dependencies": {
