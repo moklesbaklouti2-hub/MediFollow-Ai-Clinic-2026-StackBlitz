@@ -1,0 +1,1010 @@
+[
+  {
+    "variant": "b1",
+    "viewportWidth": 320,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 320,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 258,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 320,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 320,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 320,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 258,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 320,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 258,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 360,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 360,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 298,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 360,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 360,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 360,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 298,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 360,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 298,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 800,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 800,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 353,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 353,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 114.078125,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 718,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 800,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 800,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 800,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 353,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 353,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 114.078125,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 718,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 800,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 1280,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 1280,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 593,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 593,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 114.078125,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 1198,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 1280,
+    "theme": "light",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b1",
+    "viewportWidth": 1280,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b2",
+    "viewportWidth": 1280,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 593,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 593,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 114.078125,
+        "height": 64,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 1198,
+        "height": 64,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  },
+  {
+    "variant": "b3",
+    "viewportWidth": 1280,
+    "theme": "dark",
+    "noOverflow": true,
+    "focus": {
+      "style": "solid",
+      "width": 3
+    },
+    "buttons": [
+      {
+        "label": "Enregistrer les modifications",
+        "width": 225.78125,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Annuler la modification",
+        "width": 191.515625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Envoyer",
+        "width": 90.5625,
+        "height": 52,
+        "disabled": false,
+        "contentFits": true
+      },
+      {
+        "label": "Enregistrer la consultation",
+        "width": 211.25,
+        "height": 52,
+        "disabled": true,
+        "contentFits": true
+      }
+    ],
+    "fieldHeight": 52,
+    "textareaHeight": 112
+  }
+]
