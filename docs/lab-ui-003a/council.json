@@ -1,0 +1,572 @@
+[
+  {
+    "viewport": "701x1280",
+    "theme": "light",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 426,
+        "height": 153.984375
+      },
+      "welcome": {
+        "x": 242,
+        "y": 181.984375,
+        "width": 426,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 620.296875,
+        "width": 426,
+        "height": 223.171875
+      },
+      "helios": {
+        "x": 242,
+        "y": 857.46875,
+        "width": 426,
+        "height": 180.53125
+      },
+      "heliosButton": {
+        "x": 524.96875,
+        "y": 873.90625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 1052,
+        "width": 206,
+        "height": 348.1875
+      },
+      "recent": {
+        "x": 462,
+        "y": 1052,
+        "width": 206,
+        "height": 522.4375
+      }
+    }
+  },
+  {
+    "viewport": "701x1280",
+    "theme": "dark",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 426,
+        "height": 147.890625
+      },
+      "welcome": {
+        "x": 242,
+        "y": 175.890625,
+        "width": 426,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 614.203125,
+        "width": 426,
+        "height": 223.171875
+      },
+      "helios": {
+        "x": 242,
+        "y": 851.375,
+        "width": 426,
+        "height": 180.53125
+      },
+      "heliosButton": {
+        "x": 524.96875,
+        "y": 867.8125,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 1045.90625,
+        "width": 206,
+        "height": 348.1875
+      },
+      "recent": {
+        "x": 462,
+        "y": 1045.90625,
+        "width": 206,
+        "height": 522.4375
+      }
+    }
+  },
+  {
+    "viewport": "750x1280",
+    "theme": "light",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 475,
+        "height": 153.984375
+      },
+      "welcome": {
+        "x": 242,
+        "y": 181.984375,
+        "width": 475,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 585.3125,
+        "width": 475,
+        "height": 201.484375
+      },
+      "helios": {
+        "x": 242,
+        "y": 800.796875,
+        "width": 475,
+        "height": 180.53125
+      },
+      "heliosButton": {
+        "x": 573.96875,
+        "y": 817.234375,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 995.328125,
+        "width": 230.5,
+        "height": 304.8125
+      },
+      "recent": {
+        "x": 486.5,
+        "y": 995.328125,
+        "width": 230.5,
+        "height": 475.5625
+      }
+    }
+  },
+  {
+    "viewport": "750x1280",
+    "theme": "dark",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 475,
+        "height": 147.890625
+      },
+      "welcome": {
+        "x": 242,
+        "y": 175.890625,
+        "width": 475,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 579.21875,
+        "width": 475,
+        "height": 201.484375
+      },
+      "helios": {
+        "x": 242,
+        "y": 794.703125,
+        "width": 475,
+        "height": 180.53125
+      },
+      "heliosButton": {
+        "x": 573.96875,
+        "y": 811.140625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 989.234375,
+        "width": 230.5,
+        "height": 304.8125
+      },
+      "recent": {
+        "x": 486.5,
+        "y": 989.234375,
+        "width": 230.5,
+        "height": 475.5625
+      }
+    }
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": true,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 525,
+        "height": 115.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 525,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 546.875,
+        "width": 525,
+        "height": 181.34375
+      },
+      "helios": {
+        "x": 242,
+        "y": 742.21875,
+        "width": 525,
+        "height": 156.390625
+      },
+      "heliosButton": {
+        "x": 623.96875,
+        "y": 758.65625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 912.609375,
+        "width": 255.5,
+        "height": 304.8125
+      },
+      "recent": {
+        "x": 511.5,
+        "y": 912.609375,
+        "width": 255.5,
+        "height": 475.5625
+      }
+    }
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": true,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 525,
+        "height": 115.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 525,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 546.875,
+        "width": 525,
+        "height": 181.34375
+      },
+      "helios": {
+        "x": 242,
+        "y": 742.21875,
+        "width": 525,
+        "height": 156.390625
+      },
+      "heliosButton": {
+        "x": 623.96875,
+        "y": 758.65625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 912.609375,
+        "width": 255.5,
+        "height": 304.8125
+      },
+      "recent": {
+        "x": 511.5,
+        "y": 912.609375,
+        "width": 255.5,
+        "height": 475.5625
+      }
+    }
+  },
+  {
+    "viewport": "850x1280",
+    "theme": "light",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 575,
+        "height": 115.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 575,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 531.546875,
+        "width": 575,
+        "height": 181.34375
+      },
+      "helios": {
+        "x": 242,
+        "y": 726.890625,
+        "width": 575,
+        "height": 134.703125
+      },
+      "heliosButton": {
+        "x": 673.96875,
+        "y": 743.328125,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 875.59375,
+        "width": 280.5,
+        "height": 283.125
+      },
+      "recent": {
+        "x": 536.5,
+        "y": 875.59375,
+        "width": 280.5,
+        "height": 437.5625
+      }
+    }
+  },
+  {
+    "viewport": "850x1280",
+    "theme": "dark",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 575,
+        "height": 119.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 575,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 535.546875,
+        "width": 575,
+        "height": 181.34375
+      },
+      "helios": {
+        "x": 242,
+        "y": 730.890625,
+        "width": 575,
+        "height": 134.703125
+      },
+      "heliosButton": {
+        "x": 673.96875,
+        "y": 743.328125,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 879.59375,
+        "width": 280.5,
+        "height": 283.125
+      },
+      "recent": {
+        "x": 536.5,
+        "y": 879.59375,
+        "width": 280.5,
+        "height": 437.5625
+      }
+    }
+  },
+  {
+    "viewport": "900x1280",
+    "theme": "light",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 625,
+        "height": 115.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 625,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 531.546875,
+        "width": 625,
+        "height": 159.65625
+      },
+      "helios": {
+        "x": 242,
+        "y": 705.203125,
+        "width": 625,
+        "height": 134.703125
+      },
+      "heliosButton": {
+        "x": 723.96875,
+        "y": 721.640625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 853.90625,
+        "width": 305.5,
+        "height": 264.53125
+      },
+      "recent": {
+        "x": 561.5,
+        "y": 853.90625,
+        "width": 305.5,
+        "height": 437.5625
+      }
+    }
+  },
+  {
+    "viewport": "900x1280",
+    "theme": "dark",
+    "heliosBeforeAgendaAndRecent": true,
+    "heliosButtonInFirstViewport": true,
+    "identityPreservedBeforeTools": true,
+    "storageNoticeVisible": true,
+    "prototypeVisible": true,
+    "storageFailureChecked": false,
+    "heliosCallbackNavigates": true,
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "boxes": {
+      "header": {
+        "x": 242,
+        "y": 14,
+        "width": 625,
+        "height": 115.546875
+      },
+      "welcome": {
+        "x": 242,
+        "y": 143.546875,
+        "width": 625,
+        "height": 128
+      },
+      "identity": {
+        "x": 242,
+        "y": 531.546875,
+        "width": 625,
+        "height": 159.65625
+      },
+      "helios": {
+        "x": 242,
+        "y": 705.203125,
+        "width": 625,
+        "height": 134.703125
+      },
+      "heliosButton": {
+        "x": 723.96875,
+        "y": 721.640625,
+        "width": 128.03125,
+        "height": 44
+      },
+      "agenda": {
+        "x": 242,
+        "y": 853.90625,
+        "width": 305.5,
+        "height": 264.53125
+      },
+      "recent": {
+        "x": 561.5,
+        "y": 853.90625,
+        "width": 305.5,
+        "height": 437.5625
+      }
+    }
+  }
+]

@@ -1,0 +1,1034 @@
+[
+  {
+    "dataset": "vide",
+    "viewport": "1280x800",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "800x1280",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "360x740",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "360x740",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "1648x928",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "vide",
+    "viewport": "1648x928",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "0",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "0",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "0",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "0",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept0",
+      "oct0",
+      "nov0"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s0 en retard \u00b7 0 aujourd\u2019hui \u00b7 0 dans les 7 jours0 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.Ouvrir les consultations"
+    ],
+    "identity": [],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire0 article(s)Valeur estim\u00e9e du stock0,000 DTCalcul\u00e9e \u00e0 partir des co\u00fbts unitaires saisisStocks bas0Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s0\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours0Lots \u00e0 surveillerAlertes prioritairesAucune alerte de stock actuellement.Derniers mouvementsAucun mouvement enregistr\u00e9.La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :0 consultation(s) avec dossier patient confirm\u00e9.Par sp\u00e9cialit\u00e9Aucune consultation reli\u00e9e.Par motif enregistr\u00e9Aucune consultation reli\u00e9e.Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle\u2014mmHg",
+      "\u2301Fr\u00e9quence cardiaque\u2014bpm",
+      "\u25c9Saturation SpO\u2082\u2014%",
+      "\u2668Temp\u00e9rature\u2014\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[]",
+      "medifollow-consultations": "[]",
+      "medifollow-prescriptions": "[]",
+      "medifollow-inventory": "{\"items\": [], \"movements\": []}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "1280x800",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "800x1280",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "360x740",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "360x740",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "1648x928",
+    "theme": "light",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  },
+  {
+    "dataset": "fictif",
+    "viewport": "1648x928",
+    "theme": "dark",
+    "pageErrors": [],
+    "overflow": false,
+    "duplicateIds": [],
+    "stats": [
+      {
+        "label": "Patients inscrits",
+        "value": "2",
+        "note": "Dossiers patients"
+      },
+      {
+        "label": "Consultations ce mois",
+        "value": "5",
+        "note": "novembre 2026"
+      },
+      {
+        "label": "Ordonnances \u00e9mises",
+        "value": "2",
+        "note": "Historique enregistr\u00e9"
+      },
+      {
+        "label": "Suivi des patients",
+        "value": "1",
+        "note": "Dossiers actifs ou en suivi"
+      }
+    ],
+    "recent": [
+      "Dossier fictif AContr\u00f4le fictif c117/11/2026",
+      "Document fictif \u00e0 relierContr\u00f4le fictif c417/11/2026",
+      "Dossier fictif BContr\u00f4le fictif c216/11/2026",
+      "Dossier fictif AContr\u00f4le fictif c310/11/2026"
+    ],
+    "chart": [
+      "juin0",
+      "juil0",
+      "ao\u00fbt0",
+      "sept1",
+      "oct0",
+      "nov5"
+    ],
+    "follow": [
+      "HELIOS FOLLOW-UPContr\u00f4les de suivi programm\u00e9s1 en retard \u00b7 1 aujourd\u2019hui \u00b7 1 dans les 7 jours2 contr\u00f4le(s) planifi\u00e9(s) \u00e0 plus de 7 jours, non inclus dans les \u00e9ch\u00e9ances ci-dessus.Contr\u00f4les effectu\u00e9s exclus des \u00e9ch\u00e9ances. Aucun message automatique aux patients.1 contr\u00f4le(s) planifi\u00e9(s) sans date valide, exclus des \u00e9ch\u00e9ances ci-dessus. Date \u00e0 v\u00e9rifier dans le dossier.Ouvrir les consultations"
+    ],
+    "identity": [
+      "Attention \u2014 documents cliniques sans dossier patient confirm\u00e91 consultation(s) et 1 ordonnance(s) n\u00e9cessitent une v\u00e9rification de l\u2019identit\u00e9 du patient.Aucun rapprochement automatique n\u2019est effectu\u00e9 pour les homonymes. V\u00e9rifiez les documents dans Consultations et Ordonnances avant toute d\u00e9cision clinique."
+    ],
+    "inventory": [
+      "GESTION DU CABINET\u00c9tat de l\u2019inventaire2 article(s)Valeur estim\u00e9e du stock7,000 DTEstimation partielle : co\u00fbts manquantsStocks bas1Article(s) au seuil ou en dessousArticles p\u00e9rim\u00e9s1\u00c0 isoler du stock disponibleP\u00e9remption \u2264 90 jours1Lots \u00e0 surveillerAlertes prioritairesCompresses fictives \u00b7 Lot LAB-01P\u00c9RIM\u00c9Compresses fictives \u00b7 Lot LAB-01STOCK BASGants fictifs \u00b7 Lot LAB-02P\u00c9REMPTION PROCHEDerniers mouvementsCompresses fictivesEntr\u00e9e fictive \u00b7 16/11/2026+2Gants fictifsSortie fictive \u00b7 17/11/2026\u22121La valeur est indicative et ne comprend que les articles dont le co\u00fbt d\u2019achat unitaire est renseign\u00e9. Les alertes sont calcul\u00e9es lot par lot."
+    ],
+    "activity": [
+      "HELIOS ACTIVIT\u00c9Consultations par sp\u00e9cialit\u00e9 et motifStatistiques descriptives des informations saisies :5 consultation(s) avec dossier patient confirm\u00e9. 1 document(s) avec identit\u00e9 patient ou identifiant de consultation non confirm\u00e9(s), exclu(s) des calculs.Par sp\u00e9cialit\u00e9M\u00e9decine g\u00e9n\u00e9rale : 5Par motif enregistr\u00e9Contr\u00f4le fictif c1 : 1Contr\u00f4le fictif c2 : 1Contr\u00f4le fictif c3 : 1Contr\u00f4le fictif c5 : 1Contr\u00f4le fictif c6 : 1Ces chiffres repr\u00e9sentent des saisies administratives, pas des diagnostics valid\u00e9s ni une pr\u00e9valence m\u00e9dicale. Les donn\u00e9es non renseign\u00e9es restent visibles comme telles. Aucun envoi \u00e0 une IA externe."
+    ],
+    "indicators": [
+      "\u2665Tension art\u00e9rielle120/80mmHg",
+      "\u2301Fr\u00e9quence cardiaque72bpm",
+      "\u25c9Saturation SpO\u208298%",
+      "\u2668Temp\u00e9rature37\u00b0C"
+    ],
+    "stored": {
+      "medifollow-patients": "[{\"id\": \"lab003-a\", \"name\": \"Dossier fictif A\", \"age\": 42, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Actif\"}, {\"id\": \"lab003-b\", \"name\": \"Dossier fictif B\", \"age\": 51, \"sex\": \"Non renseign\\u00e9\", \"status\": \"Nouveau\"}]",
+      "medifollow-consultations": "[{\"id\": \"c1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c1\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {\"systolic\": \"120\", \"diastolic\": \"80\", \"heartRate\": \"72\", \"spo2\": \"98\", \"temperature\": \"37\"}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T10:00:00+01:00\", \"updatedAt\": \"2026-11-17T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-17\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c2\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-16T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c2\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-16T10:00:00+01:00\", \"updatedAt\": \"2026-11-16T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-16\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c3\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-10T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c3\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-10T10:00:00+01:00\", \"updatedAt\": \"2026-11-10T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-20\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c4\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-17T09:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c4\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-17T09:00:00+01:00\", \"updatedAt\": \"2026-11-17T09:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-11-27\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c5\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-09-12T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c5\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-09-12T10:00:00+01:00\", \"updatedAt\": \"2026-09-12T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"2026-12-01\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}, {\"id\": \"c6\", \"patientId\": \"lab003-b\", \"patient\": \"Dossier fictif B\", \"date\": \"2026-11-09T10:00:00+01:00\", \"specialty\": \"M\\u00e9decine g\\u00e9n\\u00e9rale\", \"motif\": \"Contr\\u00f4le fictif c6\", \"symptoms\": \"D\\u00e9monstration\", \"history\": \"\", \"vitals\": {}, \"physicalExamination\": {}, \"examination\": \"\", \"diagnosis\": \"\", \"plan\": \"\", \"createdAt\": \"2026-11-09T10:00:00+01:00\", \"updatedAt\": \"2026-11-09T10:00:00+01:00\", \"followUp\": {\"dueDate\": \"\", \"objective\": \"Contr\\u00f4le de d\\u00e9monstration\", \"status\": \"planned\"}}]",
+      "medifollow-prescriptions": "[{\"id\": \"rx1\", \"patientId\": \"lab003-a\", \"patient\": \"Dossier fictif A\", \"date\": \"2026-11-17\", \"medications\": [], \"exams\": []}, {\"id\": \"rx2\", \"patientId\": \"missing\", \"patient\": \"Document fictif \\u00e0 relier\", \"date\": \"2026-11-16\", \"medications\": [], \"exams\": []}]",
+      "medifollow-inventory": "{\"items\": [{\"id\": \"stock1\", \"name\": \"Compresses fictives\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 2, \"minimumQuantity\": 5, \"unitCost\": 3.5, \"expiryDate\": \"2026-11-01\", \"batchNumber\": \"LAB-01\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}, {\"id\": \"stock2\", \"name\": \"Gants fictifs\", \"category\": \"supply\", \"unit\": \"bo\\u00eete\", \"quantity\": 3, \"minimumQuantity\": 2, \"expiryDate\": \"2026-11-30\", \"batchNumber\": \"LAB-02\", \"createdAt\": \"2026-11-01\", \"updatedAt\": \"2026-11-17\"}], \"movements\": [{\"id\": \"m1\", \"itemId\": \"stock1\", \"itemName\": \"Compresses fictives\", \"type\": \"entry\", \"quantity\": 2, \"date\": \"2026-11-16\", \"reason\": \"Entr\\u00e9e fictive\"}, {\"id\": \"m2\", \"itemId\": \"stock2\", \"itemName\": \"Gants fictifs\", \"type\": \"dispense\", \"quantity\": 1, \"date\": \"2026-11-17\", \"reason\": \"Sortie fictive\"}]}"
+    }
+  }
+]
