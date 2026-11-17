@@ -1,0 +1,482 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(246, 243, 235)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "dashboard",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "patients",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "consultations",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "helios",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "ordonnances",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "protocoles",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "inventaire",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "page": "parametres",
+    "overflow": false,
+    "background": "rgb(33, 31, 27)",
+    "headingFont": "Georgia, \"Times New Roman\", serif",
+    "smallFields": [],
+    "duplicateIds": []
+  }
+]
