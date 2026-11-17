@@ -1,0 +1,1490 @@
+[
+  {
+    "option": "actuel",
+    "viewport": "1280x800",
+    "theme": "light",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": false
+      }
+    ],
+    "screenshot": "actuel-1280x800-light.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "1280x800",
+    "theme": "light",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": false
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-1280x800-light.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "1280x800",
+    "theme": "light",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-1280x800-light.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "1280x800",
+    "theme": "light",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-1280x800-light.png"
+  },
+  {
+    "option": "actuel",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": false
+      }
+    ],
+    "screenshot": "actuel-1280x800-dark.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": false
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-1280x800-dark.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 212,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-1280x800-dark.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "1280x800",
+    "theme": "dark",
+    "drawerOpen": false,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 211,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-1280x800-dark.png"
+  },
+  {
+    "option": "actuel",
+    "viewport": "800x1280",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "actuel-800x1280-light.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "800x1280",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-800x1280-light.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "800x1280",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-800x1280-light.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "800x1280",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-800x1280-light.png"
+  },
+  {
+    "option": "actuel",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "actuel-800x1280-dark.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-800x1280-dark.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-800x1280-dark.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "800x1280",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-800x1280-dark.png"
+  },
+  {
+    "option": "actuel",
+    "viewport": "360x740",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "actuel-360x740-light.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "360x740",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-360x740-light.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "360x740",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-360x740-light.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "360x740",
+    "theme": "light",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-360x740-light.png"
+  },
+  {
+    "option": "actuel",
+    "viewport": "360x740",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "actuel-360x740-dark.png"
+  },
+  {
+    "option": "a1",
+    "viewport": "360x740",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a1-360x740-dark.png"
+  },
+  {
+    "option": "a2",
+    "viewport": "360x740",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 292,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a2-360x740-dark.png"
+  },
+  {
+    "option": "a3",
+    "viewport": "360x740",
+    "theme": "dark",
+    "drawerOpen": true,
+    "title": "MediFollow AI — Espace clinique",
+    "language": "fr",
+    "clinicalSnapshotUnchanged": true,
+    "pageErrors": [],
+    "overflow": false,
+    "buttons": [
+      {
+        "name": "Tableau de bord",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Patients",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Consultations",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Protocoles médicaux",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Ordonnances",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Inventaire",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Copilote IA",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      },
+      {
+        "name": "Paramètres",
+        "width": 291,
+        "height": 48,
+        "initiallyVisible": true
+      }
+    ],
+    "screenshot": "a3-360x740-dark.png"
+  }
+]

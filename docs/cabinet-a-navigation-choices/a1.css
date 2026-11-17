@@ -1,0 +1,12 @@
+/* PROPOSAL ONLY: injected by preview.py, never imported by the application. */
+#root #cabinet-app #cabinet-navigation .sidebar {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto minmax(0,1fr) auto auto;
+}
+#root #cabinet-app #cabinet-navigation .sidebar-nav {
+  min-height:0;
+  overflow-y:auto !important;
+  overflow-x:hidden;
+}
+#root #cabinet-app #cabinet-navigation :is(.sidebar-bottom,.sidebar-version) {display:none !important;}

@@ -1,0 +1,5 @@
+/* PROPOSAL ONLY: injected by preview.py, never imported by the application. */
+#root #cabinet-app #cabinet-navigation :is(.sidebar-workspace,.sidebar-lower,.sidebar-bottom,.sidebar-version) {display:none !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-brand {padding-bottom:12px !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-nav {gap:8px !important;flex:0 0 auto;}
+#root #cabinet-app #cabinet-navigation .sidebar-settings {margin-top:0 !important;}

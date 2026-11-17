@@ -1,0 +1,15 @@
+/* PROPOSAL ONLY: appended after a2.css by preview.py; never imported by the app. */
+#root #cabinet-app #cabinet-navigation {background:var(--a-paper) !important;color:var(--a-ink) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar {background:var(--a-paper) !important;color:var(--a-ink) !important;border-right:1px solid var(--a-line) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar :is(.brand-copy h2,.brand-copy h2 span) {color:var(--a-ink) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar :is(.brand-copy small,.sidebar-section-label) {color:var(--a-muted) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-brand {border-color:var(--a-line) !important;}
+#root #cabinet-app #cabinet-navigation .premium-nav-item {color:var(--a-ink) !important;}
+#root #cabinet-app #cabinet-navigation .premium-nav-item:hover {background:var(--a-soft) !important;}
+#root #cabinet-app #cabinet-navigation .premium-nav-item.active {background:var(--a-primary) !important;color:var(--a-on-primary) !important;}
+#root #cabinet-app #cabinet-navigation .nav-active-indicator {background:var(--a-on-primary) !important;}
+#root #cabinet-app #cabinet-navigation .cabinet-drawer {background:var(--a-paper) !important;color:var(--a-ink) !important;}
+#root #cabinet-app #cabinet-navigation .cabinet-menu-toggle {color:var(--a-ink) !important;border-color:var(--a-field-line) !important;}
+#root #cabinet-app #cabinet-navigation .cabinet-mobile-brand {color:var(--a-ink) !important;}
+#root #cabinet-app .mf-orb-assistant {background:var(--a-paper) !important;}
+#root #cabinet-app .mf-orb-caption {color:var(--a-ink) !important;text-shadow:none !important;}
