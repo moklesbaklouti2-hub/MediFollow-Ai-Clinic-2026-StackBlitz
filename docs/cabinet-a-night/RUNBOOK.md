@@ -48,3 +48,7 @@ Les reprises prévues couvrent la nuit du 17 au 18 novembre 2026, avec une clôt
 Quand les tâches réalisables sont terminées, ne pas inventer du travail : consulter seulement d’éventuels nouveaux retours autorisés et préparer le bilan. Au passage final du matin, fournir les commits réels, tests et limites, liens PR/journal/captures, choix graphiques en attente et état réel de CI. Après cette fenêtre, aucune nouvelle modification ; pas de continuation automatique les jours suivants.
 
 Les rapports restent dans l’historique de l’automatisation et le journal GitHub. Ne pas promettre une notification Android ni un message direct dans une autre conversation. L’audit indépendant du Council reste distinct des vérifications de l’agent.
+
+## État après la session nocturne 01
+
+Les contrôles techniques ciblés de la file ont été réalisés, avec corrections et tests ; voir le [rapport du 18 novembre](2026-11-18-session-01/README.md) et le journal. Les reprises suivantes portent sur les nouveaux retours autorisés et le bilan du matin. Aucun test identique ni commit vide/répétitif pour occuper la plage. Les choix graphiques, l’audit indépendant et les appareils physiques restent en attente.

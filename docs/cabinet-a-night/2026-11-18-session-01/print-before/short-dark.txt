@@ -1,0 +1,30 @@
+APERÇU DE L'ORDONNANCE
+
+ORDONNANCE MÉDICALE
+Patient : Dossier fictif A
+
+Date : 2026-11-17
+
+Médicament
+
+Posologie et voie
+
+Durée
+
+MED_001_FICTIF —
+
+Instruction fictive sans valeur
+
+Durée fictive
+
+Présentation fictive
+
+clinique.
+Voie fictive
+FIN_001_FICTIF
+
+Conseils : Conseil fictif, sans recommandation clinique.
+
+Signature et cachet du médecin :
+
+

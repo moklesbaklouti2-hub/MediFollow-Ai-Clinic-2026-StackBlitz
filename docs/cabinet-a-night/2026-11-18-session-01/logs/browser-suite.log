@@ -1,0 +1,11 @@
+RUN accessibility-after
+accessibility-after EXIT 0
+RUN responsive-after
+responsive-after EXIT 0
+RUN print-after
+print-after EXIT 0
+RUN print-oversize
+print-oversize EXIT 0
+RUN status-after
+status-after EXIT 0
+PASS all targeted browser checks on unchanged application sources

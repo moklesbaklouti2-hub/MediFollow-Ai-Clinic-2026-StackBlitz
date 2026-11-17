@@ -1,0 +1,5 @@
+
+> medifollow-ai@1.0.0 test:warm-design
+> node scripts/test-warm-design-contract.mjs
+
+PASS LAB-UI-002: light-only import, visual modules, preserved alert scope, contrast ratios.

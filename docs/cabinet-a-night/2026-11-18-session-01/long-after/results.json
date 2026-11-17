@@ -1,0 +1,1202 @@
+[
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  }
+]
