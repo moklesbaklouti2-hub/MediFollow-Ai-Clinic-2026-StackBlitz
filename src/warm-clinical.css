@@ -1,0 +1,403 @@
+/*
+ * MediFollow AI — Warm Clinical Concept / LAB-UI-002
+ * Council-approved ivory • coral • sage VISUAL LAYER ONLY.
+ * Scope: active light theme. Dark/auto preference and clinical logic untouched.
+ * Last in the CSS import chain; no changes to clinical state or storage.
+ */
+:root[data-theme='light'] {
+  color-scheme: light;
+  --mf-blue: #bb4939;
+  --mf-cyan: #dc7356;
+  --mf-teal: #23755b;
+  --mf-violet: #946b8d;
+  --mf-amber: #aa6728;
+  --mf-focus: #ad392b;
+  --mf-page-glow:
+    radial-gradient(ellipse at 90% 0%, rgba(245,174,146,.22), transparent 40%),
+    radial-gradient(ellipse at 8% 90%, rgba(130,178,142,.15), transparent 35%);
+  --mf-sheen: linear-gradient(137deg,rgba(255,233,211,.40),transparent 54%,rgba(154,193,154,.08));
+  --mf-shadow: 0 12px 28px rgba(95,65,46,.095);
+  --mf-outline: rgba(141,103,79,.20);
+  --mf-elevated: #fff5ed;
+  --mf-field: #fffbf7;
+  --color-background: #fff9f3;
+  --color-surface: #fffcf8;
+  --color-surface-secondary: #faeee6;
+  --color-text: #243a30;
+  --color-text-secondary: #5e685c;
+  --color-border: #dfd3c6;
+  --color-charcoal: #213b31;
+  --color-charcoal-light: #476250;
+  --color-mint: #467f63;
+  --color-mint-dark: #246c50;
+  --background: #fff9f3;
+  --surface: #fffcf8;
+  --border: #dfd3c6;
+  --text: #243a30;
+  --muted: #5e685c;
+  --navy: #213b31;
+  --navy-light: #476250;
+  --teal: #467f63;
+  --teal-dark: #246c50;
+  --text-primary: #243a30;
+}
+:root[data-theme='light'] body {
+  background: #fff9f3;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app {
+  color: var(--color-text);
+  background: var(--mf-page-glow), var(--color-background) !important;
+}
+/* Calm ivory navigation: existing real destinations and callbacks preserved. */
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar.premium-sidebar {
+  color: #234435 !important;
+  background: linear-gradient(175deg,#fffdfa 0%,#fff4e9 56%,#f8ebdf 100%) !important;
+  border-right: 1px solid #dfccbb !important;
+  box-shadow: 7px 0 26px rgba(101,75,58,.06) !important;
+  scrollbar-color: #b9ad9f transparent;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-brand {
+  border-bottom-color: #e5d7c9;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .brand-mark {
+  color: #aa4232;
+  background: linear-gradient(135deg,#ffe4d3,#e3f0df);
+  border-color: #e8c9b9;
+  box-shadow: none;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .brand-copy h2 {
+  color: #234735 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .brand-copy h2 span {
+  color: #c54b38 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .brand-copy small,
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-section-label,
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-version,
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-security-note small {
+  color: #677d6b !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-workspace {
+  background: #f1f5e9;
+  color: #335a46;
+  border-color: #d6e3d3;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-nav-item {
+  color: #325142 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  font-size: 13px !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-nav-item:hover {
+  color: #99402f !important;
+  background: #fce8df !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-nav-item.active {
+  color: #fff !important;
+  background: linear-gradient(106deg,#bb4939,#d96650) !important;
+  border-color: #bb4939 !important;
+  box-shadow: 0 7px 16px rgba(172,67,48,.18) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .nav-icon {
+  color: #477d61 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-nav-item.active .nav-icon {
+  color: #fff !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-helios-action {
+  background: linear-gradient(130deg,#fce0d2,#f5eee2) !important;
+  color: #703b2c !important;
+  border-color: #e9bfac !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-helios-action :is(strong,small) {
+  color: #703b2c !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .sidebar-helios-mark {
+  background: #fff6ed;
+  color: #ba4e3d;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-sidebar-bottom {
+  border-top-color: #dfd1c4 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-doctor-avatar {
+  color: #1f6951 !important;
+  background: #e0f0df !important;
+  border-color: #c6dec8;
+}
+/* Toolbar and editorial structure. */
+:root[data-theme='light'] #root .app.premium-clinical-app .main > .premium-topbar {
+  background: linear-gradient(122deg,#fffaf5,#fff2e6) !important;
+  border-color: #e6d5c8 !important;
+  box-shadow: 0 10px 26px rgba(117,73,51,.075) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-topbar h1 {
+  color: #1b4b37 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .header-label-line {
+  background: #d9624e !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .header-date {
+  background: #fffaf3;
+  border-color: #e2d4c5;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .header-date-icon {
+  color: #a44837;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-status {
+  background: #e8f3e7;
+  border-color: #d0e4cf;
+  color: #285941;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-status .status-dot {
+  background: #277c56;
+  box-shadow: 0 0 0 4px rgba(39,124,86,.10);
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .header-helios-button {
+  background: linear-gradient(115deg,#b94031,#d76550) !important;
+  border-color: #ae4233 !important;
+  color: #fff !important;
+  box-shadow: 0 7px 17px rgba(168,64,42,.19);
+}
+/* Shared cards, forms and tables across real modules. */
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  .section-card,.consultation-section,.prescription-section,.settings-section,
+  .inventory-panel,.patient-card,.patient-detail,.protocol-card,.patient-trend-card,
+  .history-card,.saved-consultation,.mf-panel,.copilot-context-panel,.copilot-side-card
+) {
+  border-color: var(--color-border) !important;
+  background: linear-gradient(145deg,#fffefa,#fff7ef) !important;
+  color: var(--color-text);
+  box-shadow: var(--mf-shadow) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  .consultation-field,.prescription-field,.settings-field,.inventory-field,.patient-form
+) label {
+  color: #324b3c !important;
+  font-size: 13px !important;
+  line-height: 1.45;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  input:not([type='checkbox']):not([type='radio']),select,textarea
+) {
+  min-height: 46px !important;
+  background: #fffcf8 !important;
+  border-color: #d8c7b7 !important;
+  color: #233a30 !important;
+  font-size: 14px !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(input,textarea)::placeholder {
+  color: #726a61 !important;
+  opacity: 1;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  input:not([type='checkbox']),textarea,select
+):focus {
+  border-color: #b74735 !important;
+  box-shadow: 0 0 0 3px rgba(186,70,51,.17) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  .consultation-save,.prescription-primary,.settings-save,.inventory-button,
+  .patient-view,.patients-action,.consultation-action-primary,.mf-quick-primary
+) {
+  background: linear-gradient(115deg,#b94031,#d7624b) !important;
+  border-color: #af4333 !important;
+  color: #fff !important;
+  box-shadow: 0 8px 17px rgba(173,68,48,.13) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(th) {
+  color: #355340;
+  background: #f1f2e8;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main tbody tr:hover {
+  background: #fff2e7;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(
+  .patient-summary-item,.patient-vital,.vital-card,.patient-trend-chart
+) {
+  background: #f7f8f0 !important;
+  border-color: #d6e0d0 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .patient-timeline-entry {
+  background: #fff8f1;
+  border-left-color: #cd6e54;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .patient-card:hover {
+  border-color: #a7c6a9 !important;
+}
+/* Dashboard: warmly coloured real metrics; never insert fake clinical numbers. */
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page {
+  background: linear-gradient(145deg,#fffaf5,#fbf2e9) !important;
+  color: #253e32 !important;
+  border-radius: 20px;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-hero {
+  background: radial-gradient(ellipse at 87% 28%,rgba(143,185,136,.29),transparent 48%),
+              linear-gradient(111deg,#fff1e4,#f6e2d1 66%,#ebefdc) !important;
+  border-color: #e2cbbb !important;
+  box-shadow: 0 14px 25px rgba(107,75,50,.12) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero :is(h1,h2,h3,strong) {
+  color: #214d39 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero h2 em {
+  color: #bf513c !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero p,
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero-meta {
+  color: #4e6252 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-eyebrow {
+  color: #a14231 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero-badge {
+  color: #95422e !important;
+  background: #fff8ee !important;
+  border-color: #e4bfa8 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero-orbit {
+  border-color: rgba(192,111,86,.18);
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-hero-ecg {
+  color: #cb7d68;
+  text-shadow: none;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat {
+  border-color: #deddd1 !important;
+  background: #e9f2e5 !important;
+  box-shadow: 0 9px 20px rgba(91,68,51,.08) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat:nth-child(2) {
+  background: #fde9dc !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat:nth-child(3) {
+  background: #fae9e9 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat:nth-child(4) {
+  background: #f1f1df !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat :is(strong,.mf-stat-label,.mf-stat-kicker,.mf-stat-foot) {
+  color: #264334 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard .mf-stat strong {
+  font-size: clamp(28px,2.6vw,37px) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat-icon {
+  color: #247357 !important;
+  background: rgba(73,147,111,.14) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat:nth-child(2) .mf-stat-icon,
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-stat:nth-child(3) .mf-stat-icon {
+  color: #b74435 !important;
+  background: rgba(194,77,57,.12) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard-grid > .mf-panel,
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard > .mf-recent-panel {
+  background: #fffdfa !important;
+  border-color: #e5d6c8 !important;
+  box-shadow: 0 8px 24px rgba(91,68,51,.085) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard .mf-panel :is(h3,strong),
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard .mf-panel-heading h3 {
+  color: #253e32 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-panel-overline {
+  color: #a84a36 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(.mf-panel-chip,.mf-panel-count) {
+  color: #5c5948 !important;
+  border-color: #e7d7c8 !important;
+  background: #fff2e6 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page :is(.mf-chart-legend,.mf-chart-note,.mf-chart-labels span,.mf-chart-labels b,.mf-activity-copy span,.mf-activity-copy small) {
+  color: #5b6a5b !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-chart-gridline {
+  stroke: #d7ddd0 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-chart-line {
+  stroke: #247f5f !important;
+  filter: none !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-chart-point {
+  fill: #e4f5e8 !important;
+  stroke: #247f5f !important;
+  filter: none !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-activity-item {
+  border-bottom-color: #e9ddd1 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-dashboard-grid .mf-quick-action {
+  background: #fff8f0 !important;
+  border-color: #e5d4c3 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-quick-action :is(strong,small) {
+  color: #284735 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-quick-action > :is(span,b) {
+  color: #c0523b !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-quick-action.mf-quick-primary {
+  background: linear-gradient(116deg,#b94031,#d6644a) !important;
+  border-color: #ad3c2e !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-quick-primary :is(strong,small,span,b) {
+  color: #fff !important;
+}
+/* HELIOS remains functionally identical; warm coral panel for the approved mockup. */
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page .mf-copilot-card {
+  background: radial-gradient(circle at 80% 20%,rgba(255,235,189,.28),transparent 48%),
+              linear-gradient(135deg,#c44c3d,#e87a5d) !important;
+  border-color: #bb4d3e !important;
+  box-shadow: 0 14px 30px rgba(175,72,53,.19) !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-copilot-card :is(h3,p,li,.mf-panel-overline) {
+  color: #fff !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-copilot-card button {
+  color: #713526 !important;
+  background: #fff8ef !important;
+  min-height: 44px !important;
+  border: 1px solid #fff !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-robot-halo {
+  background: radial-gradient(circle,rgba(255,239,204,.45),transparent 71%);
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-indicator {
+  background: #f5f7ec !important;
+  border-color: #dae4d4 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-indicator :is(strong,small,em) {
+  color: #305341 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-indicator-icon {
+  color: #257257 !important;
+  background: #dcece0 !important;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main .mf-empty-state :is(strong,p) {
+  color: #506b57 !important;
+}
+/* Clinically meaningful error/success styles are deliberately NOT overwritten.
+   A corail brand accent is NOT an alert indicator. */
+/* Comfortable touch, calm hover. Narrow screens keep existing navigation logic. */
+:root[data-theme='light'] #root .app.premium-clinical-app .main button:not(:disabled) {
+  touch-action: manipulation;
+}
+:root[data-theme='light'] #root .app.premium-clinical-app .main :is(input,textarea,select,button):focus-visible,
+:root[data-theme='light'] #root .app.premium-clinical-app .premium-nav-item:focus-visible {
+  outline: 3px solid #ad392b !important;
+  outline-offset: 2px !important;
+}
+@media (max-width: 700px) {
+  :root[data-theme='light'] #root .app.premium-clinical-app .sidebar.premium-sidebar {
+    border-right: 0 !important;
+    border-bottom: 1px solid #e5d5c7 !important;
+  }
+  :root[data-theme='light'] #root .app.premium-clinical-app .main .mf-dashboard-page {
+    border-radius: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='light'] #root .app.premium-clinical-app :is(.mf-quick-action,.premium-nav-item) {
+    transition: none !important;
+  }
+}
