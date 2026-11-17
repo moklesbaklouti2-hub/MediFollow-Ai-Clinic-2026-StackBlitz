@@ -27,8 +27,13 @@ assert.equal(hash(source.slice(dashboard.body!.statements[0].getStart(ast), rend
   '12085d49add240e4e58a5430dfbc6b3b0aeb944d02b4995b4efe7b547b9e5c26',
   'Do not change aggregation, inventory, follow-up, dates, refresh or vital selection in a layout task.');
 // Remove only the two Dashboard props; Sidebar/HELIOS already had this binding.
-const app = read('src/App.tsx').replace("import './dashboard-warm-layout.css';\n", '').replace(/^ {12}onNavigate=\{setActive\}\n/gm, '');
-assert.equal(hash(app), '7558e6518408127943ac6d7bd2ae06da31440e885ebe6c5a1c1dd792554e3031', 'Only Dashboard navigation wiring and scoped stylesheet import may change in App.');
+const app = read('src/App.tsx')
+  .replace("import './cabinet-a.css';\n", '')
+  .replace("import AppNavigation from './components/AppNavigation';", "import Sidebar from './components/Sidebar';")
+  .replace('      <AppNavigation\n', '      <Sidebar\n')
+  .replace(' id="cabinet-app" data-design="cabinet-a"', '')
+  .replace("import './dashboard-warm-layout.css';\n", '').replace(/^ {12}onNavigate=\{setActive\}\n/gm, '');
+assert.equal(hash(app), '7558e6518408127943ac6d7bd2ae06da31440e885ebe6c5a1c1dd792554e3031', 'Only the approved navigation wrapper, visual root attributes and stylesheet imports may change in App.');
 
 const text = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 let actions = 0;

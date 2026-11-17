@@ -128,8 +128,8 @@ export function DataIntegrityNotice({ data }: { data: DashboardData }) {
   return (
     <>{(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
       <section className="wd-panel wd-integrity-notice" role="alert" aria-label="Documents sans dossier patient confirmé"
-        style={{ padding: 18, borderColor: '#bd7c13' }}>
-        <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
+        style={{ padding: 18, borderColor: 'var(--a-warning, #bd7c13)' }}>
+        <strong style={{ color: 'var(--a-warning, #bd7c13)', display: 'block', marginBottom: 6 }}>
           Attention — documents cliniques sans dossier patient confirmé
         </strong>
         <p style={{ margin: 0 }}>
@@ -208,17 +208,17 @@ export function InventoryPanel({ inventory, inventoryLow, inventoryExpired, inve
         </div>
         <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
           <small style={{ color: 'var(--color-text-secondary)' }}>Stocks bas</small>
-          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryLow.length ? '#c45c36' : 'inherit' }}>{inventoryLow.length}</strong>
+          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryLow.length ? 'var(--a-warning, #c45c36)' : 'inherit' }}>{inventoryLow.length}</strong>
           <small style={{ color: 'var(--color-text-secondary)' }}>Article(s) au seuil ou en dessous</small>
         </div>
         <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
           <small style={{ color: 'var(--color-text-secondary)' }}>Articles périmés</small>
-          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpired.length ? '#d94b4b' : 'inherit' }}>{inventoryExpired.length}</strong>
+          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpired.length ? 'var(--a-danger, #d94b4b)' : 'inherit' }}>{inventoryExpired.length}</strong>
           <small style={{ color: 'var(--color-text-secondary)' }}>À isoler du stock disponible</small>
         </div>
         <div style={{ background: 'var(--color-surface-secondary)', border: '1px solid var(--color-border)', borderRadius: 12, padding: 14 }}>
           <small style={{ color: 'var(--color-text-secondary)' }}>Péremption ≤ 90 jours</small>
-          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpiring.length ? '#bd7c13' : 'inherit' }}>{inventoryExpiring.length}</strong>
+          <strong style={{ display: 'block', fontSize: 22, marginTop: 6, color: inventoryExpiring.length ? 'var(--a-warning, #bd7c13)' : 'inherit' }}>{inventoryExpiring.length}</strong>
           <small style={{ color: 'var(--color-text-secondary)' }}>Lots à surveiller</small>
         </div>
       </div>
@@ -228,7 +228,7 @@ export function InventoryPanel({ inventory, inventoryLow, inventoryExpired, inve
           {inventoryLow.length + inventoryExpired.length + inventoryExpiring.length === 0
             ? <p style={{ color: 'var(--color-text-secondary)', fontSize: 13 }}>Aucune alerte de stock actuellement.</p>
             : <div style={{ display: 'grid', gap: 7, marginTop: 9 }}>
-                {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: '#d94b4b' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: '#c45c36' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: '#bd7c13' }))].slice(0, 6).map(alert => (
+                {[...inventoryExpired.map(item => ({ item, label: 'PÉRIMÉ', color: 'var(--a-danger, #d94b4b)' })), ...inventoryLow.map(item => ({ item, label: 'STOCK BAS', color: 'var(--a-warning, #c45c36)' })), ...inventoryExpiring.map(item => ({ item, label: 'PÉREMPTION PROCHE', color: 'var(--a-warning, #bd7c13)' }))].slice(0, 6).map(alert => (
                   <div className="wd-stock-row" key={alert.item.id + alert.label} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
                     <span>{alert.item.name} · {alert.item.batchNumber ? 'Lot ' + alert.item.batchNumber : 'Lot sans numéro'}</span>
                     <strong style={{ color: alert.color, whiteSpace: 'nowrap' }}>{alert.label}</strong>
@@ -244,7 +244,7 @@ export function InventoryPanel({ inventory, inventoryLow, inventoryExpired, inve
                 {recentStockMovements.map(movement => (
                   <div className="wd-stock-row" key={movement.id} style={{ display: 'flex', justifyContent: 'space-between', gap: 8, borderBottom: '1px solid var(--color-border)', paddingBottom: 7, fontSize: 12 }}>
                     <span>{movement.itemName}<small style={{ display: 'block', color: 'var(--color-text-secondary)' }}>{movement.reason || movement.type} · {new Date(movement.date).toLocaleDateString('fr-FR')}</small></span>
-                    <strong style={{ whiteSpace: 'nowrap', color: movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '#d97757' : '#159b7b' }}>{movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '−' : '+'}{Math.abs(movement.quantity)}</strong>
+                    <strong style={{ whiteSpace: 'nowrap', color: movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? 'var(--a-warning, #d97757)' : 'var(--a-positive, #159b7b)' }}>{movement.type === 'dispense' || (movement.type === 'adjustment' && movement.quantity < 0) ? '−' : '+'}{Math.abs(movement.quantity)}</strong>
                   </div>
                 ))}
               </div>}

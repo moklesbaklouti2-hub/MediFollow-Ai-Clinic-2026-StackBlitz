@@ -266,7 +266,9 @@ export default function Protocols() {
       </section>
 
       <div className="protocols-search">
+        <label htmlFor="cabinet-protocol-search">Rechercher un protocole</label>
         <input
+          id="cabinet-protocol-search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher un protocole, une pathologie..."

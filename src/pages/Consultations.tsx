@@ -1201,13 +1201,13 @@ export default function Consultations({
         <h3>01 · Identification</h3>
         <div className="consultation-grid">
           <div className="consultation-field">
-            <label>Patient *</label>
+            <label htmlFor="cabinet-consultations-1">Patient *</label>
             <select
               value={patientId}
               onChange={(e) => {
                 setPatientId(e.target.value);
                 setSaved(false);
-              }}
+              }} id="cabinet-consultations-1"
             >
               <option value="">Choisir un patient enregistré</option>
               {patients.map((patient) => (
@@ -1224,13 +1224,13 @@ export default function Consultations({
           </div>
 
           <div className="consultation-field">
-            <label>Spécialité de consultation *</label>
+            <label htmlFor="cabinet-consultations-2">Spécialité de consultation *</label>
             <select
               value={specialty}
               onChange={(e) => {
                 setSpecialty(e.target.value);
                 setSaved(false);
-              }}
+              }} id="cabinet-consultations-2"
             >
               <option value="">Choisir la spécialité</option>
               {specialtyGroups.map((group) => (
@@ -1245,14 +1245,14 @@ export default function Consultations({
           </div>
 
           <div className="consultation-field">
-            <label>Motif de consultation *</label>
+            <label htmlFor="cabinet-consultations-3">Motif de consultation *</label>
             <input
               value={motif}
               onChange={(e) => {
                 setMotif(e.target.value);
                 setSaved(false);
               }}
-              placeholder="Motif principal"
+              placeholder="Motif principal" id="cabinet-consultations-3"
             />
             {motif.trim().length >= 3 && (
               <>
@@ -1371,16 +1371,16 @@ export default function Consultations({
       <div className="consultation-section">
         <h3>02 · Histoire de la maladie</h3>
         <div className="consultation-field">
-          <label>Symptômes et histoire clinique</label>
-          <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="Début, durée, évolution, symptômes associés..." />
+          <label htmlFor="cabinet-consultations-4">Symptômes et histoire clinique</label>
+          <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="Début, durée, évolution, symptômes associés..." id="cabinet-consultations-4" />
         </div>
         <div className="consultation-field">
-          <label>Antécédents et traitements</label>
-          <textarea value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." />
+          <label htmlFor="cabinet-consultations-5">Antécédents et traitements</label>
+          <textarea value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." id="cabinet-consultations-5" />
         </div>
         <div className="consultation-field">
-          <label>Interrogatoire ciblé · réponses au copilote</label>
-          <textarea value={targetedInterview} onChange={(e) => { setTargetedInterview(e.target.value); setSaved(false); }} placeholder="Les réponses sélectionnées dans le panneau du copilote s’ajouteront ici. Vous pouvez aussi compléter ou corriger librement." />
+          <label htmlFor="cabinet-consultations-6">Interrogatoire ciblé · réponses au copilote</label>
+          <textarea value={targetedInterview} onChange={(e) => { setTargetedInterview(e.target.value); setSaved(false); }} placeholder="Les réponses sélectionnées dans le panneau du copilote s’ajouteront ici. Vous pouvez aussi compléter ou corriger librement." id="cabinet-consultations-6" />
           <p style={{ margin: '4px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 11 }}>Chaque choix est ajouté ici, puis pris en compte dans la prochaine analyse clinique.</p>
         </div>
       </div>
@@ -1434,11 +1434,11 @@ export default function Consultations({
             Ancien examen libre (facultatif) — conserver les notes historiques
           </summary>
           <div className="consultation-field" style={{ marginTop: 12 }}>
-            <label>Notes libres de l’examen clinique</label>
+            <label htmlFor="cabinet-consultations-7">Notes libres de l’examen clinique</label>
             <textarea
               value={examination}
               onChange={(e) => setExamination(e.target.value)}
-              placeholder="Notes complémentaires libres..."
+              placeholder="Notes complémentaires libres..." id="cabinet-consultations-7"
             />
           </div>
         </details>
@@ -1447,12 +1447,12 @@ export default function Consultations({
       <div className="consultation-section">
         <h3>05 · Évaluation et prise en charge</h3>
         <div className="consultation-field">
-          <label>Hypothèses diagnostiques</label>
-          <textarea value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="Diagnostic principal et diagnostics différentiels..." />
+          <label htmlFor="cabinet-consultations-8">Hypothèses diagnostiques</label>
+          <textarea value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="Diagnostic principal et diagnostics différentiels..." id="cabinet-consultations-8" />
         </div>
         <div className="consultation-field">
-          <label>Conduite à tenir</label>
-          <textarea value={plan} onChange={(e) => setPlan(e.target.value)} placeholder="Examens complémentaires, traitement, conseils, suivi..." />
+          <label htmlFor="cabinet-consultations-9">Conduite à tenir</label>
+          <textarea value={plan} onChange={(e) => setPlan(e.target.value)} placeholder="Examens complémentaires, traitement, conseils, suivi..." id="cabinet-consultations-9" />
         </div>
       </div>
 

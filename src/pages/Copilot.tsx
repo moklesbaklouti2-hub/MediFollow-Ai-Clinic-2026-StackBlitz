@@ -87,7 +87,7 @@ export default function Copilot({
 
 
       <div className="copilot-workspace">
-        <main className="copilot-main-column">
+        <div className="copilot-main-column">
       <div className="copilot-conversation" ref={conversationRef}>
         {messages.length === 0 && (
           <div className="copilot-welcome">
@@ -218,8 +218,10 @@ export default function Copilot({
 
 
           <div className="premium-input-area">
+        <label htmlFor="cabinet-copilot-question" className="cabinet-field-label">Votre question clinique</label>
         <div className="premium-chat-input">
           <textarea
+            id="cabinet-copilot-question"
             value={question}
             onChange={(event) => onQuestionChange(event.target.value)}
             onKeyDown={handleKeyDown}
@@ -252,7 +254,7 @@ export default function Copilot({
           </span>
         </div>
       </div>
-        </main>
+        </div>
 
         <aside className="copilot-side-column" aria-label="Outils du copilote">
                 <section className="copilot-context-panel" aria-label="Contexte clinique">
