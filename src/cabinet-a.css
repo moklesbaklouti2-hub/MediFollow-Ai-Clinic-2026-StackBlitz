@@ -43,6 +43,7 @@ body:has(#cabinet-app) {margin:0;background:var(--a-bg) !important;color:var(--a
 #root #cabinet-app #contenu-principal {
   grid-column:2;min-width:0;width:100% !important;margin:0 !important;padding:24px 24px 112px !important;
   background:var(--a-bg) !important;color:var(--a-ink);font:400 16px/1.5 var(--mf-font) !important;
+  overflow-wrap:anywhere;
 }
 #root #cabinet-app :is(button,input,select,textarea) {font-family:var(--mf-font) !important;}
 #root #cabinet-app :is(button,a,summary,input,select,textarea):focus-visible {outline:3px solid var(--a-primary) !important;outline-offset:2px;}
@@ -301,6 +302,8 @@ body:has(#cabinet-app) {margin:0;background:var(--a-bg) !important;color:var(--a
   #root #cabinet-app #contenu-principal :is(.copilot-identity,.premium-copilot-header) {flex-wrap:wrap;}
   #root #cabinet-app #contenu-principal .copilot-welcome {grid-template-columns:minmax(0,1fr);}
 }
+#root #cabinet-app #contenu-principal .prescription-feedback {display:contents;}
+#root #cabinet-app #contenu-principal .prescription-success {background:var(--a-soft) !important;color:var(--a-ink) !important;border:1px solid var(--a-line) !important;}
 #root #cabinet-app #contenu-principal [hidden] {display:none !important;}
 @media(prefers-reduced-motion:reduce) {
   #root #cabinet-app *,#root #cabinet-app *::before,#root #cabinet-app *::after {animation:none !important;transition:none !important;scroll-behavior:auto !important;}
@@ -318,4 +321,7 @@ body:has(#cabinet-app) {margin:0;background:var(--a-bg) !important;color:var(--a
   #root #cabinet-app:has(.prescription-preview) .prescription-page > :not(.prescription-preview) {display:none !important;}
   #root #cabinet-app #contenu-principal .prescription-preview {position:static !important;width:100% !important;margin:0 !important;background:#fff !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;overflow:visible !important;}
   #root #cabinet-app #contenu-principal .prescription-preview * {background:transparent !important;color:#000 !important;border-color:#777 !important;}
+  #root #cabinet-app #contenu-principal .prescription-preview tr {break-inside:avoid-page;page-break-inside:avoid;}
+  /* Extremely long cell text must flow, rather than defer an oversized first row. */
+  #root #cabinet-app #contenu-principal .prescription-preview tr.prescription-flow-row {break-inside:auto;page-break-inside:auto;}
 }

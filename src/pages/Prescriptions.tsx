@@ -655,9 +655,11 @@ export default function Prescriptions() {
         </button>
       </div>
 
-      {savedMessage && (
-        <div className="prescription-success">{savedMessage}</div>
-      )}
+      <div className="prescription-feedback" role="status" aria-label="État de l’ordonnance" aria-live="polite" aria-atomic="true">
+        {savedMessage && (
+          <div className="prescription-success">{savedMessage}</div>
+        )}
+      </div>
 
       {showPreview && (
         <div className="prescription-preview">
@@ -676,7 +678,11 @@ export default function Prescriptions() {
             </thead>
             <tbody>
               {medications.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} className={
+                  [[item.name, item.dosage], [item.frequency, item.route, item.instructions], [item.duration]]
+                    .some((column) => column.join(' ').length > 2000)
+                    ? 'prescription-flow-row' : undefined
+                }>
                   <td>{item.name} — {item.dosage}</td>
                   <td>
                     {item.frequency}<br />
