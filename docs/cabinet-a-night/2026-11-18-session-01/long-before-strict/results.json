@@ -1,0 +1,3342 @@
+[
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 37,
+          "y": 4222.453125,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 37,
+          "y": 4222.453125,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 37,
+          "y": 4301.234375,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 37,
+          "y": 4301.234375,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 37,
+          "y": 4380.015625,
+          "width": 1003.234375,
+          "height": 26.59375
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "PÉREMPTION PROCHE",
+        "r": {
+          "x": 909.875,
+          "y": 4380.015625,
+          "width": 130.359375,
+          "height": 18.59375
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 37,
+          "y": 633.28125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 37,
+          "y": 633.28125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 37,
+          "y": 663.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 37,
+          "y": 684.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "Dossier fictif B",
+        "r": {
+          "x": 58,
+          "y": 4910.453125,
+          "width": 984.484375,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "En retard · 2026-11-16",
+        "r": {
+          "x": 58,
+          "y": 4938.953125,
+          "width": 984.484375,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 4962.953125,
+          "width": 984.484375,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 16/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 58,
+          "y": 4994.546875,
+          "width": 984.484375,
+          "height": 63
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5063.546875,
+          "width": 984.484375,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 5170.546875,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 58,
+          "y": 5199.046875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5223.046875,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 58,
+          "y": 5254.640625,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5281.640625,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 5388.640625,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "À venir · 2026-11-20",
+        "r": {
+          "x": 58,
+          "y": 5417.140625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 65,
+          "y": 1142,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 2108.453125,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 58,
+          "y": 2138.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 58,
+          "y": 2164.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 58,
+          "y": 2190.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 2216.953125,
+          "width": 1793.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 52,
+          "y": 1032.6875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 52,
+          "y": 1559.46875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 685,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "700x600",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 5755.484375,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 5755.484375,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 5834.265625,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 5834.265625,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 5913.046875,
+          "width": 1003.234375,
+          "height": 26.59375
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "PÉREMPTION PROCHE",
+        "r": {
+          "x": 1157.875,
+          "y": 5913.046875,
+          "width": 130.359375,
+          "height": 18.59375
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 686.28125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 285,
+          "y": 686.28125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 285,
+          "y": 716.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 285,
+          "y": 737.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "Dossier fictif B",
+        "r": {
+          "x": 306,
+          "y": 5082.84375,
+          "width": 984.484375,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "En retard · 2026-11-16",
+        "r": {
+          "x": 306,
+          "y": 5111.34375,
+          "width": 984.484375,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 5135.34375,
+          "width": 984.484375,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 16/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 5166.9375,
+          "width": 984.484375,
+          "height": 63
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 5235.9375,
+          "width": 984.484375,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "consultation-save",
+        "text": "Marquer le contrôle effectué",
+        "r": {
+          "x": 526.1875,
+          "y": 5235.9375,
+          "width": 263.078125,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 5342.9375,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 5371.4375,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 5395.4375,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 5427.03125,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 5454.03125,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "consultation-save",
+        "text": "Marquer le contrôle effectué",
+        "r": {
+          "x": 526.1875,
+          "y": 5454.03125,
+          "width": 263.078125,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 313,
+          "y": 1339.5,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 1986.21875,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 2016.71875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 306,
+          "y": 2042.71875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 306,
+          "y": 2068.71875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 2094.71875,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "prescription-remove",
+        "text": "Supprimer",
+        "r": {
+          "x": 629.296875,
+          "y": 2094.71875,
+          "width": 118.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 838.6875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 1515.46875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 686,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "701x600",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 37,
+          "y": 596.78125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 37,
+          "y": 596.78125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 37,
+          "y": 627.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 37,
+          "y": 648.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 4898.453125,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 58,
+          "y": 4926.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 4950.953125,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 58,
+          "y": 4982.546875,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5009.546875,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 5116.546875,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "À venir · 2026-11-20",
+        "r": {
+          "x": 58,
+          "y": 5145.046875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5169.046875,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 10/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 58,
+          "y": 5200.640625,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 5227.640625,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 5959.734375,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "17/11/2026 10:00:00",
+        "r": {
+          "x": 58,
+          "y": 5988.234375,
+          "width": 1793.171875,
+          "height": 18
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 829.546875,
+          "y": 629,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 58,
+          "y": 2049.5625,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 58,
+          "y": 2080.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 58,
+          "y": 2106.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 58,
+          "y": 2132.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 58,
+          "y": 2158.0625,
+          "width": 1793.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 52,
+          "y": 975.1875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 52,
+          "y": 1445.96875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x500",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 2929.5,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 2929.5,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 3008.28125,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 3008.28125,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 3087.0625,
+          "width": 1003.234375,
+          "height": 26.59375
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "PÉREMPTION PROCHE",
+        "r": {
+          "x": 1157.875,
+          "y": 3087.0625,
+          "width": 130.359375,
+          "height": 18.59375
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 493.78125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 285,
+          "y": 493.78125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 285,
+          "y": 524.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 285,
+          "y": 545.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "Dossier fictif B",
+        "r": {
+          "x": 306,
+          "y": 4452.359375,
+          "width": 984.484375,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "En retard · 2026-11-16",
+        "r": {
+          "x": 306,
+          "y": 4480.859375,
+          "width": 984.484375,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4504.859375,
+          "width": 984.484375,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 16/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 4536.453125,
+          "width": 984.484375,
+          "height": 63
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4605.453125,
+          "width": 984.484375,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 4712.453125,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 4740.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4764.953125,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 4796.546875,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4823.546875,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 4930.546875,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "À venir · 2026-11-20",
+        "r": {
+          "x": 306,
+          "y": 4959.046875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 916.359375,
+          "y": 526,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 1667.5625,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 1698.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 306,
+          "y": 1724.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 306,
+          "y": 1750.0625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 1776.0625,
+          "width": 1793.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 605.1875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 1075.96875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1265,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1280x501",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 3773.359375,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 3773.359375,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 3852.140625,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 285,
+          "y": 3852.140625,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 3930.921875,
+          "width": 1003.234375,
+          "height": 26.59375
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "PÉREMPTION PROCHE",
+        "r": {
+          "x": 1157.875,
+          "y": 3930.921875,
+          "width": 130.359375,
+          "height": 18.59375
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 285,
+          "y": 566.28125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 285,
+          "y": 566.28125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 285,
+          "y": 596.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 285,
+          "y": 617.875,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "Dossier fictif B",
+        "r": {
+          "x": 306,
+          "y": 4629.859375,
+          "width": 984.484375,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "En retard · 2026-11-16",
+        "r": {
+          "x": 306,
+          "y": 4658.359375,
+          "width": 984.484375,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4682.359375,
+          "width": 984.484375,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 16/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 4713.953125,
+          "width": 984.484375,
+          "height": 63
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4782.953125,
+          "width": 984.484375,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 4889.953125,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 4918.453125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 4942.453125,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 306,
+          "y": 4974.046875,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 5001.046875,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 5108.046875,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "À venir · 2026-11-20",
+        "r": {
+          "x": 306,
+          "y": 5136.546875,
+          "width": 1793.171875,
+          "height": 18
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 315,
+          "y": 1126.5,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 306,
+          "y": 1762.453125,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 306,
+          "y": 1792.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 306,
+          "y": 1818.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 306,
+          "y": 1844.953125,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 306,
+          "y": 1870.953125,
+          "width": 1793.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 698.6875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 300,
+          "y": 1225.46875,
+          "width": 1239.59375,
+          "height": 22
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 1009,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "1024x768",
+    "theme": "light",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Tableau de bord"
+    ],
+    "current": [
+      "Tableau de bord"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 29,
+          "y": 6336.796875,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 29,
+          "y": 6336.796875,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 29,
+          "y": 6415.578125,
+          "width": 1003.234375,
+          "height": 71.78125
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 29,
+          "y": 6415.578125,
+          "width": 1003.234375,
+          "height": 37.1875
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "wd-stock-row",
+        "text": "",
+        "r": {
+          "x": 29,
+          "y": 6494.359375,
+          "width": 1003.234375,
+          "height": 26.59375
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "PÉREMPTION PROCHE",
+        "r": {
+          "x": 901.875,
+          "y": 6494.359375,
+          "width": 130.359375,
+          "height": 18.59375
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "dashboard",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Patients"
+    ],
+    "current": [
+      "Patients"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 33,
+          "y": 801.78125,
+          "width": 1887.296875,
+          "height": 72.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-name",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 33,
+          "y": 801.78125,
+          "width": 1887.296875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "42 ans · Non renseigné ·",
+        "r": {
+          "x": 33,
+          "y": 832.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "patient-meta",
+        "text": "Dernière visite : 17/11/2026 10:00:00",
+        "r": {
+          "x": 33,
+          "y": 853.375,
+          "width": 1887.296875,
+          "height": 21
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "patients",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Consultations"
+    ],
+    "current": [
+      "Consultations"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "Dossier fictif B",
+        "r": {
+          "x": 50,
+          "y": 6023.421875,
+          "width": 984.484375,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "En retard · 2026-11-16",
+        "r": {
+          "x": 50,
+          "y": 6051.921875,
+          "width": 984.484375,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 50,
+          "y": 6075.921875,
+          "width": 984.484375,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 16/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 50,
+          "y": 6107.515625,
+          "width": 984.484375,
+          "height": 63
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 50,
+          "y": 6176.515625,
+          "width": 984.484375,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "consultation-save",
+        "text": "Marquer le contrôle effectué",
+        "r": {
+          "x": 270.1875,
+          "y": 6176.515625,
+          "width": 263.078125,
+          "height": 48
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 50,
+          "y": 6283.515625,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Aujourd’hui · 2026-11-17",
+        "r": {
+          "x": 50,
+          "y": 6312.015625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 50,
+          "y": 6336.015625,
+          "width": 1793.171875,
+          "height": 25.59375
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "patient-hint",
+        "text": "Consultation : 17/11/2026 10:00:00 · Motif : Motif fictif XXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 50,
+          "y": 6367.609375,
+          "width": 1793.171875,
+          "height": 21
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 50,
+          "y": 6394.609375,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "consultation-save",
+        "text": "Marquer le contrôle effectué",
+        "r": {
+          "x": 270.1875,
+          "y": 6394.609375,
+          "width": 263.078125,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "consultations",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Copilote IA"
+    ],
+    "current": [
+      "Copilote IA"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Contexte actif : Médecine générale — Motif fictif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "r": {
+          "x": 61,
+          "y": 1510.78125,
+          "width": 1125.109375,
+          "height": 76.78125
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "helios",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Ordonnances"
+    ],
+    "current": [
+      "Ordonnances"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "FICTIF_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
+        "r": {
+          "x": 50,
+          "y": 2512.90625,
+          "width": 1793.171875,
+          "height": 22.5
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Date de prescription : 2026-11-17",
+        "r": {
+          "x": 50,
+          "y": 2543.40625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "0 médicament(s)",
+        "r": {
+          "x": 50,
+          "y": 2569.40625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "",
+        "text": "Statut documentaire : Statut non renseigné (ancien dossier)",
+        "r": {
+          "x": 50,
+          "y": 2595.40625,
+          "width": 1793.171875,
+          "height": 18
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "history-actions",
+        "text": "",
+        "r": {
+          "x": 50,
+          "y": 2621.40625,
+          "width": 1793.171875,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "prescription-remove",
+        "text": "Annuler l’ordonnance",
+        "r": {
+          "x": 159.796875,
+          "y": 2621.40625,
+          "width": 205.5,
+          "height": 48
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "prescription-remove",
+        "text": "Supprimer",
+        "r": {
+          "x": 373.296875,
+          "y": 2621.40625,
+          "width": 118.171875,
+          "height": 48
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "ordonnances",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Protocoles médicaux"
+    ],
+    "current": [
+      "Protocoles médicaux"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "protocoles",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Inventaire"
+    ],
+    "current": [
+      "Inventaire"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 44,
+          "y": 1138.59375,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 44,
+          "y": 1907.15625,
+          "width": 1239.59375,
+          "height": 158.5625
+        }
+      },
+      {
+        "tag": "STRONG",
+        "cls": "",
+        "text": "ARTICLE_FICTIF_ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+        "r": {
+          "x": 44,
+          "y": 1908.15625,
+          "width": 1239.59375,
+          "height": 22
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Consommable · 2 boîte · Seuil : 5 boîte",
+        "r": {
+          "x": 44,
+          "y": 1936.15625,
+          "width": 1239.59375,
+          "height": 22.390625
+        }
+      },
+      {
+        "tag": "P",
+        "cls": "",
+        "text": "Coût unitaire : 3.500 DT · Lot : LOT_FICTIF_BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+        "r": {
+          "x": 44,
+          "y": 1963.546875,
+          "width": 1239.59375,
+          "height": 67.171875
+        }
+      },
+      {
+        "tag": "SPAN",
+        "cls": "inventory-alert inventory-alert-expired",
+        "text": "PÉRIMÉ depuis 16 j · ne pas délivrer",
+        "r": {
+          "x": 293.609375,
+          "y": 2036.71875,
+          "width": 260.671875,
+          "height": 29
+        }
+      },
+      {
+        "tag": "DIV",
+        "cls": "",
+        "text": "",
+        "r": {
+          "x": 457.421875,
+          "y": 2077.71875,
+          "width": 412.734375,
+          "height": 103
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "inventory-secondary",
+        "text": "+ Ajouter au stock",
+        "r": {
+          "x": 457.421875,
+          "y": 2077.71875,
+          "width": 178.765625,
+          "height": 103
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "inventory-secondary",
+        "text": "Modifier",
+        "r": {
+          "x": 643.1875,
+          "y": 2077.71875,
+          "width": 101.796875,
+          "height": 103
+        }
+      },
+      {
+        "tag": "BUTTON",
+        "cls": "inventory-secondary",
+        "text": "Supprimer",
+        "r": {
+          "x": 751.984375,
+          "y": 2077.71875,
+          "width": 118.171875,
+          "height": 103
+        }
+      }
+    ],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "inventaire",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "descendants extend outside viewport"
+    ]
+  },
+  {
+    "lang": "fr",
+    "title": "MediFollow AI — Espace clinique",
+    "mainCount": 1,
+    "h1": [
+      "Paramètres"
+    ],
+    "current": [
+      "Paramètres"
+    ],
+    "unnamedFields": [],
+    "overflow": false,
+    "scrollWidth": 320,
+    "bad": [],
+    "brandClear": true,
+    "docked": true,
+    "viewport": "320x640",
+    "theme": "dark",
+    "page": "parametres",
+    "keyboardSkipIntoMain": null,
+    "unnamedAXControls": [],
+    "dataUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  }
+]

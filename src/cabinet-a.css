@@ -1,0 +1,327 @@
+/* Cabinet chaleureux A — approved whole-application visual system.
+   One final layer over the preserved legacy styles; no clinical rule or data. */
+:root[data-theme='light'] {
+  color-scheme:light;
+  --a-bg:#fff8f0;--a-paper:#fffcf8;--a-soft:#e5ede2;--a-peach:#f9e6dc;
+  --a-ink:#243a30;--a-muted:#56655b;--a-primary:#b94a3b;--a-on-primary:#fff;
+  --a-sidebar:#29483b;--a-sidebar-ink:#f5f8f2;--a-sidebar-muted:#cedccd;
+  --a-line:#cfdace;--a-field-line:#7c9080;--a-danger:#a1282b;--a-danger-bg:#fff0ed;
+  --a-warning:#805600;--a-warning-bg:#fff2d6;--a-positive:#25644c;
+  --a-shadow:0 6px 18px rgb(41 72 59 / .05);
+}
+:root[data-theme='dark'] {
+  color-scheme:dark;
+  --a-bg:#14211c;--a-paper:#1d3027;--a-soft:#253c31;--a-peach:#3c3029;
+  --a-ink:#f0f5ee;--a-muted:#b9c7ba;--a-primary:#f39a87;--a-on-primary:#2a1c17;
+  --a-sidebar:#172820;--a-sidebar-ink:#f0f5ee;--a-sidebar-muted:#b9c7ba;
+  --a-line:#4f6858;--a-field-line:#6f8977;--a-danger:#ffb1aa;--a-danger-bg:#40292a;
+  --a-warning:#f0ce85;--a-warning-bg:#3d3422;--a-positive:#a5d4b3;
+  --a-shadow:0 6px 18px rgb(0 0 0 / .1);
+}
+:root[data-theme] {
+  --color-background:var(--a-bg);--color-surface:var(--a-paper);--color-surface-secondary:var(--a-soft);
+  --color-text:var(--a-ink);--color-text-secondary:var(--a-muted);--color-border:var(--a-line);
+  --color-charcoal:var(--a-ink);--color-charcoal-light:var(--a-muted);
+  --color-mint:var(--a-primary);--color-mint-dark:var(--a-primary);
+  --background:var(--a-bg);--surface:var(--a-paper);--border:var(--a-line);--text:var(--a-ink);
+  --text-primary:var(--a-ink);--text-secondary:var(--a-muted);--muted:var(--a-muted);
+  --navy:var(--a-ink);--navy-light:var(--a-muted);--teal:var(--a-primary);--teal-dark:var(--a-primary);
+  --mf-blue:var(--a-primary);--mf-cyan:var(--a-primary);--mf-teal:var(--a-ink);
+  --mf-focus:var(--a-primary);--mf-danger:var(--a-danger);--mf-amber:var(--a-warning);
+  --mf-font:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-heading:var(--mf-font);--font-body:var(--mf-font);--font-family:var(--mf-font);
+  --mf-outline:var(--a-line);--mf-field:var(--a-paper);--mf-elevated:var(--a-soft);
+  --mf-sheen:none;--mf-page-glow:none;--mf-shadow:var(--a-shadow);
+}
+body:has(#cabinet-app) {margin:0;background:var(--a-bg) !important;color:var(--a-ink);}
+#root #cabinet-app {
+  display:grid !important;grid-template-columns:240px minmax(0,1fr);min-height:100dvh;
+  background:var(--a-bg) !important;color:var(--a-ink);font:400 16px/1.5 var(--mf-font);
+  --mf-sidebar-width:240px;
+}
+#root #cabinet-app *,#root #cabinet-app *::before,#root #cabinet-app *::after {box-sizing:border-box;}
+#root #cabinet-app #contenu-principal {
+  grid-column:2;min-width:0;width:100% !important;margin:0 !important;padding:24px 24px 112px !important;
+  background:var(--a-bg) !important;color:var(--a-ink);font:400 16px/1.5 var(--mf-font) !important;
+  overflow-wrap:anywhere;
+}
+#root #cabinet-app :is(button,input,select,textarea) {font-family:var(--mf-font) !important;}
+#root #cabinet-app :is(button,a,summary,input,select,textarea):focus-visible {outline:3px solid var(--a-primary) !important;outline-offset:2px;}
+#root #cabinet-app .premium-skip-link {background:var(--a-primary);color:var(--a-on-primary);font-size:16px;padding:12px 16px;z-index:1000;}
+
+/* One navigation tree: permanent in landscape, native modal dialog in portrait. */
+#root #cabinet-app #cabinet-navigation {min-width:0;grid-column:1;min-height:100dvh;background:var(--a-sidebar);}
+#root #cabinet-app #cabinet-navigation > .sidebar {
+  position:sticky !important;top:0;inset-inline-start:0;width:240px !important;min-width:0 !important;
+  height:calc(100dvh - 100px) !important;min-height:0 !important;overflow-y:auto;overflow-x:hidden;
+}
+#root #cabinet-app #cabinet-navigation .sidebar {
+  display:flex !important;flex-direction:column;gap:12px;padding:20px 14px !important;
+  background:var(--a-sidebar) !important;color:var(--a-sidebar-ink) !important;
+  border:0 !important;box-shadow:none !important;
+}
+#root #cabinet-app #cabinet-navigation .sidebar :is(.brand-copy h2,.brand-copy h2 span,.doctor-info strong,.sidebar-workspace,.sidebar-workspace span) {color:var(--a-sidebar-ink) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar :is(.brand-copy small,.sidebar-section-label,.sidebar-security-note strong,.sidebar-security-note small,.doctor-info small,.sidebar-version) {color:var(--a-sidebar-muted) !important;font-size:12px !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-brand {padding:0 0 16px !important;margin:0 !important;border-bottom:1px solid rgb(255 255 255 / .2);gap:10px;}
+#root #cabinet-app #cabinet-navigation .brand-copy h2 {font:700 18px/1.3 var(--mf-font) !important;letter-spacing:-.3px;}
+#root #cabinet-app #cabinet-navigation .brand-copy small {font-size:12px !important;letter-spacing:0;}
+#root #cabinet-app #cabinet-navigation .brand-mark {width:42px;height:42px;flex-basis:42px;background:var(--a-primary) !important;color:var(--a-on-primary) !important;border:0;box-shadow:none;}
+#root #cabinet-app #cabinet-navigation .brand-mark svg path {stroke:currentColor;}
+#root #cabinet-app #cabinet-navigation .sidebar-workspace {background:rgb(255 255 255 / .06);border:1px solid rgb(255 255 255 / .18);padding:12px;font-size:12px;}
+#root #cabinet-app #cabinet-navigation .sidebar-nav {display:flex !important;flex-direction:column !important;gap:12px !important;overflow:visible;padding:0;}
+#root #cabinet-app #cabinet-navigation .sidebar-nav-group {display:flex !important;flex-direction:column;gap:4px;}
+#root #cabinet-app #cabinet-navigation .sidebar-section-label {padding:4px 10px;letter-spacing:.05em;}
+#root #cabinet-app #cabinet-navigation .premium-nav-item {
+  display:flex !important;align-items:center;gap:10px;min-height:48px !important;width:100%;min-width:0 !important;
+  padding:10px 12px !important;margin:0 !important;border:1px solid transparent !important;border-radius:12px;
+  background:transparent !important;color:var(--a-sidebar-ink) !important;font-size:14px !important;text-align:left;white-space:normal;
+  box-shadow:none !important;
+}
+#root #cabinet-app #cabinet-navigation .premium-nav-item:hover {background:rgb(255 255 255 / .09) !important;}
+#root #cabinet-app #cabinet-navigation .premium-nav-item.active {background:#e5ede2 !important;color:#243a30 !important;font-weight:700;}
+#root #cabinet-app #cabinet-navigation .nav-icon {color:inherit !important;width:22px;flex-basis:22px;background:transparent;}
+#root #cabinet-app #cabinet-navigation .nav-icon svg {width:22px;height:22px;}
+#root #cabinet-app #cabinet-navigation .nav-active-indicator {background:#b94a3b;box-shadow:none;}
+#root #cabinet-app #cabinet-navigation .sidebar-lower {display:grid !important;gap:12px;margin-top:auto;padding:0;}
+#root #cabinet-app #cabinet-navigation .sidebar-helios-action {display:flex;min-height:60px;padding:12px;border:1px solid rgb(255 255 255 / .2) !important;background:rgb(255 255 255 / .07) !important;color:var(--a-sidebar-ink) !important;box-shadow:none;}
+#root #cabinet-app #cabinet-navigation .sidebar-helios-action :is(strong,small) {color:inherit !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-helios-mark {color:var(--a-primary);background:var(--a-paper);}
+#root #cabinet-app #cabinet-navigation :is(.sidebar-security-note,.sidebar-bottom,.sidebar-version) {display:flex !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-bottom {padding:12px 0 0 !important;margin:0 !important;border-top:1px solid rgb(255 255 255 / .2) !important;}
+#root #cabinet-app #cabinet-navigation .sidebar-version {font-size:12px !important;flex-wrap:wrap;}
+#root #cabinet-app #cabinet-navigation .version-separator {color:inherit !important;}
+#root #cabinet-app #cabinet-navigation .cabinet-menu-toggle {min-height:48px;min-width:48px;padding:10px 14px;border:1px solid rgb(255 255 255 / .35);border-radius:12px;background:transparent;color:var(--a-sidebar-ink);font:600 16px/1.4 var(--mf-font);}
+#root #cabinet-app #cabinet-navigation .cabinet-mobile-brand {font-weight:700;}
+#root #cabinet-app #cabinet-navigation .cabinet-drawer {position:fixed;inset:0 auto 0 0;width:min(320px,calc(100vw - 24px));max-width:none;height:100dvh;max-height:100dvh;margin:0;padding:0;border:0;background:var(--a-sidebar);color:var(--a-sidebar-ink);box-shadow:12px 0 40px rgb(0 0 0 / .25);}
+#root #cabinet-app #cabinet-navigation .cabinet-drawer::backdrop {background:rgb(15 28 22 / .6);}
+#root #cabinet-app #cabinet-navigation .cabinet-drawer-heading {display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;min-height:64px;}
+#root #cabinet-app #cabinet-navigation .cabinet-drawer .sidebar {position:static !important;width:100% !important;height:calc(100dvh - 64px) !important;min-height:0 !important;overflow-y:auto;}
+
+/* Compact honest page header; browser storage and prototype labels stay visible. */
+#root #cabinet-app #contenu-principal > .premium-topbar {min-height:0 !important;padding:16px 20px !important;margin:0 0 20px !important;gap:16px;background:var(--a-paper) !important;border:1px solid var(--a-line) !important;border-radius:16px !important;box-shadow:var(--a-shadow) !important;}
+#root #cabinet-app #contenu-principal > .premium-topbar::after {display:none;}
+#root #cabinet-app #contenu-principal .premium-topbar :is(h1,.premium-status span,.header-date strong) {color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal h1 {font-size:28px !important;line-height:1.25 !important;letter-spacing:-.03em;margin:4px 0;}
+#root #cabinet-app #contenu-principal .premium-topbar :is(.top-label,.header-subtitle,.header-date small) {color:var(--a-muted) !important;font-size:12px !important;line-height:1.5;}
+#root #cabinet-app #contenu-principal .header-right {display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+#root #cabinet-app #contenu-principal .header-date {display:flex !important;padding:6px 10px !important;background:var(--a-soft) !important;border:1px solid var(--a-line) !important;}
+#root #cabinet-app #contenu-principal .header-date small {display:block !important;}
+#root #cabinet-app #contenu-principal .header-date-icon {color:var(--a-primary);}
+#root #cabinet-app #contenu-principal .premium-status {background:var(--a-soft) !important;border-color:var(--a-line) !important;padding:8px 10px;color:var(--a-ink) !important;font-size:12px;}
+
+/* Shared text, forms and actions. Clinical labels/values/handlers are untouched. */
+#root #cabinet-app #contenu-principal :is(h2,h3,h4) {font-family:var(--mf-font) !important;color:var(--a-ink) !important;line-height:1.3;letter-spacing:-.02em;overflow-wrap:anywhere;}
+#root #cabinet-app #contenu-principal h2 {font-size:24px !important;font-weight:700;}
+#root #cabinet-app #contenu-principal h3 {font-size:20px !important;font-weight:650;}
+#root #cabinet-app #contenu-principal h4 {font-size:18px !important;font-weight:650;}
+#root #cabinet-app #contenu-principal :is(p,li,td,.patient-name,.message-bubble) {font-size:16px !important;line-height:1.6;}
+#root #cabinet-app #contenu-principal :is(label,.cabinet-field-label) {font-size:14px !important;font-weight:600;color:var(--a-ink) !important;line-height:1.5;}
+#root #cabinet-app #contenu-principal summary {min-height:48px;padding:12px 0;font-size:16px;line-height:1.5;}
+#root #cabinet-app #contenu-principal :is(small,.patient-hint,.patient-meta,.patient-trend-note,.settings-description,.settings-note,.inventory-muted,.pex-note,.input-footer,.copilot-side-note,.wd-kpi-note) {font-size:14px !important;line-height:1.5;color:var(--a-muted) !important;}
+#root #cabinet-app #contenu-principal :is(.prescription-empty,.patient-empty-history,.patient-trend-dates,.inventory-empty,.inventory-stat-label,.pci-group p,.protocol-card p,.settings-toggle span) {color:var(--a-muted) !important;font-size:14px !important;}
+#root #cabinet-app #contenu-principal :is(.patients-heading p,.prescription-header p,.protocols-header p,.protocol-detail > p,.saved-consultation span,.history-card span) {color:var(--a-muted) !important;}
+#root #cabinet-app #contenu-principal :is(.consultation-field,.prescription-field,.settings-field,.inventory-field,.cabinet-field) {display:grid;gap:8px;min-width:0;}
+#root #cabinet-app #contenu-principal :is(input:not([type='checkbox']):not([type='radio']):not([type='file']),select,textarea) {
+  width:100%;min-width:0 !important;max-width:100%;min-height:48px !important;padding:11px 12px !important;
+  border:1px solid var(--a-field-line) !important;border-radius:10px !important;background:var(--a-paper) !important;
+  color:var(--a-ink) !important;font:400 16px/1.5 var(--mf-font) !important;box-shadow:none !important;
+}
+#root #cabinet-app #contenu-principal textarea {height:auto;min-height:104px !important;resize:vertical;}
+#root #cabinet-app #contenu-principal :is(input,textarea)::placeholder {color:var(--a-muted) !important;opacity:1;}
+#root #cabinet-app #contenu-principal :is(input,select,textarea):focus {border-color:var(--a-primary) !important;}
+#root #cabinet-app #contenu-principal :is(input,select,textarea):disabled {background:var(--a-soft) !important;color:var(--a-muted) !important;cursor:not-allowed;}
+#root #cabinet-app #contenu-principal :is(input,textarea)[readonly] {background:var(--a-soft) !important;}
+#root #cabinet-app #contenu-principal :is(input,select,textarea)[aria-invalid='true'] {border-color:var(--a-danger) !important;}
+#root #cabinet-app #contenu-principal :is(input[type='checkbox'],input[type='radio']) {width:22px;height:22px;min-height:22px !important;accent-color:var(--a-primary);flex-shrink:0;}
+#root #cabinet-app #contenu-principal .smart-copilot-label span {font-size:14px !important;}
+#root #cabinet-app #contenu-principal .smart-copilot-checkbox:checked {background:var(--a-primary) !important;border-color:var(--a-primary) !important;}
+#root #cabinet-app #contenu-principal label:has(input[type='checkbox']),#root #cabinet-app #contenu-principal .settings-toggle {min-height:48px;gap:12px;}
+#root #cabinet-app #contenu-principal :is(button,.protocol-open,.settings-backup-button) {
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:48px !important;min-width:48px;max-width:100%;padding:11px 16px !important;border:1px solid var(--a-field-line) !important;
+  border-radius:12px !important;background:var(--a-paper) !important;color:var(--a-ink) !important;
+  font:600 16px/1.45 var(--mf-font) !important;white-space:normal;text-align:center;box-shadow:none !important;
+}
+#root #cabinet-app #contenu-principal :is(button,.protocol-open,.settings-backup-button):hover:not(:disabled) {background:var(--a-soft) !important;}
+#root #cabinet-app #contenu-principal :is(.header-helios-button,.consultation-save,.prescription-primary,.settings-save,.inventory-button,.patients-action,.protocol-open,.copilot-send-button,.wd-primary,.wd-helios .wd-button) {
+  background:var(--a-primary) !important;border-color:var(--a-primary) !important;color:var(--a-on-primary) !important;
+}
+#root #cabinet-app #contenu-principal :is(.header-helios-button,.consultation-save,.prescription-primary,.settings-save,.inventory-button,.patients-action,.protocol-open,.copilot-send-button,.wd-primary,.wd-helios .wd-button):hover:not(:disabled) {filter:brightness(.95);background:var(--a-primary) !important;}
+#root #cabinet-app #contenu-principal :is(.patient-delete,.prescription-remove) {color:var(--a-danger) !important;border-color:var(--a-danger) !important;background:var(--a-danger-bg) !important;}
+#root #cabinet-app #contenu-principal button:disabled {opacity:.62;cursor:not-allowed;}
+#root #cabinet-app #contenu-principal :is(.settings-theme.active,.protocol-filter.active) {background:var(--a-soft) !important;border-color:var(--a-primary) !important;color:var(--a-ink) !important;box-shadow:inset 0 -3px var(--a-primary) !important;}
+
+/* A single surface language across every existing module. */
+#root #cabinet-app #contenu-principal :is(.section-card,.consultation-section,.prescription-section,.settings-section,.inventory-panel,.patient-card,.patient-detail,.patient-form,.patient-trash,.protocol-card,.protocol-detail,.patient-trend-card,.history-card,.saved-consultation,.copilot-context-panel,.copilot-side-card,.smart-copilot-card,.wd-panel,.wd-quick-pathways) {
+  min-width:0;max-width:100%;padding:20px !important;border:1px solid var(--a-line) !important;border-radius:16px !important;
+  background:var(--a-paper) !important;color:var(--a-ink) !important;box-shadow:var(--a-shadow) !important;
+}
+#root #cabinet-app #contenu-principal :is(.consultation-page,.prescription-page,.settings-page,.inventory-page,.patients-page,.protocols-page) {display:grid;gap:20px;min-width:0;}
+#root #cabinet-app #contenu-principal :is(.consultation-header,.prescription-header,.settings-header,.patients-heading,.protocols-header) {margin:0;gap:16px;}
+#root #cabinet-app #contenu-principal :is(.consultation-grid,.prescription-grid,.settings-grid,.inventory-grid) {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px !important;}
+#root #cabinet-app #contenu-principal :is(.consultation-field,.prescription-field,.settings-field) + :is(.consultation-field,.prescription-field,.settings-field) {margin-top:12px;}
+#root #cabinet-app #contenu-principal :is(.consultation-grid,.prescription-grid,.settings-grid) > :is(.consultation-field,.prescription-field,.settings-field) {margin-top:0;}
+#root #cabinet-app #contenu-principal :is(.patient-summary-item,.patient-vital,.vital-card,.patient-trend-chart,.inventory-item,.patient-trash-item,.copilot-context-summary,.prescription-item) {min-width:0;background:var(--a-soft) !important;color:var(--a-ink) !important;border-color:var(--a-line) !important;border-radius:12px;}
+#root #cabinet-app #contenu-principal :is(.patient-summary-item span,.patient-vital span,.inventory-item p,.patient-status,.protocol-category,.protocol-tag) {font-size:14px !important;color:var(--a-muted) !important;}
+#root #cabinet-app #contenu-principal :is(.patient-status,.protocol-category,.protocol-tag,.consultation-badge,.protocols-count) {background:var(--a-soft) !important;color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal .patients-count {padding:16px 20px;background:var(--a-soft);color:var(--a-ink);border-color:var(--a-line);border-radius:16px;}
+#root #cabinet-app #contenu-principal .patients-count span {font-size:14px;color:var(--a-muted);}
+#root #cabinet-app #contenu-principal .patients-toolbar {display:grid;gap:8px;}
+#root #cabinet-app #contenu-principal .protocols-search {display:grid;gap:8px;}
+#root #cabinet-app #contenu-principal .pci-group {padding:16px;border-color:var(--a-line);background:var(--a-paper);border-radius:12px;}
+#root #cabinet-app #contenu-principal :is(.pci-entry,.pci-fields) {gap:12px;min-width:0;}
+#root #cabinet-app #contenu-principal .pci-remove {color:var(--a-danger) !important;border-color:var(--a-danger) !important;}
+#root #cabinet-app #contenu-principal .patient-form {gap:12px;}
+#root #cabinet-app #contenu-principal :is(.patient-timeline-filter,.protocols-filters,.settings-theme-options,.prescription-actions,.history-actions,.settings-backup-actions) {display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+#root #cabinet-app #contenu-principal :is(.patient-timeline-entry,.patient-timeline-entry p) {overflow-wrap:anywhere;}
+#root #cabinet-app #contenu-principal .patient-timeline-entry {background:var(--a-paper) !important;border-color:var(--a-line) !important;border-left-color:var(--a-primary) !important;}
+#root #cabinet-app #contenu-principal table {width:100%;table-layout:fixed;border-collapse:collapse;font-size:16px;}
+#root #cabinet-app #contenu-principal :is(th,td) {padding:12px 10px;vertical-align:top;overflow-wrap:anywhere;border-bottom:1px solid var(--a-line);color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal th {background:var(--a-soft) !important;font-size:14px !important;text-align:left;}
+#root #cabinet-app #contenu-principal tbody tr:hover {background:var(--a-soft);}
+#root #cabinet-app #contenu-principal :is(.clinical-storage-alert,.prescription-warning,.inventory-alert,.inventory-alert-low,.inventory-alert-soon) {font-size:14px !important;line-height:1.5;background:var(--a-warning-bg) !important;border-color:var(--a-warning) !important;color:var(--a-warning) !important;}
+#root #cabinet-app #contenu-principal .inventory-alert-expired {background:var(--a-danger-bg) !important;border-color:var(--a-danger) !important;color:var(--a-danger) !important;}
+#root #cabinet-app #contenu-principal .clinical-storage-alert :is(strong,p) {color:inherit !important;}
+#root #cabinet-app #contenu-principal .inventory-item {flex-wrap:wrap;}
+#root #cabinet-app #contenu-principal .prescription-preview {background:var(--a-paper) !important;color:var(--a-ink) !important;border:1px solid var(--a-line);border-radius:16px;}
+#root #cabinet-app #contenu-principal .preview-label {color:var(--a-positive) !important;}
+
+/* Consultations: permanent labels, readable units and all exam chapters retained. */
+#root #cabinet-app #contenu-principal .vitals-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) !important;gap:12px;}
+#root #cabinet-app #contenu-principal .vital-card {padding:14px;}
+#root #cabinet-app #contenu-principal .vital-input-row {display:grid !important;grid-template-columns:minmax(0,1fr);gap:4px;min-width:0;}
+#root #cabinet-app #contenu-principal .vital-input-row input {width:100% !important;min-width:0;}
+#root #cabinet-app #contenu-principal .vital-input-row span {font-size:14px !important;color:var(--a-muted);text-align:right;}
+#root #cabinet-app #contenu-principal .pex-section {border:1px solid var(--a-line);border-radius:12px;padding:0;overflow:visible;background:var(--a-paper);}
+#root #cabinet-app #contenu-principal .pex-section summary {min-height:48px;padding:12px 16px;background:var(--a-soft);border-radius:12px;color:var(--a-ink);font-size:16px;}
+#root #cabinet-app #contenu-principal .pex-section[open] summary {border-radius:12px 12px 0 0;border-bottom:1px solid var(--a-line);}
+#root #cabinet-app #contenu-principal .pex-row {padding:16px;margin:0;gap:10px;grid-template-columns:minmax(0,1fr) minmax(170px,.7fr);border-bottom:1px solid var(--a-line);}
+#root #cabinet-app #contenu-principal .pex-row:last-child {border-bottom:0;}
+#root #cabinet-app #contenu-principal .pex-row textarea {min-height:80px !important;}
+#root #cabinet-app #contenu-principal .differential-floating-panel {max-width:calc(100vw - 32px) !important;max-height:80dvh;overflow:auto;}
+
+/* HELIOS remains the existing assistant; calm artwork and readable conversation. */
+#root #cabinet-app #contenu-principal .premium-copilot {min-width:0;background:transparent !important;color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal .premium-copilot-header {padding:20px;border:1px solid var(--a-line);border-radius:16px;background:var(--a-soft) !important;gap:16px;}
+#root #cabinet-app #contenu-principal :is(.copilot-eyebrow,.welcome-eyebrow,.message-author,.copilot-context-secure) {color:var(--a-muted) !important;font-size:12px !important;}
+#root #cabinet-app #contenu-principal .copilot-workspace {display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr);gap:20px;align-items:start;}
+#root #cabinet-app #contenu-principal :is(.copilot-main-column,.copilot-side-column,.message-content) {min-width:0;}
+#root #cabinet-app #contenu-principal .copilot-conversation {background:var(--a-paper) !important;border:1px solid var(--a-line) !important;border-radius:16px;min-height:220px !important;height:auto !important;max-height:60dvh;overflow-y:auto;}
+#root #cabinet-app #contenu-principal .copilot-welcome {display:grid !important;grid-template-columns:100px minmax(0,1fr);align-items:center;min-height:0 !important;padding:20px !important;gap:16px;}
+#root #cabinet-app #contenu-principal .welcome-neural-visual {max-width:100px;width:100%;height:100px;margin:0;}
+#root #cabinet-app #contenu-principal .welcome-neural-visual svg {width:100%;height:100px;}
+#root #cabinet-app #contenu-principal :is(.welcome-neural-visual svg,.holographic-orb) {filter:grayscale(1) sepia(.45) hue-rotate(65deg) saturate(.55) !important;}
+#root #cabinet-app #contenu-principal .welcome-text {text-align:left;}
+#root #cabinet-app #contenu-principal :is(.copilot-identity-text p,.welcome-text p) {color:var(--a-muted) !important;}
+#root #cabinet-app #contenu-principal .holographic-orb {width:64px;height:64px;flex:0 0 64px;}
+#root #cabinet-app #contenu-principal :is(.message-bubble,.copilot-context-summary) {background:var(--a-soft) !important;border-color:var(--a-line) !important;color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal .premium-chat-input {display:flex;align-items:flex-end;gap:12px;padding:12px;background:var(--a-paper) !important;border:1px solid var(--a-line) !important;border-radius:16px;}
+#root #cabinet-app #contenu-principal .premium-chat-input textarea {flex:1;}
+#root #cabinet-app #contenu-principal .input-footer {display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;}
+#root #cabinet-app #contenu-principal .copilot-status {background:var(--a-paper) !important;color:var(--a-ink) !important;border-color:var(--a-line) !important;}
+
+/* Dashboard keeps its verified data and layout, now using the complete A palette. */
+#root #cabinet-app #contenu-principal .warm-dashboard {--wd-paper:var(--a-paper);--wd-ink:var(--a-ink);--wd-muted:var(--a-muted);--wd-line:var(--a-line);--wd-primary:var(--a-primary);--wd-on-primary:var(--a-on-primary);--wd-helios:var(--a-soft);--wd-on-helios:var(--a-ink);--wd-sage-tile:var(--a-soft);--wd-peach-tile:var(--a-peach);--wd-rose-tile:color-mix(in srgb,var(--a-primary) 10%,var(--a-paper));--wd-gap:16px;font-size:16px;}
+#root #cabinet-app #contenu-principal .wd-mobile-pages {display:none !important;}
+#root #cabinet-app #contenu-principal .wd-welcome {padding:16px 20px;border-radius:16px;background:var(--a-peach);}
+#root #cabinet-app #contenu-principal .wd-welcome-actions {max-width:360px;}
+#root #cabinet-app #contenu-principal .wd-kpi {border-radius:16px;padding:14px;min-height:122px;}
+#root #cabinet-app #contenu-principal .wd-kpi-label {font-size:14px;}
+#root #cabinet-app #contenu-principal .wd-panel-overline {font-size:12px;}
+#root #cabinet-app #contenu-principal .wd-kpi-value strong {font-size:28px;}
+#root #cabinet-app #contenu-principal .wd-kpi[href] {min-height:48px;}
+#root #cabinet-app #contenu-principal .wd-helios {background:var(--a-soft) !important;border-color:var(--a-line) !important;color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal .wd-helios :is(h3,p,li,.wd-panel-overline) {color:var(--a-ink) !important;}
+#root #cabinet-app #contenu-principal .wd-helios ul {font-size:14px;}
+#root #cabinet-app #contenu-principal .wd-integrity-notice {border-color:var(--a-warning) !important;}
+#root #cabinet-app #contenu-principal .wd-integrity-notice > strong {color:var(--a-warning) !important;}
+#root #cabinet-app #contenu-principal .wd-quick-pathways button {background:var(--a-soft) !important;}
+#root #cabinet-app #contenu-principal .wd-chart-labels {font-size:14px;}
+
+/* Existing voice/assistant behavior stays intact; only its visible shell changes. */
+#root #cabinet-app .mf-orb-assistant {position:fixed !important;left:16px !important;right:auto !important;top:auto !important;bottom:16px !important;width:120px !important;height:84px !important;min-height:0 !important;display:flex !important;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:0 !important;margin:0;z-index:60;background:var(--a-sidebar);border-radius:12px;}
+#root #cabinet-app .mf-orb-launcher {width:60px !important;height:60px !important;min-width:48px;min-height:48px;padding:0 !important;flex:0 0 auto;background:var(--a-paper);border:1px solid var(--a-line);box-shadow:var(--a-shadow);}
+#root #cabinet-app .mf-orb-canvas {filter:saturate(.35);}
+#root #cabinet-app .mf-orb-caption {position:static !important;font-size:12px !important;line-height:1.2;color:var(--a-sidebar-ink) !important;letter-spacing:0 !important;transform:none !important;margin:0;padding:0;white-space:nowrap;}
+#root #cabinet-app .mf-orb-panel {position:fixed !important;left:256px !important;right:auto !important;top:auto !important;bottom:16px !important;max-width:calc(100vw - 272px);width:430px !important;height:min(640px,calc(100dvh - 32px)) !important;max-height:calc(100dvh - 32px);background:var(--a-paper) !important;border-color:var(--a-line) !important;color:var(--a-ink) !important;}
+#root #cabinet-app .mf-orb-panel :is(input,textarea,select) {font-size:16px !important;min-height:48px;background:var(--a-paper);color:var(--a-ink);border-color:var(--a-field-line);}
+#root #cabinet-app .mf-orb-panel :is(input,textarea)::placeholder {color:var(--a-muted);opacity:1;}
+#root #cabinet-app .cabinet-orb-message-field {display:grid;gap:6px;flex:1;min-width:0;color:var(--a-ink);font-size:14px;}
+#root #cabinet-app .cabinet-orb-message-field textarea {width:100%;box-sizing:border-box;}
+#root #cabinet-app .mf-orb-panel button {min-height:48px;min-width:48px;font-size:14px;}
+#root #cabinet-app .mf-orb-panel :is(.mf-orb-panel-header,.mf-orb-panel-footer,.mf-orb-chat-form) {background:var(--a-paper);border-color:var(--a-line);}
+#root #cabinet-app .mf-orb-panel :is(.mf-orb-context,.mf-orb-message) {background:var(--a-soft);border-color:var(--a-line);color:var(--a-ink);}
+#root #cabinet-app .mf-orb-panel :is(p,strong) {color:var(--a-ink) !important;font-size:16px;}
+#root #cabinet-app .mf-orb-panel :is(small,.mf-orb-context span,.mf-orb-panel-footer span,.mf-orb-message > span,.mf-orb-typing) {color:var(--a-muted) !important;font-size:12px;line-height:1.5;}
+#root #cabinet-app .mf-orb-panel button:not(.is-listening) {background:var(--a-paper);color:var(--a-ink);border:1px solid var(--a-field-line);border-radius:12px;}
+#root #cabinet-app .mf-orb-panel button[aria-pressed='true'] {background:var(--a-soft) !important;color:var(--a-ink) !important;border-color:var(--a-primary) !important;}
+#root #cabinet-app .mf-orb-chat-form button[type='submit'] {background:var(--a-primary) !important;color:var(--a-on-primary) !important;}
+#root #cabinet-app .mf-orb-panel :is(.mf-orb-speech-status.has-error,.mf-orb-mic-button.is-listening,.priority-urgent) {background:var(--a-danger-bg) !important;color:var(--a-danger) !important;border-color:var(--a-danger) !important;}
+#root #cabinet-app .mf-orb-panel .priority-attention {background:var(--a-warning-bg);color:var(--a-warning);}
+
+@media(max-width:1100px) {
+  #root #cabinet-app #contenu-principal .copilot-workspace {grid-template-columns:minmax(0,1fr);}
+  #root #cabinet-app #contenu-principal > .premium-topbar {flex-wrap:wrap;}
+}
+/* Keep this condition aligned with AppNavigation.compactNavigationQuery. */
+@media(max-width:700px),(orientation:portrait),(max-height:500px) {
+  html:has(#cabinet-app) {scroll-padding-top:96px;}
+  #root #cabinet-app {display:block !important;}
+  #root #cabinet-app #cabinet-navigation {position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:16px;min-height:80px;padding:8px 16px;background:var(--a-sidebar);color:var(--a-sidebar-ink);}
+  #root #cabinet-app #cabinet-navigation .cabinet-mobile-brand {padding-right:0;white-space:nowrap;}
+  #root #cabinet-app .mf-orb-assistant {left:auto !important;right:16px !important;top:8px !important;bottom:auto !important;width:64px !important;height:66px !important;z-index:90;align-items:flex-end;gap:2px;}
+  #root #cabinet-app .mf-orb-launcher {width:48px !important;height:48px !important;}
+  #root #cabinet-app .mf-orb-caption {width:110px;text-align:right;}
+  #root #cabinet-app .mf-orb-panel {left:16px !important;right:16px !important;top:96px !important;bottom:auto !important;width:calc(100vw - 32px) !important;max-width:none;height:min(640px,calc(100dvh - 112px)) !important;max-height:calc(100dvh - 112px);}
+  #root #cabinet-app #contenu-principal {padding:16px 16px 112px !important;}
+  #root #cabinet-app #contenu-principal h1 {font-size:24px !important;}
+  #root #cabinet-app #contenu-principal :is(.consultation-grid,.prescription-grid,.settings-grid,.inventory-grid) {grid-template-columns:minmax(0,1fr) !important;}
+  #root #cabinet-app #contenu-principal .header-right {width:100%;}
+  #root #cabinet-app #contenu-principal .header-date {flex:1;}
+  #root #cabinet-app #contenu-principal :is(section,.consultation-section,.patient-detail,.pex-section) {scroll-margin-top:96px;}
+  #root #cabinet-app #contenu-principal .pex-row {grid-template-columns:minmax(0,1fr);}
+}
+@media(max-width:600px) {
+  #root #cabinet-app #cabinet-navigation {gap:12px;}
+  #root #cabinet-app #cabinet-navigation .cabinet-mobile-brand {font-size:14px;}
+  #root #cabinet-app #contenu-principal {padding:12px 12px 112px !important;}
+  #root #cabinet-app #contenu-principal h1 {font-size:22px !important;}
+  #root #cabinet-app #contenu-principal h2 {font-size:22px !important;}
+  #root #cabinet-app #contenu-principal > .premium-topbar {padding:14px !important;gap:12px;}
+  #root #cabinet-app #contenu-principal .header-date {flex-basis:100%;}
+  #root #cabinet-app #contenu-principal :is(.consultation-section,.prescription-section,.settings-section,.inventory-panel,.patient-detail,.patient-form,.protocol-detail,.wd-panel) {padding:16px !important;}
+  #root #cabinet-app #contenu-principal :is(.patient-summary-grid,.patient-vitals-grid,.patient-trends-grid,.protocols-grid) {grid-template-columns:minmax(0,1fr) !important;}
+  #root #cabinet-app #contenu-principal .vitals-grid {grid-template-columns:repeat(2,minmax(0,1fr)) !important;}
+  #root #cabinet-app #contenu-principal .vital-card {padding:10px;}
+  #root #cabinet-app #contenu-principal .vital-input-row {flex-wrap:wrap;gap:4px;}
+  #root #cabinet-app #contenu-principal .vital-input-row input {flex-basis:100%;}
+  #root #cabinet-app #contenu-principal .wd-welcome {padding:14px;}
+  #root #cabinet-app #contenu-principal .wd-welcome-actions {display:grid;grid-template-columns:1.6fr 1fr;width:100%;max-width:none;}
+  #root #cabinet-app #contenu-principal .wd-kpis .wd-kpi:last-child {grid-column:1 / -1;}
+  #root #cabinet-app #contenu-principal .prescription-item {flex-wrap:wrap;}
+  #root #cabinet-app #contenu-principal :is(.copilot-identity,.premium-copilot-header) {flex-wrap:wrap;}
+  #root #cabinet-app #contenu-principal .copilot-welcome {grid-template-columns:minmax(0,1fr);}
+}
+#root #cabinet-app #contenu-principal .prescription-feedback {display:contents;}
+#root #cabinet-app #contenu-principal .prescription-success {background:var(--a-soft) !important;color:var(--a-ink) !important;border:1px solid var(--a-line) !important;}
+#root #cabinet-app #contenu-principal [hidden] {display:none !important;}
+@media(prefers-reduced-motion:reduce) {
+  #root #cabinet-app *,#root #cabinet-app *::before,#root #cabinet-app *::after {animation:none !important;transition:none !important;scroll-behavior:auto !important;}
+}
+@media print {
+  html:has(#cabinet-app),body:has(#cabinet-app),#root:has(#cabinet-app) {min-height:0 !important;height:auto !important;background:#fff !important;color:#000 !important;}
+  #root #cabinet-app {display:block !important;background:#fff !important;color:#000 !important;}
+  #root #cabinet-app #cabinet-navigation,#root #cabinet-app .mf-orb-assistant {display:none !important;}
+  #root #cabinet-app #contenu-principal {padding:0 !important;background:#fff !important;color:#000 !important;}
+  /* Remove hidden editor flow so a short prescription has no blank print pages. */
+  #root #cabinet-app:has(.prescription-preview),
+  #root #cabinet-app:has(.prescription-preview) #contenu-principal,
+  #root #cabinet-app:has(.prescription-preview) .prescription-page {display:block !important;position:static !important;min-height:0 !important;height:auto !important;margin:0 !important;padding:0 !important;transform:none !important;overflow:visible !important;}
+  #root #cabinet-app:has(.prescription-preview) #contenu-principal > :not(.prescription-page),
+  #root #cabinet-app:has(.prescription-preview) .prescription-page > :not(.prescription-preview) {display:none !important;}
+  #root #cabinet-app #contenu-principal .prescription-preview {position:static !important;width:100% !important;margin:0 !important;background:#fff !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;overflow:visible !important;}
+  #root #cabinet-app #contenu-principal .prescription-preview * {background:transparent !important;color:#000 !important;border-color:#777 !important;}
+  #root #cabinet-app #contenu-principal .prescription-preview tr {break-inside:avoid-page;page-break-inside:avoid;}
+  /* Extremely long cell text must flow, rather than defer an oversized first row. */
+  #root #cabinet-app #contenu-principal .prescription-preview tr.prescription-flow-row {break-inside:auto;page-break-inside:auto;}
+}

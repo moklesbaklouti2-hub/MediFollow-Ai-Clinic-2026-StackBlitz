@@ -1,0 +1,17 @@
+baseline 1280 800 light dashboard PASS
+baseline 1280 800 light patients PASS
+baseline 1280 800 light consultations PASS
+baseline 1280 800 light helios PASS
+baseline 1280 800 light ordonnances PASS
+baseline 1280 800 light protocoles PASS
+baseline 1280 800 light inventaire PASS
+baseline 1280 800 light parametres PASS
+baseline 800 1280 dark dashboard PASS
+baseline 800 1280 dark patients PASS
+baseline 800 1280 dark consultations PASS
+baseline 800 1280 dark helios PASS
+baseline 800 1280 dark ordonnances PASS
+baseline 800 1280 dark protocoles PASS
+baseline 800 1280 dark inventaire PASS
+baseline 800 1280 dark parametres PASS
+SUMMARY 16 states 0 with findings

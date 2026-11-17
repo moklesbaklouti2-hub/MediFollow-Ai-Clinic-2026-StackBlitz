@@ -1,0 +1,49 @@
+long 700 600 light dashboard ['descendants extend outside viewport']
+long 700 600 light patients ['descendants extend outside viewport']
+long 700 600 light consultations ['descendants extend outside viewport']
+long 700 600 light helios ['descendants extend outside viewport']
+long 700 600 light ordonnances ['descendants extend outside viewport']
+long 700 600 light protocoles PASS
+long 700 600 light inventaire ['descendants extend outside viewport']
+long 700 600 light parametres PASS
+long 701 600 dark dashboard ['descendants extend outside viewport']
+long 701 600 dark patients ['descendants extend outside viewport']
+long 701 600 dark consultations ['descendants extend outside viewport']
+long 701 600 dark helios ['descendants extend outside viewport']
+long 701 600 dark ordonnances ['descendants extend outside viewport']
+long 701 600 dark protocoles PASS
+long 701 600 dark inventaire ['descendants extend outside viewport']
+long 701 600 dark parametres PASS
+long 1280 500 light dashboard PASS
+long 1280 500 light patients ['descendants extend outside viewport']
+long 1280 500 light consultations ['descendants extend outside viewport']
+long 1280 500 light helios ['descendants extend outside viewport']
+long 1280 500 light ordonnances ['descendants extend outside viewport']
+long 1280 500 light protocoles PASS
+long 1280 500 light inventaire ['descendants extend outside viewport']
+long 1280 500 light parametres PASS
+long 1280 501 dark dashboard ['descendants extend outside viewport']
+long 1280 501 dark patients ['descendants extend outside viewport']
+long 1280 501 dark consultations ['descendants extend outside viewport']
+long 1280 501 dark helios ['descendants extend outside viewport']
+long 1280 501 dark ordonnances ['descendants extend outside viewport']
+long 1280 501 dark protocoles PASS
+long 1280 501 dark inventaire ['descendants extend outside viewport']
+long 1280 501 dark parametres PASS
+long 1024 768 light dashboard ['descendants extend outside viewport']
+long 1024 768 light patients ['descendants extend outside viewport']
+long 1024 768 light consultations ['descendants extend outside viewport']
+long 1024 768 light helios ['descendants extend outside viewport']
+long 1024 768 light ordonnances ['descendants extend outside viewport']
+long 1024 768 light protocoles PASS
+long 1024 768 light inventaire ['descendants extend outside viewport']
+long 1024 768 light parametres PASS
+long 320 640 dark dashboard ['descendants extend outside viewport']
+long 320 640 dark patients ['descendants extend outside viewport']
+long 320 640 dark consultations ['descendants extend outside viewport']
+long 320 640 dark helios ['descendants extend outside viewport']
+long 320 640 dark ordonnances ['descendants extend outside viewport']
+long 320 640 dark protocoles PASS
+long 320 640 dark inventaire ['descendants extend outside viewport']
+long 320 640 dark parametres PASS
+SUMMARY 48 states 35 with findings

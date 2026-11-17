@@ -1,0 +1,15 @@
+1280 light PASS patient create/edit/history save
+1280 light PASS consultation/vitals/physical/legacy/follow-up save and edit
+PASS real one-page PDF content 1280 light
+1280 light PASS prescription draft save/stock unchanged/print media
+1280 light PASS inventory/settings/theme/reload; all original fixtures unchanged
+800 dark PASS patient create/edit/history save
+800 dark PASS consultation/vitals/physical/legacy/follow-up save and edit
+PASS real one-page PDF content 800 dark
+800 dark PASS prescription draft save/stock unchanged/print media
+800 dark PASS inventory/settings/theme/reload; all original fixtures unchanged
+360 light PASS patient create/edit/history save
+360 light PASS consultation/vitals/physical/legacy/follow-up save and edit
+PASS real one-page PDF content 360 light
+360 light PASS prescription draft save/stock unchanged/print media
+360 light PASS inventory/settings/theme/reload; all original fixtures unchanged

@@ -334,18 +334,18 @@ export default function Settings({
 
         <div className="settings-grid">
           <div className="settings-field">
-            <label>Nom du médecin</label>
+            <label htmlFor="cabinet-settings-1">Nom du médecin</label>
             <input
               value={doctorName}
-              onChange={(e) => setDoctorName(e.target.value)}
+              onChange={(e) => setDoctorName(e.target.value)} id="cabinet-settings-1"
             />
           </div>
 
           <div className="settings-field">
-            <label>Spécialité</label>
+            <label htmlFor="cabinet-settings-2">Spécialité</label>
             <input
               value={specialty}
-              onChange={(e) => setSpecialty(e.target.value)}
+              onChange={(e) => setSpecialty(e.target.value)} id="cabinet-settings-2"
             />
           </div>
         </div>
@@ -359,38 +359,38 @@ export default function Settings({
 
         <div className="settings-grid">
           <div className="settings-field">
-            <label>Nom du cabinet</label>
+            <label htmlFor="cabinet-settings-3">Nom du cabinet</label>
             <input
               value={cabinetName}
-              onChange={(e) => setCabinetName(e.target.value)}
+              onChange={(e) => setCabinetName(e.target.value)} id="cabinet-settings-3"
             />
           </div>
 
           <div className="settings-field">
-            <label>Adresse</label>
+            <label htmlFor="cabinet-settings-4">Adresse</label>
             <input
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Adresse du cabinet"
+              placeholder="Adresse du cabinet" id="cabinet-settings-4"
             />
           </div>
 
           <div className="settings-field">
-            <label>Téléphone</label>
+            <label htmlFor="cabinet-settings-5">Téléphone</label>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Numéro professionnel"
+              placeholder="Numéro professionnel" id="cabinet-settings-5"
             />
           </div>
 
           <div className="settings-field">
-            <label>Email professionnel</label>
+            <label htmlFor="cabinet-settings-6">Email professionnel</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Adresse email"
+              placeholder="Adresse email" id="cabinet-settings-6"
             />
           </div>
         </div>
@@ -427,7 +427,7 @@ export default function Settings({
           Contrôlez les fonctionnalités d'assistance médicale.
         </p>
 
-        <div className="settings-toggle">
+        <label className="settings-toggle">
           <div>
             <strong>Activer le copilote IA</strong>
             <span>Autoriser l'accès à l'assistant depuis l'interface.</span>
@@ -437,9 +437,9 @@ export default function Settings({
             checked={copilotEnabled}
             onChange={(e) => setCopilotEnabled(e.target.checked)}
           />
-        </div>
+        </label>
 
-        <div className="settings-toggle">
+        <label className="settings-toggle">
           <div>
             <strong>Confirmation avant prescription</strong>
             <span>Maintenir une validation médicale avant toute prescription.</span>
@@ -451,7 +451,7 @@ export default function Settings({
               setConfirmBeforePrescription(e.target.checked)
             }
           />
-        </div>
+        </label>
       </div>
 
       <div className="settings-section">

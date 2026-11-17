@@ -451,8 +451,8 @@ export default function Prescriptions() {
         )}
         <div className="prescription-grid">
           <div className="prescription-field">
-            <label>Nom et prénom du patient</label>
-            <select value={patientId} onChange={(e) => setPatientId(e.target.value)}>
+            <label htmlFor="cabinet-prescriptions-1">Nom et prénom du patient</label>
+            <select value={patientId} onChange={(e) => setPatientId(e.target.value)} id="cabinet-prescriptions-1">
               <option value="">Choisir un patient enregistré</option>
               {patients.map((item) => (
                 <option key={item.id} value={item.id}>{item.name} · {item.age} ans</option>
@@ -461,11 +461,11 @@ export default function Prescriptions() {
             {patients.length === 0 && <p className="prescription-empty">Créez d'abord un dossier dans la rubrique Patients.</p>}
           </div>
           <div className="prescription-field">
-            <label>Date de prescription</label>
+            <label htmlFor="cabinet-prescriptions-2">Date de prescription</label>
             <input
               type="date"
               value={date}
-              onChange={(e) => setDate(e.target.value)}
+              onChange={(e) => setDate(e.target.value)} id="cabinet-prescriptions-2"
             />
           </div>
         </div>
@@ -475,29 +475,29 @@ export default function Prescriptions() {
         <h3>02 · Ajouter un médicament</h3>
 
         <div className="prescription-field">
-          <label>Nom du médicament</label>
+          <label htmlFor="cabinet-prescriptions-3">Nom du médicament</label>
           <input
             value={medication.name}
             onChange={(e) => updateMedication('name', e.target.value)}
-            placeholder="Nom du médicament"
+            placeholder="Nom du médicament" id="cabinet-prescriptions-3"
           />
         </div>
 
         <div className="prescription-grid">
           <div className="prescription-field">
-            <label>Dosage / concentration</label>
+            <label htmlFor="cabinet-prescriptions-4">Dosage / concentration</label>
             <input
               value={medication.dosage}
               onChange={(e) => updateMedication('dosage', e.target.value)}
-              placeholder="Ex. : 500 mg"
+              placeholder="Ex. : 500 mg" id="cabinet-prescriptions-4"
             />
           </div>
 
           <div className="prescription-field">
-            <label>Voie d'administration</label>
+            <label htmlFor="cabinet-prescriptions-5">Voie d'administration</label>
             <select
               value={medication.route}
-              onChange={(e) => updateMedication('route', e.target.value)}
+              onChange={(e) => updateMedication('route', e.target.value)} id="cabinet-prescriptions-5"
             >
               <option>Voie orale</option>
               <option>Voie intraveineuse</option>
@@ -512,38 +512,38 @@ export default function Prescriptions() {
           </div>
 
           <div className="prescription-field">
-            <label>Fréquence / posologie</label>
+            <label htmlFor="cabinet-prescriptions-6">Fréquence / posologie</label>
             <input
               value={medication.frequency}
               onChange={(e) => updateMedication('frequency', e.target.value)}
-              placeholder="À préciser"
+              placeholder="À préciser" id="cabinet-prescriptions-6"
             />
           </div>
 
           <div className="prescription-field">
-            <label>Durée du traitement</label>
+            <label htmlFor="cabinet-prescriptions-7">Durée du traitement</label>
             <input
               value={medication.duration}
               onChange={(e) => updateMedication('duration', e.target.value)}
-              placeholder="À préciser"
+              placeholder="À préciser" id="cabinet-prescriptions-7"
             />
           </div>
         </div>
 
         <div className="prescription-field">
-          <label>Instructions particulières</label>
+          <label htmlFor="cabinet-prescriptions-8">Instructions particulières</label>
           <input
             value={medication.instructions}
             onChange={(e) => updateMedication('instructions', e.target.value)}
-            placeholder="Ex. : pendant le repas..."
+            placeholder="Ex. : pendant le repas..." id="cabinet-prescriptions-8"
           />
         </div>
 
         <div className="prescription-field">
-          <label>Article de stock associé (facultatif)</label>
+          <label htmlFor="cabinet-prescriptions-9">Article de stock associé (facultatif)</label>
           <select
             value={medication.inventoryItemId || ''}
-            onChange={(e) => updateMedication('inventoryItemId', e.target.value)}
+            onChange={(e) => updateMedication('inventoryItemId', e.target.value)} id="cabinet-prescriptions-9"
           >
             <option value="">Aucun lien avec le stock</option>
             {dispensableInventoryItems.map((item) => (
@@ -581,7 +581,7 @@ export default function Prescriptions() {
                     const stockItem = inventory.items.find((stock) => stock.id === item.inventoryItemId);
                     return (
                       <div className="prescription-field prescription-dispensed-quantity">
-                        <label>Quantité réellement délivrée {stockItem ? `(${stockItem.unit})` : ''}</label>
+                        <label className="cabinet-field">Quantité réellement délivrée {stockItem ? `(${stockItem.unit})` : ''}
                         <input
                           type="number"
                           min="0"
@@ -590,6 +590,7 @@ export default function Prescriptions() {
                           onChange={(e) => updateDispensedQuantity(item.id, e.target.value)}
                           placeholder="À saisir au moment de la délivrance"
                         />
+                        </label>
                         <p className="prescription-empty">Article lié : {stockItem?.name || 'Article introuvable'} · Stock actuel : {stockItem ? `${stockItem.quantity} ${stockItem.unit}` : 'indisponible'}</p>
                         {stockItem && isExpired(stockItem.expiryDate) && (
                           <p role="alert" style={{ color: '#c43d3d', fontWeight: 700, fontSize: 12 }}>
@@ -615,11 +616,11 @@ export default function Prescriptions() {
       <div className="prescription-section">
         <h3>04 · Conseils et recommandations</h3>
         <div className="prescription-field">
-          <label>Instructions complémentaires</label>
+          <label htmlFor="cabinet-prescriptions-10">Instructions complémentaires</label>
           <textarea
             value={advice}
             onChange={(e) => setAdvice(e.target.value)}
-            placeholder="Conseils, surveillance et rendez-vous de contrôle..."
+            placeholder="Conseils, surveillance et rendez-vous de contrôle..." id="cabinet-prescriptions-10"
           />
         </div>
       </div>
@@ -654,9 +655,11 @@ export default function Prescriptions() {
         </button>
       </div>
 
-      {savedMessage && (
-        <div className="prescription-success">{savedMessage}</div>
-      )}
+      <div className="prescription-feedback" role="status" aria-label="État de l’ordonnance" aria-live="polite" aria-atomic="true">
+        {savedMessage && (
+          <div className="prescription-success">{savedMessage}</div>
+        )}
+      </div>
 
       {showPreview && (
         <div className="prescription-preview">
@@ -675,7 +678,11 @@ export default function Prescriptions() {
             </thead>
             <tbody>
               {medications.map((item) => (
-                <tr key={item.id}>
+                <tr key={item.id} className={
+                  [[item.name, item.dosage], [item.frequency, item.route, item.instructions], [item.duration]]
+                    .some((column) => column.join(' ').length > 2000)
+                    ? 'prescription-flow-row' : undefined
+                }>
                   <td>{item.name} — {item.dosage}</td>
                   <td>
                     {item.frequency}<br />

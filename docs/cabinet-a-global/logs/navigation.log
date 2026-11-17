@@ -1,0 +1,10 @@
+701 light PASS native drawer, 8 routes, focus/Escape/backdrop, rotation, scroll reset and assistant panel
+800 dark PASS native drawer, 8 routes, focus/Escape/backdrop, rotation, scroll reset and assistant panel
+900 light PASS native drawer, 8 routes, focus/Escape/backdrop, rotation, scroll reset and assistant panel
+360 dark PASS native drawer, 8 routes, focus/Escape/backdrop, rotation, scroll reset and assistant panel
+light PASS 200% equivalent reflow across 8 pages
+dark PASS 200% equivalent reflow across 8 pages
+PASS automatic theme and real storage error event
+theme-writes PASS application and session theme remain usable
+storage-getter PASS application and session theme remain usable
+PASS navigation/assistant/reflow/auto/storage resilience suite

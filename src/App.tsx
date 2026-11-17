@@ -4,8 +4,9 @@ import './mobile-navigation.css';
 import './clinical-premium.css';
 import './warm-clinical.css';
 import './dashboard-warm-layout.css';
+import './cabinet-a.css';
 
-import Sidebar from './components/Sidebar';
+import AppNavigation from './components/AppNavigation';
 import Header from './components/Header';
 
 import Dashboard from './pages/Dashboard';
@@ -300,9 +301,9 @@ function App() {
   // ---------- RENDU PRINCIPAL ----------
 
   return (
-    <div className="app premium-clinical-app">
+    <div className="app premium-clinical-app" id="cabinet-app" data-design="cabinet-a">
       <a className="premium-skip-link" href="#contenu-principal">Aller au contenu principal</a>
-      <Sidebar
+      <AppNavigation
         active={active}
         onNavigate={setActive}
       />

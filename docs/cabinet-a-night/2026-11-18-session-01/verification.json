@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "finalPageStates": 64,
+  "beforePageStates": 64,
+  "clippedStatesBefore": 35,
+  "clippedStatesAfter": 0,
+  "finalPDFCases": 6,
+  "negativeRegressionCommands": 2,
+  "saveWorkflows": 2,
+  "messageStates": 4,
+  "pngArtifacts": 32,
+  "browserScreenshots": 16,
+  "pdfPageRenders": 16,
+  "pdfArtifacts": 10,
+  "sourceChecked": true
+}

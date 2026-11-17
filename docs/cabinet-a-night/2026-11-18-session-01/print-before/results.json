@@ -1,0 +1,142 @@
+[
+  {
+    "kind": "short",
+    "theme": "light",
+    "viewport": "1280x800",
+    "expectedRows": 1,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 0,
+    "actualInstructionPhrases": 0,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 1,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "kind": "short",
+    "theme": "dark",
+    "viewport": "800x1280",
+    "expectedRows": 1,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 0,
+    "actualInstructionPhrases": 0,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 1,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "kind": "long",
+    "theme": "light",
+    "viewport": "1280x800",
+    "expectedRows": 36,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 180,
+    "actualInstructionPhrases": 180,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 13,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [
+      {
+        "row": 3,
+        "startPage": 1,
+        "endPage": 2
+      },
+      {
+        "row": 10,
+        "startPage": 3,
+        "endPage": 4
+      },
+      {
+        "row": 16,
+        "startPage": 5,
+        "endPage": 6
+      },
+      {
+        "row": 22,
+        "startPage": 7,
+        "endPage": 8
+      },
+      {
+        "row": 28,
+        "startPage": 9,
+        "endPage": 10
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "medication rows split across pages"
+    ]
+  },
+  {
+    "kind": "long",
+    "theme": "dark",
+    "viewport": "800x1280",
+    "expectedRows": 36,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 180,
+    "actualInstructionPhrases": 180,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 13,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [
+      {
+        "row": 3,
+        "startPage": 1,
+        "endPage": 2
+      },
+      {
+        "row": 10,
+        "startPage": 3,
+        "endPage": 4
+      },
+      {
+        "row": 16,
+        "startPage": 5,
+        "endPage": 6
+      },
+      {
+        "row": 22,
+        "startPage": 7,
+        "endPage": 8
+      },
+      {
+        "row": 28,
+        "startPage": 9,
+        "endPage": 10
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": [
+      "medication rows split across pages"
+    ]
+  }
+]

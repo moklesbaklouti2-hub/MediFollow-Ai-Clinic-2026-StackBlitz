@@ -112,9 +112,9 @@ export default function PatientClinicalInfo({ patient, onSave }: Props) {
           <h4>{group.label}</h4>
           {(history[group.key] ?? []).map((item) => (
             <div className="pci-entry" key={item.id}>
-              <input aria-label={`${group.label} : intitulé`} placeholder="Pathologie, intervention, allergène…" value={item.label} onChange={(e) => updateHistoryItem(group.key, item.id, { label: e.target.value })} />
-              <input aria-label="Date" placeholder="Date (facultative)" value={item.date ?? ''} onChange={(e) => updateHistoryItem(group.key, item.id, { date: e.target.value })} />
-              <textarea aria-label="Détails" placeholder="Détails, réaction allergique, précision…" value={item.details ?? ''} onChange={(e) => updateHistoryItem(group.key, item.id, { details: e.target.value })} />
+              <label className="cabinet-field"><span>{`${group.label} : intitulé`}</span><input aria-label={`${group.label} : intitulé`} placeholder="Pathologie, intervention, allergène…" value={item.label} onChange={(e) => updateHistoryItem(group.key, item.id, { label: e.target.value })} /></label>
+              <label className="cabinet-field"><span>{"Date"}</span><input aria-label="Date" placeholder="Date (facultative)" value={item.date ?? ''} onChange={(e) => updateHistoryItem(group.key, item.id, { date: e.target.value })} /></label>
+              <label className="cabinet-field pci-wide"><span>{"Détails"}</span><textarea aria-label="Détails" placeholder="Détails, réaction allergique, précision…" value={item.details ?? ''} onChange={(e) => updateHistoryItem(group.key, item.id, { details: e.target.value })} /></label>
               <button type="button" className="pci-small-btn pci-remove" onClick={() => removeHistoryItem(group.key, item.id)}>Retirer</button>
             </div>
           ))}
@@ -126,18 +126,18 @@ export default function PatientClinicalInfo({ patient, onSave }: Props) {
         <h4>Antécédents gynéco-obstétricaux</h4>
         <p>À renseigner selon le contexte clinique et la pertinence pour la patiente.</p>
         <div className="pci-fields">
-          <input placeholder="Ménarche" value={gyn.menarche ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, menarche: e.target.value } }))} />
-          <input placeholder="Cycles menstruels" value={gyn.cycle ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, cycle: e.target.value } }))} />
-          <input placeholder="Date des dernières règles" value={gyn.lastMenstrualPeriod ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, lastMenstrualPeriod: e.target.value } }))} />
-          <input placeholder="Ménopause" value={gyn.menopause ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, menopause: e.target.value } }))} />
-          <input placeholder="Gestité (G)" value={gyn.gravidity ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, gravidity: e.target.value } }))} />
-          <input placeholder="Parité (P)" value={gyn.parity ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, parity: e.target.value } }))} />
-          <input placeholder="Fausses couches" value={gyn.miscarriages ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, miscarriages: e.target.value } }))} />
-          <input placeholder="IVG / interruptions" value={gyn.abortions ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, abortions: e.target.value } }))} />
-          <input placeholder="Accouchements" value={gyn.deliveries ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, deliveries: e.target.value } }))} />
-          <input placeholder="Césariennes" value={gyn.cesareanSections ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, cesareanSections: e.target.value } }))} />
-          <input placeholder="Contraception" value={gyn.contraception ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, contraception: e.target.value } }))} />
-          <textarea className="pci-wide" placeholder="Détails des grossesses et autres informations" value={gyn.pregnanciesDetails ?? gyn.other ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, pregnanciesDetails: e.target.value } }))} />
+          <label className="cabinet-field"><span>{"Ménarche"}</span><input placeholder="Ménarche" value={gyn.menarche ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, menarche: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Cycles menstruels"}</span><input placeholder="Cycles menstruels" value={gyn.cycle ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, cycle: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Date des dernières règles"}</span><input placeholder="Date des dernières règles" value={gyn.lastMenstrualPeriod ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, lastMenstrualPeriod: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Ménopause"}</span><input placeholder="Ménopause" value={gyn.menopause ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, menopause: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Gestité (G)"}</span><input placeholder="Gestité (G)" value={gyn.gravidity ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, gravidity: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Parité (P)"}</span><input placeholder="Parité (P)" value={gyn.parity ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, parity: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Fausses couches"}</span><input placeholder="Fausses couches" value={gyn.miscarriages ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, miscarriages: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"IVG / interruptions"}</span><input placeholder="IVG / interruptions" value={gyn.abortions ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, abortions: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Accouchements"}</span><input placeholder="Accouchements" value={gyn.deliveries ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, deliveries: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Césariennes"}</span><input placeholder="Césariennes" value={gyn.cesareanSections ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, cesareanSections: e.target.value } }))} /></label>
+          <label className="cabinet-field"><span>{"Contraception"}</span><input placeholder="Contraception" value={gyn.contraception ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, contraception: e.target.value } }))} /></label>
+          <label className="cabinet-field pci-wide"><span>{"Détails des grossesses et autres informations"}</span><textarea className="pci-wide" placeholder="Détails des grossesses et autres informations" value={gyn.pregnanciesDetails ?? gyn.other ?? ''} onChange={(e) => setHistory((h) => ({ ...h, gynecoObstetric: { ...h.gynecoObstetric, pregnanciesDetails: e.target.value } }))} /></label>
         </div>
       </div>
 
@@ -146,14 +146,14 @@ export default function PatientClinicalInfo({ patient, onSave }: Props) {
         <p>Les traitements sont distincts des médicaments prescrits lors d'une consultation donnée.</p>
         {medications.map((medication) => (
           <div className="pci-entry" key={medication.id}>
-            <input placeholder="Nom du médicament" value={medication.name} onChange={(e) => updateMedication(medication.id, { name: e.target.value })} />
-            <input placeholder="Dosage (ex. 500 mg)" value={medication.dosage ?? ''} onChange={(e) => updateMedication(medication.id, { dosage: e.target.value })} />
-            <input placeholder="Voie d'administration" value={medication.route ?? ''} onChange={(e) => updateMedication(medication.id, { route: e.target.value })} />
-            <input placeholder="Fréquence / posologie" value={medication.frequency ?? ''} onChange={(e) => updateMedication(medication.id, { frequency: e.target.value })} />
-            <input placeholder="Date de début" value={medication.startDate ?? ''} onChange={(e) => updateMedication(medication.id, { startDate: e.target.value })} />
-            <input placeholder="Date de fin (si connue)" value={medication.endDate ?? ''} onChange={(e) => updateMedication(medication.id, { endDate: e.target.value })} />
-            <input placeholder="Indication" value={medication.indication ?? ''} onChange={(e) => updateMedication(medication.id, { indication: e.target.value })} />
-            <textarea placeholder="Instructions particulières" value={medication.instructions ?? ''} onChange={(e) => updateMedication(medication.id, { instructions: e.target.value })} />
+            <label className="cabinet-field"><span>{"Nom du médicament"}</span><input placeholder="Nom du médicament" value={medication.name} onChange={(e) => updateMedication(medication.id, { name: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Dosage (ex. 500 mg)"}</span><input placeholder="Dosage (ex. 500 mg)" value={medication.dosage ?? ''} onChange={(e) => updateMedication(medication.id, { dosage: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Voie d'administration"}</span><input placeholder="Voie d'administration" value={medication.route ?? ''} onChange={(e) => updateMedication(medication.id, { route: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Fréquence / posologie"}</span><input placeholder="Fréquence / posologie" value={medication.frequency ?? ''} onChange={(e) => updateMedication(medication.id, { frequency: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Date de début"}</span><input placeholder="Date de début" value={medication.startDate ?? ''} onChange={(e) => updateMedication(medication.id, { startDate: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Date de fin (si connue)"}</span><input placeholder="Date de fin (si connue)" value={medication.endDate ?? ''} onChange={(e) => updateMedication(medication.id, { endDate: e.target.value })} /></label>
+            <label className="cabinet-field"><span>{"Indication"}</span><input placeholder="Indication" value={medication.indication ?? ''} onChange={(e) => updateMedication(medication.id, { indication: e.target.value })} /></label>
+            <label className="cabinet-field pci-wide"><span>{"Instructions particulières"}</span><textarea placeholder="Instructions particulières" value={medication.instructions ?? ''} onChange={(e) => updateMedication(medication.id, { instructions: e.target.value })} /></label>
             <button type="button" className="pci-small-btn pci-remove" onClick={() => setMedications((current) => current.filter((item) => item.id !== medication.id))}>Retirer ce traitement</button>
           </div>
         ))}

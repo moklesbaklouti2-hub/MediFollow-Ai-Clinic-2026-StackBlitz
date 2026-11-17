@@ -1,0 +1,56 @@
+[
+  {
+    "kind": "oversize",
+    "theme": "light",
+    "viewport": "1280x800",
+    "expectedRows": 1,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 160,
+    "actualInstructionPhrases": 160,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 8,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [
+      {
+        "row": 1,
+        "startPage": 1,
+        "endPage": 7
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  },
+  {
+    "kind": "oversize",
+    "theme": "dark",
+    "viewport": "800x1280",
+    "expectedRows": 1,
+    "firstRowPage": 1,
+    "expectedInstructionPhrases": 160,
+    "actualInstructionPhrases": 160,
+    "instructionTokensMatch": true,
+    "missingTokens": {},
+    "unexpectedTokens": {},
+    "pdfPages": 8,
+    "missingRows": [],
+    "rowsInOrder": true,
+    "minimumRowWordHeightPt": 16.343998999999997,
+    "outsidePage": [],
+    "splitRows": [
+      {
+        "row": 1,
+        "startPage": 1,
+        "endPage": 7
+      }
+    ],
+    "clinicalStorageUnchanged": true,
+    "pageErrors": [],
+    "failures": []
+  }
+]

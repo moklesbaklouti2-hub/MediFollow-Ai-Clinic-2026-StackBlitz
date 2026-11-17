@@ -1,0 +1,65 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "patientCreateEditHistory": true,
+    "consultationCreateEdit": true,
+    "nineVitalsPreserved": true,
+    "physicalAndLegacyPreserved": true,
+    "followUpPreserved": true,
+    "prescriptionDraftAndStockPreserved": true,
+    "printMedia": true,
+    "printPdfOnePageAndContent": true,
+    "inventorySave": true,
+    "settingsSave": true,
+    "themeSwitchesPersist": true,
+    "reloadPersists": true,
+    "originalRecordsUnchanged": true,
+    "pageErrors": [],
+    "alerts": [
+      "Ant\u00e9c\u00e9dents et traitements enregistr\u00e9s."
+    ]
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "patientCreateEditHistory": true,
+    "consultationCreateEdit": true,
+    "nineVitalsPreserved": true,
+    "physicalAndLegacyPreserved": true,
+    "followUpPreserved": true,
+    "prescriptionDraftAndStockPreserved": true,
+    "printMedia": true,
+    "printPdfOnePageAndContent": true,
+    "inventorySave": true,
+    "settingsSave": true,
+    "themeSwitchesPersist": true,
+    "reloadPersists": true,
+    "originalRecordsUnchanged": true,
+    "pageErrors": [],
+    "alerts": [
+      "Ant\u00e9c\u00e9dents et traitements enregistr\u00e9s."
+    ]
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "patientCreateEditHistory": true,
+    "consultationCreateEdit": true,
+    "nineVitalsPreserved": true,
+    "physicalAndLegacyPreserved": true,
+    "followUpPreserved": true,
+    "prescriptionDraftAndStockPreserved": true,
+    "printMedia": true,
+    "printPdfOnePageAndContent": true,
+    "inventorySave": true,
+    "settingsSave": true,
+    "themeSwitchesPersist": true,
+    "reloadPersists": true,
+    "originalRecordsUnchanged": true,
+    "pageErrors": [],
+    "alerts": [
+      "Ant\u00e9c\u00e9dents et traitements enregistr\u00e9s."
+    ]
+  }
+]

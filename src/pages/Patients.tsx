@@ -441,7 +441,9 @@ export default function Patients() {
       </div>
 
       <div className="patients-toolbar">
+        <label htmlFor="cabinet-patient-search">Rechercher un dossier patient</label>
         <input
+          id="cabinet-patient-search"
           className="patients-search"
           placeholder="Rechercher par nom ou téléphone..."
           value={search}
@@ -452,9 +454,9 @@ export default function Patients() {
       {showForm && (
         <div className="patient-form">
           <h3>Nouveau dossier patient</h3>
-          <input placeholder="Nom et prénom" value={name} onChange={(e) => setName(e.target.value)} />
-          <input placeholder="Âge" type="number" min="0" max="130" step="1" value={age} onChange={(e) => setAge(e.target.value)} />
-          <input placeholder="Téléphone (facultatif)" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <div className="cabinet-field"><label htmlFor="cabinet-new-patient-name">Nom et prénom</label><input id="cabinet-new-patient-name" placeholder="Nom et prénom" value={name} onChange={(e) => setName(e.target.value)} /></div>
+          <div className="cabinet-field"><label htmlFor="cabinet-new-patient-age">Âge</label><input id="cabinet-new-patient-age" placeholder="Âge" type="number" min="0" max="130" step="1" value={age} onChange={(e) => setAge(e.target.value)} /></div>
+          <div className="cabinet-field"><label htmlFor="cabinet-new-patient-phone">Téléphone (facultatif)</label><input id="cabinet-new-patient-phone" placeholder="Téléphone (facultatif)" value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
           <button className="patients-action" onClick={addNewPatient}>Enregistrer le patient</button>
         </div>
       )}
@@ -533,11 +535,11 @@ export default function Patients() {
           {showEditForm && (
             <div className="patient-form">
               <h3>Modifier les informations du patient</h3>
-              <input placeholder="Nom et prénom" value={editName} onChange={(e) => setEditName(e.target.value)} />
-              <input placeholder="Âge" type="number" min="0" max="130" step="1" value={editAge} onChange={(e) => setEditAge(e.target.value)} />
-              <input placeholder="Sexe" value={editSex} onChange={(e) => setEditSex(e.target.value)} />
-              <input placeholder="Téléphone" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} />
-              <input placeholder="Statut" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} />
+              <div className="cabinet-field"><label htmlFor="cabinet-edit-patient-name">Nom et prénom</label><input id="cabinet-edit-patient-name" placeholder="Nom et prénom" value={editName} onChange={(e) => setEditName(e.target.value)} /></div>
+              <div className="cabinet-field"><label htmlFor="cabinet-edit-patient-age">Âge</label><input id="cabinet-edit-patient-age" placeholder="Âge" type="number" min="0" max="130" step="1" value={editAge} onChange={(e) => setEditAge(e.target.value)} /></div>
+              <div className="cabinet-field"><label htmlFor="cabinet-edit-patient-sex">Sexe</label><input id="cabinet-edit-patient-sex" placeholder="Sexe" value={editSex} onChange={(e) => setEditSex(e.target.value)} /></div>
+              <div className="cabinet-field"><label htmlFor="cabinet-edit-patient-phone">Téléphone</label><input id="cabinet-edit-patient-phone" placeholder="Téléphone" value={editPhone} onChange={(e) => setEditPhone(e.target.value)} /></div>
+              <div className="cabinet-field"><label htmlFor="cabinet-edit-patient-status">Statut</label><input id="cabinet-edit-patient-status" placeholder="Statut" value={editStatus} onChange={(e) => setEditStatus(e.target.value)} /></div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 <button className="patients-action" onClick={savePatientChanges}>Enregistrer les modifications</button>
                 <button className="patient-view" onClick={() => setShowEditForm(false)}>Annuler</button>
