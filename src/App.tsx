@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import './mobile-navigation.css';
 import './clinical-premium.css';
+import './warm-clinical.css';
 
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
