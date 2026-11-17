@@ -306,9 +306,16 @@ body:has(#cabinet-app) {margin:0;background:var(--a-bg) !important;color:var(--a
   #root #cabinet-app *,#root #cabinet-app *::before,#root #cabinet-app *::after {animation:none !important;transition:none !important;scroll-behavior:auto !important;}
 }
 @media print {
+  html:has(#cabinet-app),body:has(#cabinet-app),#root:has(#cabinet-app) {min-height:0 !important;height:auto !important;background:#fff !important;color:#000 !important;}
   #root #cabinet-app {display:block !important;background:#fff !important;color:#000 !important;}
   #root #cabinet-app #cabinet-navigation,#root #cabinet-app .mf-orb-assistant {display:none !important;}
   #root #cabinet-app #contenu-principal {padding:0 !important;background:#fff !important;color:#000 !important;}
-  #root #cabinet-app #contenu-principal .prescription-preview {background:#fff !important;color:#000 !important;box-shadow:none !important;}
+  /* Remove hidden editor flow so a short prescription has no blank print pages. */
+  #root #cabinet-app:has(.prescription-preview),
+  #root #cabinet-app:has(.prescription-preview) #contenu-principal,
+  #root #cabinet-app:has(.prescription-preview) .prescription-page {display:block !important;position:static !important;min-height:0 !important;height:auto !important;margin:0 !important;padding:0 !important;transform:none !important;overflow:visible !important;}
+  #root #cabinet-app:has(.prescription-preview) #contenu-principal > :not(.prescription-page),
+  #root #cabinet-app:has(.prescription-preview) .prescription-page > :not(.prescription-preview) {display:none !important;}
+  #root #cabinet-app #contenu-principal .prescription-preview {position:static !important;width:100% !important;margin:0 !important;background:#fff !important;color:#000 !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;overflow:visible !important;}
   #root #cabinet-app #contenu-principal .prescription-preview * {background:transparent !important;color:#000 !important;border-color:#777 !important;}
 }
