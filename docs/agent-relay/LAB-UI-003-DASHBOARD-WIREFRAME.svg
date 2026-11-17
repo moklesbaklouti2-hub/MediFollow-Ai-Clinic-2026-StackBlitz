@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">LAB-UI-003 — Schéma de disposition du Dashboard approuvé</title>
+<desc id="desc">Schéma conceptuel et non capture d'application, sans chiffres patients ni rendez-vous inventés. Barre latérale ivoire, cartes corail et vert sauge, agenda consultations HELIOS en trois colonnes, rangée de suivi, raccourcis.</desc>
+<style>
+  text{font-family:system-ui,Arial,sans-serif;fill:#214a36;font-weight:600}
+  .tiny{font-size:14px;font-weight:500;fill:#5c6e5b}
+  .label{font-size:21px;font-weight:750}
+  .h{font-size:27px;font-weight:800}
+  .card{fill:#fffcf7;stroke:#e8d8cb;stroke-width:2}
+  .tag{fill:#b94031}
+  .tagText{fill:#fff}
+</style>
+<rect width="1600" height="900" fill="#fff9f3"/>
+<rect x="0" y="0" width="245" height="900" fill="#fff3e8" stroke="#e1cfbf" stroke-width="2"/>
+<text class="h" x="18" y="52">MediFollow <tspan fill="#be4d38">AI</tspan></text>
+<text class="tiny" x="20" y="78">Médecine de famille</text>
+<rect x="15" y="123" width="215" height="47" rx="13" fill="#c4523d"/>
+<text x="30" y="153" fill="#fff" font-size="18">Tableau de bord</text>
+<text x="30" y="212">Patients</text><text x="30" y="262">Consultations</text>
+<text x="30" y="312">HELIOS – Copilote</text>
+<text x="30" y="362">Protocoles</text><text x="30" y="412">Ordonnances</text>
+<text x="30" y="462">Suivi &amp; Parcours</text>
+<text x="30" y="512">Inventaire</text>
+<text x="30" y="562">Paramètres</text>
+<rect x="14" y="777" width="214" height="107" rx="17" class="card"/>
+<text x="28" y="807" font-size="16">Profil du cabinet</text>
+<text class="tiny" x="28" y="837">Données réelles uniquement</text>
+<rect x="263" y="16" width="1318" height="57" rx="20" fill="#fffdfa" stroke="#ebd5c7"/>
+<text class="label" x="285" y="52">En-tête : recherche / actions existantes</text>
+<rect x="263" y="88" width="1318" height="78" rx="18" fill="#fce9de"/>
+<text class="h" x="283" y="124">Bienvenue / Médecine de famille</text>
+<text class="tiny" x="284" y="151">Date du jour dynamique · illustration légère facultative</text>
+<g>
+<rect x="263" y="179" width="246" height="100" rx="20" fill="#e8f2e3"/>
+<rect x="519" y="179" width="246" height="100" rx="20" fill="#fbe8df"/>
+<rect x="775" y="179" width="246" height="100" rx="20" fill="#fae8e7"/>
+<rect x="1031" y="179" width="246" height="100" rx="20" fill="#e8eee0"/>
+<rect x="1287" y="179" width="294" height="100" rx="20" fill="#fae5e2"/>
+<text x="283" y="219">KPI Patients</text><text x="539" y="219">Consultations</text>
+<text x="795" y="219">RDV / état vide</text><text x="1051" y="219">Suivis réels</text>
+<text x="1307" y="219">Alertes réelles</text>
+<text class="tiny" x="283" y="250">Données réelles</text><text class="tiny" x="539" y="250">Mois en cours</text>
+<text class="tiny" x="795" y="250">Pas de chiffre fictif</text><text class="tiny" x="1051" y="250">Source existante</text>
+<text class="tiny" x="1307" y="250">Gravité inchangée</text>
+</g>
+<rect x="263" y="293" width="424" height="284" rx="20" class="card"/>
+<rect x="699" y="293" width="428" height="284" rx="20" class="card"/>
+<rect x="1139" y="293" width="442" height="284" rx="20" fill="#e56c54"/>
+<text class="label" x="286" y="329">Agenda / état vide</text>
+<text class="label" x="719" y="329">Consultations récentes</text>
+<text class="label tagText" x="1160" y="329">HELIOS</text>
+<text class="tiny" x="286" y="359">Si calendrier non activé : le dire</text>
+<text class="tiny" x="719" y="359">Liste issue du stockage existant</text>
+<text x="1160" y="360" fill="#fff">Copilote clinique existant</text>
+<g stroke="#e9ddd2" stroke-width="2">
+<line x1="286" y1="390" x2="661" y2="390"/><line x1="286" y1="439" x2="661" y2="439"/><line x1="286" y1="488" x2="661" y2="488"/>
+<line x1="719" y1="390" x2="1104" y2="390"/><line x1="719" y1="439" x2="1104" y2="439"/><line x1="719" y1="488" x2="1104" y2="488"/>
+</g>
+<rect x="1160" y="402" width="399" height="47" rx="16" fill="#fff8ee"/>
+<text x="1182" y="432" font-size="17">Analyser un cas clinique</text>
+<rect x="1160" y="463" width="399" height="47" rx="16" fill="#fff8ee"/>
+<text x="1182" y="493" font-size="17">Ouvrir le copilote / dictée existante</text>
+<rect x="263" y="591" width="755" height="194" rx="20" class="card"/>
+<rect x="1032" y="591" width="266" height="194" rx="20" fill="#eef4e9" stroke="#dce8d5"/>
+<rect x="1312" y="591" width="269" height="194" rx="20" class="card"/>
+<text class="label" x="284" y="625">Suivi / Graphique EXISTANT</text>
+<text class="tiny" x="284" y="653">Titre honnête selon la source : patient ou activité</text>
+<polyline points="300,746 400,714 500,723 600,688 700,698 800,680 915,690" fill="none" stroke="#338461" stroke-width="5" stroke-linejoin="round"/>
+<text class="label" x="1054" y="629">HELIOS Follow-up</text>
+<text class="tiny" x="1054" y="658">Vraies échéances</text>
+<text class="label" x="1334" y="629">Parcours</text>
+<text class="tiny" x="1334" y="658">Si disponibles</text>
+<rect x="263" y="799" width="1318" height="85" rx="22" fill="#fffdfa" stroke="#ebd8c9"/>
+<text class="label" x="286" y="831">Accès rapides :</text>
+<g>
+<rect x="465" y="811" width="206" height="58" rx="18" fill="#fbe5db"/>
+<rect x="684" y="811" width="206" height="58" rx="18" fill="#edf2e6"/>
+<rect x="903" y="811" width="206" height="58" rx="18" fill="#fff0dd"/>
+<rect x="1122" y="811" width="208" height="58" rx="18" fill="#f8e8e5"/>
+<rect x="1343" y="811" width="213" height="58" rx="18" fill="#e9f1e4"/>
+<text x="482" y="848" font-size="15">Consultation</text><text x="701" y="848" font-size="15">Patients</text>
+<text x="920" y="848" font-size="15">HELIOS</text><text x="1139" y="848" font-size="15">Protocoles</text>
+<text x="1360" y="848" font-size="15">Ordonnances</text>
+</g>
+</svg>
