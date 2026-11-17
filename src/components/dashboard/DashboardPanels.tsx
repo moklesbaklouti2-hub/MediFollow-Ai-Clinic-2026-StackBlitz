@@ -23,42 +23,61 @@ export function MobileDashboardNavigation({ onNavigate }: { onNavigate: (page: D
   </details>;
 }
 
+type DashboardIconName = 'patients' | 'consultation' | 'prescription' | 'follow-up' | 'overdue' | 'calendar' | 'helios';
+
+function DashboardIcon({ name }: { name: DashboardIconName }) {
+  const paths: Record<DashboardIconName, string> = {
+    patients: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M17 4a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
+    consultation: 'M8 5H5v16h14V5h-3M9 3h6v4H9zM8 13h8M12 10v6',
+    prescription: 'M14 3H5v18h14V8zM14 3v5h5M8 12h7M8 16h5',
+    'follow-up': 'M20 11a8 8 0 1 1-4-6.93M8 11l3 3 9-9',
+    overdue: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0M12 7v5l3 2',
+    calendar: 'M4 5h16v16H4zM8 3v4M16 3v4M4 10h16M8 14h3M8 17h7',
+    helios: 'M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z',
+  };
+  return <svg className="wd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><path d={paths[name]} /></svg>;
+}
+
 function WelcomeArtwork() {
-  return <svg className="wd-welcome-art" viewBox="0 0 100 100" aria-hidden="true">
+  return <svg className="wd-welcome-art" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
     <circle cx="50" cy="50" r="47" fill="var(--wd-sage-tile)" />
-    <path d="M21 93V78c0-17 12-25 29-25s29 8 29 25v15" fill="var(--color-surface)" stroke="var(--color-border)" strokeWidth="2" />
-    <path d="M40 59l10 13 10-13M50 72v21" fill="none" stroke="var(--color-mint)" strokeWidth="2" />
-    <ellipse cx="50" cy="37" rx="20" ry="23" fill="var(--wd-peach-tile)" stroke="var(--color-charcoal-light)" strokeWidth="1.5" />
-    <path d="M30 37c-5-22 10-29 22-28 14 1 23 13 18 28l-5-10c-12 6-20-7-29 0Z" fill="var(--color-text-secondary)" />
-    <path d="M36 36h10v8H36zm18 0h10v8H54zm-8 3h8M44 51q6 4 12 0" fill="none" stroke="var(--color-text)" strokeWidth="1.8" />
-    <path d="M35 63v14a10 10 0 0 0 20 0V64m0 13h9v8" fill="none" stroke="var(--color-mint)" strokeWidth="2.5" />
-    <circle cx="64" cy="87" r="4" fill="var(--color-mint)" />
+    <circle cx="83" cy="20" r="12" fill="var(--wd-paper)" stroke="var(--wd-line)" />
+    <path d="M78 20h10m-5-5v10" fill="none" stroke="var(--mf-blue)" strokeWidth="2" strokeLinecap="round" />
+    <path d="M22 91V77c0-16 12-24 28-24s28 8 28 24v14Z" fill="var(--wd-paper)" stroke="var(--wd-line)" strokeWidth="1.5" />
+    <path d="M42 57l8 12 8-12v34H42Z" fill="var(--wd-peach-tile)" />
+    <path d="M39 59l-4 13 10 6-4 13m20-32 4 13-10 6 4 13" fill="none" stroke="var(--color-mint)" strokeWidth="1.5" />
+    <ellipse cx="50" cy="36" rx="19" ry="23" fill="var(--wd-peach-tile)" stroke="var(--wd-line)" strokeWidth="1.5" />
+    <path d="M31 37c-4-20 6-28 19-28s23 8 19 28l-5-11c-8 1-12-3-14-6-2 5-8 7-14 6Z" fill="var(--color-text-secondary)" />
+    <path d="M34 40c1 16 9 20 16 20s15-4 16-20l-7 9-9-3-9 3Z" fill="var(--wd-paper)" />
+    <g fill="none" stroke="var(--wd-ink)" strokeWidth="1.6" strokeLinecap="round"><rect x="35" y="33" width="11" height="9" rx="3" /><rect x="54" y="33" width="11" height="9" rx="3" /><path d="M46 36h8M46 50q4 3 8 0" /></g>
+    <path d="M34 64v11a9 9 0 0 0 18 0V64m0 11h12v8" fill="none" stroke="var(--color-mint)" strokeWidth="2.3" strokeLinecap="round" />
+    <circle cx="64" cy="86" r="4" fill="var(--color-mint)" stroke="var(--wd-paper)" strokeWidth="1.5" />
   </svg>;
 }
 
 export function WelcomeBanner({ date, onStartConsultation, onOpenPatients }: { date: Date; onStartConsultation: () => void; onOpenPatients: () => void }) {
   return <header className="wd-welcome">
     <WelcomeArtwork />
-    <div className="wd-welcome-copy"><h2>Bienvenue dans votre espace clinique</h2><p>Votre tableau de suivi aujourd’hui</p><time dateTime={date.toLocaleDateString('sv-SE')}>{date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</time></div>
+    <div className="wd-welcome-copy"><h2>Bienvenue dans votre cabinet</h2><time dateTime={date.toLocaleDateString('sv-SE')}>{date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</time></div>
     <div className="wd-welcome-actions"><button type="button" className="wd-button wd-primary" onClick={onStartConsultation}>Nouvelle consultation</button><button type="button" className="wd-button" onClick={onOpenPatients}>Patients</button></div>
   </header>;
 }
 
-export function OverviewKpi({ label, value, note, tone, href }: { label: string; value: number; note: string; tone: 'sage' | 'peach' | 'rose' | 'cream'; href?: string }) {
-  const content = <><span className="wd-kpi-label">{label}</span><strong>{value.toLocaleString('fr-FR')}</strong><span className="wd-kpi-note">{note}</span></>;
+export function OverviewKpi({ label, value, note, tone, icon, href }: { label: string; value: number; note: string; tone: 'sage' | 'peach' | 'rose' | 'cream'; icon: DashboardIconName; href?: string }) {
+  const content = <><span className="wd-kpi-label">{label}</span><div className="wd-kpi-value"><strong>{value.toLocaleString('fr-FR')}</strong><span className="wd-kpi-icon"><DashboardIcon name={icon} /></span></div><span className="wd-kpi-note">{note}</span></>;
   return href ? <a className={'wd-kpi wd-kpi-' + tone} href={href}>{content}</a> : <article className={'wd-kpi wd-kpi-' + tone}>{content}</article>;
 }
 
 export function AgendaPanel() {
   return <section className="wd-panel wd-agenda" aria-label="Agenda — calendrier non activé">
     <div className="wd-panel-heading"><div><span className="wd-panel-overline">AGENDA CLINIQUE</span><h3>Agenda du jour</h3></div></div>
-    <div className="wd-empty-state"><span className="wd-calendar-mark" aria-hidden="true">◷</span><strong>Calendrier non activé</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p><small>Aucune donnée de rendez-vous disponible.</small></div>
+    <div className="wd-empty-state"><span className="wd-calendar-mark"><DashboardIcon name="calendar" /></span><strong>Calendrier non activé</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p><small>Aucune donnée de rendez-vous disponible.</small></div>
   </section>;
 }
 
 export function HeliosPanel({ onOpenCopilot }: { onOpenCopilot: () => void }) {
   return <section className="wd-panel wd-helios" aria-label="HELIOS, copilote clinique">
-    <span className="wd-panel-overline">VOTRE COPILOTE IA</span><h3>HELIOS</h3><p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
+    <div className="wd-helios-heading"><div><span className="wd-panel-overline">VOTRE COPILOTE IA</span><h3>HELIOS</h3></div><span className="wd-helios-icon"><DashboardIcon name="helios" /></span></div><p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
     <ul><li>Analyse d’un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
     <button type="button" className="wd-button" onClick={onOpenCopilot}>Ouvrir HELIOS</button>
   </section>;

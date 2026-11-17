@@ -159,11 +159,11 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
       <MobileDashboardNavigation onNavigate={onNavigate} />
       <WelcomeBanner date={now} onStartConsultation={onStartConsultation} onOpenPatients={onOpenPatients} />
       <section className="wd-kpis" aria-label="Indicateurs du cabinet">
-        <OverviewKpi label="Patients inscrits" value={data.patients.length} note="Dossiers patients" tone="sage" />
-        <OverviewKpi label="Consultations ce mois" value={currentMonth} note={monthName} tone="peach" />
-        <OverviewKpi label="Ordonnances émises" value={data.prescriptions.length} note="Historique enregistré" tone="rose" />
-        <OverviewKpi label="Suivi des patients" value={followUpCount} note="Dossiers actifs ou en suivi" tone="cream" />
-        <OverviewKpi label="Contrôles en retard" href="#dashboard-follow-up" value={data.followUpConsultations.overdue} note="Dates de contrôle valides" tone="rose" />
+        <OverviewKpi label="Patients inscrits" value={data.patients.length} note="Dossiers patients" tone="sage" icon="patients" />
+        <OverviewKpi label="Consultations ce mois" value={currentMonth} note={monthName} tone="peach" icon="consultation" />
+        <OverviewKpi label="Ordonnances émises" value={data.prescriptions.length} note="Historique enregistré" tone="rose" icon="prescription" />
+        <OverviewKpi label="Suivi des patients" value={followUpCount} note="Dossiers actifs ou en suivi" tone="cream" icon="follow-up" />
+        <OverviewKpi label="Contrôles en retard" href="#dashboard-follow-up" value={data.followUpConsultations.overdue} note="Dates de contrôle valides" tone="rose" icon="overdue" />
       </section>
       <DataIntegrityNotice data={data} />
       <section className="wd-operational-grid" aria-label="Agenda, consultations récentes et HELIOS">
