@@ -6,11 +6,15 @@ import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/m
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
-import { getConsultations } from '../services/storage';
+import { getConsultations, getMedicalData } from '../services/storage';
 import { hasConfirmedPatientSelection, confirmedPatientNameLabel, normalizeVoicePatientName } from '../services/patientSelectionGuard';
 import { consultationClinicalSnapshot, hasUniqueConsultationId, consultationSpecialtyLabel, consultationMotifLabel, consultationDiagnosisLabel, hasEditableConsultationText } from '../services/consultationIdentity';
 import { parseExpressDraft, expressWouldOverwrite, expressDraftPatientBinding, MAX_EXPRESS_DRAFT_CHARS } from '../clinical/consultationExpress';
 import { displayRecordedDate, orderRecordedNewest } from '../clinical/medicalTimeline';
+import { selectUniquePatient } from '../services/uniquePatientSelection';
+import { patientSnapshot } from '../jarvis/context';
+import { doctorAuthRequested } from '../services/doctorAuthMode';
+import type { ConsultationPrefill } from '../jarvis/tools';
 
 
 const specialtyGroups = [
@@ -152,11 +156,15 @@ type ClinicalInsightPayload = {
 export default function Consultations({
   onAskCopilot,
   onClinicalReasoningChange,
+  jarvisDraft,
+  onJarvisDraftConsumed,
   commandActions = [],
   onCommandActionsConsumed,
 }: {
   onAskCopilot?: (prompt: string) => void;
   onClinicalReasoningChange?: (insight: ClinicalInsightPayload) => void;
+  jarvisDraft?: ConsultationPrefill | null;
+  onJarvisDraftConsumed?: () => void;
   commandActions?: VoiceCommandAction[];
   onCommandActionsConsumed?: () => void;
 }) {
@@ -190,6 +198,32 @@ export default function Consultations({
   const [smartCopilotEnabled, setSmartCopilotEnabled] = useState(true);
   const [differentialPopupOpen, setDifferentialPopupOpen] = useState(false);
   const differentialPopupTriggered = useRef(false);
+
+  const consumedJarvisDraft = useRef<ConsultationPrefill | null>(null);
+  useEffect(() => {
+    if (!jarvisDraft || jarvisDraft === consumedJarvisDraft.current) return;
+    consumedJarvisDraft.current = jarvisDraft;
+    onJarvisDraftConsumed?.();
+    const currentPatient = selectUniquePatient(getMedicalData().patients, jarvisDraft.patientId);
+    const occupied = patientId || editingId || expressPatientId || specialty || motif || symptoms ||
+      history || targetedInterview || examination || diagnosis || plan || followUpDate ||
+      followUpObjective || followUpCompleted || expressDraft || Object.values(vitals).some(Boolean) ||
+      Object.keys(physicalExamination).length > 0;
+    if (doctorAuthRequested || occupied || !currentPatient || patientSnapshot(currentPatient) !== jarvisDraft.patientVersion) {
+      setCommandFeedback('Brouillon JARVIS refusé. Vérifiez l’accès, l’identité et le formulaire.');
+      return;
+    }
+    const setters = {
+      motif: setMotif, symptoms: setSymptoms, history: setHistory,
+      targetedInterview: setTargetedInterview, examination: setExamination,
+      plan: setPlan, followUpObjective: setFollowUpObjective,
+    };
+    setPatientId(currentPatient.id);
+    setters[jarvisDraft.field](jarvisDraft.value);
+    setCommandFeedback('Champ préparé par JARVIS dans le formulaire. Vérifiez le contenu avant tout enregistrement.');
+  }, [jarvisDraft, onJarvisDraftConsumed, patientId, editingId, expressPatientId, specialty, motif, symptoms,
+    history, targetedInterview, examination, diagnosis, plan, followUpDate, followUpObjective,
+    followUpCompleted, expressDraft, vitals, physicalExamination]);
 
   useEffect(() => {
     if (!Array.isArray(commandActions)) {
