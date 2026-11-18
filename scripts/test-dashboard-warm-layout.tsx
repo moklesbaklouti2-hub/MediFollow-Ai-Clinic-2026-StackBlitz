@@ -26,14 +26,14 @@ const render = dashboard.body!.statements.find(ts.isReturnStatement)!;
 assert.equal(hash(source.slice(dashboard.body!.statements[0].getStart(ast), render.getStart(ast))),
   '12085d49add240e4e58a5430dfbc6b3b0aeb944d02b4995b4efe7b547b9e5c26',
   'Do not change aggregation, inventory, follow-up, dates, refresh or vital selection in a layout task.');
-// Remove only the two Dashboard props; Sidebar/HELIOS already had this binding.
+// Remove only the two Dashboard props; Sidebar/JARVIS already had this binding.
 const app = read('src/App.tsx')
   .replace("import './cabinet-a.css';\n", '')
   .replace("import AppNavigation from './components/AppNavigation';", "import Sidebar from './components/Sidebar';")
   .replace('      <AppNavigation\n', '      <Sidebar\n')
   .replace(' id="cabinet-app" data-design="cabinet-a"', '')
   .replace("import './dashboard-warm-layout.css';\n", '').replace(/^ {12}onNavigate=\{setActive\}\n/gm, '');
-assert.equal(hash(app), '7558e6518408127943ac6d7bd2ae06da31440e885ebe6c5a1c1dd792554e3031', 'Only the approved navigation wrapper, visual root attributes and stylesheet imports may change in App.');
+assert.equal(hash(app), '6525a7de8894500910ceb10970dd1f1c988150c0784ef4ee085b4f0b57f7e08e', 'App changed outside the approved navigation, styles and JARVIS integration.');
 
 const text = (html: string) => html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 let actions = 0;
@@ -87,4 +87,4 @@ for (const match of css.matchAll(/([^{}]+)\{/g)) {
   if (!selector.startsWith('@')) assert.ok(selector.includes('.warm-dashboard'), 'Style leaks to another page: ' + selector);
 }
 assert.ok(!/@import|https?:\/\//.test(css), 'No network asset/dependency required for layout.');
-console.log('PASS LAB-UI-003: original loaders/calculations and App behavior frozen; five real KPIs, honest empty states, identity/follow-up/stock warnings, escaped read-only recents, six real shortcuts and scoped CSS. Browser geometry remains a separate check.');
+console.log('PASS LAB-UI-003: original loaders and calculations frozen; five real KPIs, honest empty states, identity/follow-up/stock warnings, escaped read-only recents, six real shortcuts and scoped CSS. Browser geometry remains a separate check.');

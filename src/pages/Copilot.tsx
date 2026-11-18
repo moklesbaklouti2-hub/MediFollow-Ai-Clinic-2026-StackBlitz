@@ -1,329 +1,296 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import type { Consultation, Patient } from '../types/medical';
-import Orb3D from '../components/Orb3D';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import type { Consultation, Patient, Prescription } from '../types/medical';
+import { getMedicalData, getInventoryData } from '../services/storage';
+import { verifyJarvisToolsAccess } from '../jarvis/toolsAccess';
+import { confirmedPatientNameLabel } from '../services/patientSelectionGuard';
+import ContextPanel from '../jarvis/ContextPanel';
+import DocumentsPanel from '../jarvis/DocumentsPanel';
+import ToolsPanel from '../jarvis/ToolsPanel';
+import ActionPreview from '../jarvis/ActionPreview';
+import Reactor from '../jarvis/Reactor';
+import { resolveContext } from '../jarvis/context';
+import { useJarvisConversation } from '../jarvis/conversation';
+import { useJarvisVoice } from '../jarvis/voice';
+import type { JarvisDocument } from '../jarvis/documents';
+import type { JarvisAction } from '../jarvis/actionSchema';
+import { authorizeAction, receiptTarget, type ConsultationPrefill, type PendingAction, type PrescriptionPrefill, type ReceiptPrefill } from '../jarvis/tools';
+import '../jarvis/jarvis.css';
 
-export type Message = {
-  role: 'user' | 'assistant';
-  content: string;
-};
-
-type CopilotProps = {
-  messages: Message[];
-  consultations: Consultation[];
+type Props = {
   patients: Patient[];
-  question: string;
-  onQuestionChange: (value: string) => void;
-  loading: boolean;
-  onSend: (consultationId?: string) => void;
+  consultations: Consultation[];
+  prescriptions: Prescription[];
+  onNavigate: (page: string) => void;
+  onDraft: (draft: ConsultationPrefill) => void;
+  onPrescription: (draft: PrescriptionPrefill) => void;
+  onReceipt: (draft: ReceiptPrefill) => void;
 };
 
-export default function Copilot({
-  messages,
-  consultations,
-  patients,
-  question,
-  onQuestionChange,
-  loading,
-  onSend,
-}: CopilotProps) {
-  const latestConsultation = consultations.length
-    ? [...consultations].sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      )[0]
-    : undefined;
-  const [chosenConsultationId, setChosenConsultationId] = useState<string | null>(null);
-  const conversationRef = useRef<HTMLDivElement>(null);
+const phaseLabels = {
+  off: 'Prêt', starting: 'Activation du microphone', listening: 'Écoute', transcribing: 'Transcription',
+  waiting: 'Transcription à relire', processing: 'Traitement', speaking: 'Lecture vocale',
+  paused: 'Voix en pause',
+};
 
+export default function Copilot({ patients, consultations, prescriptions, onNavigate, onDraft, onPrescription, onReceipt }: Props) {
+  const [patientId, setPatientId] = useState('');
+  const [visitId, setVisitId] = useState('');
+  const [documents, setDocuments] = useState<JarvisDocument[]>([]);
+  const [question, setQuestion] = useState('');
+  const [autoVoice, setAutoVoice] = useState(false);
+  const [toolsAllowed, setToolsAllowed] = useState(false);
+  const [checkingAction, setCheckingAction] = useState(false);
+  const [proposalEnabled, setProposalEnabled] = useState(false);
+  const [actionMessage, setActionMessage] = useState('');
+  const [pending, setPending] = useState<PendingAction | null>(null);
+  const actionRef = useRef<PendingAction | null>(null);
+  const epoch = useRef(0);
+  const submitting = useRef(false);
+  const log = useRef<HTMLDivElement>(null);
+  const composer = useRef<HTMLTextAreaElement>(null);
+
+  const context = resolveContext(patients, consultations, patientId, visitId);
+  const selected = documents.filter(doc => doc.selected);
+  const checking = useRef<AbortController | null>(null);
   useEffect(() => {
-    const conversation = conversationRef.current;
-    if (!conversation) return;
-    conversation.scrollTo({
-      top: conversation.scrollHeight,
-      behavior: loading ? 'smooth' : 'auto',
+    const controller = new AbortController();
+    void verifyJarvisToolsAccess(controller.signal).then(allowed => {
+      if (!controller.signal.aborted) setToolsAllowed(allowed);
     });
-  }, [messages, loading]);
-  const selectedConsultationId = chosenConsultationId !== null
-    ? chosenConsultationId
-    : latestConsultation?.id ?? '';
-  const selectedConsultation = consultations.find(
-    (item) => item.id === selectedConsultationId
-  );
-  const selectedPatient = selectedConsultation
-    ? patients.find((item) => item.id === selectedConsultation.patientId)
-    : undefined;
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-
-      if (question.trim() && !loading) {
-        onSend(selectedConsultationId || undefined);
-      }
-    }
+    return () => controller.abort();
+  }, []);
+  const freshContext = () => {
+    const data = getMedicalData();
+    const latest = resolveContext(data.patients, data.consultations, patientId, visitId);
+    return { data, latest };
   };
+  const conversation = useJarvisConversation(() => {
+    const { latest } = freshContext();
+    return latest.valid && latest.version === context.version;
+  });
+  const voice = useJarvisVoice(text => {
+    const transcript = text.slice(0, 5000);
+    setQuestion(transcript);
+    if (autoVoice) void submit(transcript);
+    else composer.current?.focus();
+  }, conversation.cancel);
 
-  return (
-    <section className="copilot premium-copilot">
-      <div className="premium-copilot-header">
-        <div className="copilot-identity">
-          <div className="holographic-orb">
-            <Orb3D />
+  function setAction(next: PendingAction | null) {
+    checking.current?.abort();
+    checking.current = null;
+    setCheckingAction(false);
+    actionRef.current = next;
+    setPending(next);
+  }
+
+  function resetConversation() {
+    epoch.current += 1;
+    submitting.current = false;
+    voice.stop();
+    conversation.clear();
+    setAction(null);
+    setActionMessage('');
+    setProposalEnabled(false);
+    setQuestion('');
+  }
+
+  const lastContextVersion = useRef(context.version);
+  const docScope = useRef(0);
+  useLayoutEffect(() => {
+    if (lastContextVersion.current !== context.version) {
+      lastContextVersion.current = context.version;
+      docScope.current += 1;
+      setDocuments([]);
+      resetConversation();
+    }
+  }, [context.version]);
+
+  useLayoutEffect(() => () => {
+    epoch.current += 1;
+    actionRef.current = null;
+    checking.current?.abort();
+  }, []);
+  useEffect(() => {
+    if (log.current) log.current.scrollTop = log.current.scrollHeight;
+  }, [conversation.turns]);
+
+  function selectPatient(id: string) {
+    resetConversation();
+    setDocuments([]);
+    setPatientId(id);
+    setVisitId('');
+  }
+
+  function propose(action: JarvisAction) {
+    const { latest } = freshContext();
+    if (!toolsAllowed || !latest.valid || latest.version !== context.version ||
+        (action.tool === 'prepare_consultation' && (!latest.patient || visitId)) ||
+        (action.tool === 'prepare_prescription' && !latest.patient)) {
+      setActionMessage('Outil indisponible pour ce contexte. Vérifiez l’accès et la sélection.');
+      return false;
+    }
+    const stock = action.tool === 'prepare_receipt'
+      ? receiptTarget(getInventoryData().items, action.itemId, action.quantity) : undefined;
+    if (action.tool === 'prepare_receipt' && !stock) {
+      setActionMessage('Le lot ou la quantité est invalide.');
+      return false;
+    }
+    setActionMessage('');
+    setAction({ action, version: JSON.stringify([epoch.current, latest.version]), stock });
+    return true;
+  }
+
+  async function confirm() {
+    const proposal = actionRef.current;
+    if (!proposal || checking.current) return;
+    const controller = new AbortController();
+    checking.current = controller;
+    setCheckingAction(true);
+    const allowed = await verifyJarvisToolsAccess(controller.signal);
+    if (controller.signal.aborted || actionRef.current !== proposal) return;
+    setAction(null);
+    if (!allowed) setToolsAllowed(false);
+    const { data, latest } = freshContext();
+    const result = authorizeAction(proposal, allowed, data, patientId, visitId,
+      JSON.stringify([epoch.current, latest.version]),
+      proposal.action.tool === 'prepare_receipt' ? getInventoryData().items : []);
+    if (result.ok === false) { setActionMessage(result.message); return; }
+    if ('draft' in result) onDraft(result.draft);
+    else if ('prescription' in result) onPrescription(result.prescription);
+    else if ('receipt' in result) onReceipt(result.receipt);
+    else onNavigate(result.action.page);
+  }
+
+  async function submit(text = question) {
+    if (!text.trim() || submitting.current || actionRef.current) return;
+    const { latest } = freshContext();
+    if (!latest.valid || latest.version !== context.version) {
+      resetConversation();
+      setActionMessage('Contexte modifié. Vérifiez la sélection avant de renvoyer la demande.');
+      return;
+    }
+    const mine = epoch.current;
+    submitting.current = true;
+    setActionMessage('');
+    const voiceTurn = voice.beginTurn();
+    // Only a text turn with explicit opt-in and no document context can propose a tool.
+    const allowProposal = toolsAllowed && selected.length === 0 && proposalEnabled && !voiceTurn;
+    setProposalEnabled(false);
+    const result = await conversation.send(text, {
+      ...context.payload,
+      documents: selected.map(doc => ({ name: doc.name, sources: doc.sources, warnings: doc.warnings })),
+    }, allowProposal);
+    if (mine !== epoch.current) return;
+    submitting.current = false;
+    if (result) setQuestion('');
+    const awaitingAction = result?.action ? propose(result.action) : false;
+    if (voiceTurn) voice.finish(result?.text, awaitingAction);
+  }
+
+  const voiceActive = voice.phase !== 'off';
+  const voiceSessionBusy = !['off', 'paused', 'waiting'].includes(voice.phase);
+  const problem = conversation.error || voice.error || actionMessage;
+  const status = pending ? 'Action en attente de confirmation' : conversation.unavailable ? 'Moteur IA indisponible'
+    : problem ? 'Erreur' : conversation.busy ? 'Traitement' : phaseLabels[voice.phase];
+  const canSend = Boolean(question.trim()) && context.valid && !conversation.busy && !pending && !voiceSessionBusy;
+
+  return <section className="jarvis" aria-labelledby="jarvis-title">
+    <div className="jarvis-hero">
+      <Reactor />
+      <div><h2 id="jarvis-title">JARVIS</h2><p>Assistant clinique MediFollow AI</p></div>
+      <div className="jarvis-status" role="status" data-alert={Boolean(problem)}>{status}</div>
+    </div>
+    <div className="jarvis-layout">
+      <div className="jarvis-sidebar">
+        <section className="jarvis-panel" aria-labelledby="jarvis-conversation">
+          <div className="jarvis-row jarvis-heading">
+            <h3 id="jarvis-conversation">Conversation</h3>
+            <button type="button" onClick={resetConversation}>Effacer la conversation</button>
           </div>
-
-          <div className="copilot-identity-text">
-            <span className="copilot-eyebrow">
-              MEDIFOLLOW INTELLIGENCE
-            </span>
-            <h2>Copilote médical</h2>
-            <p>Votre partenaire de réflexion clinique</p>
+          <div className="jarvis-log" role="log" aria-label="Historique de session" ref={log} tabIndex={0}>
+            {conversation.turns.length === 0 && <p className="jarvis-muted">Posez une question ou choisissez le contexte à analyser.</p>}
+            {conversation.turns.map((turn, index) => <article key={index} className="jarvis-message" data-role={turn.role}>
+              <strong>{turn.role === 'assistant' ? 'JARVIS' : 'Vous'}</strong>
+              <p>{turn.content}</p>
+            </article>)}
           </div>
-        </div>
-
-        <div className={`copilot-status${loading ? ' is-thinking' : ''}`}>
-          <span className="copilot-status-indicator"></span>
-          {loading ? 'Analyse en cours...' : 'Assistant disponible'}
-        </div>
-      </div>
-
-
-      <div className="copilot-workspace">
-        <div className="copilot-main-column">
-      <div className="copilot-conversation" ref={conversationRef}>
-        {messages.length === 0 && (
-          <div className="copilot-welcome">
-            <div className="welcome-neural-visual">
-              <svg
-                className="neural-network-svg mf-medical-neural-network"
-                viewBox="0 0 420 270"
-                role="img"
-                aria-label="Illustration anatomique du cerveau avec un réseau de connexions neuronales"
-              >
-                <defs>
-                  <radialGradient id="mfNeuralCore" cx="50%" cy="45%" r="60%">
-                    <stop offset="0" stopColor="#d8fff8" stopOpacity=".42" />
-                    <stop offset=".62" stopColor="#42c9d0" stopOpacity=".15" />
-                    <stop offset="1" stopColor="#1686bd" stopOpacity="0" />
-                  </radialGradient>
-                  <linearGradient id="mfBrainSurface" x1="0" y1="0" x2="0.9" y2="1">
-                    <stop offset="0" stopColor="#d9fff8" />
-                    <stop offset=".42" stopColor="#72dcd9" />
-                    <stop offset="1" stopColor="#278db8" />
-                  </linearGradient>
-                  <linearGradient id="mfBrainFold" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0" stopColor="#effffb" stopOpacity=".92" />
-                    <stop offset="1" stopColor="#1688ad" stopOpacity=".72" />
-                  </linearGradient>
-                  <filter id="mfBrainSoftGlow" x="-35%" y="-35%" width="170%" height="170%">
-                    <feGaussianBlur stdDeviation="5" />
-                  </filter>
-                </defs>
-                <ellipse cx="210" cy="137" rx="157" ry="104" fill="url(#mfNeuralCore)" />
-                <ellipse cx="210" cy="137" rx="112" ry="77" fill="#53d6d4" opacity=".10" filter="url(#mfBrainSoftGlow)" />
-                <g className="mf-brain-anatomy">
-                  <path d="M205 66C193 43 165 38 147 53C126 45 104 58 101 79C78 86 72 109 84 127C69 148 81 174 104 180C109 204 135 214 154 201C170 220 195 210 205 193Z" fill="url(#mfBrainSurface)" fillOpacity=".83" stroke="#bafff4" strokeWidth="2.2" />
-                  <path d="M215 66C227 43 255 38 273 53C294 45 316 58 319 79C342 86 348 109 336 127C351 148 339 174 316 180C311 204 285 214 266 201C250 220 225 210 215 193Z" fill="url(#mfBrainSurface)" fillOpacity=".83" stroke="#bafff4" strokeWidth="2.2" />
-                  <path d="M210 57C205 84 215 102 210 127C205 153 215 176 210 204" fill="none" stroke="#e3fffa" strokeWidth="2.4" opacity=".9" />
-                  <g fill="none" stroke="url(#mfBrainFold)" strokeWidth="3" strokeLinecap="round" opacity=".9">
-                    <path d="M108 91C126 72 145 76 151 93C157 108 139 115 126 107C112 99 99 111 105 126" />
-                    <path d="M91 139C108 124 128 129 132 145C136 161 119 169 105 160" />
-                    <path d="M137 58C153 63 162 77 158 91M164 52C178 64 180 79 170 91" />
-                    <path d="M119 181C136 169 153 175 157 190M169 121C185 110 195 119 195 133C195 146 182 151 171 145" />
-                    <path d="M312 91C294 72 275 76 269 93C263 108 281 115 294 107C308 99 321 111 315 126" />
-                    <path d="M329 139C312 124 292 129 288 145C284 161 301 169 315 160" />
-                    <path d="M283 58C267 63 258 77 262 91M256 52C242 64 240 79 250 91" />
-                    <path d="M301 181C284 169 267 175 263 190M249 121C235 110 225 119 225 133C225 146 238 151 249 145" />
-                  </g>
-                </g>
-                <g className="mf-neuron-branches" fill="none" stroke="#b8fff2" strokeWidth="1.35" strokeLinecap="round" opacity=".72">
-                  <path d="M118 105L88 88L70 91M118 105L96 126L75 132M143 83L130 60L112 48M143 83L165 69L178 48M128 151L103 171L88 192M128 151L145 174L143 198" />
-                  <path d="M302 105L332 88L350 91M302 105L324 126L345 132M277 83L290 60L308 48M277 83L255 69L242 48M292 151L317 171L332 192M292 151L275 174L277 198" />
-                  <path d="M178 103L193 115L210 111L227 115L242 103M164 153L184 164L210 157L236 164L256 153" opacity=".65" />
-                </g>
-                <g className="mf-neuron-cell-bodies" fill="#e5fffa" stroke="#36aeb9" strokeWidth="1.2">
-                  <circle cx="88" cy="88" r="3.6"/><circle cx="70" cy="91" r="2.8"/><circle cx="96" cy="126" r="3.2"/>
-                  <circle cx="130" cy="60" r="3"/><circle cx="178" cy="48" r="3.2"/><circle cx="103" cy="171" r="3.1"/>
-                  <circle cx="145" cy="174" r="3.4"/><circle cx="332" cy="88" r="3.6"/><circle cx="350" cy="91" r="2.8"/>
-                  <circle cx="324" cy="126" r="3.2"/><circle cx="290" cy="60" r="3"/><circle cx="242" cy="48" r="3.2"/>
-                  <circle cx="317" cy="171" r="3.1"/><circle cx="275" cy="174" r="3.4"/>
-                </g>
-                <g className="mf-neural-synapses" fill="#f0fffc" opacity=".9">
-                  <circle cx="210" cy="111" r="3.2"/><circle cx="210" cy="157" r="3.2"/>
-                  <circle cx="193" cy="115" r="2.5"/><circle cx="227" cy="115" r="2.5"/>
-                </g>
-                <g className="mf-neural-medical-mark" transform="translate(210 137)">
-                  <circle r="15" fill="#103d5c" fillOpacity=".88" stroke="#c5fff5" strokeOpacity=".8" strokeWidth="1.2" />
-                  <path d="M-2.2-8h4.4v5.8H8v4.4H2.2V8h-4.4V2.2H-8v-4.4h5.8z" fill="#e4fffa" />
-                </g>
-              </svg>
-            </div>
-
-            <div className="welcome-text">
-              <span className="welcome-eyebrow">
-                INTELLIGENCE CLINIQUE
-              </span>
-
-              <h3>Comment puis-je vous aider aujourd'hui ?</h3>
-
-              <p>
-                Posez une question médicale, analysez une situation
-                clinique ou explorez les recommandations scientifiques.
-              </p>
-            </div>
-
+          {problem && <p className="jarvis-error" role="alert">{problem}</p>}
+          <div className="jarvis-row jarvis-chips" aria-label="Suggestions">
+            <button type="button" disabled={conversation.busy || voiceSessionBusy} onClick={() => setQuestion('Explique-moi comment utiliser MediFollow.')}>Découvrir MediFollow</button>
+            <button type="button" disabled={!context.patient || conversation.busy || voiceSessionBusy} onClick={() => setQuestion('Résume les faits documentés dans le contexte choisi.')}>Résumer le dossier</button>
+            <button type="button" disabled={!selected.length || conversation.busy || voiceSessionBusy} onClick={() => setQuestion('Résume les documents joints et cite les passages par page ou ligne.')}>Résumer les documents</button>
           </div>
-        )}
-
-        {messages.length > 0 && (
-          <div className="copilot-messages" aria-live="polite">
-            {messages.map((message, index) => (
-              <div
-                key={`${message.role}-${index}`}
-                className={`premium-message ${message.role}`}
-              >
-                <div className="message-avatar">
-                  {message.role === 'user' ? 'MB' : '✧'}
-                </div>
-
-                <div className="message-content">
-                  <div className="message-author">
-                    {message.role === 'user' ? 'Vous' : 'MediFollow AI'}
-                  </div>
-
-                  <div className="message-bubble">
-                    <p>{message.content}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {loading && (
-              <div className="premium-message assistant">
-                <div className="message-avatar">✧</div>
-
-                <div className="message-content">
-                  <div className="message-author">MediFollow AI</div>
-
-                  <div className="message-bubble typing-bubble">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <small>Analyse clinique en cours...</small>
-                  </div>
-                </div>
-              </div>
-            )}
+          <form onSubmit={event => { event.preventDefault(); if (canSend) void submit(); }}>
+            <label htmlFor="jarvis-question">{voice.phase === 'waiting' ? 'Transcription à corriger avant envoi' : 'Votre message'}</label>
+            <textarea id="jarvis-question" ref={composer} value={question} rows={3} maxLength={5000}
+              onChange={event => setQuestion(event.target.value)} disabled={conversation.busy || voiceSessionBusy}
+              onKeyDown={event => {
+                if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !event.nativeEvent.isComposing && canSend) {
+                  event.preventDefault();
+                  void submit();
+                }
+              }} />
+            {toolsAllowed && !selected.length && !voiceActive && <label className="jarvis-check">
+              <input type="checkbox" checked={proposalEnabled} disabled={conversation.busy || Boolean(pending)}
+                onChange={event => setProposalEnabled(event.target.checked)} />Autoriser une proposition d’action pour ce message
+            </label>}
+            <p className="jarvis-muted">L’envoi transmet le message et les éléments sélectionnés au fournisseur IA configuré.</p>
+            <div className="jarvis-row">
+              <button type="submit" className="jarvis-primary" disabled={!canSend}>Envoyer</button>
+              {conversation.busy && <button type="button" onClick={() => { conversation.cancel(); voice.stop(); }}>Annuler la demande</button>}
+            </div>
+          </form>
+          <p className="jarvis-muted jarvis-source">L’IA assiste le médecin. La décision clinique reste médicale.</p>
+        </section>
+        {pending && <ActionPreview pending={pending}
+          patient={context.patient ? `${confirmedPatientNameLabel(context.patient)} (${context.patient.id})` : 'Aucun'}
+          busy={checkingAction} onConfirm={() => { void confirm(); }} onCancel={() => setAction(null)} />}
+        <section className="jarvis-panel" aria-labelledby="jarvis-voice">
+          <h3 id="jarvis-voice">Conversation vocale</h3>
+          <p className="jarvis-muted">Le navigateur peut transmettre l’audio à son service de reconnaissance. Les messages vocaux ne proposent aucune action.</p>
+          {voice.micActive && <p role="status"><strong>Microphone actif</strong></p>}
+          {!voice.available && <p>Reconnaissance vocale indisponible dans ce navigateur.</p>}
+          {!voice.speechAvailable && <p>Lecture vocale indisponible dans ce navigateur.</p>}
+          <div className="jarvis-row">
+            {(!voiceActive || voice.phase === 'paused') && <button type="button"
+              disabled={!voice.available || conversation.busy || Boolean(pending)} onClick={() => {
+                setProposalEnabled(false);
+                voice.listen();
+              }}>{voiceActive ? 'Reprendre l’écoute' : 'Démarrer la conversation vocale'}</button>}
+            {voiceActive && <>
+              {voice.phase !== 'paused' && <button type="button" onClick={() => voice.stop('paused')}>Mettre en pause</button>}
+              <button type="button" onClick={() => voice.stop()}>Arrêter la voix</button>
+              {voice.phase === 'speaking' && <button type="button" onClick={voice.interrupt}>Interrompre la lecture</button>}
+            </>}
           </div>
-        )}
+          <label className="jarvis-check"><input type="checkbox" checked={autoVoice}
+            onChange={event => setAutoVoice(event.target.checked)} />Envoyer automatiquement les transcriptions vocales</label>
+          <label className="jarvis-check"><input type="checkbox" checked={voice.read && voice.speechAvailable}
+            disabled={!voice.speechAvailable || voice.phase === 'processing'}
+            onChange={event => voice.setRead(event.target.checked)} />Lire les réponses à voix haute</label>
+        </section>
       </div>
-
-
-          <div className="premium-input-area">
-        <label htmlFor="cabinet-copilot-question" className="cabinet-field-label">Votre question clinique</label>
-        <div className="premium-chat-input">
-          <textarea
-            id="cabinet-copilot-question"
-            value={question}
-            onChange={(event) => onQuestionChange(event.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Décrivez votre question clinique..."
-            rows={2}
-            disabled={loading}
-          />
-
-          <button
-            type="button"
-            className="copilot-send-button"
-            onClick={() => onSend(selectedConsultationId || undefined)}
-            disabled={!question.trim() || loading}
-            aria-label="Envoyer le message"
-          >
-            {loading ? (
-              <span className="send-loading">···</span>
-            ) : (
-              <span>↑</span>
-            )}
-          </button>
-        </div>
-
-        <div className="input-footer">
-          <span>↵ Envoyer</span>
-          <span>⇧ + ↵ Nouvelle ligne</span>
-
-          <span className="input-security">
-            L'IA assiste le médecin. La décision clinique reste médicale.
-          </span>
-        </div>
-      </div>
-        </div>
-
-        <aside className="copilot-side-column" aria-label="Outils du copilote">
-                <section className="copilot-context-panel" aria-label="Contexte clinique">
-                  <div className="copilot-context-heading">
-                    <div className="copilot-context-title">
-                      <span className="copilot-context-icon" aria-hidden="true">⌘</span>
-                      <div>
-                        <strong>Contexte clinique</strong>
-                        <small>Choisissez les données enregistrées à associer à votre demande</small>
-                      </div>
-                    </div>
-                    <span className="copilot-context-secure">Données enregistrées</span>
-                  </div>
-                  <label className="copilot-context-label" htmlFor="copilot-consultation-context">
-                    Consultation de référence
-                  </label>
-                  <select
-                    id="copilot-consultation-context"
-                    className="copilot-context-select"
-                    value={selectedConsultationId}
-                    onChange={(event) => setChosenConsultationId(event.target.value)}
-                    disabled={loading || consultations.length === 0}
-                  >
-                    {consultations.length === 0 && (
-                      <option value="">Aucune consultation enregistrée</option>
-                    )}
-                    {consultations.length > 0 && (
-                      <option value="">Aucun contexte — question générale</option>
-                    )}
-                    {consultations
-                      .slice()
-                      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                      .map((item) => {
-                        const linkedPatient = patients.find((patient) => patient.id === item.patientId);
-                        const dateLabel = new Date(item.date).toLocaleDateString('fr-FR');
-                        return (
-                          <option key={item.id} value={item.id}>
-                            {dateLabel} · {item.specialty || 'Spécialité non précisée'} · {item.motif} · {linkedPatient?.name || 'Patient'}
-                          </option>
-                        );
-                      })}
-                  </select>
-                  <div className="copilot-context-summary" aria-live="polite">
-                    <span className="context-summary-dot" />
-                    <p>
-                      {selectedConsultation
-                        ? `Contexte actif : ${selectedConsultation.specialty || 'Spécialité non précisée'} — ${selectedConsultation.motif}${selectedPatient ? ` · ${selectedPatient.age} ans` : ''}. Seules les données enregistrées sont transmises.`
-                        : 'Aucun dossier associé : le copilote répondra en mode question générale.'}
-                    </p>
-                  </div>
-                </section>
-          <section className="copilot-side-card">
-            <div className="copilot-side-card-heading">
-              <span aria-hidden="true">✧</span>
-              <div><strong>Suggestions rapides</strong><small>Accès direct à vos demandes fréquentes</small></div>
-            </div>
-            <div className="copilot-side-actions">
-              <button type="button" onClick={() => onQuestionChange('Aide-moi à analyser ce cas clinique étape par étape.')} disabled={loading}>Analyse d’un cas clinique <span>→</span></button>
-              <button type="button" onClick={() => onQuestionChange('Établis un diagnostic différentiel argumenté à partir des données disponibles.')} disabled={loading}>Diagnostic différentiel <span>→</span></button>
-              <button type="button" onClick={() => onQuestionChange('Recherche les recommandations récentes et les sources fiables concernant : ')} disabled={loading}>Recommandations récentes <span>→</span></button>
-              <button type="button" onClick={() => onQuestionChange('Aide-moi à préparer un plan de prise en charge adapté à ce contexte : ')} disabled={loading}>Plan de prise en charge <span>→</span></button>
-            </div>
-          </section>
-          <section className="copilot-side-note">
-            <span aria-hidden="true">ⓘ</span>
-            <p>L’IA soutient la réflexion médicale. Vérifiez les informations et les sources avant toute décision clinique.</p>
-          </section>
-        </aside>
-      </div>
-    </section>
-  );
+      <aside className="jarvis-sidebar" aria-label="Contexte, documents et outils">
+        <ContextPanel patients={patients} consultations={consultations} context={context}
+          patientId={patientId} visitId={visitId} documents={selected.map(doc => doc.name)}
+          onPatient={selectPatient} onVisit={id => { resetConversation(); setVisitId(id); }} />
+        <DocumentsPanel key={`${patientId}:${docScope.current}`} documents={documents}
+          onPrepareExcerpt={toolsAllowed && context.patient && !visitId ? excerpt => {
+            if (propose({ tool: 'prepare_consultation', field: 'history', value: excerpt })) {
+              voice.stop();
+              conversation.cancel();
+            }
+          } : undefined}
+          onChange={(next, changed) => {
+          if (changed) resetConversation();
+          else setAction(null);
+          setDocuments(next);
+        }} />
+        <ToolsPanel key={JSON.stringify([patientId, visitId])} patient={context.patient} visitId={visitId}
+          prescriptions={prescriptions} allowed={toolsAllowed} onPropose={action => {
+            if (propose(action)) { voice.stop(); conversation.cancel(); }
+          }} onEdit={() => setAction(null)} />
+      </aside>
+    </div>
+  </section>;
 }

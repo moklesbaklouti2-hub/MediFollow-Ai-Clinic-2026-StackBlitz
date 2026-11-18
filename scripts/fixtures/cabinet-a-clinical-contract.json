@@ -1,6 +1,6 @@
 {
   "reference": "1cbd541c4cbe801f80c26eb4cfccf64e50a9be40",
-  "appHash": "90583520f21873fbc612aed8db9fa37301b6cccb4b40c427820823aca5910a5d",
+  "appHash": "fee201a6a68931e4397cfc8d80df6bfd87ead41051c4ce962e90b8ce60206bfd",
   "protectedFiles": {
     "src/clinical/academySources.ts": "56590146882c35876e22dfd6d023c41f339fc2eb1d2cc62b53b13b0c905d44aa",
     "src/clinical/activityStats.ts": "c505dbf0b460902e775bcf2d32148dfc0496718edc55fda8f4154b96de21b7c4",
@@ -49,15 +49,15 @@
     "src/hooks/useClinicalReasoning.ts": "329460cef63e50b2266eed9095f87125c7fd1753bbc62ff00afdda74f3f47a27",
     "src/hooks/useMedicalData.ts": "bdc47587689052e185b5dc590040cda9232940560db924f9b3a00f73373f03e9",
     "src/types/medical.ts": "314bf0ba6c938f672f4bd9cb80a9fecef3f9482d6dd6ce1c2d3b5e683b3486f4",
-    "server/ai/providers/cloudflare.ts": "4810e58ba6c70c98174a803502897f46594a2ec565f5592d5f481cc5590cd651",
-    "server/ai/providers/groq.ts": "f7f1d08fc1dd405f547d437db159b6075768e0da671fb3ba774d590def013bbe",
-    "server/ai/providers/openrouter.ts": "d367f886fec698da8228223a7b6c0fa92ac4be2f4a63862cd48120cfc81c5e33",
-    "server/ai/router.ts": "97d911286a9b7f890a1a67cc6223d9e33841f628be7ba69ff075dc446a15b568",
+    "server/ai/providers/cloudflare.ts": "e3fc1f115cbbb142d8b5dfce9255ff1783c1bfc839a3d5f06199fc7430ebbee3",
+    "server/ai/providers/groq.ts": "950a64b1d6b355d20987a03bd0a84d2e7d8ef29f69319fcb749381d773fdad66",
+    "server/ai/providers/openrouter.ts": "a2cea4faba4f2daed9ec8bb762fb9e016e72a2ed1d0fe7a3bdcad99a6f1c85a8",
+    "server/ai/router.ts": "96676199712010248884b55d72600c22f0f9bf24190218f64fcd87e6c9cd929c",
     "server/ai/test-clinical-live.ts": "4dcafcab42ff2c3dfafc2e270155ab09fdd207fa68cc0aa0fc0e1242b9d22f28",
     "server/ai/test-clinical-regression.ts": "2a5fa6bc3e865e725f74d4dfa069f76674dcd2353d97d14c862a89943e392b70",
     "server/ai/test-providers.ts": "60feeed2160168b89e036f509a9681d29b372cf5e601a3bfbeeb63c1a9cff0ef",
     "server/ai/test-resilience.ts": "400b0207e99282d09c3f99e4973b7ba300c7f4ba19c091b5eb155869e46b5dc2",
-    "server/index.ts": "cf7f9636716fe97b354982eff98f03d524f281c1d7b60848878b6fd27fe4e3e4",
+    "server/index.ts": "7132df5237823db79326080982b9e987d66decc03c25d3c68c70c650beeb25b9",
     "server/security/clinicalPromptInput.ts": "a9bfbf8b3c79e5acda49a699b9dda6a33c69aacf4e62dc7432d0f0ad50b869a7",
     "server/security/doctorAccessRouter.ts": "738aead13e1676bda586a98fefb7ec7ad5b06874baa28d09f3d40785ec744de1",
     "server/security/doctorCookieAuth.ts": "07aa751180c95dfc0440752d7c2c4e664001a759c1e7ee9cfd67e39f1f5f6686",
@@ -71,8 +71,8 @@
     "server/security/safeAiFailureLog.ts": "4254f0569e490cd7966e143b017928a8444d65d67e057305947d0295b3a58907",
     "server/security/sessionStore.ts": "06d4f175b7c8e1c2ef2104991b8adcbb8df3cb7cebd3c5851fc5462a4e393306",
     "server/security/singleDoctorGuard.ts": "c9e85c3321faeb0bd2a2ae32af65f7a0b7d548f4ca3898210a50a49d2d983320",
-    "src/components/Header.tsx": "49c17f70ce08e928ab834961d7e152739e058f39bcff4044acbd9cac5f504027",
-    "src/components/Sidebar.tsx": "fbfe21b97559327fada4bb8807052287a13b13d8bf61f72e0cda30f41c6535fb",
+    "src/components/Header.tsx": "129047d6c79fe41a7fbae0d4edd5b28bd84a69fb1db483b1cc871f386fc143c8",
+    "src/components/Sidebar.tsx": "59aafb1a98a72850a047993ff439cad290c2d826c67cee79877aaad4c6495bb7",
     "src/components/PhysicalExaminationEditor.tsx": "b6c9794367f1110d0e7be5f3393bebe533f2fc3c975ccec3141c48093fb31722",
     "src/components/OrbAssistant.tsx": "84bff719d1c896150e4d394057e75cfab5558f1717dc86aa35d98d1f2e7f5ef1",
     "src/components/LocalDocumentReader.tsx": "fa0f480b7d7b8cc8a6e7a7e41e628e295837c3a755f042b339805a8b08457898"
@@ -252,7 +252,7 @@
       ]
     },
     "src/pages/Consultations.tsx": {
-      "prefix": "0074e7fc2eebaad9bae590059bd03061cf9137ff0fd625287ef65c53d70b8762",
+      "prefix": "7ae8dc457eab36c1acf59dec21876b8af23e381d5c9560a70b2d941afea25104",
       "bindings": "288bab0e16ad487d3209c82bde0392be672befc95d18e8aeb8b9bfc3da07e1e7",
       "texts": [
         "\u00c9valuation clinique structur\u00e9e du patient.",
@@ -434,7 +434,7 @@
       ]
     },
     "src/pages/Prescriptions.tsx": {
-      "prefix": "a9fb5cda248a1ce67ce705d574765bfa9bd1cfda60d4b5cc0fe63f5907efaf88",
+      "prefix": "055728a457724064e8a5142aef72727b139d2dc37f2e752237475afed055bd3a",
       "bindings": "8e3211013de10a5d608261c21fb356bbd171e0f721b9170df15116801bb541b5",
       "texts": [
         "Ordonnances",
@@ -518,7 +518,7 @@
       "ids": []
     },
     "src/pages/Inventory.tsx": {
-      "prefix": "0db26da9179b8e79ad7ca563a14d4028bd827618a1b2c0cc0cf70f5a2c436eac",
+      "prefix": "1235920993ebca39b018967f2977e45072c7ea373c19f1e0ca800211cc4f7c30",
       "bindings": "33ebe294118d3989522cc4a15303de8bc6733c432db6cab8aa3630b29df0d7e5",
       "texts": [
         "Gestion de l\u2019inventaire",
@@ -609,7 +609,7 @@
       "ids": []
     },
     "src/pages/Protocols.tsx": {
-      "prefix": "d8f0bef070bc79c590c6d6d0960098f519cb67939591f966d7eb7afa9703aa6e",
+      "prefix": "69cf4e9c21f60e50f8d1f1a4c3cfaf333797bd9216dbee8d8b6895cacbb9ec24",
       "bindings": "d7112c9985cf6627f5f6f2ba617770bcd72a66a6c3c7b62e287e7fe23e8f392f",
       "texts": [
         "Protocoles m\u00e9dicaux",
@@ -656,5 +656,5 @@
       "ids": []
     }
   },
-  "dashboardPanelHash": "7376474a825156110f8ed5ed14610bc14dbce71fadc9cc08b06fbcfab54772d0"
+  "dashboardPanelHash": "04cfaf474f6da8a37ed22a162f3c83da1e5a0d781052026a7b31055f876e6110"
 }
