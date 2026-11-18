@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import './App.css';
 import './mobile-navigation.css';
 
@@ -12,6 +12,7 @@ import Copilot, { type Message } from './pages/Copilot';
 import Protocols from './pages/Protocols';
 import Prescriptions from './pages/Prescriptions';
 import Inventory from './pages/Inventory';
+import { useHeliosVoice } from './hooks/useHeliosVoice';
 import Settings from './pages/Settings';
 import { useMedicalData } from './hooks/useMedicalData';
 import OrbAssistant from './components/OrbAssistant';
@@ -103,6 +104,15 @@ function App() {
   // ---------- NAVIGATION ----------
 
   const [active, setActive] = useState('Tableau de bord');
+  const voice = useHeliosVoice();
+  const stopVoice = voice.stop;
+  const [voiceContext, setVoiceContext] = useState('');
+  const onVoiceContextChange = useCallback((key: string) => {
+    stopVoice();
+    setVoiceContext(key);
+  }, [stopVoice]);
+  // Invalide également une réponse de la page précédente encore en transit.
+  useLayoutEffect(() => { stopVoice(); }, [active, stopVoice]);
   const [pendingConsultationActions, setPendingConsultationActions] = useState<VoiceCommandAction[]>([]);
   const handleVoiceCommandActions = useCallback((actions: VoiceCommandAction[]) => {
     const navigationActions = actions.filter(
@@ -145,6 +155,7 @@ function App() {
       { role: 'user', content: message },
     ]);
 
+    const responseGeneration = stopVoice();
     setQuestion('');
     setLoading(true);
 
@@ -202,13 +213,9 @@ function App() {
         throw new Error(data.error || 'Erreur du serveur IA.');
       }
 
-      setMessages(previous => [
-        ...previous,
-        {
-          role: 'assistant',
-          content: data.reply || 'Aucune réponse reçue.',
-        },
-      ]);
+      const reply = data.reply || 'Aucune réponse reçue.';
+      setMessages(previous => [...previous, { role: 'assistant', content: reply }]);
+      voice.play(reply, responseGeneration);
     } catch (error) {
       const errorMessage =
         error instanceof Error
@@ -243,11 +250,12 @@ function App() {
         );
 
       case 'Patients':
-        return <Patients />;
+        return <Patients onVoiceContextChange={onVoiceContextChange} />;
 
       case 'Consultations':
         return (
           <Consultations
+            onVoiceContextChange={onVoiceContextChange}
             onAskCopilot={(prompt) => setOrbPrompt(prompt)}
             onClinicalReasoningChange={handleClinicalReasoningChange}
             commandActions={pendingConsultationActions}
@@ -258,6 +266,8 @@ function App() {
       case 'Copilote IA':
         return (
           <Copilot
+            voice={voice}
+            onVoiceContextChange={onVoiceContextChange}
             messages={messages}
             consultations={consultations}
             patients={patients}
@@ -280,6 +290,7 @@ function App() {
       case 'Paramètres':
         return (
           <Settings
+            voice={voice}
             themePreference={themePreference}
             onThemeChange={setThemePreference}
           />
@@ -345,6 +356,8 @@ function App() {
       </main>
 
       <OrbAssistant
+        voice={voice}
+        contextKey={voiceContext}
         isThinking={loading}
         currentPage={active}
         clinicalPrompt={orbPrompt}

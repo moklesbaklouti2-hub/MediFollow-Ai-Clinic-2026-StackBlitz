@@ -1,4 +1,6 @@
 
+import HeliosVoiceSettings from '../components/HeliosVoiceSettings';
+import type { HeliosVoice } from '../hooks/useHeliosVoice';
 import { useState, type ChangeEvent } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { DoctorSettings } from '../types/medical';
@@ -12,11 +14,13 @@ import {
 } from '../services/storage';
 
 type SettingsProps = {
+  voice: HeliosVoice;
   themePreference: string;
   onThemeChange: (value: string) => void;
 };
 
 export default function Settings({
+  voice,
   themePreference,
   onThemeChange,
 }: SettingsProps) {
@@ -453,6 +457,8 @@ export default function Settings({
           />
         </div>
       </div>
+
+      <HeliosVoiceSettings voice={voice} />
 
       <div className="settings-section">
         <h3>05 · Sauvegarde des données</h3>

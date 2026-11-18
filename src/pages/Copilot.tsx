@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import type { HeliosVoice } from '../hooks/useHeliosVoice';
+import { useEffect, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { Consultation, Patient } from '../types/medical';
 import Orb3D from '../components/Orb3D';
 
@@ -8,6 +9,8 @@ export type Message = {
 };
 
 type CopilotProps = {
+  voice: HeliosVoice;
+  onVoiceContextChange: (key: string) => void;
   messages: Message[];
   consultations: Consultation[];
   patients: Patient[];
@@ -18,6 +21,8 @@ type CopilotProps = {
 };
 
 export default function Copilot({
+  voice,
+  onVoiceContextChange,
   messages,
   consultations,
   patients,
@@ -48,6 +53,10 @@ export default function Copilot({
   const selectedConsultation = consultations.find(
     (item) => item.id === selectedConsultationId
   );
+  useLayoutEffect(() => {
+    onVoiceContextChange(`copilot:${selectedConsultationId}:${selectedConsultation?.patientId ?? ''}`);
+  }, [onVoiceContextChange, selectedConsultationId, selectedConsultation?.patientId]);
+
   const selectedPatient = selectedConsultation
     ? patients.find((item) => item.id === selectedConsultation.patientId)
     : undefined;
@@ -191,6 +200,10 @@ export default function Copilot({
 
                   <div className="message-bubble">
                     <p>{message.content}</p>
+                    {message.role === 'assistant' && (
+                      <button type="button" disabled={!voice.voices.length}
+                        onClick={() => voice.listen(message.content)}>Écouter</button>
+                    )}
                   </div>
                 </div>
               </div>

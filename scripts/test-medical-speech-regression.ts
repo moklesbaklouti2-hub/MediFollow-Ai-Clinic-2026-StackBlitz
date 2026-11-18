@@ -1,3 +1,4 @@
+import { prepareHeliosSpeech, selectHeliosVoice, splitHeliosSpeech } from '../src/services/heliosSpeech';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type MedicalSpeechCorrection } from '../src/services/medicalSpeech';
@@ -596,38 +597,45 @@ assert.equal(JSON.stringify(duplicateAlternatives), duplicateSnapshot);
 assertions++;
 
 
-// Contrat de lecture ponctuelle Orb (inspection du vrai composant React).
-// L'essai microphone et l'interaction vocale restent à effectuer sur Android.
+// La lecture ponctuelle utilise le même point d'entrée que celle du copilote.
 const orbSource = readFileSync(new URL('../src/components/OrbAssistant.tsx', import.meta.url), 'utf8');
-assert.ok(orbSource.includes('function readMessageAloud(reply: string)') &&
-  orbSource.includes('onClick={() => readMessageAloud(message.content)}'),
-  'La lecture d’une seule réponse de MediFollow doit être proposée.');
+const voiceSource = readFileSync(new URL('../src/hooks/useHeliosVoice.ts', import.meta.url), 'utf8');
+assert.ok(orbSource.includes('onClick={() => voice.listen(message.content)}') &&
+  orbSource.includes('disabled={!voice.voices.length}') &&
+  orbSource.includes('aria-label={`Écouter la réponse'),
+  'La lecture ponctuelle doit être étiquetée et disponible avec une voix locale.');
 assertions++;
-assert.ok(orbSource.includes('if (!window.confirm(') &&
-  orbSource.includes('informations confidentielles'),
-  'La lecture ponctuelle doit demander une confirmation explicite de confidentialité.');
+assert.ok(voiceSource.includes('window.confirm(') && voiceSource.includes('informations confidentielles') &&
+  voiceSource.includes(')) play(reply);'),
+  'La lecture ponctuelle doit rester indépendante de la lecture automatique et demander un accord.');
 assertions++;
-assert.ok(orbSource.includes('(!manual && !voiceRepliesRef.current)') &&
-  orbSource.includes('speakReply(reply, true);'),
-  'La lecture ponctuelle doit fonctionner sans activer les réponses automatiques.');
+const suspendBlock = orbSource.split('function suspendRecognition')[1]?.split('useLayoutEffect')[0] ?? '';
+assert.ok(suspendBlock.includes('if (disarm) commandListeningEnabledRef.current = false;') &&
+  suspendBlock.indexOf('recognitionRef.current = null;') < suspendBlock.indexOf('recognition?.abort();') &&
+  voiceSource.includes('beforePlayback.current?.(expectedGeneration === undefined);'),
+  'La lecture ponctuelle désarme les commandes et neutralise les résultats tardifs.');
 assertions++;
-const readBlock = orbSource.split('function readMessageAloud(reply: string)')[1]?.split('function closePanel()')[0] ?? '';
-assert.ok(readBlock.indexOf('commandListeningEnabledRef.current = false;') > readBlock.indexOf('window.confirm(') &&
-  readBlock.includes('recognitionRef.current?.abort();') && readBlock.includes('recognitionRef.current = null;'),
-  'Le microphone doit être désarmé après consentement, avant lecture ponctuelle.');
-assertions++;
-const closeBlock = orbSource.split('function closePanel()')[1]?.split('function toggleVoiceReplies()')[0] ?? '';
-assert.ok(closeBlock.includes('stopSpeaking();') &&
-  closeBlock.includes('recognitionRef.current?.abort();') &&
-  orbSource.includes('onClick={closePanel}') &&
-  orbSource.includes('panelOpen ? closePanel() : openPanel()'),
+const closeBlock = orbSource.split('function closePanel()')[1]?.split('function changeMode')[0] ?? '';
+assert.ok(closeBlock.includes('stop();') && closeBlock.includes('suspendRecognition(true);') &&
+  orbSource.includes('onClick={closePanel}') && orbSource.includes('panelOpen ? closePanel() : openPanel()'),
   'La fermeture par bouton ou Orb doit arrêter la parole et l’écoute.');
 assertions++;
-assert.ok(orbSource.includes("disabled={!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)}") &&
-  orbSource.includes('className="mf-orb-read-reply"') &&
-  orbSource.includes('aria-label={`Lire à voix haute'),
-  'Le contrôle ponctuel doit être étiqueté et indisponible sans synthèse vocale.');
-assertions++;
+
+const localFr = { name: 'Voix locale fictive', voiceURI: 'abc', lang: 'fr-FR', localService: true, default: false };
+const remoteFr = { ...localFr, voiceURI: 'xyz', localService: false, default: true };
+const localEn = { ...localFr, voiceURI: 'eng', lang: 'en-GB' };
+assert.equal(selectHeliosVoice([localEn, remoteFr], 'xyz'), undefined);
+assert.equal(selectHeliosVoice([localEn, remoteFr, localFr], 'xyz'), localFr);
+const localCa = { ...localFr, lang: 'fr-CA', voiceURI: 'can' };
+assert.equal(selectHeliosVoice([localFr, localCa], 'can'), localCa);
+assert.equal(prepareHeliosSpeech('## Mesures\n- **SpO₂ 97 %**. Pas de dyspnée.\n- `0,5 mg` (2 mL).'),
+  'Mesures\nsaturation en oxygène, 97 pour cent. Pas de dyspnée.\n0,5 milligramme (2 millilitres).');
+assert.equal(prepareHeliosSpeech('Ne pas dépasser 0,05 mg/kg. TA 110/70 mmHg. 4.2 mmol/L.'),
+  'Ne pas dépasser 0,05 milligrammes par kilogramme. TA 110/70 millimètre de mercure. 4,2 millimoles par litre.');
+const longReply = 'Pas de dyspnée. Dose inchangée : 0,5 milligramme. '.repeat(30).trim();
+assert.equal(splitHeliosSpeech(longReply).join(' '), longReply);
+assert.ok(splitHeliosSpeech(longReply).length > 1);
+assertions += 7;
 
 // QW-006 — garde de sécurité après un échec de reconnaissance Android.
 // Contrôles structurels du vrai gestionnaire d'événements, sans prétendre
@@ -656,27 +664,27 @@ assert.ok(endHandler.includes('if (sessionEnded || recognitionRef.current !== re
 
 // QW-006C — ne pas lire une réponse tardive si l'Orb a été fermé,
 // y compris si le panneau a été rouvert entre l'envoi et la réponse.
-const playbackGuard = orbSource.split('function speakReply(')[1]?.split('function readMessageAloud(')[0] ?? '';
-assert.ok(playbackGuard.includes('!panelOpenRef.current') &&
-  playbackGuard.includes('expectedGeneration !== speechGenerationRef.current'),
+const playbackGuard = orbSource.split('function speakReply(')[1]?.split('useEffect(')[0] ?? '';
+assert.ok(playbackGuard.includes('if (panelOpenRef.current) voice.play(reply, expectedGeneration)') &&
+  voiceSource.includes('expectedGeneration !== generation.current'),
   'La synthèse doit vérifier l’ouverture actuelle et la génération du message.'); assertions++;
 const panelOpenBlock = orbSource.split('function openPanel()')[1]?.split('function closePanel()')[0] ?? '';
-const panelCloseBlock = orbSource.split('function closePanel()')[1]?.split('function toggleVoiceReplies()')[0] ?? '';
+const panelCloseBlock = orbSource.split('function closePanel()')[1]?.split('function changeMode')[0] ?? '';
 assert.ok(panelOpenBlock.includes('panelOpenRef.current = true;') &&
   panelCloseBlock.includes('panelOpenRef.current = false;') &&
-  panelCloseBlock.includes('stopSpeaking();'),
+  panelCloseBlock.includes('stop();'),
   'L’ouverture et la fermeture doivent synchroniser le garde audio sans attendre React.'); assertions++;
 const sendMessageBlock = orbSource.split('async function sendMessage(value = input)')[1]
   ?.split('function handleSubmit(')[0] ?? '';
-assert.ok(sendMessageBlock.includes('const responseSpeechGeneration = speechGenerationRef.current;'),
+assert.ok(sendMessageBlock.includes('const responseSpeechGeneration = stop();'),
   'La génération audio doit être capturée avant tout appel réseau.'); assertions++;
-assert.ok(sendMessageBlock.includes("speakReply(quickMatch.page + ' ouvert.', false, responseSpeechGeneration);") &&
-  sendMessageBlock.includes('false, responseSpeechGeneration);'),
+assert.ok(sendMessageBlock.includes("speakReply(quickMatch.page + ' ouvert.', responseSpeechGeneration);") &&
+  sendMessageBlock.includes(', responseSpeechGeneration);'),
   'Les réponses de navigation et de commandes doivent respecter la génération audio.'); assertions++;
-assert.ok(sendMessageBlock.includes("speakReply(data.reply || 'Je n’ai pas reçu de réponse.', false, responseSpeechGeneration);"),
+assert.ok(sendMessageBlock.includes("speakReply(data.reply || 'Je n’ai pas reçu de réponse.', responseSpeechGeneration);"),
   'La réponse de chat reçue après fermeture ne doit pas relancer le haut-parleur.'); assertions++;
 assert.ok(orbSource.includes('onClick={() => panelOpen ? closePanel() : openPanel()}') &&
-  orbSource.includes('openPanel();') && orbSource.includes('function readMessageAloud(reply: string)'),
+  orbSource.includes('openPanel();') && orbSource.includes('voice.listen(message.content)'),
   'L’ouverture de l’Orb doit conserver la lecture ponctuelle et synchroniser le panneau.'); assertions++;
 
 console.log('OK : ' + assertions + ' assertions sur les fonctions réelles de correction médicale et le contrat vocal Orb (sans navigateur).');

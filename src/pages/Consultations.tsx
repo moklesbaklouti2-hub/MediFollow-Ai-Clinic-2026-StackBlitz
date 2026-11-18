@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/useClinicalReasoning';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
@@ -147,11 +147,13 @@ type ClinicalInsightPayload = {
 };
 
 export default function Consultations({
+  onVoiceContextChange,
   onAskCopilot,
   onClinicalReasoningChange,
   commandActions = [],
   onCommandActionsConsumed,
 }: {
+  onVoiceContextChange: (key: string) => void;
   onAskCopilot?: (prompt: string) => void;
   onClinicalReasoningChange?: (insight: ClinicalInsightPayload) => void;
   commandActions?: VoiceCommandAction[];
@@ -176,6 +178,10 @@ export default function Consultations({
   const [saved, setSaved] = useState(false);
   const [commandFeedback, setCommandFeedback] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
+  useLayoutEffect(() => {
+    onVoiceContextChange(`consultation:${patientId}:${editingId ?? ''}`);
+  }, [onVoiceContextChange, patientId, editingId]);
+
   const [expressOpen, setExpressOpen] = useState(false);
   const [expressDraft, setExpressDraft] = useState('');
   const [expressFeedback, setExpressFeedback] = useState('');

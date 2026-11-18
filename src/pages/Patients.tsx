@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Patient } from '../types/medical';
 import PatientClinicalInfo from '../components/PatientClinicalInfo';
@@ -18,7 +18,7 @@ import type { TimelinePrescriptionStatusFilter } from '../clinical/timelineStatu
 import type { MedicalTimelineFilter } from '../clinical/timelineFilter';
 import LocalDocumentReader from '../components/LocalDocumentReader';
 
-export default function Patients() {
+export default function Patients({ onVoiceContextChange }: { onVoiceContextChange: (key: string) => void }) {
   const { patients, consultations, prescriptions, deletedPatients, addPatient, updatePatient, deletePatient, restoreDeletedPatient } = useMedicalData();
 
   const [search, setSearch] = useState('');
@@ -38,6 +38,9 @@ export default function Patients() {
   const [editStatus, setEditStatus] = useState('');
 
   const selected = selectUniquePatient(patients, selectedId);
+  useLayoutEffect(() => {
+    onVoiceContextChange(`patient:${selected?.id ?? ''}`);
+  }, [onVoiceContextChange, selected?.id]);
 
   const filtered = useMemo(
     () => patients.filter((patient) =>
