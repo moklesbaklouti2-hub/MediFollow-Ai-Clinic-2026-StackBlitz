@@ -28,6 +28,6 @@ function getGroqClient(): Groq {
  * Adaptateur Groq : seule cette couche connaît le SDK du fournisseur.
  * Les paramètres et la réponse restent compatibles avec les appels existants.
  */
-export async function completeWithGroq(request: any): Promise<any> {
-  return getGroqClient().chat.completions.create(request);
+export async function completeWithGroq(request: any, signal?: AbortSignal): Promise<any> {
+  return getGroqClient().chat.completions.create(request, signal ? { signal } : undefined);
 }

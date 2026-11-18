@@ -20,7 +20,7 @@ function makeProviderError(message: string, status: number, headers?: Headers): 
 }
 
 /** Adaptateur REST OpenRouter compatible avec le format Chat Completions. */
-export async function completeWithOpenRouter(request: any): Promise<any> {
+export async function completeWithOpenRouter(request: any, signal?: AbortSignal): Promise<any> {
   const apiKey = process.env.OPENROUTER_API_KEY?.trim();
   if (!apiKey) {
     throw makeProviderError('Clé OPENROUTER_API_KEY non configurée.', 503);
@@ -56,7 +56,7 @@ export async function completeWithOpenRouter(request: any): Promise<any> {
         'X-OpenRouter-Title': 'MediFollow AI',
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(12000),
+      signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(12000)]) : AbortSignal.timeout(12000),
     });
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : 'Erreur réseau OpenRouter.';

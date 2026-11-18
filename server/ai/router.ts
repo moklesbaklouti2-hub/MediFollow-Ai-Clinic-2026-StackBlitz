@@ -8,7 +8,7 @@ export type AiProviderId = 'groq' | 'cloudflare' | 'openrouter';
 type ProviderAdapter = {
   id: AiProviderId;
   isConfigured: () => boolean;
-  complete: (request: any) => Promise<any>;
+  complete: (request: any, signal?: AbortSignal) => Promise<any>;
 };
 
 type ProviderRegistry = Record<AiProviderId, ProviderAdapter>;
@@ -90,6 +90,7 @@ export async function createCompletionWithProviders(
   request: any,
   task: AiTask = 'chat',
   providerRegistry: ProviderRegistry = providers,
+  signal?: AbortSignal,
 ): Promise<any> {
   const order = providerOrder[task];
   let lastError: unknown = null;
@@ -97,12 +98,16 @@ export async function createCompletionWithProviders(
 
   for (const providerId of order) {
     const provider = providerRegistry[providerId];
+    signal?.throwIfAborted();
     if (!provider.isConfigured()) continue;
 
     attemptedProvider = true;
     try {
-      return normalizeCompletion(await provider.complete(request));
+      const completion = await provider.complete(request, signal);
+      signal?.throwIfAborted();
+      return normalizeCompletion(completion);
     } catch (error) {
+      signal?.throwIfAborted();
       lastError = error;
       if (!canTryAnotherProvider(error)) throw error;
       console.warn(
@@ -123,6 +128,6 @@ export async function createCompletionWithProviders(
   throw error;
 }
 
-export function createAiCompletion(request: any, task: AiTask = 'chat'): Promise<any> {
-  return createCompletionWithProviders(request, task);
+export function createAiCompletion(request: any, task: AiTask = 'chat', signal?: AbortSignal): Promise<any> {
+  return createCompletionWithProviders(request, task, providers, signal);
 }

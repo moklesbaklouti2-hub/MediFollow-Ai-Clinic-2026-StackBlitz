@@ -26,7 +26,7 @@ function makeProviderError(message: string, status: number, headers?: Headers): 
  * Le modèle Llama 3.3 sélectionné prend en charge le mode JSON.
  * Les secrets restent exclusivement dans les variables d'environnement du serveur.
  */
-export async function completeWithCloudflare(request: any): Promise<any> {
+export async function completeWithCloudflare(request: any, signal?: AbortSignal): Promise<any> {
   const token = process.env.CLOUDFLARE_API_TOKEN?.trim();
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
 
@@ -67,7 +67,7 @@ export async function completeWithCloudflare(request: any): Promise<any> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(12000),
+      signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(12000)]) : AbortSignal.timeout(12000),
     });
   } catch (cause) {
     const message = cause instanceof Error ? cause.message : 'Erreur réseau Cloudflare.';
