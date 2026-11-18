@@ -8,8 +8,8 @@ export default function LocalDocumentReader() {
   const preview = previewLocalDocument(rawText);
 
   return (
-    <section aria-label="HELIOS Document Reader — aperçu texte local">
-      <h3 className="patient-section-title">HELIOS Document Reader · aperçu texte local</h3>
+    <section aria-label="JARVIS Document Reader — aperçu texte local">
+      <h3 className="patient-section-title">JARVIS Document Reader · aperçu texte local</h3>
       <p className="patient-empty-history">
         Collez exclusivement du texte fictif pour vérifier sa lisibilité.
         Aucune interprétation médicale, extraction PDF/OCR, sauvegarde,

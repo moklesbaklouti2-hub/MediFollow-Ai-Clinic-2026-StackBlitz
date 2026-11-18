@@ -6,9 +6,9 @@ export default function HeliosVoiceSettings({ voice }: { voice: HeliosVoice }) {
   const selected = selectHeliosVoice(voices, preferences.voiceURI);
   return (
     <section className="settings-section" aria-labelledby="helios-voice-title">
-      <h3 id="helios-voice-title">Voix HELIOS</h3>
+      <h3 id="helios-voice-title">Voix JARVIS</h3>
       <p className="settings-description" role="status">
-        {!supported ? 'Synthèse vocale indisponible dans ce navigateur. HELIOS reste disponible à l’écrit.'
+        {!supported ? 'Synthèse vocale indisponible dans ce navigateur. JARVIS reste disponible à l’écrit.'
           : !selected ? NO_LOCAL_VOICE
           : 'La lecture utilise une voix française locale. Écoutez les voix proposées pour choisir votre timbre.'}
       </p>
@@ -35,7 +35,7 @@ export default function HeliosVoiceSettings({ voice }: { voice: HeliosVoice }) {
         </label>
       </div>
       <label className="settings-toggle">
-        Lire automatiquement les réponses de HELIOS
+        Lire automatiquement les réponses de JARVIS
         <input type="checkbox" checked={preferences.autoRead}
           onChange={event => update({ autoRead: event.target.checked })} />
       </label>

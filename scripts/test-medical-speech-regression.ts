@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber, type MedicalSpeechCorrection } from '../src/services/medicalSpeech';
 
-// Tests directs du module réellement utilisé par HELIOS, sans navigateur.
+// Tests directs du module réellement utilisé par JARVIS, sans navigateur.
 const runtime = { findMedicalSpeechCorrections, applyMedicalSpeechCorrection, chooseMedicalSpeechAlternative, hasDictatedClinicalNumber };
 type Correction = MedicalSpeechCorrection;
 

@@ -326,9 +326,9 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           </article>
         </section>
 
-        <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="HELIOS Follow-up : échéances de suivi">
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="JARVIS Follow-up : échéances de suivi">
           <div className="mf-panel-heading">
-            <div><span className="mf-panel-overline">HELIOS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
+            <div><span className="mf-panel-overline">JARVIS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
           </div>
           <p style={{ margin: 0 }}>
             <strong>{data.followUpConsultations.overdue}</strong> en retard ·{' '}
@@ -361,10 +361,10 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
         )}
 
         <section className="mf-panel" style={{ marginBottom: 18, padding: 18, display: 'grid', gap: 12 }}
-          aria-label="HELIOS Activité — statistiques descriptives">
+          aria-label="JARVIS Activité — statistiques descriptives">
           <div className="mf-panel-heading">
             <div>
-              <span className="mf-panel-overline">HELIOS ACTIVITÉ</span>
+              <span className="mf-panel-overline">JARVIS ACTIVITÉ</span>
               <h3>Consultations par spécialité et motif</h3>
             </div>
           </div>
@@ -485,16 +485,16 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
             <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
             <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>JARVIS</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
           </article>
 
           <article className="mf-copilot-card">
             <div className="mf-copilot-copy">
               <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
-              <h3>Votre Copilote IA</h3>
+              <h3>JARVIS, votre copilote IA</h3>
               <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
               <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
-              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
+              <button onClick={onOpenCopilot}>Ouvrir JARVIS <span>→</span></button>
             </div>
             <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
           </article>

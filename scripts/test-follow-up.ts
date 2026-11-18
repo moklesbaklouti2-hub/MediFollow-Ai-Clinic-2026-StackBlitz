@@ -112,7 +112,7 @@ assert.ok(consultationUI.includes('prepareFollowUp(followUpDate, followUpObjecti
   consultationUI.includes('followUp: followUpPlan.followUp') &&
   consultationUI.includes('setFollowUpDate(item.followUp?.dueDate') &&
   consultationUI.includes("setFollowUpCompleted(item.followUp?.status === 'completed')") &&
-  consultationUI.includes('HELIOS Follow-up'),
+  consultationUI.includes('JARVIS Follow-up'),
   'The real consultation form must edit and persist follow-up plans.');
 assert.ok(dashboardUI.includes('summarizeFollowUps(clinicalConsultations,') &&
   dashboardUI.includes('const clinicalConsultations = getConsultations();') &&
@@ -169,10 +169,10 @@ assert.ok(completionCode.includes('hasConfirmedPatientSelection(current.patientI
   completionCode.indexOf('hasConfirmedPatientSelection(') <
     completionCode.indexOf('updateConsultation('),
   'The real follow-up completion must reject ambiguous patient IDs before confirming or saving.');
-console.log('PASS HELIOS Follow-up QW-032: 8 synthetic identities and 2 actual UI contracts.');
+console.log('PASS JARVIS Follow-up QW-032: 8 synthetic identities and 2 actual UI contracts.');
 
 
-// QW-042 — HELIOS Consultation Express: strict documentary mapping, no
+// QW-042 — JARVIS Consultation Express: strict documentary mapping, no
 // inference, no accidental overwrite, no patient selection by name and no save.
 const expressGood = parseExpressDraft([
   'Motif: Vertiges fictifs', 'Symptômes: Depuis 2 jours',
@@ -204,7 +204,7 @@ assert.ok(consultationUI.includes('parseExpressDraft(expressDraft)') &&
   consultationUI.includes('onClick={applyExpressDraft}') &&
   consultationUI.includes('Préremplir les champs — sans enregistrer') &&
   consultationUI.includes('function saveConsultation()') &&
-  consultationUI.includes('HELIOS Consultation Express · saisie rapide'),
+  consultationUI.includes('JARVIS Consultation Express · saisie rapide'),
   'Express UI must verify identity, avoid overwrite, and use existing manual save.');
 console.log('PASS QW-042: fictional labelled-note parsing, conflict and UI guard checks.');
 
@@ -218,7 +218,7 @@ assert.ok(resetSource.includes('window.confirm(') &&
   resetSource.includes('cancelEditing();') &&
   resetSource.indexOf('window.confirm(') < resetSource.indexOf('cancelEditing();'),
   'Reset must explicitly confirm before clearing the unsaved consultation.');
-const safeExpressUi = consultationUI.split('HELIOS Consultation Express · saisie rapide')[1]
+const safeExpressUi = consultationUI.split('JARVIS Consultation Express · saisie rapide')[1]
   ?.split('Copilote clinique intelligent')[0] ?? '';
 assert.ok(safeExpressUi.includes('onClick={resetExpressConsultation}') &&
   safeExpressUi.includes('Réinitialiser la consultation non enregistrée') &&
@@ -233,4 +233,4 @@ assert.ok(consultationUI.includes('enabled: smartCopilotEnabled && !expressPatie
   'A patient mismatch must suppress both clinical suggestions and AI analysis, and block saving.');
 console.log('PASS QW-043: confirmed reset plus fail-closed AI, UI and save contracts.');
 
-console.log('PASS HELIOS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');
+console.log('PASS JARVIS Follow-up: échéances, liste, clôture confirmée, sauvegarde fictive et contrats UI.');

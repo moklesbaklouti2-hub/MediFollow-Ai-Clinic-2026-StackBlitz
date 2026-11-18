@@ -449,7 +449,7 @@ export default function Consultations({
 
     const followUpPlan = prepareFollowUp(followUpDate, followUpObjective, followUpCompleted);
     if (!followUpPlan.valid) {
-      window.alert('Suivi HELIOS : date de contrôle invalide, ou objectif de plus de 500 caractères.');
+      window.alert('Suivi JARVIS : date de contrôle invalide, ou objectif de plus de 500 caractères.');
       return;
     }
 
@@ -813,10 +813,10 @@ export default function Consultations({
         <span className="consultation-badge">Consultation médicale</span>
       </header>
 
-      <section className="consultation-section" aria-label="HELIOS Consultation Express — saisie rapide">
+      <section className="consultation-section" aria-label="JARVIS Consultation Express — saisie rapide">
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <div>
-            <h3 style={{ margin: '0 0 5px' }}>HELIOS Consultation Express · saisie rapide</h3>
+            <h3 style={{ margin: '0 0 5px' }}>JARVIS Consultation Express · saisie rapide</h3>
             <p className="patient-hint" style={{ margin: 0 }}>
               Copiez une note fictive structurée. Aucun diagnostic n'est déduit et aucune consultation n'est enregistrée automatiquement.
             </p>
@@ -974,7 +974,7 @@ export default function Consultations({
                   cursor: 'pointer',
                 }}
               >
-                Approfondir avec l’Orb
+                Approfondir avec JARVIS
               </button>
             </article>
           ))}
@@ -1241,7 +1241,7 @@ export default function Consultations({
       </div>
 
       <div className="consultation-section">
-        <h3>06 · HELIOS Follow-up — contrôle programmé</h3>
+        <h3>06 · JARVIS Follow-up — contrôle programmé</h3>
         <p className="patient-hint">Suivi décidé par le médecin. Aucun rappel envoyé automatiquement au patient.</p>
         <div className="consultation-grid">
           <div className="consultation-field">
@@ -1281,7 +1281,7 @@ export default function Consultations({
       )}
 
       <div className="consultation-section">
-        <h3>HELIOS Follow-up · contrôles à revoir ({dueFollowUps.length})</h3>
+        <h3>JARVIS Follow-up · contrôles à revoir ({dueFollowUps.length})</h3>
         <p className="patient-hint">
           Consultations dont le contrôle est en retard, prévu aujourd’hui ou dans les sept jours.
           Aucun message n’est envoyé au patient et aucun contrôle n’est clôturé automatiquement.
@@ -1337,7 +1337,7 @@ export default function Consultations({
                 <p><b>Motif :</b> {item.motif}</p>
                 {item.diagnosis && <p><b>Diagnostic :</b> {item.diagnosis}</p>}
                 {item.followUp && (
-                  <p><b>HELIOS Follow-up :</b> {item.followUp.dueDate} · {item.followUp.status === 'completed' ? 'Contrôle effectué' : 'Contrôle prévu'}
+                  <p><b>JARVIS Follow-up :</b> {item.followUp.dueDate} · {item.followUp.status === 'completed' ? 'Contrôle effectué' : 'Contrôle prévu'}
                     {item.followUp.objective ? ` · ${item.followUp.objective}` : ''}</p>
                 )}
                 <button

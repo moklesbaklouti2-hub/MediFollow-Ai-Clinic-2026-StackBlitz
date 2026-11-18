@@ -1,6 +1,6 @@
 export const HELIOS_TEST_PHRASE = 'Bonjour docteur. Je suis prêt. Quel dossier souhaitez-vous ouvrir ?';
 
-export const NO_LOCAL_VOICE = 'Aucune voix française locale détectée. HELIOS reste disponible à l’écrit. Vérifiez les voix françaises installées dans les paramètres de synthèse vocale de votre appareil.';
+export const NO_LOCAL_VOICE = 'Aucune voix française locale détectée. JARVIS reste disponible à l’écrit. Vérifiez les voix françaises installées dans les paramètres de synthèse vocale de votre appareil.';
 
 export function frenchLocalVoices(voices: SpeechSynthesisVoice[]) {
   return voices.filter(voice => voice.localService === true && /^fr(?:[-_]|$)/i.test(voice.lang));

@@ -494,8 +494,8 @@ export default function Patients({ onVoiceContextChange }: { onVoiceContextChang
           />
 
           {clinicalMemory && (
-            <section aria-label="HELIOS Clinical Memory — mémoire documentaire">
-              <h3 className="patient-section-title">HELIOS Clinical Memory · aperçu documentaire</h3>
+            <section aria-label="JARVIS Clinical Memory — mémoire documentaire">
+              <h3 className="patient-section-title">JARVIS Clinical Memory · aperçu documentaire</h3>
               <p className="patient-empty-history">
                 Extraits des données enregistrées pour ce dossier. À vérifier lors de la consultation :
                 aucune information manquante n'est interprétée comme une absence d'allergie, de traitement ou de diagnostic.
@@ -553,8 +553,8 @@ export default function Patients({ onVoiceContextChange }: { onVoiceContextChang
           )}
 
           {preventionReview && (
-            <section aria-label="HELIOS Prevention — entretien documentaire">
-              <h3 className="patient-section-title">HELIOS Prevention · préparation documentaire</h3>
+            <section aria-label="JARVIS Prevention — entretien documentaire">
+              <h3 className="patient-section-title">JARVIS Prevention · préparation documentaire</h3>
               <p className="patient-empty-history">
                 Repères de discussion non personnalisés. Les informations du dossier restent déclaratives :
                 cette rubrique ne vérifie ni l'éligibilité ni la réalisation d'un acte préventif.
@@ -582,8 +582,8 @@ export default function Patients({ onVoiceContextChange }: { onVoiceContextChang
             </section>
           )}
 
-          <section aria-label="HELIOS Referral — brouillon documentaire non transmis">
-            <h3 className="patient-section-title">HELIOS Referral · préparation d'orientation</h3>
+          <section aria-label="JARVIS Referral — brouillon documentaire non transmis">
+            <h3 className="patient-section-title">JARVIS Referral · préparation d'orientation</h3>
             <p className="patient-empty-history">
               Extraits de la dernière consultation datée de ce dossier, à relire par le médecin
               avant toute éventuelle lettre d'orientation. Ce panneau ne décide pas de l'indication d'adresser.
@@ -617,8 +617,8 @@ export default function Patients({ onVoiceContextChange }: { onVoiceContextChang
 
           <LocalDocumentReader key={selected.id} />
 
-          <section aria-label="HELIOS Parcours spécialisés — consultations consignées">
-            <h3 className="patient-section-title">HELIOS Parcours spécialisés · consultations documentées</h3>
+          <section aria-label="JARVIS Parcours spécialisés — consultations consignées">
+            <h3 className="patient-section-title">JARVIS Parcours spécialisés · consultations documentées</h3>
             <p className="patient-empty-history">
               Regroupement des consultations enregistrées dans ce seul dossier par spécialité saisie.
               Le nombre de visites ne confirme ni une maladie, ni un suivi spécialisé actif, ni une prise en charge recommandée.
@@ -674,8 +674,8 @@ export default function Patients({ onVoiceContextChange }: { onVoiceContextChang
             {renderTrendChart('Saturation en oxygène (SpO₂)', '%', 'spo2')}
           </div>
 
-          <section aria-label="HELIOS Trends — comparaison descriptive des mesures">
-            <h3 className="patient-section-title">HELIOS Trends · comparaison des deux dernières mesures</h3>
+          <section aria-label="JARVIS Trends — comparaison descriptive des mesures">
+            <h3 className="patient-section-title">JARVIS Trends · comparaison des deux dernières mesures</h3>
             <p className="patient-empty-history">
               Différences numériques entre deux consultations enregistrées, avec dates et unités.
               Ces écarts ne constituent ni une tendance cliniquement validée, ni une alerte, ni une recommandation.

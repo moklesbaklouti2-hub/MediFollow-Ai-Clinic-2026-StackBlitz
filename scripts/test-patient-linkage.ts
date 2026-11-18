@@ -236,7 +236,7 @@ const missingDate = buildClinicalMemory({ id: 'patient-fictif' }, [
 ]);
 assert.equal(missingDate.documentedDiagnoses[0]?.date, 'Date non renseignée');
 assert.equal(patientPageSource.includes('buildClinicalMemory(selected, patientConsultations)'), true);
-assert.ok(patientPageSource.includes('HELIOS Clinical Memory · aperçu documentaire') &&
+assert.ok(patientPageSource.includes('JARVIS Clinical Memory · aperçu documentaire') &&
   patientPageSource.includes('Allergies déclarées') &&
   patientPageSource.includes('Traitements déclarés dans le dossier (à confirmer)') &&
   patientPageSource.includes('Non renseigné') &&
@@ -289,7 +289,7 @@ assert.ok(patientPageSource.includes('clinicalMemory.documentedHistory[group.key
   patientPageSource.includes('Antécédents chirurgicaux déclarés') &&
   patientPageSource.includes('Antécédents familiaux déclarés') &&
   patientPageSource.includes('Non renseigné'),
-  'HELIOS Clinical Memory must present all three original history groups without inventing negatives.');
+  'JARVIS Clinical Memory must present all three original history groups without inventing negatives.');
 console.log('PASS QW-036: 10 fictional history group and UI regression checks.');
 
 
@@ -328,7 +328,7 @@ assert.deepEqual(compareRecentVitals([
 ]).find(item => item.key === 'weight')?.difference, 0.1);
 assert.equal(JSON.stringify(trendFixture), trendOriginal, 'Trend calculation must not alter stored visits.');
 assert.ok(patientPageSource.includes('compareRecentVitals(patientConsultations)') &&
-  patientPageSource.includes('HELIOS Trends · comparaison des deux dernières mesures') &&
+  patientPageSource.includes('JARVIS Trends · comparaison des deux dernières mesures') &&
   patientPageSource.includes('Écart brut :') &&
   patientPageSource.includes('Deux mesures numériques datées sont nécessaires'),
   'The patient UI must show source dates and avoid a clinical interpretation.');
@@ -358,7 +358,7 @@ assert.equal(buildPreventionReview({ id: 'fictif-a', age: -1 } as never, []).rec
 assert.equal(buildPreventionReview({ id: 'fictif-a', age: 'inconnu' } as never, []).recordedAge, null);
 assert.equal(buildPreventionReview({ id: 'fictif-a', age: 0 } as never, []).recordedAge, 0);
 assert.ok(patientPageSource.includes('buildPreventionReview(selected, patientConsultations)') &&
-  patientPageSource.includes('HELIOS Prevention · préparation documentaire') &&
+  patientPageSource.includes('JARVIS Prevention · préparation documentaire') &&
   patientPageSource.includes('preventionReview.discussionTopics.map(') &&
   patientPageSource.includes('Aucune vaccination, aucun dépistage') &&
   patientPageSource.includes('Aucune échéance, alerte, décision clinique'),
@@ -388,7 +388,7 @@ assert.equal(buildReferralSource('fictif-a', [
   { id: 'no-data', patientId: 'fictif-a', date: '2026-11-12', motif: '', diagnosis: '  ', plan: '  ' },
 ]).recordedDiagnosis, null);
 assert.ok(patientPageSource.includes('buildReferralSource(selected.id, patientConsultations)') &&
-  patientPageSource.includes('HELIOS Referral · préparation d\'orientation') &&
+  patientPageSource.includes('JARVIS Referral · préparation d\'orientation') &&
   patientPageSource.includes('aucune donnée n\'est transmise') &&
   patientPageSource.includes('Diagnostic consigné (non revalidé)'),
   'Referral preview must remain source-only, non-prescriptive and never transmitted.');
@@ -412,7 +412,7 @@ assert.equal(previewLocalDocument('X'.repeat(MAX_LOCAL_DOCUMENT_CHARS + 5)).char
 assert.equal(previewLocalDocument('X'.repeat(MAX_LOCAL_DOCUMENT_CHARS + 5)).truncated, true);
 const readerSource = readFileSync('src/components/LocalDocumentReader.tsx', 'utf8');
 assert.ok(patientPageSource.includes('<LocalDocumentReader key={selected.id} />') &&
-  readerSource.includes('HELIOS Document Reader · aperçu texte local') &&
+  readerSource.includes('JARVIS Document Reader · aperçu texte local') &&
   readerSource.includes('previewLocalDocument(rawText)') &&
   readerSource.includes("setRawText('')") &&
   !readerSource.includes('localStorage') && !readerSource.includes('fetch('),
@@ -433,7 +433,7 @@ for (const source of academySources) {
   assert.ok(source.institution.trim() && source.title.trim() && source.description.trim());
 }
 const protocolPageSource = readFileSync('src/pages/Protocols.tsx', 'utf8');
-assert.ok(protocolPageSource.includes('HELIOS Medical Academy · sources institutionnelles') &&
+assert.ok(protocolPageSource.includes('JARVIS Medical Academy · sources institutionnelles') &&
   protocolPageSource.includes('academySources.map(') &&
   protocolPageSource.includes('rel="noopener noreferrer"') &&
   protocolPageSource.includes('Aucun lien n\'envoie de données patient') &&
@@ -471,7 +471,7 @@ assert.deepEqual(summarizeDocumentedSpecialties('fictif-a', [
 ]), [{ specialty: 'Spécialité non renseignée', count: 1, lastConsultationDate: null }]);
 assert.equal(JSON.stringify(specialtyVisits), originalSpecialtyVisits);
 assert.ok(patientPageSource.includes('summarizeDocumentedSpecialties(selected.id, patientConsultations)') &&
-  patientPageSource.includes('HELIOS Parcours spécialisés · consultations documentées') &&
+  patientPageSource.includes('JARVIS Parcours spécialisés · consultations documentées') &&
   patientPageSource.includes('documentedSpecialties.map(') &&
   patientPageSource.includes('ne confirme ni une maladie') &&
   patientPageSource.includes('Dernière date enregistrée :'),
@@ -511,7 +511,7 @@ assert.deepEqual(summarizeRecordedActivity([], []), {
 assert.equal(summarizeRecordedActivity([], activityVisits).excluded, activityVisits.length);
 const dashboardActivitySource = readFileSync('src/pages/Dashboard.tsx', 'utf8');
 assert.ok(dashboardActivitySource.includes('summarizeRecordedActivity(clinicalPatients, clinicalConsultations)') &&
-  dashboardActivitySource.includes('HELIOS Activité — statistiques descriptives') &&
+  dashboardActivitySource.includes('JARVIS Activité — statistiques descriptives') &&
   dashboardActivitySource.includes('data.clinicalActivity.excluded') &&
   dashboardActivitySource.includes('group.items.slice(0, 5).map(') &&
   dashboardActivitySource.includes('pas des diagnostics validés') &&

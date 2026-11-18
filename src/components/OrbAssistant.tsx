@@ -371,7 +371,7 @@ export default function OrbAssistant({
           { page: 'Tableau de bord', patterns: [/\b(tableau de bord|accueil|page d accueil)\b/] },
           { page: 'Patients', patterns: [/\b(patient|patients|dossier patient|liste des patients)\b/] },
           { page: 'Consultations', patterns: [/\b(consultation|consultations)\b/] },
-          { page: 'Copilote IA', patterns: [/\b(copilote|assistant ia)\b/] },
+          { page: 'Copilote IA', patterns: [/\b(copilote|assistant ia|jarvis)\b/] },
           { page: 'Protocoles médicaux', patterns: [/\b(protocole|protocoles|protocoles medicaux)\b/] },
           { page: 'Ordonnances', patterns: [/\b(ordonnance|ordonnances|prescription|prescriptions)\b/] },
           { page: 'Inventaire', patterns: [/\b(inventaire|stock|stocks)\b/] },
@@ -480,11 +480,11 @@ export default function OrbAssistant({
   return (
     <div className={`mf-orb-assistant${isThinking || sending ? ' is-thinking' : ''}`}>
       {clinicalInsight?.enabled && clinicalInsight.status !== 'idle' && !panelOpen && !insightDismissed && (
-        <aside className={`mf-orb-insight-bubble ${clinicalInsight.analysis?.priority === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de l’Orb">
+        <aside className={`mf-orb-insight-bubble ${clinicalInsight.analysis?.priority === 'urgent' ? 'is-urgent' : ''}`} aria-live="polite" aria-label="Analyse clinique de JARVIS">
           <div className="mf-orb-insight-top">
             <div className="mf-orb-insight-heading">
               <span className={`mf-orb-status-dot${clinicalInsight.status === 'analyzing' ? ' is-thinking' : ''}`} />
-              <strong>{clinicalInsight.status === 'analyzing' ? 'MediFollow analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
+              <strong>{clinicalInsight.status === 'analyzing' ? 'JARVIS analyse…' : clinicalInsight.status === 'error' ? 'Analyse à relancer' : 'Réflexion clinique'}</strong>
             </div>
             <button type="button" className="mf-orb-insight-close" onClick={() => setInsightDismissed(true)} aria-label="Fermer la réflexion clinique" title="Fermer">×</button>
           </div>
@@ -507,7 +507,7 @@ export default function OrbAssistant({
                   : `Aide-moi à approfondir cette analyse clinique : ${clinicalInsight.analysis?.situationSummary || ''}`;
                 setInput(prompt);
                 openPanel();
-              }}>Approfondir avec l’Orb ↗</button>
+              }}>Approfondir avec JARVIS ↗</button>
             </>
           ) : clinicalInsight.status === 'error' ? (
             <p>{clinicalInsight.error || 'Le moteur IA n’a pas pu terminer l’analyse.'}</p>
@@ -518,11 +518,11 @@ export default function OrbAssistant({
       )}
 
       {panelOpen && (
-        <section className="mf-orb-panel" aria-label="Discussion avec MediFollow AI">
+        <section className="mf-orb-panel" aria-label="Discussion avec JARVIS">
           <div className="mf-orb-panel-header">
             <div className="mf-orb-panel-identity">
               <span className={`mf-orb-status-dot${sending || isThinking ? ' is-thinking' : ''}`} />
-              <div><strong>MediFollow AI</strong><small>ASSISTANT CLINIQUE PERMANENT</small></div>
+              <div><strong>JARVIS</strong><small>ASSISTANT CLINIQUE PERMANENT</small></div>
             </div>
             <button type="button" className="mf-orb-close" onClick={closePanel} aria-label="Fermer l'assistant">×</button>
           </div>
@@ -559,7 +559,7 @@ export default function OrbAssistant({
               </div>
             ) : messages.map((message, index) => (
               <div className={`mf-orb-message ${message.role}`} key={index}>
-                <span>{message.role === 'user' ? 'Vous' : 'MediFollow'}</span>
+                <span>{message.role === 'user' ? 'Vous' : 'JARVIS'}</span>
                 <p>{message.content}</p>
                 {message.role === 'assistant' && (
                   <button
@@ -567,7 +567,7 @@ export default function OrbAssistant({
                     className="mf-orb-read-reply"
                     onClick={() => voice.listen(message.content)}
                     disabled={!voice.voices.length}
-                    aria-label={`Écouter la réponse ${index + 1} de HELIOS`}
+                    aria-label={`Écouter la réponse ${index + 1} de JARVIS`}
                     title="Lecture ponctuelle avec confirmation de confidentialité"
                   >
                     Écouter
@@ -575,7 +575,7 @@ export default function OrbAssistant({
                 )}
               </div>
             ))}
-            {sending && <div className="mf-orb-typing">MediFollow réfléchit…</div>}
+            {sending && <div className="mf-orb-typing">JARVIS réfléchit…</div>}
           </div>
 
           <div className="mf-orb-mode-switch" role="group" aria-label="Mode de l’assistant">
@@ -645,7 +645,7 @@ export default function OrbAssistant({
           {voice.error && <span role="status">{voice.error}</span>}
         </div>
       )}
-      <button type="button" className={`mf-orb-launcher${voice.speaking ? ' is-speaking' : ''}${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : openPanel()} aria-label={panelOpen ? 'Fermer MediFollow AI' : 'Discuter avec MediFollow AI'} aria-expanded={panelOpen} title="Discuter avec MediFollow AI">
+      <button type="button" className={`mf-orb-launcher${voice.speaking ? ' is-speaking' : ''}${panelOpen ? ' is-open' : ''}${isThinking || sending || clinicalInsight?.status === 'analyzing' ? ' is-thinking' : ''}`} onClick={() => panelOpen ? closePanel() : openPanel()} aria-label={panelOpen ? 'Fermer JARVIS' : 'Discuter avec JARVIS'} aria-expanded={panelOpen} title="Discuter avec JARVIS">
         <span className="mf-orb-canvas"><OrbVisual isThinking={isThinking || sending} /></span>
       </button>
       <span className="mf-orb-caption">{sending || isThinking ? 'JE RÉFLÉCHIS' : 'À VOTRE ÉCOUTE'}</span>

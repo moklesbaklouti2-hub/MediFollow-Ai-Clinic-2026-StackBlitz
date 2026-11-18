@@ -239,8 +239,8 @@ export default function Protocols() {
         </span>
       </header>
 
-      <section className="protocol-detail" aria-label="HELIOS Medical Academy — sources institutionnelles">
-        <h3>HELIOS Medical Academy · sources institutionnelles</h3>
+      <section className="protocol-detail" aria-label="JARVIS Medical Academy — sources institutionnelles">
+        <h3>JARVIS Medical Academy · sources institutionnelles</h3>
         <p>
           Portails et notices documentaires à consulter dans leur version officielle.
           Ce répertoire ne certifie pas l'actualité ou l'applicabilité tunisienne de chaque recommandation,

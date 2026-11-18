@@ -81,9 +81,9 @@ export default function Copilot({
 
           <div className="copilot-identity-text">
             <span className="copilot-eyebrow">
-              MEDIFOLLOW INTELLIGENCE
+              MEDIFOLLOW AI
             </span>
-            <h2>Copilote médical</h2>
+            <h2>JARVIS · Copilote médical</h2>
             <p>Votre partenaire de réflexion clinique</p>
           </div>
         </div>
@@ -195,7 +195,7 @@ export default function Copilot({
 
                 <div className="message-content">
                   <div className="message-author">
-                    {message.role === 'user' ? 'Vous' : 'MediFollow AI'}
+                    {message.role === 'user' ? 'Vous' : 'JARVIS'}
                   </div>
 
                   <div className="message-bubble">
@@ -214,7 +214,7 @@ export default function Copilot({
                 <div className="message-avatar">✧</div>
 
                 <div className="message-content">
-                  <div className="message-author">MediFollow AI</div>
+                  <div className="message-author">JARVIS</div>
 
                   <div className="message-bubble typing-bubble">
                     <span></span>
