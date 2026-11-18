@@ -33,7 +33,9 @@ class FakeRecognition {
     abort() { window.testVoice.aborts++; window.testVoice.listening = false; }
 }
 Object.defineProperty(window, 'SpeechRecognition', {value: FakeRecognition});
+Object.defineProperty(window, 'SpeechSynthesisUtterance', {value: class { constructor(text) { this.text = text; } }});
 Object.defineProperty(window, 'speechSynthesis', { value: {
+    getVoices() { return [{ voiceURI: 'fr-test', name: 'Voix fictive', lang: 'fr-FR', localService: true }]; },
     speak(utterance) {
         const state = window.testVoice;
         state.overlap ||= state.listening;
@@ -249,6 +251,16 @@ def functional(browser, args):
     start = page.get_by_role("button", name="Démarrer la conversation vocale")
     stop = page.get_by_role("button", name="Arrêter la voix")
     state["response"] = {"reply": "Réponse vocale fictive."}
+    page.get_by_label("Voix de JARVIS").select_option("fr-test")
+    page.get_by_role("button", name="Écouter la voix de JARVIS").click()
+    expect(page.get_by_role("button", name="Arrêter l’essai")).to_be_visible()
+    assert page.evaluate("testVoice.speech.voice.voiceURI") == "fr-test"
+    assert page.evaluate("testVoice.speech.pitch === 0.85 && testVoice.speech.rate === 0.92")
+    assert page.evaluate("testVoice.starts") == 0
+    page.evaluate("endSpeech()")
+    expect(start).to_be_enabled()
+    assert page.evaluate("testVoice.starts") == 0
+
     start.click()
     expect(page.get_by_text("Microphone actif")).to_be_visible()
     page.evaluate("emitTranscript('Propos vocal fictif')")

@@ -27,12 +27,14 @@ const voiceErrors: Record<string, string> = {
   aborted: 'Écoute interrompue.',
 };
 
-type Phase = 'off' | 'starting' | 'listening' | 'transcribing' | 'waiting' | 'processing' | 'speaking' | 'paused';
+type Phase = 'off' | 'starting' | 'listening' | 'transcribing' | 'waiting' | 'processing' | 'speaking' | 'preview' | 'paused';
 
 export function useJarvisVoice(onTranscript: (text: string) => void, cancelRequest: () => void) {
   const [phase, setPhase] = useState<Phase>('off');
   const [error, setError] = useState('');
   const [read, setRead] = useState(true);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [voiceURI, setVoiceURI] = useState('');
   const current = useRef<Phase>('off');
   const recognition = useRef<Recognition | null>(null);
   const speech = useRef<SpeechSynthesisUtterance | null>(null);
@@ -42,6 +44,15 @@ export function useJarvisVoice(onTranscript: (text: string) => void, cancelReque
   callbacks.current = { onTranscript, cancelRequest };
   const speechAvailable = typeof window !== 'undefined' && 'speechSynthesis' in window &&
     typeof SpeechSynthesisUtterance !== 'undefined';
+
+  useEffect(() => {
+    if (!speechAvailable) return;
+    const engine = window.speechSynthesis;
+    const update = () => setVoices(engine.getVoices?.() ?? []);
+    update();
+    engine.addEventListener?.('voiceschanged', update);
+    return () => engine.removeEventListener?.('voiceschanged', update);
+  }, [speechAvailable]);
 
   function transition(next: Phase) {
     current.current = next;
@@ -150,14 +161,31 @@ export function useJarvisVoice(onTranscript: (text: string) => void, cancelReque
       setError('Lecture vocale indisponible dans ce navigateur.');
       return;
     }
-    transition('speaking');
-    const utterance = new SpeechSynthesisUtterance(reply);
+    speak(reply, true);
+  }
+
+  function speak(text: string, inConversation: boolean) {
+    if (!speechAvailable) return;
+    setError('');
+    transition(inConversation ? 'speaking' : 'preview');
+    const utterance = new SpeechSynthesisUtterance(text);
     speech.current = utterance;
-    utterance.lang = 'fr-FR';
-    utterance.onend = () => { if (speech.current === utterance) resumeAfterSpeech(); };
+    const available = window.speechSynthesis.getVoices?.() ?? [];
+    const chosen = available.find(voice => voice.voiceURI === voiceURI) ??
+      available.find(voice => voice.localService && /^fr(?:-|$)/i.test(voice.lang)) ??
+      available.find(voice => /^fr(?:-|$)/i.test(voice.lang));
+    if (chosen) utterance.voice = chosen;
+    utterance.lang = chosen?.lang ?? 'fr-FR';
+    utterance.rate = 0.92;
+    utterance.pitch = 0.85;
+    utterance.onend = () => {
+      if (speech.current !== utterance) return;
+      if (inConversation) resumeAfterSpeech();
+      else stop();
+    };
     const failed = () => {
       if (speech.current !== utterance) return;
-      stop('paused');
+      stop(inConversation ? 'paused' : 'off');
       setError('La lecture vocale a été interrompue ou a dépassé le délai.');
     };
     utterance.onerror = failed;
@@ -166,7 +194,10 @@ export function useJarvisVoice(onTranscript: (text: string) => void, cancelReque
   }
 
   return {
-    phase, error, read, speechAvailable,
+    phase, error, read, speechAvailable, voices, voiceURI, setVoiceURI,
+    preview: () => {
+      if (current.current === 'off') speak('Bonjour. Je suis JARVIS, votre assistant MediFollow. Comment puis-je vous aider ?', false);
+    },
     available: typeof window !== 'undefined' && Boolean(recognitionFactory()),
     micActive: phase === 'listening' || phase === 'transcribing',
     listen,

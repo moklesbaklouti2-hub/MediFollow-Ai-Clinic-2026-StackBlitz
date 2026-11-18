@@ -29,7 +29,7 @@ type Props = {
 const phaseLabels = {
   off: 'Prêt', starting: 'Activation du microphone', listening: 'Écoute', transcribing: 'Transcription',
   waiting: 'Transcription à relire', processing: 'Traitement', speaking: 'Lecture vocale',
-  paused: 'Voix en pause',
+  paused: 'Voix en pause', preview: 'Essai de la voix',
 };
 
 export default function Copilot({ patients, consultations, prescriptions, onNavigate, onDraft, onPrescription, onReceipt }: Props) {
@@ -251,6 +251,20 @@ export default function Copilot({ patients, consultations, prescriptions, onNavi
           {voice.micActive && <p role="status"><strong>Microphone actif</strong></p>}
           {!voice.available && <p>Reconnaissance vocale indisponible dans ce navigateur.</p>}
           {!voice.speechAvailable && <p>Lecture vocale indisponible dans ce navigateur.</p>}
+          {voice.speechAvailable && <div className="jarvis-fields">
+            <div>
+              <label htmlFor="jarvis-speech-voice">Voix de JARVIS</label>
+              <select id="jarvis-speech-voice" value={voice.voices.some(item => item.voiceURI === voice.voiceURI) ? voice.voiceURI : ''}
+                disabled={voice.phase !== 'off'} onChange={event => voice.setVoiceURI(event.target.value)}>
+                <option value="">Français automatique</option>
+                {voice.voices.map(item => <option key={item.voiceURI} value={item.voiceURI}>{item.name} ({item.lang})</option>)}
+              </select>
+            </div>
+            <div className="jarvis-row">
+              {voice.phase !== 'preview' && <button type="button" disabled={voice.phase !== 'off' || conversation.busy}
+                onClick={voice.preview}>Écouter la voix de JARVIS</button>}
+            </div>
+          </div>}
           <div className="jarvis-row">
             {(!voiceActive || voice.phase === 'paused') && <button type="button"
               disabled={!voice.available || conversation.busy || Boolean(pending)} onClick={() => {
@@ -258,8 +272,8 @@ export default function Copilot({ patients, consultations, prescriptions, onNavi
                 voice.listen();
               }}>{voiceActive ? 'Reprendre l’écoute' : 'Démarrer la conversation vocale'}</button>}
             {voiceActive && <>
-              {voice.phase !== 'paused' && <button type="button" onClick={() => voice.stop('paused')}>Mettre en pause</button>}
-              <button type="button" onClick={() => voice.stop()}>Arrêter la voix</button>
+              {voice.phase !== 'paused' && voice.phase !== 'preview' && <button type="button" onClick={() => voice.stop('paused')}>Mettre en pause</button>}
+              <button type="button" onClick={() => voice.stop()}>{voice.phase === 'preview' ? 'Arrêter l’essai' : 'Arrêter la voix'}</button>
               {voice.phase === 'speaking' && <button type="button" onClick={voice.interrupt}>Interrompre la lecture</button>}
             </>}
           </div>
