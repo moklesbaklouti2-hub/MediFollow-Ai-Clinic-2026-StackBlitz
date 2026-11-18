@@ -7,7 +7,7 @@ const pageDescriptions: Record<string, string> = {
   'Tableau de bord': 'Votre activité clinique, vos dossiers et vos priorités en un regard.',
   'Patients': 'Dossiers, antécédents et parcours de soins réunis.',
   'Consultations': 'Un espace structuré pour documenter chaque consultation.',
-  'Copilote IA': 'HELIOS vous accompagne dans la réflexion clinique.',
+  'Copilote IA': 'JARVIS vous accompagne dans la réflexion clinique.',
   'Protocoles médicaux': 'Références et supports cliniques à portée de main.',
   'Ordonnances': 'Traitements, examens et documents médicaux.',
   'Inventaire': 'Consommables et équipements de votre cabinet.',
@@ -22,7 +22,7 @@ export default function Header({ title, onOpenCopilot }: HeaderProps) {
           <span className="header-label-line" aria-hidden="true" />
           MEDIFOLLOW AI / ESPACE CLINIQUE
         </span>
-        <h1>{title}</h1>
+        <h1>{title === 'Copilote IA' ? 'JARVIS' : title}</h1>
         <p className="header-subtitle">
           {pageDescriptions[title] ?? 'Votre espace de travail médical intelligent.'}
         </p>
@@ -45,9 +45,9 @@ export default function Header({ title, onOpenCopilot }: HeaderProps) {
           className="header-helios-button"
           onClick={onOpenCopilot}
           disabled={title === 'Copilote IA'}
-          aria-label="Ouvrir le copilote HELIOS"
+          aria-label="Ouvrir le copilote JARVIS"
         >
-          ✦ HELIOS
+          ✦ JARVIS
         </button>
       </div>
     </header>

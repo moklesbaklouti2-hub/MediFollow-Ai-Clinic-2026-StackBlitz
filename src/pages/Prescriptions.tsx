@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
 import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import { isDispensablePrescriptionStatus } from '../services/prescriptionFinality';
@@ -6,6 +6,10 @@ import { prescriptionHasRecordedStockMovement } from '../services/prescriptionId
 import { documentedPrescriptionStatus } from '../clinical/prescriptionTimeline';
 import type { InventoryData, Medication } from '../types/medical';
 import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
+import { selectUniquePatient } from '../services/uniquePatientSelection';
+import { patientSnapshot } from '../jarvis/context';
+import { doctorAuthRequested } from '../services/doctorAuthMode';
+import type { PrescriptionPrefill } from '../jarvis/tools';
 
 const emptyMedication: Medication = {
   id: '',
@@ -28,7 +32,10 @@ function isExpired(expiryDate?: string): boolean {
   return expiryDate < today;
 }
 
-export default function Prescriptions() {
+export default function Prescriptions({ jarvisDraft, onJarvisDraftConsumed }: {
+  jarvisDraft?: PrescriptionPrefill | null;
+  onJarvisDraftConsumed?: () => void;
+}) {
   const { patients, prescriptions, addPrescription, updatePrescription, deletePrescription } = useMedicalData();
   const [patientId, setPatientId] = useState('');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -40,6 +47,24 @@ export default function Prescriptions() {
   const [medication, setMedication] =
     useState<Medication>({ ...emptyMedication });
   const [inventory, setInventory] = useState<InventoryData>(() => getInventoryData());
+
+  const consumedJarvisDraft = useRef<PrescriptionPrefill | null>(null);
+  useEffect(() => {
+    if (!jarvisDraft || consumedJarvisDraft.current === jarvisDraft) return;
+    consumedJarvisDraft.current = jarvisDraft;
+    onJarvisDraftConsumed?.();
+    const current = selectUniquePatient(getMedicalData().patients, jarvisDraft.patientId);
+    const occupied = patientId || editingId || medications.length || advice || medication.name ||
+      medication.dosage || medication.frequency || medication.duration || medication.instructions ||
+      medication.inventoryItemId || medication.route !== emptyMedication.route;
+    if (doctorAuthRequested || !current || occupied || patientSnapshot(current) !== jarvisDraft.patientVersion) {
+      setSavedMessage('Brouillon JARVIS refusé. Vérifiez l’accès, l’identité et le formulaire.');
+      return;
+    }
+    setPatientId(current.id);
+    setMedication({ id: '', ...jarvisDraft.medication });
+    setSavedMessage('Ligne préparée par JARVIS. Vérifiez et complétez les champs avant de l’ajouter au brouillon.');
+  }, [jarvisDraft, onJarvisDraftConsumed, patientId, editingId, medications, advice, medication]);
 
   useEffect(() => subscribeToMedicalData(() => setInventory(getInventoryData())), []);
   // Présenter d'abord les lots encore valides, par date de péremption croissante (FEFO).

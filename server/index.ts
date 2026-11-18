@@ -9,6 +9,7 @@ import { handleJsonBodyError } from './security/jsonBodyErrorHandler.ts';
 import { logSafeAiFailure } from './security/safeAiFailureLog.ts';
 import { readClinicalPromptText, isClinicalChatMessageTooLong, allowedVoiceCommandPage, isOptionalChatContext, isOptionalChatHistory, hasOnlyValidChatHistoryEntries } from './security/clinicalPromptInput.ts';
 import { createAiCompletion, isAiProviderConfigured } from './ai/router.ts';
+import { jarvisInstructions, jarvisProposalInstructions, parseJarvisCompletion } from './ai/jarvisChat.ts';
 
 dotenv.config();
 // Optional remote-deployment preflight; no public access or authentication is enabled here.
@@ -702,8 +703,23 @@ function interviewQuestionIssues(reply: string, facts: string, history: Array<{ 
   return issues;
 }
 
+function localJarvisToolsAllowed(address: string | undefined) {
+  return !remoteAccessConfig && ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(address ?? '');
+}
+
 app.post('/api/chat', async (req, res) => {
   try {
+    if (req.body?.mode === 'jarvis-tools-access') {
+      if (!localJarvisToolsAllowed(req.socket.remoteAddress)) return res.status(403).json({ localToolsAllowed: false });
+      return res.json({ localToolsAllowed: true });
+    }
+    const jarvis = req.body?.mode === 'jarvis';
+    if (jarvis && !isAiProviderConfigured()) {
+      return res.status(503).json({
+        code: 'AI_NOT_CONFIGURED',
+        error: 'Aucun fournisseur IA configuré. Renseignez un fournisseur dans le fichier .env du serveur à partir de .env.example, puis redémarrez le serveur.',
+      });
+    }
     const message = readClinicalPromptText(req.body?.message);
     if (!message) return res.status(400).json({ error: 'Message vide.' });
     if (isClinicalChatMessageTooLong(message)) {
@@ -732,6 +748,33 @@ app.post('/api/chat', async (req, res) => {
       ? req.body.history.filter((item: any) => item && (item.role === 'user' || item.role === 'assistant') && typeof item.content === 'string')
           .slice(-40).map((item: any) => ({ role: item.role, content: item.content.slice(0, 5000) }))
       : [];
+    if (jarvis) {
+      const allowProposal = req.body?.allowProposal === true && localJarvisToolsAllowed(req.socket.remoteAddress) &&
+        isPlainObject(context) && Array.isArray(context.documents) && context.documents.length === 0;
+      const disconnect = new AbortController();
+      const cancel = () => disconnect.abort();
+      res.once('close', cancel);
+      const deadline = AbortSignal.timeout(32_000);
+      try {
+        const completion = await createAiCompletion({
+          model: 'openai/gpt-oss-20b',
+          messages: [
+            { role: 'system', content: jarvisInstructions + '\n' + jarvisProposalInstructions(allowProposal) },
+            ...history,
+            { role: 'user', content: JSON.stringify({ questionDuMedecin: message, donneesSelectionnees: context }) },
+          ],
+          temperature: 0.2,
+        }, 'chat', AbortSignal.any([disconnect.signal, deadline]));
+        if (!disconnect.signal.aborted) return res.json(parseJarvisCompletion(completion.choices[0].message.content, allowProposal));
+        return;
+      } catch (error) {
+        if (disconnect.signal.aborted) return;
+        if (deadline.aborted) return res.status(504).json({ error: 'Délai du moteur IA dépassé. Réessayez.' });
+        throw error;
+      } finally {
+        res.off('close', cancel);
+      }
+    }
     const clinicalInterview = /\b(interrogatoire|question|patient|sympt[oô]me|odynophagie|dysphagie|fi[eè]vre|douleur|consultation)\b/i.test(
       [message, ...history.filter(item => item.role === 'user').map(item => item.content)].join(' ')
     );

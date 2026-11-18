@@ -12,7 +12,8 @@ import Header from './components/Header';
 import Dashboard from './pages/Dashboard';
 import Patients from './pages/Patients';
 import Consultations from './pages/Consultations';
-import Copilot, { type Message } from './pages/Copilot';
+import Copilot from './pages/Copilot';
+import type { ConsultationPrefill, PrescriptionPrefill, ReceiptPrefill } from './jarvis/tools';
 import Protocols from './pages/Protocols';
 import Prescriptions from './pages/Prescriptions';
 import Inventory from './pages/Inventory';
@@ -40,7 +41,7 @@ function getStoredCount(key: string): number {
 }
 
 function App() {
-  const { consultations, patients } = useMedicalData();
+  const { consultations, patients, prescriptions } = useMedicalData();
   const [storageWarning, setStorageWarning] = useState('');
 
   useEffect(() => {
@@ -127,103 +128,17 @@ function App() {
     setClinicalInsight(insight);
   }, []);
 
-  // ---------- COPILOTE IA ----------
+  const [jarvisDraft, setJarvisDraft] = useState<ConsultationPrefill | null>(null);
+  const clearJarvisDraft = useCallback(() => setJarvisDraft(null), []);
+  const openJarvisDraft = useCallback((draft: ConsultationPrefill) => {
+    setJarvisDraft(draft);
+    setActive('Consultations');
+  }, []);
 
-  const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  async function sendMessage(consultationId?: string) {
-    const message = question.trim();
-
-    if (!message || loading) return;
-
-    setMessages(previous => [
-      ...previous,
-      { role: 'user', content: message },
-    ]);
-
-    setQuestion('');
-    setLoading(true);
-
-    try {
-      const consultation = consultationId
-        ? consultations.find((item) => item.id === consultationId)
-        : undefined;
-      const patient = consultation
-        ? patients.find((item) => item.id === consultation.patientId)
-        : undefined;
-
-      const clinicalContext = consultation
-        ? {
-            specialty: consultation.specialty || 'Non précisée',
-            motif: consultation.motif,
-            symptoms: consultation.symptoms,
-            history: consultation.history,
-            vitals: consultation.vitals,
-            physicalExamination: consultation.physicalExamination,
-            legacyExaminationNotes: consultation.examination,
-            diagnosisAlreadyEntered: consultation.diagnosis,
-            managementPlanAlreadyEntered: consultation.plan,
-            patient: patient
-              ? {
-                  age: patient.age,
-                  sex: patient.sex,
-                  clinicalHistory: patient.clinicalHistory,
-                  currentMedications: patient.currentMedications,
-                }
-              : undefined,
-          }
-        : undefined;
-
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message, context: clinicalContext }),
-      });
-
-      const contentType = response.headers.get('content-type') || '';
-
-      if (!contentType.includes('application/json')) {
-        const text = await response.text();
-
-        throw new Error(
-          `Réponse inattendue du serveur : ${text.slice(0, 150)}`
-        );
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur du serveur IA.');
-      }
-
-      setMessages(previous => [
-        ...previous,
-        {
-          role: 'assistant',
-          content: data.reply || 'Aucune réponse reçue.',
-        },
-      ]);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Impossible de contacter le moteur IA.';
-
-      setMessages(previous => [
-        ...previous,
-        {
-          role: 'assistant',
-          content: `Erreur : ${errorMessage}`,
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const [jarvisPrescription, setJarvisPrescription] = useState<PrescriptionPrefill | null>(null);
+  const clearJarvisPrescription = useCallback(() => setJarvisPrescription(null), []);
+  const [jarvisReceipt, setJarvisReceipt] = useState<ReceiptPrefill | null>(null);
+  const clearJarvisReceipt = useCallback(() => setJarvisReceipt(null), []);
 
   // ---------- AFFICHAGE DES PAGES ----------
 
@@ -249,6 +164,8 @@ function App() {
           <Consultations
             onAskCopilot={(prompt) => setOrbPrompt(prompt)}
             onClinicalReasoningChange={handleClinicalReasoningChange}
+            jarvisDraft={jarvisDraft}
+            onJarvisDraftConsumed={clearJarvisDraft}
             commandActions={pendingConsultationActions}
             onCommandActionsConsumed={clearPendingConsultationActions}
           />
@@ -257,13 +174,13 @@ function App() {
       case 'Copilote IA':
         return (
           <Copilot
-            messages={messages}
             consultations={consultations}
             patients={patients}
-            question={question}
-            onQuestionChange={setQuestion}
-            loading={loading}
-            onSend={sendMessage}
+            prescriptions={prescriptions}
+            onNavigate={setActive}
+            onDraft={openJarvisDraft}
+            onPrescription={draft => { setJarvisPrescription(draft); setActive('Ordonnances'); }}
+            onReceipt={draft => { setJarvisReceipt(draft); setActive('Inventaire'); }}
           />
         );
 
@@ -271,10 +188,10 @@ function App() {
         return <Protocols />;
 
       case 'Ordonnances':
-        return <Prescriptions />;
+        return <Prescriptions jarvisDraft={jarvisPrescription} onJarvisDraftConsumed={clearJarvisPrescription} />;
 
       case 'Inventaire':
-        return <Inventory />;
+        return <Inventory jarvisReceipt={jarvisReceipt} onJarvisReceiptConsumed={clearJarvisReceipt} />;
 
       case 'Paramètres':
         return (
@@ -325,8 +242,8 @@ function App() {
         {renderContent()}
       </main>
 
-      <OrbAssistant
-        isThinking={loading}
+      {active !== 'Copilote IA' && <OrbAssistant
+        isThinking={false}
         currentPage={active}
         clinicalPrompt={orbPrompt}
         clinicalInsight={active === 'Consultations' ? clinicalInsight : undefined}
@@ -334,7 +251,7 @@ function App() {
         onOpenCopilot={() => setActive('Copilote IA')}
         onNavigate={setActive}
         onCommandActions={handleVoiceCommandActions}
-      />
+      />}
     </div>
   );
 }

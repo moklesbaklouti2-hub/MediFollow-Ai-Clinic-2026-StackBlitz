@@ -1,7 +1,12 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type FormEvent } from 'react';
 import type { InventoryCategory, InventoryData, InventoryItem } from '../types/medical';
 import { createId, getInventoryData, getPrescriptions, saveInventoryData, subscribeToMedicalData } from '../services/storage';
 import { canDeleteInventoryItem } from '../services/inventoryDeletionGuard';
+import { doctorAuthRequested } from '../services/doctorAuthMode';
+import { receiptTarget, type ReceiptPrefill } from '../jarvis/tools';
+import { verifyJarvisToolsAccess } from '../jarvis/toolsAccess';
+
+const receiptLockName = 'medifollow-stock-receipt';
 
 const emptyForm = {
   name: '',
@@ -16,7 +21,14 @@ const emptyForm = {
   notes: '',
 };
 
-export default function Inventory() {
+export default function Inventory({ jarvisReceipt, onJarvisReceiptConsumed }: {
+  jarvisReceipt?: ReceiptPrefill | null;
+  onJarvisReceiptConsumed?: () => void;
+}) {
+  const consumedReceipt = useRef<ReceiptPrefill | null>(null);
+  const receiptCheck = useRef<AbortController | null>(null);
+  const [receiptBusy, setReceiptBusy] = useState(false);
+  useLayoutEffect(() => () => receiptCheck.current?.abort(), []);
   const [data, setData] = useState<InventoryData>(() => getInventoryData());
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
@@ -197,18 +209,82 @@ export default function Inventory() {
       setMessage('Saisissez une quantité positive.');
       return;
     }
+    const apply = () => {
+      const current = getInventoryData();
+      const target = receiptTarget(current.items, item.id, quantity);
+      if (!target || JSON.stringify(target) !== JSON.stringify(item)) {
+        setMessage('Le lot a changé. Revérifiez le stock avant de recommencer.');
+        return;
+      }
+      recordReceipt(current, target, quantity);
+    };
+    if (navigator.locks) {
+      void navigator.locks.request(receiptLockName, apply)
+        .catch(() => setMessage('Entrée en stock interrompue. Revérifiez le lot.'));
+    } else {
+      apply();
+    }
+  }
+
+  function recordReceipt(current: InventoryData, item: InventoryItem, quantity: number) {
     const timestamp = new Date().toISOString();
-    const next = {
-      items: data.items.map((entry) => entry.id === item.id
+    persist({
+      items: current.items.map(entry => entry.id === item.id
         ? { ...entry, quantity: entry.quantity + quantity, updatedAt: timestamp }
         : entry),
       movements: [{
         id: createId(), itemId: item.id, itemName: item.name,
-        type: 'receipt' as const, quantity, date: timestamp, reason: 'Réapprovisionnement',
-      }, ...data.movements],
-    };
-    persist(next);
+        type: 'receipt', quantity, date: timestamp, reason: 'Réapprovisionnement',
+      }, ...current.movements],
+    });
   }
+
+  async function confirmJarvisReceipt(proposal: ReceiptPrefill) {
+    if (consumedReceipt.current === proposal || receiptCheck.current) return;
+    const controller = new AbortController();
+    receiptCheck.current = controller;
+    setReceiptBusy(true);
+    try {
+      const allowed = await verifyJarvisToolsAccess(controller.signal);
+      if (controller.signal.aborted) return;
+      if (!allowed || doctorAuthRequested) {
+        setMessage('Entrée JARVIS refusée. Vérifiez le mode d’accès.');
+        return;
+      }
+      if (!navigator.locks) {
+        setMessage('Verrouillage du stock indisponible dans ce navigateur. Utilisez le formulaire Inventaire.');
+        return;
+      }
+      await navigator.locks.request(receiptLockName, { signal: controller.signal }, () => {
+        const current = getInventoryData();
+        const item = receiptTarget(current.items, proposal.itemId, proposal.quantity);
+        if (!item || JSON.stringify(item) !== proposal.itemVersion) {
+          setMessage('Entrée JARVIS refusée. Le lot ou la quantité a changé.');
+          return;
+        }
+        recordReceipt(current, item, proposal.quantity);
+      });
+    } catch {
+      if (!controller.signal.aborted) setMessage('Entrée en stock interrompue. Revérifiez le lot.');
+    } finally {
+      if (receiptCheck.current === controller) {
+        receiptCheck.current = null;
+        consumedReceipt.current = proposal;
+        setReceiptBusy(false);
+        onJarvisReceiptConsumed?.();
+      }
+    }
+  }
+
+  function cancelJarvisReceipt() {
+    receiptCheck.current?.abort();
+    receiptCheck.current = null;
+    setReceiptBusy(false);
+    onJarvisReceiptConsumed?.();
+  }
+
+  const receiptItem = jarvisReceipt && !doctorAuthRequested
+    ? receiptTarget(data.items, jarvisReceipt.itemId, jarvisReceipt.quantity) : undefined;
 
   const lowStock = data.items.filter((item) => item.quantity <= item.minimumQuantity).length;
   const expiredCount = data.items.filter(item => {
@@ -288,6 +364,14 @@ export default function Inventory() {
         @media(max-width:650px){.inventory-grid{grid-template-columns:1fr}.inventory-item{align-items:flex-start;flex-direction:column}}
       `}</style>
 
+      {jarvisReceipt && <section className="inventory-panel" aria-label="Entrée en stock préparée par JARVIS">
+        <h2>Entrée en stock préparée par JARVIS</h2>
+        {receiptItem && JSON.stringify(receiptItem) === jarvisReceipt.itemVersion ? <>
+          <p>{receiptItem.name} · Lot {receiptItem.batchNumber || receiptItem.id} · {receiptItem.quantity} → {receiptItem.quantity + jarvisReceipt.quantity} {receiptItem.unit}</p>
+          <button type="button" className="inventory-button" disabled={receiptBusy} onClick={() => { void confirmJarvisReceipt(jarvisReceipt); }}>{receiptBusy ? 'Vérification de l’accès…' : 'Confirmer la réception physique et enregistrer'}</button>
+        </> : <p role="alert">Le lot a changé ou l’accès est indisponible.</p>}
+        <button type="button" className="inventory-secondary" onClick={cancelJarvisReceipt}>Annuler l’entrée préparée</button>
+      </section>}
       <header>
         <h2 style={{ margin: '0 0 6px', fontSize: 25, color: 'var(--color-text)' }}>Gestion de l’inventaire</h2>
         <p className="inventory-muted" style={{ margin: 0 }}>Suivi des consommables, équipements et traitements du cabinet.</p>

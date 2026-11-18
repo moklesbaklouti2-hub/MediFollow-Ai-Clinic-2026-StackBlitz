@@ -166,7 +166,7 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
         <OverviewKpi label="Contrôles en retard" href="#dashboard-follow-up" value={data.followUpConsultations.overdue} note="Dates de contrôle valides" tone="rose" icon="overdue" />
       </section>
       <DataIntegrityNotice data={data} />
-      <section className="wd-operational-grid" aria-label="Agenda, consultations récentes et HELIOS">
+      <section className="wd-operational-grid" aria-label="Agenda, consultations récentes et JARVIS">
         <AgendaPanel />
         <RecentConsultationsPanel recentConsultations={recentConsultations} />
         <HeliosPanel onOpenCopilot={onOpenCopilot} />

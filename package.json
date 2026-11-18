@@ -28,7 +28,8 @@
     "test:clinical-premium": "node scripts/test-clinical-premium.mjs",
     "test:warm-design": "node scripts/test-warm-design-contract.mjs",
     "test:dashboard-layout": "tsx --tsconfig tsconfig.app.json scripts/test-dashboard-warm-layout.tsx",
-    "test:cabinet-a": "tsx --tsconfig tsconfig.app.json scripts/test-cabinet-a.tsx"
+    "test:cabinet-a": "tsx --tsconfig tsconfig.app.json scripts/test-cabinet-a.tsx",
+    "test:jarvis": "tsx scripts/test-jarvis.ts"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.7",
@@ -36,6 +37,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "groq-sdk": "^0.30.0",
+    "pdfjs-dist": "4.10.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "three": "^0.181.1"

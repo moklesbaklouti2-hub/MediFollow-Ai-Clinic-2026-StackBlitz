@@ -76,10 +76,10 @@ export function AgendaPanel() {
 }
 
 export function HeliosPanel({ onOpenCopilot }: { onOpenCopilot: () => void }) {
-  return <section className="wd-panel wd-helios" aria-label="HELIOS, copilote clinique">
-    <div className="wd-helios-heading"><div><span className="wd-panel-overline">VOTRE COPILOTE IA</span><h3>HELIOS</h3></div><span className="wd-helios-icon"><DashboardIcon name="helios" /></span></div><p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
+  return <section className="wd-panel wd-helios" aria-label="JARVIS, copilote clinique">
+    <div className="wd-helios-heading"><div><span className="wd-panel-overline">VOTRE COPILOTE IA</span><h3>JARVIS</h3></div><span className="wd-helios-icon"><DashboardIcon name="helios" /></span></div><p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
     <ul><li>Analyse d’un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
-    <button type="button" className="wd-button" onClick={onOpenCopilot}>Ouvrir HELIOS</button>
+    <button type="button" className="wd-button" onClick={onOpenCopilot}>Ouvrir JARVIS</button>
   </section>;
 }
 
@@ -87,7 +87,7 @@ export function QuickPathways({ onStartConsultation, onOpenPatients, onOpenCopil
   const shortcuts = [
     { label: 'Nouvelle consultation', action: onStartConsultation },
     { label: 'Patients', action: onOpenPatients },
-    { label: 'HELIOS', action: onOpenCopilot },
+    { label: 'JARVIS', action: onOpenCopilot },
     { label: 'Ordonnances', action: () => onNavigate('Ordonnances') },
     { label: 'Protocoles', action: () => onNavigate('Protocoles médicaux') },
     { label: 'Inventaire', action: () => onNavigate('Inventaire') },
