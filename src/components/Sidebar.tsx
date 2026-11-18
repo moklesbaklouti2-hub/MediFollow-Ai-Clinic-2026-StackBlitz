@@ -91,7 +91,7 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
                   aria-current={selected ? 'page' : undefined}
                 >
                   <span className="nav-icon"><NavIcon name={item.icon} /></span>
-                  <span className="nav-label">{item.label}</span>
+                  <span className="nav-label">{item.label === 'Copilote IA' ? 'JARVIS' : item.label}</span>
                   {selected && <span className="nav-active-indicator" aria-hidden="true" />}
                 </button>
               );
@@ -105,11 +105,11 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
           type="button"
           className="sidebar-helios-action"
           onClick={() => onNavigate('Copilote IA')}
-          aria-label="Ouvrir HELIOS, le copilote clinique"
+          aria-label="Ouvrir JARVIS, le copilote clinique"
         >
           <span className="sidebar-helios-mark" aria-hidden="true">✦</span>
           <span>
-            <strong>HELIOS</strong>
+            <strong>JARVIS</strong>
             <small>Copilote clinique</small>
           </span>
         </button>
