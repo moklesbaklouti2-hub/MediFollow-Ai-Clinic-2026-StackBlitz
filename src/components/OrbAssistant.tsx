@@ -578,16 +578,16 @@ export default function OrbAssistant({
             {sending && <div className="mf-orb-typing">MediFollow réfléchit…</div>}
           </div>
 
-          <div className="mf-orb-mode-switch" role="group" aria-label="Mode de l’assistant" style={{ display: 'flex', gap: 8, padding: '10px 14px 0' }}>
-            <button type="button" onClick={() => changeMode('chat')} aria-pressed={mode === 'chat'} style={{ flex: 1, border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 10px', background: mode === 'chat' ? 'var(--accent,#38d9bd)' : 'transparent', color: mode === 'chat' ? '#10243e' : 'inherit', fontWeight: 600 }}>
+          <div className="mf-orb-mode-switch" role="group" aria-label="Mode de l’assistant">
+            <button type="button" onClick={() => changeMode('chat')} aria-pressed={mode === 'chat'}>
               Discussion / Dictée
             </button>
-            <button type="button" onClick={() => changeMode('command')} aria-pressed={mode === 'command'} style={{ flex: 1, border: '1px solid var(--border,#dce4e8)', borderRadius: 8, padding: '8px 10px', background: mode === 'command' ? 'var(--accent,#38d9bd)' : 'transparent', color: mode === 'command' ? '#10243e' : 'inherit', fontWeight: 600 }}>
+            <button type="button" onClick={() => changeMode('command')} aria-pressed={mode === 'command'}>
               Commandes vocales
             </button>
           </div>
           {mode === 'command' && (
-            <p style={{ margin: '7px 14px 0', fontSize: 11, color: 'var(--text-secondary,#81909c)' }}>
+            <p className="mf-orb-command-help">
               Parlez naturellement : chaque commande est exécutée automatiquement après votre phrase. L’écoute reprend ensuite. Dites « stop écoute » ou appuyez sur le microphone pour arrêter. Vous pouvez naviguer et remplir les champs de consultation. L’enregistrement et les prescriptions restent à confirmer séparément.
             </p>
           )}
