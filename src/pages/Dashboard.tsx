@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getInventoryData } from '../services/storage';
+import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
+import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
+import { summarizeFollowUps } from '../clinical/followUp';
+import { summarizeRecordedActivity, type ClinicalActivitySummary } from '../clinical/activityStats';
 import type { InventoryData } from '../types/medical';
 
 type DashboardProps = {
@@ -40,6 +43,10 @@ type DashboardData = {
   patients: PatientRecord[];
   consultations: ConsultationRecord[];
   prescriptions: PrescriptionRecord[];
+  unlinkedConsultations: number;
+  unlinkedPrescriptions: number;
+  followUpConsultations: ReturnType<typeof summarizeFollowUps>;
+  clinicalActivity: ClinicalActivitySummary;
 };
 
 function readArray<T>(key: string): T[] {
@@ -57,7 +64,15 @@ function loadDashboardData(patientFallback: number, consultationFallback: number
   const patients = readArray<PatientRecord>('medifollow-patients');
   const consultations = readArray<ConsultationRecord>('medifollow-consultations');
   const prescriptions = readArray<PrescriptionRecord>('medifollow-prescriptions');
+  // Use the same legacy-linkage rules as the patient services, not raw names.
+  const clinicalPatients = getPatients();
+  const clinicalConsultations = getConsultations();
+  const unlinked = countUnlinkedClinicalRecords(clinicalPatients, clinicalConsultations, getPrescriptions());
   return {
+    unlinkedConsultations: unlinked.consultations,
+    unlinkedPrescriptions: unlinked.prescriptions,
+    followUpConsultations: summarizeFollowUps(clinicalConsultations, new Date().toLocaleDateString('sv-SE')),
+    clinicalActivity: summarizeRecordedActivity(clinicalPatients, clinicalConsultations),
     patients: patients.length ? patients : Array.from({ length: patientFallback }, (_, i) => ({ id: String(i), name: '' })),
     consultations: consultations.length ? consultations : Array.from({ length: consultationFallback }, (_, i) => ({ id: String(i), date: '', patient: '', motif: '' })),
     prescriptions,
@@ -311,6 +326,82 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           </article>
         </section>
 
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="JARVIS Follow-up : échéances de suivi">
+          <div className="mf-panel-heading">
+            <div><span className="mf-panel-overline">JARVIS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
+          </div>
+          <p style={{ margin: 0 }}>
+            <strong>{data.followUpConsultations.overdue}</strong> en retard ·{' '}
+            <strong>{data.followUpConsultations.today}</strong> aujourd’hui ·{' '}
+            <strong>{data.followUpConsultations.nextSevenDays}</strong> dans les 7 jours
+          </p>
+          <p style={{ fontSize: 12, margin: '8px 0 0' }}>
+            Contrôles effectués exclus des échéances. Aucun message automatique aux patients.
+          </p>
+          <button type="button" onClick={onStartConsultation} style={{ marginTop: 10 }}>
+            Ouvrir les consultations
+          </button>
+        </section>
+
+        {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
+          <section className="mf-panel" role="alert" aria-label="Documents sans dossier patient confirmé"
+            style={{ marginBottom: 18, padding: 18, borderColor: '#bd7c13' }}>
+            <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
+              Attention — documents cliniques sans dossier patient confirmé
+            </strong>
+            <p style={{ margin: 0 }}>
+              {data.unlinkedConsultations} consultation(s) et {data.unlinkedPrescriptions} ordonnance(s)
+              nécessitent une vérification de l’identité du patient.
+            </p>
+            <p style={{ fontSize: 13, margin: '8px 0 0' }}>
+              Aucun rapprochement automatique n’est effectué pour les homonymes.
+              Vérifiez les documents dans Consultations et Ordonnances avant toute décision clinique.
+            </p>
+          </section>
+        )}
+
+        <section className="mf-panel" style={{ marginBottom: 18, padding: 18, display: 'grid', gap: 12 }}
+          aria-label="JARVIS Activité — statistiques descriptives">
+          <div className="mf-panel-heading">
+            <div>
+              <span className="mf-panel-overline">JARVIS ACTIVITÉ</span>
+              <h3>Consultations par spécialité et motif</h3>
+            </div>
+          </div>
+          <p style={{ margin: 0, fontSize: 12 }}>
+            Statistiques descriptives des informations saisies :
+            {data.clinicalActivity.included} consultation(s) avec dossier patient confirmé.
+            {data.clinicalActivity.excluded > 0 && (
+              <> {data.clinicalActivity.excluded} document(s) sans identité confirmée exclu(s) des calculs.</>
+            )}
+          </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12 }}>
+            {([
+              { title: 'Par spécialité', items: data.clinicalActivity.specialties },
+              { title: 'Par motif enregistré', items: data.clinicalActivity.motifs },
+            ] as const).map((group) => (
+              <div key={group.title} style={{ padding: 12, borderRadius: 10,
+                border: '1px solid var(--color-border)' }}>
+                <strong>{group.title}</strong>
+                {group.items.length === 0 ? <p>Aucune consultation reliée.</p> : (
+                  <ul style={{ margin: '8px 0 0', paddingLeft: 18, display: 'grid', gap: 6 }}>
+                    {group.items.slice(0, 5).map((item) => (
+                      <li key={item.label}>
+                        {item.label} : <strong>{item.count}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {group.items.length > 5 && <small>Cinq catégories les plus fréquentes affichées.</small>}
+              </div>
+            ))}
+          </div>
+          <p style={{ margin: 0, fontSize: 11 }}>
+            Ces chiffres représentent des saisies administratives, pas des diagnostics validés ni une prévalence médicale.
+            Les données non renseignées restent visibles comme telles. Aucun envoi à une IA externe.
+          </p>
+        </section>
+
         <section className="mf-panel" style={{ marginBottom: 18, padding: 20, display: 'grid', gap: 16 }}>
           <div className="mf-panel-heading">
             <div><span className="mf-panel-overline">GESTION DU CABINET</span><h3>État de l’inventaire</h3></div>
@@ -394,16 +485,16 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
             <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
             <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>JARVIS</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
           </article>
 
           <article className="mf-copilot-card">
             <div className="mf-copilot-copy">
               <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
-              <h3>Votre Copilote IA</h3>
+              <h3>JARVIS, votre copilote IA</h3>
               <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
               <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
-              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
+              <button onClick={onOpenCopilot}>Ouvrir JARVIS <span>→</span></button>
             </div>
             <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
           </article>

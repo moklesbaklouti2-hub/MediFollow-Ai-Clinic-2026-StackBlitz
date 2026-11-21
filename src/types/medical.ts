@@ -151,6 +151,14 @@ export type ClinicalSummary = {
   validatedAt?: string;
 };
 
+// ---------- HELIOS Follow-up : programme de suivi clinique facultatif ----------
+
+export type ConsultationFollowUp = {
+  dueDate: string; // date civile YYYY-MM-DD
+  objective: string; // texte saisi par le médecin
+  status: 'planned' | 'completed';
+};
+
 // ---------- CONSULTATION ----------
 
 export type Consultation = {
@@ -173,6 +181,7 @@ export type Consultation = {
   clinicalContext?: ConsultationClinicalContext;
   physicalExamination?: PhysicalExamination;
   clinicalSummary?: ClinicalSummary;
+  followUp?: ConsultationFollowUp;
 };
 
 // ---------- MÉDICAMENT D'ORDONNANCE ----------

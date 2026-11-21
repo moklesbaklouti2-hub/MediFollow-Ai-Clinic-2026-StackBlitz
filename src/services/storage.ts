@@ -1,3 +1,4 @@
+import { resolveLegacyPatientId } from './patientLinkage';
 import type {
   Patient,
   Consultation,
@@ -191,19 +192,10 @@ export function getConsultations(): Consultation[] {
   const patients = getPatients();
 
   return readArray(STORAGE_KEYS.consultations).map((item) => {
-    const patientName = String(item.patient ?? '');
-    const matchingPatient = patients.find(
-      (patient) =>
-        patient.name.trim().toLowerCase() ===
-        patientName.trim().toLowerCase()
-    );
-
     return {
       ...item,
       id: String(item.id ?? createId()),
-      patientId: String(
-        item.patientId ?? matchingPatient?.id ?? ''
-      ),
+      patientId: resolveLegacyPatientId(item.patientId, item.patient, patients),
       date: String(item.date ?? now()),
       motif: String(item.motif ?? ''),
       symptoms: String(item.symptoms ?? ''),
@@ -235,13 +227,6 @@ export function getPrescriptions(): Prescription[] {
   const patients = getPatients();
 
   return readArray(STORAGE_KEYS.prescriptions).map((item) => {
-    const patientName = String(item.patient ?? '');
-    const matchingPatient = patients.find(
-      (patient) =>
-        patient.name.trim().toLowerCase() ===
-        patientName.trim().toLowerCase()
-    );
-
     const medications = Array.isArray(item.medications)
       ? item.medications.map((medication: Record<string, any>) => ({
           id: String(medication.id ?? createId()),
@@ -262,9 +247,7 @@ export function getPrescriptions(): Prescription[] {
     return {
       ...item,
       id: String(item.id ?? createId()),
-      patientId: String(
-        item.patientId ?? matchingPatient?.id ?? ''
-      ),
+      patientId: resolveLegacyPatientId(item.patientId, item.patient, patients),
       date: String(item.date ?? now()),
       medications,
       advice: String(item.advice ?? ''),
@@ -317,6 +300,49 @@ export function saveInventoryData(data: InventoryData): boolean {
   return writeData(STORAGE_KEYS.inventory, data);
 }
 
+/** Refuse tout calcul sur un stock importé ou enregistré avec une quantité invalide. */
+function hasValidInventoryBalance(item: InventoryItem, incoming = 0): boolean {
+  return typeof item.quantity === 'number' &&
+    Number.isFinite(item.quantity) &&
+    item.quantity >= 0 &&
+    Number.isFinite(item.quantity + incoming) &&
+    item.quantity + incoming >= 0;
+}
+
+/** Vérifie la provenance des retours avant tout mouvement compensatoire. */
+function hasConsistentDispenseTrace(data: InventoryData, original: StockMovement): boolean {
+  if (typeof original.id !== 'string' || !original.id.trim() ||
+      typeof original.itemId !== 'string' || !original.itemId.trim() ||
+      typeof original.prescriptionId !== 'string' || !original.prescriptionId.trim() ||
+      typeof original.patientId !== 'string' || !original.patientId.trim()) {
+    return false;
+  }
+
+  // Un identifiant de mouvement doit désigner une seule trace, sans ambiguïté.
+  const counts = new Map<string, number>();
+  for (const movement of data.movements) {
+    counts.set(movement.id, (counts.get(movement.id) ?? 0) + 1);
+  }
+  if (counts.get(original.id) !== 1) return false;
+
+  // Une même ordonnance ne doit jamais référencer deux patients différents.
+  if (data.movements.some((movement) =>
+    movement.type === 'dispense' &&
+    movement.prescriptionId === original.prescriptionId &&
+    movement.patientId !== original.patientId
+  )) return false;
+
+  return data.movements.every((movement) => {
+    if (movement.type !== 'return' || movement.reversesMovementId !== original.id) return true;
+    return typeof movement.id === 'string' &&
+      movement.id.trim().length > 0 &&
+      counts.get(movement.id) === 1 &&
+      movement.itemId === original.itemId &&
+      movement.prescriptionId === original.prescriptionId &&
+      movement.patientId === original.patientId;
+  });
+}
+
 /**
  * Déduit le stock lors d'une délivrance effective.
  * Répartition FEFO automatique entre les lots du même produit :
@@ -328,22 +354,24 @@ export function dispenseInventoryItems(input: {
   patientId: string;
   items: Array<{ inventoryItemId: string; quantity: number }>;
 }): { success: boolean; error?: string; alreadyDispensed?: boolean } {
+  if (!input || typeof input.prescriptionId !== 'string' || !input.prescriptionId.trim() ||
+      typeof input.patientId !== 'string' || !input.patientId.trim()) {
+    return { success: false, error: 'Délivrance refusée : ordonnance ou patient non identifié.' };
+  }
   const data = getInventoryData();
 
-  // Empêcher toute seconde déduction pour une ordonnance déjà délivrée.
-  const existingDispense = data.movements.some(
-    (movement) =>
-      movement.type === 'dispense' &&
-      movement.prescriptionId === input.prescriptionId
-  );
-  if (existingDispense) return { success: true, alreadyDispensed: true };
-
-  const requested = input.items.filter(
-    (line) => line.inventoryItemId && Number.isFinite(line.quantity) && line.quantity > 0
-  );
-  if (requested.length === 0) {
+  // Une seule ligne invalide bloque toute la délivrance : ne jamais déduire
+  // silencieusement les autres articles d'une demande partiellement erronée.
+  if (!Array.isArray(input.items) || input.items.length === 0) {
     return { success: false, error: 'Aucun article de stock valide à délivrer.' };
   }
+  if (input.items.some((line) =>
+    !line || typeof line.inventoryItemId !== 'string' || !line.inventoryItemId.trim() ||
+    typeof line.quantity !== 'number' || !Number.isFinite(line.quantity) || line.quantity <= 0
+  )) {
+    return { success: false, error: 'Délivrance refusée : identifiant ou quantité invalide pour un article. Aucun stock modifié.' };
+  }
+  const requested = input.items;
 
   const currentDate = new Date();
   const today = [
@@ -367,23 +395,75 @@ export function dispenseInventoryItems(input: {
       return { success: false, error: 'Un équipement durable ne peut pas être déduit comme un médicament délivré.' };
     }
 
+    if (typeof selected.name !== 'string' || !selected.name.trim() ||
+        !['supply', 'treatment'].includes(selected.category)) {
+      return { success: false, error: 'Délivrance refusée : produit ou catégorie incohérente.' };
+    }
+    if (data.items.filter((entry) => entry.id === selected.id).length !== 1) {
+      return { success: false, error: 'Délivrance refusée : identifiant de lot dupliqué.' };
+    }
+
     const key = selected.category + '::' + selected.name.trim().toLocaleLowerCase('fr');
     const previous = productRequests.get(key);
+    const totalQuantity = (previous?.quantity ?? 0) + line.quantity;
+    if (!Number.isFinite(totalQuantity)) {
+      return { success: false, error: 'Délivrance refusée : somme des quantités invalide.' };
+    }
     productRequests.set(key, {
       name: selected.name,
       category: selected.category,
-      quantity: (previous?.quantity ?? 0) + line.quantity,
+      quantity: totalQuantity,
     });
+  }
+
+  // Un replay n'est idempotent que s'il correspond réellement aux produits
+  // et quantités historiquement délivrés, même en cas de répartition FEFO.
+  const existingDispenses = data.movements.filter((movement) =>
+    movement.type === 'dispense' && movement.prescriptionId === input.prescriptionId
+  );
+  if (existingDispenses.length > 0) {
+    const recordedQuantities = new Map<string, number>();
+    for (const movement of existingDispenses) {
+      if (movement.patientId !== input.patientId ||
+          !hasConsistentDispenseTrace(data, movement) ||
+          typeof movement.quantity !== 'number' ||
+          !Number.isFinite(movement.quantity) || movement.quantity <= 0) {
+        return { success: false, error: 'Délivrance refusée : conflit de patient ou trace incohérente.' };
+      }
+      const sourceLots = data.items.filter((lot) => lot.id === movement.itemId);
+      if (sourceLots.length !== 1 || typeof sourceLots[0].name !== 'string' ||
+          !sourceLots[0].name.trim() || !['supply', 'treatment'].includes(sourceLots[0].category)) {
+        return { success: false, error: 'Délivrance refusée : lot historique introuvable ou ambigu.' };
+      }
+      const lot = sourceLots[0];
+      const key = lot.category + '::' + lot.name.trim().toLocaleLowerCase('fr');
+      const total = (recordedQuantities.get(key) ?? 0) + movement.quantity;
+      if (!Number.isFinite(total)) {
+        return { success: false, error: 'Délivrance refusée : historique des quantités invalide.' };
+      }
+      recordedQuantities.set(key, total);
+    }
+    if (recordedQuantities.size !== productRequests.size ||
+        [...productRequests].some(([key, request]) => recordedQuantities.get(key) !== request.quantity)) {
+      return { success: false, error: 'Ordonnance déjà délivrée avec des produits ou quantités différents. Vérification manuelle nécessaire.' };
+    }
+    return { success: true, alreadyDispensed: true };
   }
 
   // Calculer toutes les allocations avant de modifier le moindre stock.
   const plannedMovements: Array<{ item: InventoryItem; quantity: number }> = [];
 
   for (const request of productRequests.values()) {
-    const matchingLots = data.items
+    const productLots = data.items.filter((item) =>
+      item.category === request.category &&
+      item.name.trim().toLocaleLowerCase('fr') === request.name.trim().toLocaleLowerCase('fr')
+    );
+    // Ne pas ignorer un lot corrompu si un autre lot pourrait servir la demande.
+    if (productLots.some((lot) => !hasValidInventoryBalance(lot))) {
+      return { success: false, error: 'Délivrance refusée : quantité de stock incohérente pour un lot de ce produit.' };
+    }
+    const matchingLots = productLots
       .filter((item) =>
-        item.category === request.category &&
-        item.name.trim().toLocaleLowerCase('fr') === request.name.trim().toLocaleLowerCase('fr') &&
         item.quantity > 0 &&
         (!item.expiryDate || item.expiryDate >= today)
       )
@@ -442,7 +522,10 @@ export function returnDispensedStock(input: {
   quantity: number;
   reason?: string;
 }): { success: boolean; error?: string } {
-  if (!Number.isFinite(input.quantity) || input.quantity <= 0) {
+  if (!input || typeof input.dispenseMovementId !== 'string' || !input.dispenseMovementId.trim()) {
+    return { success: false, error: 'Retour refusé : mouvement de délivrance non identifié.' };
+  }
+  if (typeof input.quantity !== 'number' || !Number.isFinite(input.quantity) || input.quantity <= 0) {
     return { success: false, error: 'Quantité de retour invalide.' };
   }
 
@@ -451,19 +534,41 @@ export function returnDispensedStock(input: {
     movement.id === input.dispenseMovementId && movement.type === 'dispense'
   );
   if (!original) return { success: false, error: 'Mouvement de délivrance introuvable.' };
+  if (!hasConsistentDispenseTrace(data, original)) {
+    return { success: false, error: 'Retour refusé : traçabilité du lot, du patient ou de l’ordonnance incohérente.' };
+  }
 
-  const alreadyReturned = data.movements
-    .filter((movement) => movement.type === 'return' && movement.reversesMovementId === original.id)
-    .reduce((sum, movement) => sum + movement.quantity, 0);
-  const remaining = Math.max(0, original.quantity - alreadyReturned);
+  // Une trace incomplète ou corrompue ne doit jamais gonfler le stock.
+  if (!Number.isFinite(original.quantity) || original.quantity <= 0) {
+    return { success: false, error: 'Délivrance d’origine incohérente : vérifiez l’historique du lot.' };
+  }
+  const previousReturns = data.movements.filter((movement) =>
+    movement.type === 'return' && movement.reversesMovementId === original.id
+  );
+  if (previousReturns.some((movement) => !Number.isFinite(movement.quantity) || movement.quantity <= 0)) {
+    return { success: false, error: 'Historique des retours incohérent : correction manuelle nécessaire.' };
+  }
+  const alreadyReturned = previousReturns.reduce((sum, movement) => sum + movement.quantity, 0);
+  if (!Number.isFinite(alreadyReturned) || alreadyReturned > original.quantity) {
+    return { success: false, error: 'Retours enregistrés supérieurs à la délivrance d’origine.' };
+  }
+  const remaining = original.quantity - alreadyReturned;
   if (input.quantity > remaining) {
     return { success: false, error: `Retour supérieur au reliquat : ${remaining} unité(s) peuvent encore être réintégrées pour ce lot.` };
   }
 
-  const item = data.items.find((entry) => entry.id === original.itemId);
-  if (!item) return { success: false, error: 'Lot d’origine introuvable dans l’inventaire.' };
+  // Un identifiant de lot doit désigner exactement un article, y compris
+  // dans les historiques importés. Ne jamais créditer le premier doublon.
+  const sourceLots = data.items.filter((entry) => entry.id === original.itemId);
+  if (sourceLots.length !== 1) {
+    return { success: false, error: 'Retour refusé : lot d’origine absent ou identifiant dupliqué.' };
+  }
+  const item = sourceLots[0];
   if (item.category === 'equipment') {
     return { success: false, error: 'Un équipement durable ne relève pas d’un retour de délivrance.' };
+  }
+  if (!hasValidInventoryBalance(item, input.quantity)) {
+    return { success: false, error: 'Retour refusé : quantité du lot incohérente ou dépassement numérique.' };
   }
   const returnDate = new Date();
   const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
@@ -496,6 +601,9 @@ export function returnDispensedStock(input: {
 export function cancelDispensedPrescriptionStock(input: {
   prescriptionId: string;
 }): { success: boolean; error?: string; alreadyReturned?: boolean } {
+  if (!input || typeof input.prescriptionId !== 'string' || !input.prescriptionId.trim()) {
+    return { success: false, error: 'Annulation refusée : ordonnance non identifiée.' };
+  }
   const data = getInventoryData();
   const originalMovements = data.movements.filter((movement) =>
     movement.type === 'dispense' && movement.prescriptionId === input.prescriptionId
@@ -506,19 +614,53 @@ export function cancelDispensedPrescriptionStock(input: {
 
   const allocations: Array<{ movement: StockMovement; item: InventoryItem; quantity: number }> = [];
   for (const movement of originalMovements) {
-    const returned = data.movements
-      .filter((entry) => entry.type === 'return' && entry.reversesMovementId === movement.id)
-      .reduce((sum, entry) => sum + entry.quantity, 0);
-    const remaining = Math.max(0, movement.quantity - returned);
+    if (!hasConsistentDispenseTrace(data, movement)) {
+      return { success: false, error: 'Annulation refusée : traçabilité du lot, du patient ou de l’ordonnance incohérente.' };
+    }
+    if (!Number.isFinite(movement.quantity) || movement.quantity <= 0) {
+      return { success: false, error: 'Annulation refusée : quantité d’une délivrance incohérente.' };
+    }
+    const previousReturns = data.movements.filter((entry) =>
+      entry.type === 'return' && entry.reversesMovementId === movement.id
+    );
+    if (previousReturns.some((entry) => !Number.isFinite(entry.quantity) || entry.quantity <= 0)) {
+      return { success: false, error: 'Annulation refusée : historique des retours incohérent.' };
+    }
+    const returned = previousReturns.reduce((sum, entry) => sum + entry.quantity, 0);
+    if (!Number.isFinite(returned) || returned > movement.quantity) {
+      return { success: false, error: 'Annulation refusée : retours supérieurs à la délivrance d’origine.' };
+    }
+    const remaining = movement.quantity - returned;
+    // Contrôler l'unicité avant le cas « déjà retourné » : un journal
+    // ambigu ne doit jamais être confirmé comme une annulation valide.
+    const sourceLots = data.items.filter((entry) => entry.id === movement.itemId);
+    if (sourceLots.length !== 1) {
+      return { success: false, error: 'Annulation refusée : lot d’origine absent ou identifiant dupliqué.' };
+    }
+    const item = sourceLots[0];
     if (remaining === 0) continue;
-    const item = data.items.find((entry) => entry.id === movement.itemId);
-    if (!item) return { success: false, error: `Lot d’origine introuvable : ${movement.itemName}.` };
+    if (item.category === 'equipment') {
+      return { success: false, error: 'Annulation refusée : un équipement durable ne peut pas être réintégré comme une délivrance.' };
+    }
+    if (!hasValidInventoryBalance(item, remaining)) {
+      return { success: false, error: 'Annulation refusée : quantité du lot incohérente ou dépassement numérique.' };
+    }
     const returnDate = new Date();
     const today = [returnDate.getFullYear(), String(returnDate.getMonth() + 1).padStart(2, '0'), String(returnDate.getDate()).padStart(2, '0')].join('-');
     if (item.expiryDate && item.expiryDate < today) {
       return { success: false, error: `Annulation bloquée pour le lot périmé « ${item.name} ». Isolez-le : il ne peut pas être réintégré au stock disponible.` };
     }
     allocations.push({ movement, item, quantity: remaining });
+  }
+
+  // Les retours multiples vers un même lot sont cumulés avant toute écriture.
+  const returnsByLot = new Map<string, number>();
+  for (const allocation of allocations) {
+    const total = (returnsByLot.get(allocation.item.id) ?? 0) + allocation.quantity;
+    if (!Number.isFinite(total) || !hasValidInventoryBalance(allocation.item, total)) {
+      return { success: false, error: 'Annulation refusée : cumul des retours incohérent pour un lot.' };
+    }
+    returnsByLot.set(allocation.item.id, total);
   }
 
   if (allocations.length === 0) return { success: true, alreadyReturned: true };

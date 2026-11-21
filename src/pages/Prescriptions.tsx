@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMedicalData } from '../hooks/useMedicalData';
+import { hasConfirmedPatientSelection } from '../services/patientSelectionGuard';
 import type { InventoryData, Medication } from '../types/medical';
 import { cancelDispensedPrescriptionStock, dispenseInventoryItems, getInventoryData, getMedicalData, returnDispensedStock, subscribeToMedicalData } from '../services/storage';
 
@@ -79,8 +80,8 @@ export default function Prescriptions() {
   }
 
   function validatePrescription() {
-    if (!patientId) {
-      alert('Veuillez sélectionner un patient enregistré.');
+    if (!hasConfirmedPatientSelection(patientId, patients)) {
+      alert('Veuillez sélectionner un patient enregistré et non ambigu.');
       return false;
     }
 

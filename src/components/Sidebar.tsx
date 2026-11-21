@@ -91,7 +91,7 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
                   aria-current={selected ? 'page' : undefined}
                 >
                   <span className="nav-icon"><NavIcon name={item.icon} /></span>
-                  <span className="nav-label">{item.label}</span>
+                  <span className="nav-label">{item.label === 'Copilote IA' ? 'JARVIS · Copilote IA' : item.label}</span>
                   {selected && <span className="nav-active-indicator" aria-hidden="true" />}
                 </button>
               );

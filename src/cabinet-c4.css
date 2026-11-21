@@ -1,0 +1,153 @@
+/* Cabinet C4 « Lilas clinique », adapté au copilote et à l’orbe HELIOS. */
+#root .app :is(.premium-copilot, .mf-orb-assistant) {
+  --a-bg:#f6f5fb;--a-paper:#fff;--a-soft:#ece7fa;
+  --a-ink:#221d3a;--a-muted:#5a5475;--a-primary:#5b3fb0;--a-on-primary:#fff;
+  --a-line:#dedaee;--a-field-line:#7c7596;
+  --a-shadow:0 6px 18px rgb(34 29 58 / .06);
+}
+:root[data-theme='dark'] #root .app :is(.premium-copilot, .mf-orb-assistant) {
+  --a-bg:#17142a;--a-paper:#221e3a;--a-soft:#2e2757;
+  --a-ink:#eeebfa;--a-muted:#b6b0d0;--a-primary:#bdaeff;--a-on-primary:#1b1535;
+  --a-line:#38325a;--a-field-line:#8f88b2;
+  --a-shadow:0 6px 18px rgb(0 0 0 / .12);
+}
+
+#root .app .premium-copilot {
+  --mf-heading: var(--a-ink);
+  --mf-body: var(--a-ink);
+  --mf-muted: var(--a-muted);
+  --mf-accent: var(--a-primary);
+  --mf-accent-soft: var(--a-soft);
+  --mf-control-bg: var(--a-paper);
+  --mf-control-border: var(--a-field-line);
+  --mf-panel-bg: var(--a-paper);
+  --mf-panel-border: var(--a-line);
+  --mf-panel-soft: var(--a-soft);
+  --mf-elevation: var(--a-shadow);
+  padding: clamp(10px, 2vw, 20px);
+  background: var(--a-bg);
+  border-radius: 16px;
+}
+
+:root #root .app .premium-copilot :is(.premium-copilot-header, .copilot-main-column, .copilot-side-column, .premium-input-area) {
+  background: var(--a-paper);
+  color: var(--a-ink);
+  border-color: var(--a-line);
+  box-shadow: var(--a-shadow);
+}
+
+:root #root .app .premium-copilot :is(h2, h3, .message-author, .message-bubble, .copilot-context-label) {
+  color: var(--a-ink);
+}
+
+#root .app .premium-copilot h2 { font-weight: 800; }
+
+:root #root .app .premium-copilot :is(.copilot-eyebrow, .copilot-identity-text p, .copilot-status, .input-footer, .copilot-context-title small, .copilot-context-summary) {
+  color: var(--a-muted);
+}
+
+:root #root .app .premium-copilot .premium-message.user .message-bubble,
+:root #root .app .premium-copilot .copilot-status {
+  background: var(--a-soft);
+  border-color: var(--a-line);
+}
+
+#root .app :is(.mf-orb-panel, .mf-orb-insight-bubble, .mf-helios-playback) {
+  color: var(--a-ink);
+  background: var(--a-paper);
+  border: 1px solid var(--a-field-line);
+  box-shadow: var(--a-shadow);
+}
+
+#root .app .mf-orb-assistant :is(.mf-orb-panel-header, .mf-orb-context, .mf-orb-chat-form, .mf-orb-message.user, .mf-orb-insight-question) {
+  color: var(--a-ink);
+  background: var(--a-soft);
+  border-color: var(--a-line);
+}
+
+#root .app .mf-orb-assistant .mf-orb-message.assistant {
+  background: var(--a-bg);
+  border-color: var(--a-line);
+}
+
+#root .app .mf-orb-assistant :is(.mf-orb-panel-identity small, .mf-orb-welcome p, .mf-orb-panel-footer, .mf-orb-insight-bubble p, .mf-orb-command-help) {
+  color: var(--a-muted);
+}
+
+#root .app .mf-orb-assistant :is(.mf-orb-context strong, .mf-orb-message > span, .mf-orb-typing, .mf-orb-insight-question small, .mf-orb-speech-status:not(.has-error)) {
+  color: var(--a-primary);
+}
+
+#root .app .mf-orb-insight-bubble::after {
+  background: var(--a-paper);
+  border-color: var(--a-field-line);
+}
+
+.mf-orb-mode-switch { display: flex; gap: 8px; padding: 8px 12px 0; }
+.mf-orb-mode-switch button { flex: 1; }
+.mf-orb-command-help { margin: 7px 12px; font-size: 11px; overflow-y: auto; }
+
+:root #root .app .main .premium-copilot :is(.premium-chat-input textarea, .copilot-context-panel select),
+#root .app .mf-orb-panel textarea {
+  min-height: 52px;
+  border: 2px solid var(--a-field-line) !important;
+  border-radius: 12px !important;
+  background: var(--a-paper);
+  color: var(--a-ink);
+}
+
+:root #root .app .main .premium-copilot .premium-chat-input textarea { min-height: 112px; }
+#root .app .mf-orb-panel textarea::placeholder { color: var(--a-muted); }
+
+#root .app .main .premium-copilot button,
+#root .app .mf-orb-assistant button:not(.mf-orb-launcher, .is-listening) {
+  min-height: 52px !important;
+  min-width: 52px;
+  padding-inline: 8px;
+  border: 2px solid var(--a-field-line);
+  border-radius: 12px;
+  background: var(--a-paper);
+  color: var(--a-ink);
+  font-weight: 700;
+}
+
+#root .app .mf-orb-chat-form .mf-orb-mic-button.is-listening {
+  min-height: 52px;
+  min-width: 52px;
+  border-radius: 12px;
+}
+
+#root .app .main .premium-copilot .copilot-send-button,
+#root .app :is(.mf-orb-chat-form button[type='submit'], .mf-orb-mode-switch button[aria-pressed='true'], .mf-helios-playback button) {
+  background: var(--a-primary);
+  border-color: var(--a-primary);
+  color: var(--a-on-primary);
+}
+
+:root #root .app :is(.main .premium-copilot, .mf-orb-assistant) :is(button, .premium-chat-input textarea, .copilot-context-panel select, textarea):focus-visible {
+  outline: 2px solid var(--a-primary) !important;
+  outline-offset: 2px;
+}
+
+#root .app .mf-orb-conversation:has(.mf-orb-suggestions) { padding-block: 10px; }
+
+:root[data-theme='light'] #root .app .mf-orb-assistant :is(.mf-orb-speech-status.has-error, .mf-orb-priority.priority-urgent, .mf-orb-mic-button.is-listening) {
+  color: #902536;
+}
+
+:root[data-theme='light'] #root .app .mf-orb-assistant :is(.mf-orb-priority.priority-attention, .mf-orb-speech-corrections strong) {
+  color: #795014;
+}
+
+:root[data-theme='light'] #root .app .mf-orb-assistant .mf-orb-priority:not(.priority-attention, .priority-urgent) {
+  color: #176153;
+}
+
+@media (max-width: 650px) {
+  #root .app .mf-orb-panel { height: min(560px, calc(100dvh - 195px)); }
+  #root .app .premium-copilot .premium-input-area { padding-bottom: 88px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #root .app .mf-orb-assistant :is(.mf-orb-insight-bubble, .mf-orb-mic-button.is-listening) { animation: none; }
+}

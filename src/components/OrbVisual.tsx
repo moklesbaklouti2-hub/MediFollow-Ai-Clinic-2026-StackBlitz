@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useSyncExternalStore } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -240,9 +240,17 @@ const plasmaFragmentShader = `
   );
 }
 
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+function subscribeToMotionPreference(callback: () => void) {
+  motionPreference.addEventListener('change', callback);
+  return () => motionPreference.removeEventListener('change', callback);
+}
+const prefersReducedMotion = () => motionPreference.matches;
+
 export default function OrbVisual({ isThinking }: OrbVisualProps) {
+  const reducedMotion = useSyncExternalStore(subscribeToMotionPreference, prefersReducedMotion);
   return (
-    <Canvas dpr={[1, 1.35]} camera={{ position: [0, 0, 3.65], fov: 42 }}
+    <Canvas frameloop={reducedMotion ? 'demand' : 'always'} dpr={[1, 1.35]} camera={{ position: [0, 0, 3.65], fov: 42 }}
       gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
       fallback={<div className="mf-orb-fallback" />}>
       <LivingOrb isThinking={isThinking} />

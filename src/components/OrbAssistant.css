@@ -93,3 +93,43 @@
   font-size:10px;font-weight:700;cursor:pointer
 }
 .mf-orb-live-analysis button:hover{background:rgba(91,218,204,.2)}
+
+/* Lecture ponctuelle explicite, focus visible au clavier et contraste lisible. */
+.mf-orb-read-reply{margin-top:8px;padding:7px 10px;border:1px solid rgba(108,226,220,.42);border-radius:8px;background:rgba(91,218,204,.13);color:#b8fff2;font:inherit;font-size:11px;cursor:pointer}
+.mf-orb-read-reply:hover{background:rgba(91,218,204,.23)}
+.mf-orb-read-reply:focus-visible{outline:2px solid #b8fff2;outline-offset:2px}
+.mf-orb-read-reply:disabled{opacity:.5;cursor:not-allowed}
+
+.mf-helios-playback {
+  position: absolute;
+  z-index: 2;
+  right: 100%;
+  bottom: 52px;
+  margin-right: 8px;
+  width: max-content;
+  max-width: min(230px, 55vw);
+  color: #e9f8fb;
+  background: #0a1d2e;
+  border-radius: 8px;
+  pointer-events: auto;
+}
+.mf-helios-playback button {
+  min-height: 44px;
+  padding: 0 14px;
+  color: inherit;
+  background: transparent;
+  border: 1px solid rgba(111,204,226,.5);
+  border-radius: inherit;
+  cursor: pointer;
+}
+.mf-helios-playback span { display: block; padding: 8px 12px; }
+@media (prefers-reduced-motion: no-preference) {
+  .mf-orb-launcher.is-speaking .mf-orb-canvas {
+    transform-origin: center;
+    animation: mfHeliosSpeaking 1.8s ease-in-out infinite;
+  }
+}
+@keyframes mfHeliosSpeaking {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.045); }
+}

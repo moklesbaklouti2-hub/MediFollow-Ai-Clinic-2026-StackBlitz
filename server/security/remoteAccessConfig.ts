@@ -1,0 +1,59 @@
+// Preparatory HTTPS/origin configuration validator. NOT mounted in production.
+// This rejects unsafe remote deployment configuration before credentials are enabled.
+export type RemoteAccessConfig = { publicOrigin: string; trustProxy: boolean };
+
+export function validateRemoteAccessConfig(input: {
+  publicOrigin?: string;
+  trustProxy?: boolean;
+  production?: boolean;
+}): RemoteAccessConfig {
+  const value = input.publicOrigin;
+  if (!value || typeof value !== 'string') throw new Error('PUBLIC_ORIGIN is required');
+  let origin: URL;
+  try { origin = new URL(value); } catch { throw new Error('Invalid PUBLIC_ORIGIN'); }
+  if (origin.username || origin.password || origin.search || origin.hash ||
+      origin.pathname !== '/' || origin.origin + '/' !== value) {
+    throw new Error('PUBLIC_ORIGIN must be an exact origin without credentials, path, query or fragment');
+  }
+  const isLocal = origin.hostname === 'localhost' || origin.hostname === '127.0.0.1';
+  if (origin.protocol !== 'https:' && !(input.production === false && isLocal && origin.protocol === 'http:')) {
+    throw new Error('HTTPS is required for remote access');
+  }
+  if (input.production !== false && isLocal) throw new Error('Public production origin cannot be localhost');
+  if (input.production !== false && input.trustProxy !== true) {
+    throw new Error('Production reverse proxy configuration must be explicitly verified');
+  }
+  return { publicOrigin: origin.origin, trustProxy: input.trustProxy === true };
+}
+
+export function originMatches(requestOrigin: unknown, configuredOrigin: string): boolean {
+  if (typeof requestOrigin !== 'string' || requestOrigin.length > 2048) return false;
+  return requestOrigin === configuredOrigin;
+}
+
+/**
+ * Opt-in startup preflight. It does NOT authenticate requests or enable deployment.
+ * Explicit REMOTE_ACCESS_MODE=enabled requires a verified public HTTPS origin.
+ * Any other nonempty value is rejected to avoid silently ignoring typos.
+ */
+export function validateRemoteStartup(env: Record<string, string | undefined>): RemoteAccessConfig | null {
+  const mode = env.REMOTE_ACCESS_MODE;
+  if (mode === undefined || mode === '') {
+    // NODE_ENV=production must never expose the unguarded development
+    // handlers on 0.0.0.0 just because REMOTE_ACCESS_MODE was omitted.
+    // Development remains available with fictional test data only.
+    if (env.NODE_ENV === 'production') {
+      throw new Error('Production startup requires explicit REMOTE_ACCESS_MODE and verified clinical access configuration');
+    }
+    return null;
+  }
+  if (mode !== 'enabled') throw new Error('Invalid REMOTE_ACCESS_MODE; expected enabled or unset');
+  if (env.NODE_ENV !== 'production') {
+    throw new Error('Remote access requires NODE_ENV=production');
+  }
+  return validateRemoteAccessConfig({
+    publicOrigin: env.PUBLIC_ORIGIN,
+    trustProxy: env.REMOTE_TRUST_PROXY === 'verified',
+    production: true,
+  });
+}
