@@ -30,8 +30,9 @@ Pour une configuration IA autorisée, créez un fichier `.env` côté serveur à
 npm run build
 npm run test:complete
 npm run test:warm-design
-npm run test:jarvis
 ```
+
+La suite `test:complete` inclut les scénarios fictifs de JARVIS. Pour les exécuter seuls, utilisez `npm run test:jarvis`.
 
 Le scénario Chromium requiert Python avec Playwright et Chromium. Lancez les deux versions sur des ports locaux différents.
 
