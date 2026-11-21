@@ -29,6 +29,7 @@ export function useJarvisConversation(isCurrent: () => boolean) {
     history.current = [];
     setTurns([]);
     setError('');
+    setUnavailable(false);
   }
 
   useEffect(() => () => {

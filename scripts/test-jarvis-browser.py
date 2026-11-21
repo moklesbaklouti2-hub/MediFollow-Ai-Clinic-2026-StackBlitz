@@ -333,17 +333,33 @@ def functional(browser, args):
 
 def no_provider(browser, args):
     page = app_page(browser, args.app, viewport={"width": 1280, "height": 800}, color_scheme="dark")
-    launch(page, args.app)
-    page.get_by_label("Votre message").fill("Demande fictive")
-    with page.expect_response(lambda response: response.url.endswith("/api/chat") and response.status == 503) as response:
-        page.get_by_role("button", name="Envoyer", exact=True).click()
-    assert response.value.json()["code"] == "AI_NOT_CONFIGURED"
-    assert response.value.headers["cache-control"] == "no-store"
-    expect(page.get_by_role("alert")).to_contain_text("Aucun fournisseur IA configuré.")
-    expect(page.locator(".jarvis-status")).to_have_text("Moteur IA indisponible")
+    launch(page, args.app, fixture=True)
+    composer = page.get_by_label("Votre message")
+    status = page.locator(".jarvis-status")
+    alert = page.locator(".jarvis").get_by_role("alert")
+
+    def submit_unavailable_request():
+        composer.fill("Demande fictive")
+        with page.expect_response(lambda response: response.url.endswith("/api/chat") and response.status == 503) as response:
+            page.get_by_role("button", name="Envoyer", exact=True).click()
+        assert response.value.json()["code"] == "AI_NOT_CONFIGURED"
+        assert response.value.headers["cache-control"] == "no-store"
+        expect(alert).to_contain_text("Aucun fournisseur IA configuré.")
+        expect(status).to_have_text("Moteur IA indisponible")
+
+    submit_unavailable_request()
     page.screenshot(path=args.output / "sans-fournisseur.png", full_page=True)
+    page.get_by_label("Dossier patient").select_option("fixture-a")
+    expect(status).to_have_text("Prêt")
+    expect(alert).to_have_count(0)
+
+    submit_unavailable_request()
+    page.get_by_role("button", name="Effacer la conversation", exact=True).click()
+    expect(status).to_have_text("Prêt")
+    expect(alert).to_have_count(0)
+    expect(composer).to_have_value("")
     page.close()
-    print("PASS backend local sans fournisseur et réponse non mise en cache")
+    print("PASS backend local sans fournisseur, réponse non mise en cache et réinitialisation de l’état")
 
 
 def main():

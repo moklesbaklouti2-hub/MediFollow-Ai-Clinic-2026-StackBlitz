@@ -10,6 +10,7 @@ on:
       - audit-stabilisation-2026-11-10
       - prep-chronologie-2026-11-11-qw052-055
       - design/premium-clinical-ui-2026-11-16
+      - codex/medifollow-jarvis-test-coverage-2026-11-21
 
 
 permissions:
@@ -37,6 +38,8 @@ jobs:
         run: npm run test:clinical-premium
       - name: Vérifier le thème sans stockage navigateur
         run: npm run test:theme-storage
+      - name: Vérifier les scénarios JARVIS fictifs
+        run: npm run test:jarvis
       - name: Compiler le mode d'essai connexion medecin (jamais deploye)
         env:
           VITE_DOCTOR_AUTH_MODE: integration-test
