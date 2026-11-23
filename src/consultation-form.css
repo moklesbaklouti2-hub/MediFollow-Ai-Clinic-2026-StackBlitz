@@ -1,0 +1,123 @@
+/* LAB-UI-001 — Codex pilot. Presentation only, scoped to the consultation form. */
+#root .lab-consultation-form {
+  --form-accent: #176875;
+  --form-accent-soft: #eaf6f6;
+  --form-field: #ffffff;
+  --form-placeholder: #526b80;
+}
+:root[data-theme='dark'] #root .lab-consultation-form {
+  --form-accent: #8ce5dc;
+  --form-accent-soft: #153a43;
+  --form-field: #0c2037;
+  --form-placeholder: #a9bfd5;
+}
+#root .lab-consultation-form .consultation-section {
+  gap: 22px;
+  padding: clamp(18px, 2.5vw, 28px);
+  border-radius: 18px;
+}
+#root .lab-consultation-form .consultation-section > h3 {
+  border: 0;
+  border-left: 3px solid var(--form-accent);
+  border-radius: 0 10px 10px 0;
+  background: linear-gradient(90deg, var(--form-accent-soft), transparent);
+  padding: 14px 16px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+#root .lab-consultation-form .consultation-grid { gap: 20px; align-items: start; }
+#root .lab-consultation-form .consultation-field { gap: 9px; }
+#root .lab-consultation-form .consultation-field > label,
+#root .lab-consultation-form .vital-card > label {
+  font-size: 14px !important;
+  letter-spacing: .01em;
+}
+/* Existing legacy rules use !important for field surfaces and type size. */
+#root .lab-consultation-form :is(.consultation-field,.vital-input-row,.pex-row) :is(input:not([type='checkbox']),select,textarea) {
+  background: var(--form-field) !important;
+  font-size: 16px !important;
+  min-height: 48px;
+  padding: 12px 14px;
+  scroll-margin-block: 24px;
+}
+#root .lab-consultation-form :is(input,textarea)::placeholder {
+  color: var(--form-placeholder) !important;
+  opacity: 1;
+}
+#root .lab-consultation-form .consultation-field > textarea { min-height: 128px; line-height: 1.65; }
+#root .lab-consultation-form :is(input,select,textarea,summary,button):focus-visible {
+  outline: 3px solid var(--form-accent) !important;
+  outline-offset: 3px;
+}
+#root .lab-consultation-form .vitals-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 14px;
+}
+#root .lab-consultation-form .vital-card {
+  border-radius: 14px;
+  background: var(--color-surface);
+  box-shadow: none;
+  padding: 16px;
+  gap: 12px;
+}
+#root .lab-consultation-form .vital-input-row { gap: 10px; }
+#root .lab-consultation-form .vital-input-row input { font-weight: 650; }
+#root .lab-consultation-form .vital-input-row span {
+  padding: 7px 5px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+#root .lab-consultation-form .pex-note {
+  padding: 12px 14px;
+  border-left: 3px solid var(--form-accent);
+  background: var(--form-accent-soft);
+  border-radius: 0 10px 10px 0;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+#root .lab-consultation-form .pex-section {
+  padding: 0 14px 14px;
+  background: var(--color-surface-secondary);
+  border-radius: 14px;
+}
+#root .lab-consultation-form .pex-section:not([open]) { padding-bottom: 0; }
+#root .lab-consultation-form .pex-section > summary {
+  padding: 16px 4px;
+  font-size: 15px;
+  min-height: 52px;
+  box-sizing: border-box;
+}
+#root .lab-consultation-form .pex-row {
+  grid-template-columns: minmax(160px, .9fr) minmax(0, 1.4fr);
+  gap: 8px 18px;
+  margin-block: 0 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  align-items: start;
+}
+#root .lab-consultation-form .pex-row > label { grid-column: 1; font-size: 14px; line-height: 1.5; }
+#root .lab-consultation-form .pex-row > select { grid-column: 1; grid-row: 2; }
+#root .lab-consultation-form .pex-observations {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+#root .lab-consultation-form .pex-observations > label { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+#root .lab-consultation-form .pex-observations > textarea { min-height: 94px; grid-column: auto; line-height: 1.6; }
+#root .lab-consultation-form .consultation-save { min-height: 48px; margin-right: 76px; }
+@media (max-width: 740px) {
+  #root .lab-consultation-form .pex-row { grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  #root .lab-consultation-form .pex-observations { grid-column: 1; grid-row: 3; margin-top: 6px; }
+}
+@media (max-width: 420px) {
+  #root .lab-consultation-form .consultation-section { padding: 16px !important; gap: 18px; }
+  #root .lab-consultation-form .consultation-section > h3 { font-size: 16px; padding: 12px; }
+  #root .lab-consultation-form .vitals-grid { grid-template-columns: minmax(0, 1fr); }
+}
