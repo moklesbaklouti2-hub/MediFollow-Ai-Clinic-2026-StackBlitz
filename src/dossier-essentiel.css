@@ -1,0 +1,199 @@
+/* Dossier essentiel — approved direction C, foundation 01.
+ * Presentation only. Navigation, clinical states and persistence are untouched.
+ * Loaded as an additive layer; the previous experiment remains reversible.
+ */
+html:root[data-theme='light'] {
+  --de-paper: #fffdf8;
+  --de-canvas: #f6f3eb;
+  --de-soft: #e9eddf;
+  --de-ink: #303d34;
+  --de-muted: #626b5d;
+  --de-line: #d8d8c8;
+  --de-sage: #4b6750;
+  --de-on-sage: #ffffff;
+}
+html:root[data-theme='dark'] {
+  --de-paper: #2d2b25;
+  --de-canvas: #211f1b;
+  --de-soft: #394532;
+  --de-ink: #eef0e4;
+  --de-muted: #c1c7b6;
+  --de-line: #525447;
+  --de-sage: #b5d2a4;
+  --de-on-sage: #203324;
+}
+html:root[data-theme] {
+  --color-background: var(--de-canvas);
+  --color-surface: var(--de-paper);
+  --color-surface-secondary: var(--de-soft);
+  --color-text: var(--de-ink);
+  --color-text-secondary: var(--de-muted);
+  --color-border: var(--de-line);
+  --color-charcoal: var(--de-ink);
+  --color-charcoal-light: var(--de-ink);
+  --color-mint: var(--de-sage);
+  --color-mint-dark: var(--de-sage);
+  --background: var(--de-canvas);
+  --surface: var(--de-paper);
+  --border: var(--de-line);
+  --text: var(--de-ink);
+  --text-primary: var(--de-ink);
+  --text-secondary: var(--de-muted);
+  --muted: var(--de-muted);
+  --navy: var(--de-ink);
+  --navy-light: var(--de-ink);
+  --teal: var(--de-sage);
+  --teal-dark: var(--de-sage);
+  --mf-font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mf-heading: Georgia, 'Times New Roman', serif;
+  --mf-field: var(--de-paper);
+  --mf-elevated: var(--de-paper);
+  --mf-focus: var(--de-sage);
+  --mf-blue: var(--de-sage);
+  --mf-cyan: var(--de-sage);
+  --mf-teal: var(--de-sage);
+  --mf-radius: 10px;
+  --mf-radius-sm: 7px;
+  --mf-page-glow: none;
+  --mf-sheen: none;
+  --mf-shadow: 0 3px 14px rgb(34 44 30 / 5%);
+  /* Deliberately preserve danger/urgent/warning tokens and their labels. */
+}
+html:root[data-theme] body,
+html:root[data-theme] #root {background:var(--de-canvas) !important;}
+#root .app[data-appearance='dossier-essentiel'] {font-family:var(--mf-font);background:var(--de-canvas) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal {background:var(--de-canvas) !important;}
+#root [data-appearance='dossier-essentiel'] .sidebar.premium-sidebar {
+  background: var(--de-paper) !important;
+  color: var(--de-ink);
+  border-color: var(--de-line) !important;
+  box-shadow: none !important;
+}
+#root [data-appearance='dossier-essentiel'] .sidebar :is(.brand-copy h2,.doctor-info strong,.sidebar-helios-action strong) {
+  color: var(--de-ink) !important;
+}
+#root [data-appearance='dossier-essentiel'] .sidebar :is(small,.sidebar-section-label,.sidebar-version) {
+  color: var(--de-muted) !important;
+}
+#root [data-appearance='dossier-essentiel'] .sidebar :is(.sidebar-workspace,.sidebar-helios-action,.brand-mark,.premium-doctor-avatar) {
+  background: var(--de-soft) !important;
+  color: var(--de-sage) !important;
+  border-color: var(--de-line) !important;
+  box-shadow: none !important;
+}
+#root [data-appearance='dossier-essentiel'] .sidebar :is(.brand-copy h2 span,.nav-icon,.sidebar-helios-mark) {color:var(--de-sage) !important;}
+#root [data-appearance='dossier-essentiel'] .sidebar .sidebar-security-note strong {color:var(--de-ink) !important;}
+#root [data-appearance='dossier-essentiel'] .sidebar .nav-icon {background:transparent !important;box-shadow:none !important;}
+#root [data-appearance='dossier-essentiel'] .sidebar :is(.workspace-indicator,.nav-active-indicator) {background:var(--de-sage) !important;box-shadow:none !important;}
+#root [data-appearance='dossier-essentiel'] .sidebar .premium-nav-item {
+  color: var(--de-ink) !important;
+  border-radius: 7px !important;
+  font-size: 13px !important;
+}
+#root [data-appearance='dossier-essentiel'] .sidebar .premium-nav-item:is(.active,:hover) {
+  background: var(--de-soft) !important;
+  color: var(--de-ink) !important;
+  border-color: var(--de-line) !important;
+  box-shadow: inset 3px 0 var(--de-sage) !important;
+}
+/* Two existing IDs give this layer precedence over the legacy screenshot rules. */
+#root [data-appearance='dossier-essentiel'] #contenu-principal > .premium-topbar {
+  background: var(--de-paper) !important;
+  color: var(--de-ink) !important;
+  border: 1px solid var(--de-line) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal .premium-topbar :is(h1,.header-date strong) {color:var(--de-ink) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal .premium-topbar :is(.top-label,.header-subtitle,.header-date small) {color:var(--de-muted) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal .premium-topbar::after {background:var(--de-sage) !important;box-shadow:none !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal .premium-topbar :is(.header-date,.premium-status,.header-helios-button) {
+  background: var(--de-soft) !important;
+  color: var(--de-ink) !important;
+  border-color: var(--de-line) !important;
+  box-shadow: none !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(h1,h2,h3,h4) {
+  font-family: Georgia, 'Times New Roman', serif !important;
+  font-weight: 500;
+  letter-spacing: -.015em;
+  color:var(--de-ink) !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-dashboard-page,.mf-dashboard) {background:var(--de-canvas) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.copilot-workspace,.copilot-main-column,.copilot-conversation,.copilot-welcome,.copilot-context-summary) {
+  background:var(--de-paper) !important;
+  color:var(--de-ink) !important;
+  border-color:var(--de-line) !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-panel-overline,.mf-chart-note,.mf-chart-legend,.mf-quick-action small,.mf-indicator-note,.mf-empty-state p) {color:var(--de-muted) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-stat,.mf-hero)::before,
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-stat,.mf-hero)::after {background:none !important;box-shadow:none !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-hero,.mf-stat,.mf-panel,.mf-copilot-card,.consultation-section,.patient-card,.patient-detail,.patient-trash,.protocol-card,.prescription-card,.prescription-section,.settings-section,.inventory-panel,.copilot-context-panel,.copilot-side-card,.premium-copilot-header,.premium-chat-input) {
+  background: var(--de-paper) !important;
+  color: var(--de-ink) !important;
+  border-color: var(--de-line) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--mf-shadow) !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-hero,.mf-stat,.mf-copilot-card) :is(h2,h3,em,strong,.mf-stat-label) {color:var(--de-ink) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-hero,.mf-stat,.mf-copilot-card) :is(p,.mf-eyebrow,.mf-hero-meta,.mf-stat-kicker,.mf-stat-foot,.mf-panel-overline) {color:var(--de-muted) !important;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-stat-icon,.mf-hero-badge,.mf-panel-chip,.mf-panel-count) {
+  background: var(--de-soft) !important;
+  color: var(--de-sage) !important;
+  border-color: var(--de-line) !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.mf-hero-art,.welcome-neural-visual) {filter:saturate(.35);}
+#root [data-appearance='dossier-essentiel'] #contenu-principal .lab-consultation-form {
+  --form-accent: var(--de-sage);
+  --form-accent-soft: var(--de-soft);
+  --form-field: var(--de-paper);
+  --form-placeholder: var(--de-muted);
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(input:not([type='checkbox']):not([type='radio']),select,textarea) {
+  min-height: 52px !important;
+  background: var(--de-paper) !important;
+  color: var(--de-ink) !important;
+  border-color: var(--de-line) !important;
+  border-radius: 7px !important;
+  font-family: var(--mf-font) !important;
+  font-size: 16px !important;
+  line-height: 1.6;
+  padding: 12px 14px;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal textarea:not([type='checkbox']):not([type='radio']) {min-height:112px !important;resize:vertical;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(input,textarea)::placeholder {color:var(--de-muted) !important;opacity:1;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal label {font-size:14px !important;line-height:1.55;}
+#root [data-appearance='dossier-essentiel'] #contenu-principal button {
+  min-height:52px;
+  min-width:44px;
+  padding:10px 14px;
+  border:1px solid var(--de-line);
+  border-radius:7px;
+  background:var(--de-paper);
+  color:var(--de-ink);
+  font-family:var(--mf-font);
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(.consultation-save,.patients-action,.prescription-action,.inventory-button,.settings-save,.header-helios-button,.copilot-send-button,.mf-quick-primary) {
+  min-height: 52px;
+  background: var(--de-sage) !important;
+  color: var(--de-on-sage) !important;
+  border-color: var(--de-sage) !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+}
+#root [data-appearance='dossier-essentiel'] #contenu-principal :is(input,select,textarea,button,summary):focus-visible {
+  outline:3px solid var(--de-sage) !important;
+  outline-offset:3px !important;
+}
+#root [data-appearance='dossier-essentiel'] .mf-orb-panel {
+  background:var(--de-paper) !important;
+  color:var(--de-ink) !important;
+  border-color:var(--de-line) !important;
+  box-shadow:var(--mf-shadow) !important;
+}
+#root [data-appearance='dossier-essentiel'] .mf-orb-panel :is(.mf-orb-message,.mf-orb-chat-form textarea,.mf-orb-suggestions button) {
+  background:var(--de-soft) !important;
+  color:var(--de-ink) !important;
+  border-color:var(--de-line) !important;
+}
+#root [data-appearance='dossier-essentiel'] .mf-orb-panel :is(strong,small,.mf-orb-context,.mf-orb-privacy,.mf-orb-panel-footer) {color:var(--de-ink) !important;}

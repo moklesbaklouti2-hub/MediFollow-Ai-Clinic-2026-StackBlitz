@@ -1,0 +1,14 @@
+[
+  {
+    "path": "src/pages/Consultations.tsx",
+    "baselineSha256": "d8c0bf356562d61c6eb274b7f7f70c486a8e17750499c23c2aa7eeebab62202e",
+    "normalizedF1Sha256": "d8c0bf356562d61c6eb274b7f7f70c486a8e17750499c23c2aa7eeebab62202e",
+    "identical": true
+  },
+  {
+    "path": "src/components/PhysicalExaminationEditor.tsx",
+    "baselineSha256": "fedbd94fe268373e5a810146a49edcbdd1f4828d56383be4be9cd3c2b1cf26e3",
+    "normalizedF1Sha256": "fedbd94fe268373e5a810146a49edcbdd1f4828d56383be4be9cd3c2b1cf26e3",
+    "identical": true
+  }
+]

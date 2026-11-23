@@ -4,6 +4,9 @@ import { useClinicalReasoning, type ClinicalReasoningAnalysis } from '../hooks/u
 import { useMedicalData } from '../hooks/useMedicalData';
 import type { Vitals, PhysicalExamination, VoiceCommandAction } from '../types/medical';
 import PhysicalExaminationEditor from '../components/PhysicalExaminationEditor';
+import PatientContextBar from '../components/PatientContextBar';
+import '../consultation-form.css';
+import '../consultation-fields-f1.css';
 import { detectClinicalSuggestions } from '../clinical/clinicalTriggers';
 import { prepareFollowUp, selectDueFollowUps, selectUndatedPlannedFollowUps, selectLaterPlannedFollowUps, selectUnknownStatusFollowUps, filterFollowUpsByObjective, completedFollowUpPlan, matchesDisplayedFollowUpPlan, isWritableFollowUpPlan, followUpStatusLabel, followUpDateLabel, followUpObjectiveLabel, followUpDueLabel, hasUnknownImportedFollowUpStatus, followUpEditorDate, followUpEditorObjective, followUpRemovalAction } from '../clinical/followUp';
 import { getConsultations } from '../services/storage';
@@ -775,7 +778,7 @@ export default function Consultations({
 
 
   return (
-    <section className="consultation-page">
+    <section className="consultation-page lab-consultation-form" data-field-design="f1">
       <style>{`
         .consultation-page {
           display:grid;
@@ -1008,6 +1011,12 @@ export default function Consultations({
         }
       `}</style>
 
+      <PatientContextBar patients={patients} patientId={patientId} links={[
+        { label: 'Consultation', target: 'consultation-patient' },
+        { label: 'Examen', target: 'n3-consultation-exam' },
+        { label: 'Historique', target: 'n3-consultation-history' },
+      ]} />
+
       {commandFeedback && (
         <div role="status" style={{ padding: '11px 14px', borderRadius: 10, border: '1px solid var(--border,#dce4e8)', background: 'var(--surface,#fff)', fontSize: 13, lineHeight: 1.5 }}>
           {commandFeedback}
@@ -1201,8 +1210,9 @@ export default function Consultations({
         <h3>01 · Identification</h3>
         <div className="consultation-grid">
           <div className="consultation-field">
-            <label>Patient *</label>
+            <label htmlFor="consultation-patient">Patient *</label>
             <select
+              id="consultation-patient"
               value={patientId}
               onChange={(e) => {
                 setPatientId(e.target.value);
@@ -1224,8 +1234,9 @@ export default function Consultations({
           </div>
 
           <div className="consultation-field">
-            <label>Spécialité de consultation *</label>
+            <label htmlFor="consultation-specialty">Spécialité de consultation *</label>
             <select
+              id="consultation-specialty"
               value={specialty}
               onChange={(e) => {
                 setSpecialty(e.target.value);
@@ -1245,8 +1256,9 @@ export default function Consultations({
           </div>
 
           <div className="consultation-field">
-            <label>Motif de consultation *</label>
+            <label htmlFor="consultation-reason">Motif de consultation *</label>
             <input
+              id="consultation-reason"
               value={motif}
               onChange={(e) => {
                 setMotif(e.target.value);
@@ -1371,16 +1383,16 @@ export default function Consultations({
       <div className="consultation-section">
         <h3>02 · Histoire de la maladie</h3>
         <div className="consultation-field">
-          <label>Symptômes et histoire clinique</label>
-          <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="Début, durée, évolution, symptômes associés..." />
+          <label htmlFor="consultation-symptoms">Symptômes et histoire clinique</label>
+          <textarea id="consultation-symptoms" value={symptoms} onChange={(e) => setSymptoms(e.target.value)} placeholder="Début, durée, évolution, symptômes associés..." />
         </div>
         <div className="consultation-field">
-          <label>Antécédents et traitements</label>
-          <textarea value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." />
+          <label htmlFor="consultation-history">Antécédents et traitements</label>
+          <textarea id="consultation-history" value={history} onChange={(e) => setHistory(e.target.value)} placeholder="Antécédents, allergies, traitements en cours..." />
         </div>
         <div className="consultation-field">
-          <label>Interrogatoire ciblé · réponses au copilote</label>
-          <textarea value={targetedInterview} onChange={(e) => { setTargetedInterview(e.target.value); setSaved(false); }} placeholder="Les réponses sélectionnées dans le panneau du copilote s’ajouteront ici. Vous pouvez aussi compléter ou corriger librement." />
+          <label htmlFor="consultation-interview">Interrogatoire ciblé · réponses au copilote</label>
+          <textarea id="consultation-interview" value={targetedInterview} onChange={(e) => { setTargetedInterview(e.target.value); setSaved(false); }} placeholder="Les réponses sélectionnées dans le panneau du copilote s’ajouteront ici. Vous pouvez aussi compléter ou corriger librement." />
           <p style={{ margin: '4px 0 0', color: 'var(--text-secondary,#81909c)', fontSize: 11 }}>Chaque choix est ajouté ici, puis pris en compte dans la prochaine analyse clinique.</p>
         </div>
       </div>
@@ -1390,17 +1402,19 @@ export default function Consultations({
         <div className="vitals-grid">
           {vitalFields.map((field) => (
             <div className="vital-card" key={field.key}>
-              <label>{field.label}</label>
+              <label htmlFor={"consultation-vital-" + field.key}>{field.label}</label>
               <div className="vital-input-row">
                 <input
+                  id={"consultation-vital-" + field.key}
                   type="text"
                   inputMode="decimal"
                   value={vitals[field.key]}
                   onChange={(e) => updateVital(field.key, e.target.value)}
                   placeholder={field.placeholder}
                   aria-label={field.label}
+                  aria-describedby={"consultation-unit-" + field.key}
                 />
-                <span>{field.unit}</span>
+                <span id={"consultation-unit-" + field.key}>{field.unit}</span>
               </div>
             </div>
           ))}
@@ -1408,7 +1422,7 @@ export default function Consultations({
       </div>
 
       <div className="consultation-section">
-        <h3>04 · Examen physique</h3>
+        <h3 id="n3-consultation-exam" tabIndex={-1}>04 · Examen physique</h3>
 
         <div
           style={{
@@ -1434,8 +1448,9 @@ export default function Consultations({
             Ancien examen libre (facultatif) — conserver les notes historiques
           </summary>
           <div className="consultation-field" style={{ marginTop: 12 }}>
-            <label>Notes libres de l’examen clinique</label>
+            <label htmlFor="consultation-examination-notes">Notes libres de l’examen clinique</label>
             <textarea
+              id="consultation-examination-notes"
               value={examination}
               onChange={(e) => setExamination(e.target.value)}
               placeholder="Notes complémentaires libres..."
@@ -1447,12 +1462,12 @@ export default function Consultations({
       <div className="consultation-section">
         <h3>05 · Évaluation et prise en charge</h3>
         <div className="consultation-field">
-          <label>Hypothèses diagnostiques</label>
-          <textarea value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="Diagnostic principal et diagnostics différentiels..." />
+          <label htmlFor="consultation-diagnosis">Hypothèses diagnostiques</label>
+          <textarea id="consultation-diagnosis" value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} placeholder="Diagnostic principal et diagnostics différentiels..." />
         </div>
         <div className="consultation-field">
-          <label>Conduite à tenir</label>
-          <textarea value={plan} onChange={(e) => setPlan(e.target.value)} placeholder="Examens complémentaires, traitement, conseils, suivi..." />
+          <label htmlFor="consultation-plan">Conduite à tenir</label>
+          <textarea id="consultation-plan" value={plan} onChange={(e) => setPlan(e.target.value)} placeholder="Examens complémentaires, traitement, conseils, suivi..." />
         </div>
       </div>
 
@@ -1674,7 +1689,7 @@ export default function Consultations({
       )}
 
       <div className="consultation-section">
-        <h3>Historique des consultations ({consultations.length})</h3>
+        <h3 id="n3-consultation-history" tabIndex={-1}>Historique des consultations ({consultations.length})</h3>
         {sortedConsultations.length === 0 ? (
           <p>Aucune consultation enregistrée pour le moment.</p>
         ) : (

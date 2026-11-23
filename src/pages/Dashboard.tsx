@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import '../dashboard-d3.css';
 import { getInventoryData, getPatients, getConsultations, getPrescriptions } from '../services/storage';
 import { countUnlinkedClinicalRecords } from '../services/recordIntegrity';
 import { summarizeFollowUps, countUndatedPlannedFollowUps, countLaterPlannedFollowUps } from '../clinical/followUp';
@@ -285,13 +286,13 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
   ];
 
   return (
-    <section className="dashboard mf-dashboard-page">
+    <section className="dashboard mf-dashboard-page" data-dashboard-layout="d3">
       <div className="mf-dashboard">
         <section className="mf-hero">
           <div className="mf-hero-copy">
-            <span className="mf-eyebrow">PLATEFORME D'INTELLIGENCE MÉDICALE</span>
-            <h2>MediFollow <em>AI</em></h2>
-            <p>Ensemble pour votre santé.<br />L'intelligence au service du soin.</p>
+            <span className="mf-eyebrow">VOTRE CABINET</span>
+            <h2>Dossier &amp; activité du cabinet</h2>
+            <p>Consultations enregistrées, suivis et ressources du cabinet.</p>
             <div className="mf-hero-meta"><span className="mf-live-dot" /> Votre espace clinique · {monthName}</div>
           </div>
           <div className="mf-hero-art" aria-hidden="true">
@@ -330,6 +331,48 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           </article>
         </section>
 
+        <div className="d3-workspace">
+        <section className="mf-panel mf-recent-panel d3-feed">
+          <div className="mf-panel-heading"><div><span className="mf-panel-overline">ACTIVITÉ ENREGISTRÉE</span><h3>Consultations récentes</h3></div><span className="mf-panel-count">{recentConsultations.length}</span></div>
+          {recentConsultations.length === 0 ? (
+            <div className="mf-empty-state"><span>◷</span><strong>Aucune consultation enregistrée</strong><p>Vos consultations récentes apparaîtront ici.</p></div>
+          ) : (
+            <div className="mf-activity-list" role="list">
+              {recentConsultations.map((item, index) => (
+                <div className="mf-activity-item" role="listitem" key={item.id}>
+                  <span className={`mf-activity-avatar mf-avatar-${index % 4}`}>{(item.patient || '?').trim().charAt(0).toUpperCase()}</span>
+                  <div className="mf-activity-copy"><strong>{item.patient}</strong><span>{item.motif || 'Motif non renseigné'}</span><small>{new Date(item.date).toLocaleDateString('fr-FR')}</small></div>
+                  <span className="mf-activity-arrow">↗</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+          <aside className="d3-side-column" aria-label="Actions et suivis du cabinet">
+          <article className="mf-panel mf-quick-panel">
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
+            <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Dossiers patients</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
+            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
+          </article>
+
+        {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
+          <section className="mf-panel" role="alert" aria-label="Documents sans dossier patient confirmé"
+            style={{ marginBottom: 18, padding: 18, borderColor: '#bd7c13' }}>
+            <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
+              Attention — documents cliniques sans dossier patient confirmé
+            </strong>
+            <p style={{ margin: 0 }}>
+              {data.unlinkedConsultations} consultation(s) et {data.unlinkedPrescriptions} ordonnance(s)
+              nécessitent une vérification de l’identité du patient.
+            </p>
+            <p style={{ fontSize: 13, margin: '8px 0 0' }}>
+              Aucun rapprochement automatique n’est effectué pour les homonymes.
+              Vérifiez les documents dans Consultations et Ordonnances avant toute décision clinique.
+            </p>
+          </section>
+        )}
+
         <section className="mf-panel" style={{ marginBottom: 18, padding: 18 }} aria-label="HELIOS Follow-up : échéances de suivi">
           <div className="mf-panel-heading">
             <div><span className="mf-panel-overline">HELIOS FOLLOW-UP</span><h3>Contrôles de suivi programmés</h3></div>
@@ -355,22 +398,32 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           </button>
         </section>
 
-        {(data.unlinkedConsultations + data.unlinkedPrescriptions > 0) && (
-          <section className="mf-panel" role="alert" aria-label="Documents sans dossier patient confirmé"
-            style={{ marginBottom: 18, padding: 18, borderColor: '#bd7c13' }}>
-            <strong style={{ color: '#bd7c13', display: 'block', marginBottom: 6 }}>
-              Attention — documents cliniques sans dossier patient confirmé
-            </strong>
-            <p style={{ margin: 0 }}>
-              {data.unlinkedConsultations} consultation(s) et {data.unlinkedPrescriptions} ordonnance(s)
-              nécessitent une vérification de l’identité du patient.
-            </p>
-            <p style={{ fontSize: 13, margin: '8px 0 0' }}>
-              Aucun rapprochement automatique n’est effectué pour les homonymes.
-              Vérifiez les documents dans Consultations et Ordonnances avant toute décision clinique.
-            </p>
-          </section>
-        )}
+          <article className="mf-copilot-card">
+            <div className="mf-copilot-copy">
+              <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
+              <h3>Votre Copilote IA</h3>
+              <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
+              <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
+              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
+            </div>
+            <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
+          </article>
+          </aside>
+          <div className="d3-details">
+          <article className="mf-panel mf-chart-panel">
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">ANALYSE DE L'ACTIVITÉ</span><h3>Graphique des consultations</h3></div><span className="mf-panel-chip">6 derniers mois</span></div>
+            <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Historique réel</span></div>
+            <div className="mf-chart-wrap">
+              <svg viewBox="0 0 520 150" preserveAspectRatio="none" aria-label="Graphique des consultations mensuelles">
+                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#12dfff" stopOpacity=".42"/><stop offset="1" stopColor="#12dfff" stopOpacity="0"/></linearGradient></defs>
+                {[28, 58, 88, 118].map(y => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline"/>)}
+                <polygon points={`20,130 ${chartPoints.map(p => `${p.x},${p.y}`).join(' ')} 488,130`} className="mf-chart-area"/>
+                <polyline points={chartPoints.map(p => `${p.x},${p.y}`).join(' ')} className="mf-chart-line"/>
+                {chartPoints.map(p => <circle key={p.label} cx={p.x} cy={p.y} r="5" className="mf-chart-point"/>)}
+              </svg>
+            </div>
+            <div className="mf-chart-labels">{chartPoints.map(point => <span key={point.label}>{point.label}<b>{point.count}</b></span>)}</div>
+          </article>
 
         <section className="mf-panel" style={{ marginBottom: 18, padding: 18, display: 'grid', gap: 12 }}
           aria-label="HELIOS Activité — statistiques descriptives">
@@ -472,45 +525,6 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
           <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: 11 }}>La valeur est indicative et ne comprend que les articles dont le coût d’achat unitaire est renseigné. Les alertes sont calculées lot par lot.</p>
         </section>
 
-        <section className="mf-dashboard-grid">
-          <article className="mf-panel mf-chart-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">ANALYSE DE L'ACTIVITÉ</span><h3>Graphique des consultations</h3></div><span className="mf-panel-chip">6 derniers mois</span></div>
-            <div className="mf-chart-legend"><span><i className="legend-cyan" /> Consultations</span><span className="mf-chart-note">Historique réel</span></div>
-            <div className="mf-chart-wrap">
-              <svg viewBox="0 0 520 150" preserveAspectRatio="none" aria-label="Graphique des consultations mensuelles">
-                <defs><linearGradient id="mfChartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#12dfff" stopOpacity=".42"/><stop offset="1" stopColor="#12dfff" stopOpacity="0"/></linearGradient></defs>
-                {[28, 58, 88, 118].map(y => <line key={y} x1="20" x2="510" y1={y} y2={y} className="mf-chart-gridline"/>)}
-                <polygon points={`20,130 ${chartPoints.map(p => `${p.x},${p.y}`).join(' ')} 488,130`} className="mf-chart-area"/>
-                <polyline points={chartPoints.map(p => `${p.x},${p.y}`).join(' ')} className="mf-chart-line"/>
-                {chartPoints.map(p => <circle key={p.label} cx={p.x} cy={p.y} r="5" className="mf-chart-point"/>)}
-              </svg>
-            </div>
-            <div className="mf-chart-labels">{chartPoints.map(point => <span key={point.label}>{point.label}<b>{point.count}</b></span>)}</div>
-          </article>
-
-          <article className="mf-panel mf-appointments-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">AGENDA CLINIQUE</span><h3>Prochains rendez-vous</h3></div><span className="mf-panel-count">—</span></div>
-            <div className="mf-empty-state mf-appointment-empty"><span>◷</span><strong>Aucun rendez-vous planifié</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p></div>
-          </article>
-
-          <article className="mf-panel mf-quick-panel">
-            <div className="mf-panel-heading"><div><span className="mf-panel-overline">VOTRE ESPACE DE TRAVAIL</span><h3>Accès rapides</h3></div></div>
-            <button className="mf-quick-action mf-quick-primary" onClick={onStartConsultation}><span>✚</span><div><strong>Nouvelle consultation</strong><small>Ouvrir un dossier clinique</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenPatients}><span>♙</span><div><strong>Nouveau patient</strong><small>Accéder à la gestion des patients</small></div><b>→</b></button>
-            <button className="mf-quick-action" onClick={onOpenCopilot}><span>✧</span><div><strong>Copilote IA</strong><small>Assistance clinique intelligente</small></div><b>→</b></button>
-          </article>
-
-          <article className="mf-copilot-card">
-            <div className="mf-copilot-copy">
-              <span className="mf-panel-overline">INTELLIGENCE MÉDICALE</span>
-              <h3>Votre Copilote IA</h3>
-              <p>Votre assistant médical intelligent, à vos côtés à chaque étape de la consultation.</p>
-              <ul><li>Analyse d'un cas clinique</li><li>Diagnostic différentiel</li><li>Plan de prise en charge</li></ul>
-              <button onClick={onOpenCopilot}>Ouvrir le Copilote <span>→</span></button>
-            </div>
-            <div className="mf-robot-stage"><div className="mf-robot-halo"/><DoctorRobotArtwork /></div>
-          </article>
-
           <article className="mf-panel mf-indicators-panel">
             <div className="mf-panel-heading"><div><span className="mf-panel-overline">DONNÉES CLINIQUES</span><h3>Indicateurs cliniques clés</h3></div><span className="mf-panel-chip">Dernière consultation</span></div>
             <div className="mf-indicators-grid">
@@ -523,24 +537,13 @@ export default function Dashboard({ patientCount, consultationCount, onStartCons
             </div>
             <p className="mf-indicator-note">Valeurs issues de la dernière consultation contenant des constantes renseignées. « — » signifie non renseigné.</p>
           </article>
-        </section>
 
-        <section className="mf-panel mf-recent-panel">
-          <div className="mf-panel-heading"><div><span className="mf-panel-overline">HISTORIQUE CLINIQUE</span><h3>Consultations récentes</h3></div><span className="mf-panel-count">{recentConsultations.length}</span></div>
-          {recentConsultations.length === 0 ? (
-            <div className="mf-empty-state"><span>◷</span><strong>Aucune consultation enregistrée</strong><p>Vos consultations récentes apparaîtront ici.</p></div>
-          ) : (
-            <div className="mf-activity-list">
-              {recentConsultations.map((item, index) => (
-                <div className="mf-activity-item" key={item.id}>
-                  <span className={`mf-activity-avatar mf-avatar-${index % 4}`}>{(item.patient || '?').trim().charAt(0).toUpperCase()}</span>
-                  <div className="mf-activity-copy"><strong>{item.patient}</strong><span>{item.motif || 'Motif non renseigné'}</span><small>{new Date(item.date).toLocaleDateString('fr-FR')}</small></div>
-                  <span className="mf-activity-arrow">↗</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+          <article className="mf-panel mf-appointments-panel">
+            <div className="mf-panel-heading"><div><span className="mf-panel-overline">AGENDA CLINIQUE</span><h3>Prochains rendez-vous</h3></div><span className="mf-panel-count">—</span></div>
+            <div className="mf-empty-state mf-appointment-empty"><span>◷</span><strong>Aucun rendez-vous planifié</strong><p>Les rendez-vous apparaîtront ici lorsque le calendrier sera activé.</p></div>
+          </article>
+          </div>
+        </div>
 
         <footer className="mf-dashboard-footer"><span>◈ &nbsp; Sécurité & confidentialité</span><i/><strong>MediFollow AI</strong><span>Ensemble pour votre santé <b>♡</b></span></footer>
       </div>
