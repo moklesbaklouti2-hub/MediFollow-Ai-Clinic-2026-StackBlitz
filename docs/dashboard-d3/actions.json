@@ -1,0 +1,356 @@
+[
+  {
+    "viewport": "1280x800",
+    "theme": "light",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  },
+  {
+    "viewport": "1280x800",
+    "theme": "dark",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 334.2,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "light",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  },
+  {
+    "viewport": "800x1280",
+    "theme": "dark",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 695,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  },
+  {
+    "viewport": "360x740",
+    "theme": "light",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 283,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 283,
+        "height": 85.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 283,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  },
+  {
+    "viewport": "360x740",
+    "theme": "dark",
+    "actions": [
+      {
+        "action": "Nouvelle consultation",
+        "target": "Consultations",
+        "width": 283,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Dossiers patients",
+        "target": "Patients",
+        "width": 283,
+        "height": 85.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Copilote IA",
+        "target": "Copilote IA",
+        "width": 283,
+        "height": 67.3,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir les consultations",
+        "target": "Consultations",
+        "width": 185.6,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      },
+      {
+        "action": "Ouvrir le Copilote",
+        "target": "Copilote IA",
+        "width": 178.8,
+        "height": 52,
+        "focus": {
+          "style": "solid",
+          "width": 3
+        }
+      }
+    ],
+    "pageErrors": [],
+    "clinicalStorageUnchanged": true,
+    "singleColumnSidePanels": true
+  }
+]
